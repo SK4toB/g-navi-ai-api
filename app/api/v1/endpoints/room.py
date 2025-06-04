@@ -1,19 +1,20 @@
 from fastapi import APIRouter, HTTPException, Depends
 from datetime import datetime
 
+from fastapi import APIRouter, HTTPException, Depends
+from datetime import datetime
+
 from app.models.chat import ChatRoomCreate, ChatRoomResponse
-from app.services.langgraph_interface import LangGraphService, MockLangGraphService
+from app.api.deps import get_chat_service
+from app.services.chat_service import ChatService
+
 
 router = APIRouter()
-
-# 의존성 주입 - 나중에 실제 LangGraphService로 교체
-def get_langgraph_service() -> LangGraphService:
-    return MockLangGraphService()
 
 @router.post("/rooms", response_model=ChatRoomResponse)
 async def create_or_load_room(
     request: ChatRoomCreate,
-    langgraph_service: LangGraphService = Depends(get_langgraph_service)
+    chat_service: ChatService = Depends(get_chat_service)
 ):
     """
     채팅방 생성 또는 로드
@@ -30,10 +31,9 @@ async def create_or_load_room(
         print(f"{'새 채팅방' if is_new_room else '기존 채팅방'}: {request.room_id}")
         
         # LangGraph 서비스로 초기 메시지 생성
-        initial_message = await langgraph_service.generate_initial_message(
+        initial_message = await chat_service.create_chat_session(
             room_id=request.room_id,
-            user_info=request.user_info,
-            is_new_room=is_new_room
+            user_info=request.user_info
         )
         
         print(f"AI 응답 생성 완료: {initial_message[:50]}...")
