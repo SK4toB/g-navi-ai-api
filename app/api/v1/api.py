@@ -14,11 +14,11 @@ api_router.include_router(
 )
 
 # 메시지 관련 엔드포인트  
-api_router.include_router(
-    message.router,
-    prefix="/chat",
-    tags=["messages"]
-)
+# api_router.include_router(
+#     message.router,
+#     prefix="/chat",
+#     tags=["messages"]
+# )
 
 # 헬스체크 관련 엔드포인트
 api_router.include_router(

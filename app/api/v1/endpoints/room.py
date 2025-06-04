@@ -20,14 +20,14 @@ async def create_or_load_room(
     SpringBoot에서 user_id, room_id, user_info와 함께 호출
     """
     try:
-        print(f"📋 채팅방 요청: user_id={request.user_id}, room_id={request.room_id}")
-        print(f"👤 사용자 정보: {request.user_info}")
+        print(f"채팅방 요청: user_id={request.user_id}, room_id={request.room_id}")
+        print(f"사용자 정보: {request.user_info}")
         
         # TODO: MongoDB에서 기존 방 확인 (나중에 추가)
         # 지금은 간단하게 처리
         is_new_room = True  # 임시로 항상 새 방으로 처리
         
-        print(f"🆕 {'새 채팅방' if is_new_room else '기존 채팅방'}: {request.room_id}")
+        print(f"{'새 채팅방' if is_new_room else '기존 채팅방'}: {request.room_id}")
         
         # LangGraph 서비스로 초기 메시지 생성
         initial_message = await langgraph_service.generate_initial_message(
@@ -49,5 +49,5 @@ async def create_or_load_room(
         )
         
     except Exception as e:
-        print(f"❌ 채팅방 처리 실패: {str(e)}")
+        print(f"채팅방 처리 실패: {str(e)}")
         raise HTTPException(status_code=500, detail=f"채팅방 처리 실패: {str(e)}")
