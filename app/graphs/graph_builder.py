@@ -9,7 +9,7 @@ from app.graphs.state import ChatState
 from app.graphs.nodes import (
     intent_node, embedding_node, memory_node,
     similarity_node, profiling_node, connection_node, output_node,
-    user_input_node  # 새로 추가할 입력 대기 노드
+    user_input_node
 )
 
 class ChatGraphBuilder:

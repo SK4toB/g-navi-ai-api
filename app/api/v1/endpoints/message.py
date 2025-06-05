@@ -26,6 +26,7 @@ async def send_message(
     start_time = time.time()
     
     try:
+        print("api/v1/endpoints/message.py: send_message")
         print(f"메시지 전송: room_id={room_id}, user_id={request.user_id}")
         print(f"사용자 메시지: {request.message}")
         
@@ -39,7 +40,7 @@ async def send_message(
         end_time = time.time()
         processing_time = int((end_time - start_time) * 1000)
         
-        print(f"AI 응답 생성 완료: {ai_response[:50]}...")
+        print(f"응답 생성 완료: {ai_response[:50]}...")
         print(f"처리 시간: {processing_time}ms")
         
         # TODO: MongoDB에 대화 내역 저장 (나중에 추가)

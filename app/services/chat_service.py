@@ -9,8 +9,6 @@ class ChatService:
     지속적인 채팅 서비스
     채팅방 생성 시 LangGraph 시작, 사용자 입력마다 resume
     """
-
-    
     def __init__(self):
         self.graph_builder = ChatGraphBuilder()
         self.active_sessions = {}  # room_id -> {graph, thread_id, state}
@@ -36,12 +34,13 @@ class ChatService:
         """
         채팅 세션 생성 및 LangGraph 시작
         """
+        print("services/chat_service.py: create_chat_session")
         print(f"지속적 채팅 세션 생성: {room_id}")
         
         # 1. LangGraph 빌드
         compiled_graph = await self.graph_builder.build_persistent_chat_graph(room_id, user_info)
         
-        # 2. 세션 시작 (첫 번째 실행)
+        # 2. 세션 시작 (첫 번째 실행 - user_input_wait까지)
         thread_id = f"thread_{room_id}"
         config = {"configurable": {"thread_id": thread_id}}
         
@@ -50,22 +49,36 @@ class ChatService:
             "user_message": "",  # 초기에는 빈 메시지
             "user_id": user_info.get("user_id", ""),
             "room_id": room_id,
-            "user_info": user_info
+            "user_info": user_info,
+            # 나머지 필드들 초기화
+            "intent": None,
+            "embedding_vector": None,
+            "memory_results": None,
+            "similarity_score": None,
+            "profiling_data": None,
+            "connection_suggestions": None,
+            "final_response": None
         }
+        
+        print(f"초기 그래프 실행 (user_input_wait까지)")
         
         # 첫 실행 (user_input_wait에서 중단됨)
         result = await compiled_graph.ainvoke(initial_state, config)
+        
+        print(f"그래프가 user_input_wait에서 중단됨")
+        print(f"중단 상태: {list(result.keys())}")
         
         # 세션 정보 저장
         self.active_sessions[room_id] = {
             "graph": compiled_graph,
             "thread_id": thread_id,
-            "config": config
+            "config": config,
+            "user_info": user_info
         }
         
         print(f"LangGraph 세션 시작 완료: {room_id}")
         
-        # 3. 환영 메시지 생성
+        # 3. 환영 메시지 생성 (별도로)
         initial_message = await self._generate_welcome_message(user_info)
         
         return initial_message
@@ -74,32 +87,52 @@ class ChatService:
         """
         실행 중인 LangGraph에 메시지 전송 (Resume)
         """
+        print(f"services/chat_service.py: send_message")
+        print(f"LangGraph Resume 시작: {room_id}")
+        
         if room_id not in self.active_sessions:
             raise ValueError(f"활성화된 세션이 없습니다: {room_id}")
         
         session = self.active_sessions[room_id]
         graph = session["graph"]
         config = session["config"]
+        user_info = session.get("user_info", {})
         
         try:
-            # 사용자 메시지로 상태 업데이트
+            print(f"입력 메시지: {message}")
+            
+            # 사용자 메시지로 상태 업데이트하여 Resume
             updated_state = {
                 "user_message": message,
                 "user_id": user_id,
-                "room_id": room_id
+                "room_id": room_id,
+                "user_info": user_info
             }
             
-            # LangGraph Resume (다음 중단점까지 실행)
+            print(f"그래프 Resume 실행...")
+            
+            # LangGraph Resume (중단점에서 재개 → 다음 중단점까지)
             result = await graph.ainvoke(updated_state, config)
+            
+            print(f"그래프 Resume 완료")
+            print(f"Resume 결과 키들: {list(result.keys())}")
             
             # 최종 응답 추출
             final_response = result.get("final_response", "응답을 생성할 수 없습니다.")
             
-            print(f"메시지 처리 완료: {room_id} - {message[:30]}...")
+            if final_response is None:
+                print("final_response가 None입니다!")
+                print(f"result 전체 내용: {result}")
+                final_response = "응답을 생성할 수 없습니다."
+            
+            print(f"최종 응답 추출: {str(final_response)[:100]}...")
             return final_response
+    
             
         except Exception as e:
-            print(f"메시지 처리 실패: {e}")
+            print(f"Resume 처리 실패: {e}")
+            import traceback
+            print(f"상세 에러: {traceback.format_exc()}")
             return f"죄송합니다. 메시지 처리 중 오류가 발생했습니다: {str(e)}"
     
     async def close_chat_session(self, room_id: str):
