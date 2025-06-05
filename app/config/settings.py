@@ -1,13 +1,46 @@
-# app/config/settings.py
+# # app/config/settings.py
+# from pydantic_settings import BaseSettings
+# from typing import Optional
+
+# class Settings(BaseSettings):
+#     # OpenAI 설정
+#     openai_api_key: str
+#     openai_model: str = "gpt-3.5-turbo"
+#     openai_max_tokens: int = 1000
+#     openai_temperature: float = 0.7
+    
+#     # API 설정
+#     api_title: str = "AI Chatbot API"
+#     api_version: str = "1.0.0"
+#     api_description: str = "FastAPI 기반 AI 채팅 서비스"
+    
+#     # 서버 설정
+#     host: str = "0.0.0.0"
+#     port: int = 8001
+#     debug: bool = False
+    
+#     # CORS 설정
+#     cors_origins: list = ["*"]
+    
+#     class Config:
+#         env_file = ".env"
+#         env_file_encoding = "utf-8"
+#         extra = "ignore"
+
+# settings = Settings()
+
+# =========================================================
+# config/settings.py
+
 from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    # OpenAI 설정
-    openai_api_key: str
-    openai_model: str = "gpt-3.5-turbo"
-    openai_max_tokens: int = 1000
-    openai_temperature: float = 0.7
+    # OpenAI 설정 (대문자)
+    OPENAI_API_KEY: str
+    OPENAI_MODEL: str = "gpt-4o-mini"
+    OPENAI_MAX_TOKENS: int = 1000
+    OPENAI_TEMPERATURE: float = 0.7
     
     # API 설정
     api_title: str = "AI Chatbot API"
