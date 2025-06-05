@@ -32,3 +32,14 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# 업로드된 파일들 (필요에 따라)
+uploads/
+data/raw/
+*.xlsx
+*.csv
+
+# 모델 파일 (큰 파일들)
+*.pkl
+*.model
+*.bin
