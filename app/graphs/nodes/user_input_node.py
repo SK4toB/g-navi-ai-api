@@ -9,7 +9,7 @@ async def process(state: ChatState) -> ChatState:
     이 노드에서 중단되어 RESTful API를 통한 입력을 기다림
     """
     print("graphs/nodes/user_input_node.py")
-    print(f"room_id: {state.get('room_id')}")
+    print(f"conversation_id: {state.get('conversation_id')}")
     print(f"user_message: '{state.get('user_message', '')}'")
     print(f"모든 state 키: {list(state.keys())}")
     

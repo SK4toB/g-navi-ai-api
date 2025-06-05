@@ -13,10 +13,10 @@ from app.models.message import (
 
 router = APIRouter()
 
-@router.post("/rooms/{room_id}/messages", response_model=MessageResponse)
+@router.post("/{conversation_id}/messages", response_model=MessageResponse)
 async def send_message(
     request: MessageSend,
-    room_id: str = Path(..., description="채팅방 ID"),
+    conversation_id: str = Path(..., description="채팅방 ID"),
     chat_service: ChatService = Depends(get_chat_service)
 ):
     """
@@ -26,13 +26,13 @@ async def send_message(
     start_time = time.time()
     
     try:
-        print("api/v1/endpoints/message.py: send_message")
-        print(f"메시지 전송: room_id={room_id}, user_id={request.user_id}")
+        print("api")
+        print(f"메시지 전송: conversation_id={conversation_id}, user_id={request.user_id}")
         print(f"사용자 메시지: {request.message}")
         
         # LangGraph Resume 실행 (중단점에서 재개)
         ai_response = await chat_service.send_message(
-            room_id=room_id,
+            conversation_id=conversation_id,
             user_id=request.user_id,
             message=request.message
         )
@@ -46,7 +46,7 @@ async def send_message(
         # TODO: MongoDB에 대화 내역 저장 (나중에 추가)
         
         return MessageResponse(
-            room_id=room_id,
+            conversation_id=conversation_id,
             user_id=request.user_id,
             user_message=request.message,
             ai_response=ai_response,
@@ -57,16 +57,16 @@ async def send_message(
     except ValueError as e:
         # 세션이 없는 경우
         print(f"❌ 세션 없음: {str(e)}")
-        raise HTTPException(status_code=404, detail=f"채팅방을 찾을 수 없습니다: {room_id}")
+        raise HTTPException(status_code=404, detail=f"채팅방을 찾을 수 없습니다: {conversation_id}")
     
     except Exception as e:
         # 기타 처리 오류
         print(f"❌ 메시지 처리 실패: {str(e)}")
         raise HTTPException(status_code=500, detail=f"메시지 처리 실패: {str(e)}")
 
-@router.get("/rooms/{room_id}/status", response_model=SessionStatus)
+@router.get("/{conversation_id}/status", response_model=SessionStatus)
 async def get_session_status(
-    room_id: str = Path(..., description="채팅방 ID"),
+    conversation_id: str = Path(..., description="채팅방 ID"),
     chat_service: ChatService = Depends(get_chat_service)
 ):
     """
@@ -74,9 +74,9 @@ async def get_session_status(
     채팅방이 활성화되어 있는지 확인
     """
     try:
-        print(f"🔍 세션 상태 확인: room_id={room_id}")
+        print(f"🔍 세션 상태 확인: conversation_id={conversation_id}")
         
-        status_info = chat_service.get_session_status(room_id)
+        status_info = chat_service.get_session_status(conversation_id)
         
         print(f"📊 세션 상태: {status_info}")
         
@@ -86,9 +86,9 @@ async def get_session_status(
         print(f"❌ 상태 확인 실패: {str(e)}")
         raise HTTPException(status_code=500, detail=f"상태 확인 실패: {str(e)}")
 
-@router.delete("/rooms/{room_id}", response_model=SessionCloseResponse)
+@router.delete("/{conversation_id}", response_model=SessionCloseResponse)
 async def close_session(
-    room_id: str = Path(..., description="채팅방 ID"),
+    conversation_id: str = Path(..., description="채팅방 ID"),
     chat_service: ChatService = Depends(get_chat_service)
 ):
     """
@@ -96,15 +96,15 @@ async def close_session(
     메모리에서 세션 정보 제거
     """
     try:
-        print(f"🚪 세션 종료 요청: room_id={room_id}")
+        print(f"🚪 세션 종료 요청: conversation_id={conversation_id}")
         
-        await chat_service.close_chat_session(room_id)
+        await chat_service.close_chat_session(conversation_id)
         
-        print(f"✅ 세션 종료 완료: {room_id}")
+        print(f"✅ 세션 종료 완료: {conversation_id}")
         
         return SessionCloseResponse(
-            message=f"채팅방 {room_id} 세션이 종료되었습니다.",
-            room_id=room_id,
+            message=f"채팅방 {conversation_id} 세션이 종료되었습니다.",
+            conversation_id=conversation_id,
             closed_at=datetime.utcnow()
         )
         
@@ -113,19 +113,19 @@ async def close_session(
         raise HTTPException(status_code=500, detail=f"세션 종료 실패: {str(e)}")
 
 # 개발/디버깅용 엔드포인트
-@router.get("/rooms/{room_id}/debug", response_model=SessionDebugInfo)
+@router.get("/{conversation_id}/debug", response_model=SessionDebugInfo)
 async def debug_session(
-    room_id: str = Path(..., description="채팅방 ID"),
+    conversation_id: str = Path(..., description="채팅방 ID"),
     chat_service: ChatService = Depends(get_chat_service)
 ):
     """
     개발용: 세션 상세 정보 확인
     """
     try:
-        if room_id in chat_service.active_sessions:
-            session = chat_service.active_sessions[room_id]
+        if conversation_id in chat_service.active_sessions:
+            session = chat_service.active_sessions[conversation_id]
             return SessionDebugInfo(
-                room_id=room_id,
+                conversation_id=conversation_id,
                 status="active",
                 thread_id=session["thread_id"],
                 graph_compiled=session["graph"] is not None,
@@ -134,12 +134,12 @@ async def debug_session(
             )
         else:
             return SessionDebugInfo(
-                room_id=room_id,
+                conversation_id=conversation_id,
                 status="not_found",
                 total_active_sessions=len(chat_service.active_sessions)
             )
     except Exception as e:
         return SessionDebugInfo(
-            room_id=room_id,
+            conversation_id=conversation_id,
             error=str(e)
         )

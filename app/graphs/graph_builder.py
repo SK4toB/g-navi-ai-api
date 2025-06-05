@@ -35,11 +35,11 @@ class ChatGraphBuilder:
             print("⏳ 메시지 없음 → 대기")
             return "wait"
     
-    async def build_persistent_chat_graph(self, room_id: str, user_info: Dict[str, Any]):
+    async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any]):
         """
         조건부 분기 방식 LangGraph 빌드
         """
-        print(f"🔧 조건부 분기 LangGraph 빌드 시작: {room_id}")
+        print(f"🔧 조건부 분기 LangGraph 빌드 시작: {conversation_id}")
         
         # StateGraph 생성
         workflow = StateGraph(ChatState)
@@ -86,7 +86,7 @@ class ChatGraphBuilder:
             # interrupt 완전 제거
         )
         
-        print(f"✅ 조건부 분기 LangGraph 컴파일 완료: {room_id}")
+        print(f"✅ 조건부 분기 LangGraph 컴파일 완료: {conversation_id}")
         return compiled_graph
     
     def _create_wait_node(self):

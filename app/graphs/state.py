@@ -8,7 +8,7 @@ class ChatState(TypedDict):
     # 입력
     user_message: str
     user_id: str
-    room_id: str
+    conversation_id: str
     
     # 노드별 처리 결과
     intent: Optional[str]

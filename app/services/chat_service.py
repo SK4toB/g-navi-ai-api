@@ -12,7 +12,7 @@ class ChatService:
     
     def __init__(self):
         self.graph_builder = ChatGraphBuilder()
-        self.active_sessions = {}  # room_id -> {graph, thread_id, config}
+        self.active_sessions = {}  # conversation_id -> {graph, thread_id, config}
         self.openai_client = None
         self._init_openai()
         print("ChatService 초기화 (조건부 분기 방식)")
@@ -31,43 +31,43 @@ class ChatService:
         except Exception as e:
             print(f"OpenAI 초기화 실패: {e}")
     
-    async def create_chat_session(self, room_id: str, user_info: Dict[str, Any]) -> str:
+    async def create_chat_session(self, conversation_id: str, user_info: Dict[str, Any]) -> str:
         """
         조건부 분기 방식 채팅 세션 생성
         """
-        print(f"🚀 조건부 분기 채팅 세션 생성: {room_id}")
+        print(f"🚀 조건부 분기 채팅 세션 생성: {conversation_id}")
         
         # 1. LangGraph 빌드
-        compiled_graph = await self.graph_builder.build_persistent_chat_graph(room_id, user_info)
+        compiled_graph = await self.graph_builder.build_persistent_chat_graph(conversation_id, user_info)
         
         # 2. 세션 정보 저장 (실행하지 않음)
-        thread_id = f"thread_{room_id}"
+        thread_id = f"thread_{conversation_id}"
         config = {"configurable": {"thread_id": thread_id}}
         
-        self.active_sessions[room_id] = {
+        self.active_sessions[conversation_id] = {
             "graph": compiled_graph,
             "thread_id": thread_id,
             "config": config,
             "user_info": user_info
         }
         
-        print(f"✅ 조건부 분기 세션 생성 완료: {room_id}")
+        print(f"✅ 조건부 분기 세션 생성 완료: {conversation_id}")
         
         # 3. 환영 메시지 생성
         initial_message = await self._generate_welcome_message(user_info)
         
         return initial_message
     
-    async def send_message(self, room_id: str, user_id: str, message: str) -> str:
+    async def send_message(self, conversation_id: str, user_id: str, message: str) -> str:
         """
         조건부 분기 방식 메시지 처리
         """
-        print(f"🔄 조건부 분기 메시지 처리: {room_id}")
+        print(f"🔄 조건부 분기 메시지 처리: {conversation_id}")
         
-        if room_id not in self.active_sessions:
-            raise ValueError(f"활성화된 세션이 없습니다: {room_id}")
+        if conversation_id not in self.active_sessions:
+            raise ValueError(f"활성화된 세션이 없습니다: {conversation_id}")
         
-        session = self.active_sessions[room_id]
+        session = self.active_sessions[conversation_id]
         graph = session["graph"]
         config = session["config"]
         user_info = session.get("user_info", {})
@@ -79,7 +79,7 @@ class ChatService:
             input_state = {
                 "user_message": message,  # 실제 메시지
                 "user_id": user_id,
-                "room_id": room_id,
+                "conversation_id": conversation_id,
                 "user_info": user_info,
                 # 나머지 필드들 초기화
                 "intent": None,
@@ -116,21 +116,21 @@ class ChatService:
             print(f"📋 상세 에러: {traceback.format_exc()}")
             return f"죄송합니다. 메시지 처리 중 오류가 발생했습니다: {str(e)}"
     
-    async def close_chat_session(self, room_id: str):
+    async def close_chat_session(self, conversation_id: str):
         """채팅 세션 종료"""
-        if room_id in self.active_sessions:
-            del self.active_sessions[room_id]
-            print(f"🚪 조건부 분기 채팅 세션 종료: {room_id}")
+        if conversation_id in self.active_sessions:
+            del self.active_sessions[conversation_id]
+            print(f"🚪 조건부 분기 채팅 세션 종료: {conversation_id}")
     
-    def get_session_status(self, room_id: str) -> Dict[str, Any]:
+    def get_session_status(self, conversation_id: str) -> Dict[str, Any]:
         """세션 상태 조회"""
-        if room_id in self.active_sessions:
+        if conversation_id in self.active_sessions:
             return {
-                "room_id": room_id,
+                "conversation_id": conversation_id,
                 "status": "active",
-                "thread_id": self.active_sessions[room_id]["thread_id"]
+                "thread_id": self.active_sessions[conversation_id]["thread_id"]
             }
-        return {"room_id": room_id, "status": "inactive"}
+        return {"conversation_id": conversation_id, "status": "inactive"}
     
     async def _generate_welcome_message(self, user_info: Dict[str, Any]) -> str:
         """간단한 환영 메시지 생성 (테스트용)"""
