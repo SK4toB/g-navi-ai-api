@@ -2,7 +2,7 @@
 
 # app/api/v1/api.py
 from fastapi import APIRouter
-from app.api.v1.endpoints import room, message, health
+from api.v1.endpoints import room, message, health, simple_chat
 
 api_router = APIRouter()
 
@@ -24,4 +24,11 @@ api_router.include_router(
 api_router.include_router(
     health.router,
     tags=["system"]
+)
+
+# RAG 기반 간단한 채팅 엔드포인트 추가
+api_router.include_router(
+    simple_chat.router,
+    prefix="/rag",
+    tags=["RAG Chat"]
 )
