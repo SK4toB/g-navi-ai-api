@@ -6,7 +6,7 @@ from app.graphs.state import ChatState
 
 async def process(state: ChatState) -> ChatState:
     """유사 발화/상황 판단 노드"""
-    print(f"🔍 Similarity Check")
+    print(f"Similarity Check")
     
     # TODO: 실제 유사도 계산 로직 구현
     # 현재는 기본값 반환

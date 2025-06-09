@@ -27,29 +27,29 @@ async def send_message(
     
     try:
         print("api")
-        print(f"메시지 전송: conversation_id={conversation_id}, user_id={request.user_id}")
-        print(f"사용자 메시지: {request.message}")
+        print(f"메시지 전송: conversation_id={conversation_id}, member_id={request.member_id}")
+        print(f"사용자 메시지: {request.message_text}")
         
         # LangGraph Resume 실행 (중단점에서 재개)
-        ai_response = await chat_service.send_message(
+        bot_message = await chat_service.send_message(
             conversation_id=conversation_id,
-            user_id=request.user_id,
-            message=request.message
+            member_id=request.member_id,
+            message_text=request.message_text
         )
         
         end_time = time.time()
         processing_time = int((end_time - start_time) * 1000)
         
-        print(f"응답 생성 완료: {ai_response[:50]}...")
+        print(f"응답 생성 완료: {bot_message[:50]}...")
         print(f"처리 시간: {processing_time}ms")
         
         # TODO: MongoDB에 대화 내역 저장 (나중에 추가)
         
         return MessageResponse(
             conversation_id=conversation_id,
-            user_id=request.user_id,
-            user_message=request.message,
-            ai_response=ai_response,
+            member_id=request.member_id,
+            message_text=request.message_text,
+            bot_message=bot_message,
             timestamp=datetime.utcnow(),
             processing_time_ms=processing_time
         )
@@ -103,7 +103,7 @@ async def close_session(
         print(f"✅ 세션 종료 완료: {conversation_id}")
         
         return SessionCloseResponse(
-            message=f"채팅방 {conversation_id} 세션이 종료되었습니다.",
+            message_text=f"채팅방 {conversation_id} 세션이 종료되었습니다.",
             conversation_id=conversation_id,
             closed_at=datetime.utcnow()
         )
