@@ -27,13 +27,13 @@ async def send_message(
     
     try:
         print("api")
-        print(f"메시지 전송: conversation_id={conversation_id}, user_id={request.user_id}")
+        print(f"메시지 전송: conversation_id={conversation_id}, member_id={request.member_id}")
         print(f"사용자 메시지: {request.message}")
         
         # LangGraph Resume 실행 (중단점에서 재개)
         ai_response = await chat_service.send_message(
             conversation_id=conversation_id,
-            user_id=request.user_id,
+            member_id=request.member_id,
             message=request.message
         )
         
@@ -47,7 +47,7 @@ async def send_message(
         
         return MessageResponse(
             conversation_id=conversation_id,
-            user_id=request.user_id,
+            member_id=request.member_id,
             user_message=request.message,
             ai_response=ai_response,
             timestamp=datetime.utcnow(),
