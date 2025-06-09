@@ -16,8 +16,8 @@ class MessageResponse(BaseModel):
     """메시지 응답"""
     conversation_id: str = Field(..., description="채팅방 ID")
     member_id: str = Field(..., description="사용자 ID")
-    user_message: str = Field(..., description="사용자 메시지")
-    ai_response: str = Field(..., description="AI 응답")
+    message_text: str = Field(..., description="사용자 메시지")
+    bot_message: str = Field(..., description="AI 응답")
     timestamp: datetime = Field(..., description="응답 시간")
     processing_time_ms: Optional[int] = Field(None, description="처리 시간(밀리초)")
 
