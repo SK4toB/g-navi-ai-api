@@ -6,7 +6,7 @@ from app.graphs.state import ChatState
 
 async def process(state: ChatState) -> ChatState:
     """추가 연결 여부 판단 노드"""
-    print(f"🔗 Connection Check")
+    print(f"Connection Check")
     
     # TODO: 연결 제안 로직 구현
     # 현재는 기본 제안 반환

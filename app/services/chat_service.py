@@ -58,7 +58,7 @@ class ChatService:
         
         return initial_message
     
-    async def send_message(self, conversation_id: str, user_id: str, message: str) -> str:
+    async def send_message(self, conversation_id: str, member_id: str, message_text: str) -> str:
         """
         조건부 분기 방식 메시지 처리
         """
@@ -73,12 +73,12 @@ class ChatService:
         user_info = session.get("user_info", {})
         
         try:
-            print(f"📨 입력 메시지: {message}")
+            print(f"📨 입력 메시지: {message_text}")
             
             # 전체 상태 구성 (메시지 포함)
             input_state = {
-                "user_message": message,  # 실제 메시지
-                "user_id": user_id,
+                "message_text": message_text,  # 실제 메시지
+                "member_id": member_id,
                 "conversation_id": conversation_id,
                 "user_info": user_info,
                 # 나머지 필드들 초기화
@@ -88,7 +88,7 @@ class ChatService:
                 "similarity_score": None,
                 "profiling_data": None,
                 "connection_suggestions": None,
-                "final_response": None
+                "bot_message": None
             }
             
             print(f"🎯 조건부 분기 그래프 실행...")
@@ -100,15 +100,15 @@ class ChatService:
             print(f"📤 실행 결과 키들: {list(result.keys())}")
             
             # 최종 응답 추출
-            final_response = result.get("final_response")
+            bot_message  = result.get("final_response")
             
-            if final_response is None:
+            if bot_message  is None:
                 print("❌ final_response가 None입니다!")
                 print(f"📋 result 전체 내용: {result}")
-                final_response = "조건부 분기: 응답을 생성할 수 없습니다."
+                bot_message  = "조건부 분기: 응답을 생성할 수 없습니다."
             
-            print(f"✅ 조건부 분기 최종 응답: {str(final_response)[:100]}...")
-            return final_response
+            print(f"✅ 조건부 분기 최종 응답: {str(bot_message )[:100]}...")
+            return bot_message 
             
         except Exception as e:
             print(f"❌ 조건부 분기 처리 실패: {e}")
