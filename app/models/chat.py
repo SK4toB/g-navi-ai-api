@@ -8,7 +8,7 @@ class ChatRoomCreate(BaseModel):
     """SpringBoot에서 전달받는 요청"""
     member_id: str = Field(..., alias="memberId", description="사용자 ID")
     conversation_id: str = Field(..., alias="conversationId", description="SpringBoot에서 전달받은 conversation ID")
-    user_info: Dict[str, Any] = Field(..., description="SpringBoot에서 전달받은 사용자 정보")
+    user_info: Dict[str, Any] = Field(..., alias="userInfo", description="SpringBoot에서 전달받은 사용자 정보")
 
 class ChatRoomResponse(BaseModel):
     """SpringBoot로 반환하는 응답"""
