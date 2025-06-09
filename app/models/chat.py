@@ -12,7 +12,7 @@ class ChatRoomCreate(BaseModel):
 
 class ChatRoomResponse(BaseModel):
     """SpringBoot로 반환하는 응답"""
-    conversation_id: str = Field(..., description="채팅방 ID")
+    conversation_id: str = Field(..., alias="conversationId", description="채팅방 ID")
     bot_message: str = Field(..., alias="botMessage", description="AI 초기 인사 메시지")
     timestamp: datetime = Field(..., description="생성 시간")
     # member_id: str = Field(..., description="사용자 ID")

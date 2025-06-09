@@ -31,7 +31,7 @@ async def send_message(
         print(f"사용자 메시지: {request.message_text}")
         
         # LangGraph Resume 실행 (중단점에서 재개)
-        ai_response = await chat_service.send_message(
+        bot_message = await chat_service.send_message(
             conversation_id=conversation_id,
             member_id=request.member_id,
             message_text=request.message_text
@@ -40,7 +40,7 @@ async def send_message(
         end_time = time.time()
         processing_time = int((end_time - start_time) * 1000)
         
-        print(f"응답 생성 완료: {ai_response[:50]}...")
+        print(f"응답 생성 완료: {bot_message[:50]}...")
         print(f"처리 시간: {processing_time}ms")
         
         # TODO: MongoDB에 대화 내역 저장 (나중에 추가)
@@ -49,7 +49,7 @@ async def send_message(
             conversation_id=conversation_id,
             member_id=request.member_id,
             message_text=request.message_text,
-            ai_response=ai_response,
+            bot_message=bot_message,
             timestamp=datetime.utcnow(),
             processing_time_ms=processing_time
         )
