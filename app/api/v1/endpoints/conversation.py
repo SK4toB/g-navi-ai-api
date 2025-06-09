@@ -41,8 +41,8 @@ async def create_or_load_room(
         # TODO: MongoDB에 채팅방과 메시지 저장 (나중에 추가)
         
         return ChatRoomResponse(
-            conversation_id=request.conversation_id,
-            bot_message=bot_message,
+            conversationId=request.conversation_id,
+            botMessage=bot_message,
             timestamp=datetime.utcnow(),
             # member_id=request.member_id,
             # is_new_room=is_new_room,

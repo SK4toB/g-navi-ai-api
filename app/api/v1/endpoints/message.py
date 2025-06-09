@@ -46,12 +46,11 @@ async def send_message(
         # TODO: MongoDB에 대화 내역 저장 (나중에 추가)
         
         return MessageResponse(
-            conversation_id=conversation_id,
-            member_id=request.member_id,
-            message_text=request.message_text,
-            bot_message=bot_message,
-            timestamp=datetime.utcnow(),
-            processing_time_ms=processing_time
+            conversationId=conversation_id,
+            memberId=request.member_id,
+            messageText=request.message_text,
+            botMessage=bot_message,
+            timestamp=datetime.utcnow()
         )
         
     except ValueError as e:
@@ -104,7 +103,7 @@ async def close_session(
         
         return SessionCloseResponse(
             message=f"채팅방 {conversation_id} 세션이 종료되었습니다.",
-            conversation_id=conversation_id,
+            conversationId=conversation_id,
             closed_at=datetime.utcnow()
         )
         
@@ -125,7 +124,7 @@ async def debug_session(
         if conversation_id in chat_service.active_sessions:
             session = chat_service.active_sessions[conversation_id]
             return SessionDebugInfo(
-                conversation_id=conversation_id,
+                conversationId=conversation_id,
                 status="active",
                 thread_id=session["thread_id"],
                 graph_compiled=session["graph"] is not None,
@@ -134,12 +133,12 @@ async def debug_session(
             )
         else:
             return SessionDebugInfo(
-                conversation_id=conversation_id,
+                conversationId=conversation_id,
                 status="not_found",
                 total_active_sessions=len(chat_service.active_sessions)
             )
     except Exception as e:
         return SessionDebugInfo(
-            conversation_id=conversation_id,
+            conversationId=conversation_id,
             error=str(e)
         )

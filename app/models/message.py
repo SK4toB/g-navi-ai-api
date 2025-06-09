@@ -19,7 +19,7 @@ class MessageResponse(BaseModel):
     message_text: str = Field(..., alias="messageText", description="사용자 메시지")
     bot_message: str = Field(..., alias="botMessage", description="AI 응답")
     timestamp: datetime = Field(..., description="응답 시간")
-    processing_time_ms: Optional[int] = Field(None, description="처리 시간(밀리초)")
+    # processing_time_ms: Optional[int] = Field(None, description="처리 시간(밀리초)")
 
 class SessionStatus(BaseModel):
     """세션 상태 응답"""
