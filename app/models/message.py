@@ -29,7 +29,7 @@ class SessionStatus(BaseModel):
 
 class SessionCloseResponse(BaseModel):
     """세션 종료 응답"""
-    message_text: str = Field(..., alias="messageText", description="종료 메시지")
+    message: str = Field(..., description="종료 메시지")
     conversation_id: str = Field(..., alias="conversationId", description="채팅방 ID")
     closed_at: datetime = Field(..., description="종료 시간")
 

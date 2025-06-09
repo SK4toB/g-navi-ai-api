@@ -103,7 +103,7 @@ async def close_session(
         print(f"✅ 세션 종료 완료: {conversation_id}")
         
         return SessionCloseResponse(
-            message_text=f"채팅방 {conversation_id} 세션이 종료되었습니다.",
+            message=f"채팅방 {conversation_id} 세션이 종료되었습니다.",
             conversation_id=conversation_id,
             closed_at=datetime.utcnow()
         )

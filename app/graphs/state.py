@@ -20,4 +20,4 @@ class ChatState(TypedDict):
     connection_suggestions: Optional[List[str]]
     
     # 최종 출력
-    final_response: Optional[str]
+    bot_message: Optional[str]
