@@ -28,13 +28,13 @@ async def send_message(
     try:
         print("api")
         print(f"메시지 전송: conversation_id={conversation_id}, member_id={request.member_id}")
-        print(f"사용자 메시지: {request.message}")
+        print(f"사용자 메시지: {request.message_text}")
         
         # LangGraph Resume 실행 (중단점에서 재개)
         ai_response = await chat_service.send_message(
             conversation_id=conversation_id,
             member_id=request.member_id,
-            message=request.message
+            message_text=request.message_text
         )
         
         end_time = time.time()
@@ -48,7 +48,7 @@ async def send_message(
         return MessageResponse(
             conversation_id=conversation_id,
             member_id=request.member_id,
-            user_message=request.message,
+            message_text=request.message_text,
             ai_response=ai_response,
             timestamp=datetime.utcnow(),
             processing_time_ms=processing_time
@@ -103,7 +103,7 @@ async def close_session(
         print(f"✅ 세션 종료 완료: {conversation_id}")
         
         return SessionCloseResponse(
-            message=f"채팅방 {conversation_id} 세션이 종료되었습니다.",
+            message_text=f"채팅방 {conversation_id} 세션이 종료되었습니다.",
             conversation_id=conversation_id,
             closed_at=datetime.utcnow()
         )
