@@ -8,7 +8,7 @@ spec:
     app: gnavi4-ai
   ports:
     - name: http
-      protocol: TCPs
+      protocol: TCP
       port: 8001
       targetPort: 8001
   type: ClusterIP
