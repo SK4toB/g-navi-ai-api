@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gnavi4-ai
+  namespace: sk-team-04
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gnavi4-ai
+  template:
+    metadata:
+      labels:
+        app: gnavi4-ai
+    spec:
+      serviceAccountName: default
+      containers:
+        - name: webserver
+          image: amdp-registry.skala-ai.com/skala25a/sk-gnavi4-ai:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8001
