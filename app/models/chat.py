@@ -5,36 +5,15 @@ from datetime import datetime
 
 # 요청 모델들
 class ChatRoomCreate(BaseModel):
-    user_id: str = Field(..., description="사용자 ID")
+    """SpringBoot에서 전달받는 요청"""
+    member_id: str = Field(..., alias="memberId", description="사용자 ID")
+    conversation_id: str = Field(..., alias="conversationId", description="SpringBoot에서 전달받은 conversation ID")
     user_info: Dict[str, Any] = Field(..., description="SpringBoot에서 전달받은 사용자 정보")
-    room_name: Optional[str] = Field(None, description="채팅방 이름 (선택)")
-
-class MessageCreate(BaseModel):
-    user_id: str = Field(..., description="사용자 ID")
-    message: str = Field(..., min_length=1, max_length=4000, description="사용자 메시지")
-    message_type: str = Field(default="user", description="메시지 타입")
-
-# 응답 모델들
-class AIMessageResponse(BaseModel):
-    message_id: str
-    message: str
-    message_type: str
-    timestamp: datetime
-
-class MessageResponse(BaseModel):
-    message_id: str = Field(..., description="사용자 메시지 ID")
-    ai_response: AIMessageResponse = Field(..., description="AI 응답")
 
 class ChatRoomResponse(BaseModel):
-    room_id: str = Field(..., description="채팅방 ID")
-    user_id: str = Field(..., description="사용자 ID")
-    created_at: datetime = Field(..., description="생성 시간")
-    initial_message: str = Field(..., description="AI 초기 인사 메시지")
-
-# 내부 처리용 모델들
-class UserInfo(BaseModel):
-    user_id: str
-    name: str
-    projects: List[Dict[str, Any]] = []
-    skills: List[str] = []
-    preferences: Dict[str, Any] = {}
+    """SpringBoot로 반환하는 응답"""
+    conversation_id: str = Field(..., description="채팅방 ID")
+    bot_message: str = Field(..., alias="botMessage", description="AI 초기 인사 메시지")
+    timestamp: datetime = Field(..., description="생성 시간")
+    # member_id: str = Field(..., description="사용자 ID")
+    # is_new_room: bool = Field(..., description="새 방인지 기존 방인지")
