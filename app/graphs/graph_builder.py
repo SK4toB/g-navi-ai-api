@@ -26,13 +26,13 @@ class ChatGraphBuilder:
         """
         메시지 처리 여부 결정
         """
-        user_message = state.get("user_message", "")
+        message_text = state.get("message_text ", "")
         
-        if user_message and user_message.strip():
-            print(f"✅ 메시지 있음 → 처리 시작: {user_message[:30]}...")
+        if message_text and message_text .strip():
+            print(f"메시지 있음 → 처리 시작: {message_text[:30]}...")
             return "process"
         else:
-            print("⏳ 메시지 없음 → 대기")
+            print("메시지 없음 → 대기")
             return "wait"
     
     async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any]):

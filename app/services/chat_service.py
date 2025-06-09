@@ -35,7 +35,7 @@ class ChatService:
         """
         조건부 분기 방식 채팅 세션 생성
         """
-        print(f"🚀 조건부 분기 채팅 세션 생성: {conversation_id}")
+        print(f"조건부 분기 채팅 세션 생성: {conversation_id}")
         
         # 1. LangGraph 빌드
         compiled_graph = await self.graph_builder.build_persistent_chat_graph(conversation_id, user_info)
@@ -51,7 +51,7 @@ class ChatService:
             "user_info": user_info
         }
         
-        print(f"✅ 조건부 분기 세션 생성 완료: {conversation_id}")
+        print(f"조건부 분기 세션 생성 완료: {conversation_id}")
         
         # 3. 환영 메시지 생성
         initial_message = await self._generate_welcome_message(user_info)
@@ -62,7 +62,7 @@ class ChatService:
         """
         조건부 분기 방식 메시지 처리
         """
-        print(f"🔄 조건부 분기 메시지 처리: {conversation_id}")
+        print(f"조건부 분기 메시지 처리: {conversation_id}")
         
         if conversation_id not in self.active_sessions:
             raise ValueError(f"활성화된 세션이 없습니다: {conversation_id}")
@@ -91,36 +91,36 @@ class ChatService:
                 "bot_message": None
             }
             
-            print(f"🎯 조건부 분기 그래프 실행...")
+            print(f"조건부 분기 그래프 실행...")
             
             # 전체 그래프 실행 (조건부 분기로 메시지 처리)
             result = await graph.ainvoke(input_state, config)
             
-            print(f"🎯 조건부 분기 실행 완료")
-            print(f"📤 실행 결과 키들: {list(result.keys())}")
+            print(f"조건부 분기 실행 완료")
+            print(f"실행 결과 키들: {list(result.keys())}")
             
             # 최종 응답 추출
-            bot_message  = result.get("final_response")
+            bot_message = result.get("bot_message")
             
-            if bot_message  is None:
-                print("❌ final_response가 None입니다!")
-                print(f"📋 result 전체 내용: {result}")
+            if bot_message is None:
+                print("bot_message is None입니다.")
+                print(f"result 전체 내용: {result}")
                 bot_message  = "조건부 분기: 응답을 생성할 수 없습니다."
             
-            print(f"✅ 조건부 분기 최종 응답: {str(bot_message )[:100]}...")
+            print(f"조건부 분기 최종 응답: {str(bot_message )[:100]}...")
             return bot_message 
             
         except Exception as e:
-            print(f"❌ 조건부 분기 처리 실패: {e}")
+            print(f"조건부 분기 처리 실패: {e}")
             import traceback
-            print(f"📋 상세 에러: {traceback.format_exc()}")
+            print(f"상세 에러: {traceback.format_exc()}")
             return f"죄송합니다. 메시지 처리 중 오류가 발생했습니다: {str(e)}"
     
     async def close_chat_session(self, conversation_id: str):
         """채팅 세션 종료"""
         if conversation_id in self.active_sessions:
             del self.active_sessions[conversation_id]
-            print(f"🚪 조건부 분기 채팅 세션 종료: {conversation_id}")
+            print(f"조건부 분기 채팅 세션 종료: {conversation_id}")
     
     def get_session_status(self, conversation_id: str) -> Dict[str, Any]:
         """세션 상태 조회"""
