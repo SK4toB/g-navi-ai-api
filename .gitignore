@@ -32,3 +32,6 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# Build artifacts
+k8s/secrets.yaml

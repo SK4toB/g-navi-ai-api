@@ -4,7 +4,7 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # OpenAI 설정
-    openai_api_key: str
+    openai_api_key: Optional[str] = None
     openai_model: str = "gpt-3.5-turbo"
     openai_max_tokens: int = 1000
     openai_temperature: float = 0.7
