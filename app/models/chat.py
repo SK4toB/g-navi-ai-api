@@ -8,7 +8,7 @@ class MongoMessage(BaseModel):
     """MongoDB에서 오는 실제 메시지 형태"""
     sender_type: str = Field(..., alias="senderType", description="발신자 타입 (USER/BOT)")
     message_text: str = Field(..., alias="messageText", description="메시지 내용")
-    timestamp: Any = Field(None, description="메시지 시간 (받기만 하고 사용하지 않음)")
+    timestamp: Optional[Any] = Field(None, description="메시지 시간 (받기만 하고 사용하지 않음)")
     
     class Config:
         extra = "ignore"  # 추가 필드들은 무시
