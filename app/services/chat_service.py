@@ -1,8 +1,8 @@
 # app/services/chat_service.py (조건부 분기 방식)
 
 from typing import Dict, Any
-import os
 from app.graphs.graph_builder import ChatGraphBuilder
+from app.services.bot_message import BotMessageService
 
 class ChatService:
     """
@@ -13,23 +13,9 @@ class ChatService:
     def __init__(self):
         self.graph_builder = ChatGraphBuilder()
         self.active_sessions = {}  # conversation_id -> {graph, thread_id, config}
-        self.openai_client = None
-        self._init_openai()
+        self.bot_message_service = BotMessageService()
         print("ChatService 초기화 (조건부 분기 방식)")
     
-    def _init_openai(self):
-        """OpenAI 클라이언트 초기화 (초기 메시지용)"""
-        try:
-            from openai import AsyncOpenAI
-            api_key = os.getenv("OPENAI_API_KEY")
-            if api_key:
-                self.openai_client = AsyncOpenAI(api_key=api_key)
-                self.model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
-                self.max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "1000"))
-                self.temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))
-                print("ChatService OpenAI 연결")
-        except Exception as e:
-            print(f"OpenAI 초기화 실패: {e}")
     
     async def create_chat_session(self, conversation_id: str, user_info: Dict[str, Any]) -> str:
         """
@@ -53,8 +39,8 @@ class ChatService:
         
         print(f"조건부 분기 세션 생성 완료: {conversation_id}")
         
-        # 3. 환영 메시지 생성
-        initial_message = await self._generate_welcome_message(user_info)
+        # 3. BotMessageService를 사용한 환영 메시지 생성
+        initial_message = await self.bot_message_service._generate_welcome_message(user_info)
         
         return initial_message
     
@@ -131,8 +117,3 @@ class ChatService:
                 "thread_id": self.active_sessions[conversation_id]["thread_id"]
             }
         return {"conversation_id": conversation_id, "status": "inactive"}
-    
-    async def _generate_welcome_message(self, user_info: Dict[str, Any]) -> str:
-        """간단한 환영 메시지 생성 (테스트용)"""
-        name = user_info.get('name', '사용자')
-        return f"안녕하세요 {name}님! G.Navi입니다. 무엇을 도와드릴까요?"

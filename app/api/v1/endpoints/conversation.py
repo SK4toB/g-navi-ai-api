@@ -37,13 +37,13 @@ async def create_or_load_room(
 
         if is_new_room:
             # LangGraph 서비스로 초기 메시지 생성
-            # bot_message = await chat_service.create_chat_session(
-            #     conversation_id=request.conversation_id,
-            #     user_info=request.user_info
-            # )
+            bot_message = await chat_service.create_chat_session(
+                conversation_id=request.conversation_id,
+                user_info=request.user_info
+            )
         
-            # print(f"AI 응답 생성 완료: {bot_message[:50]}...")
-            bot_message = "새 채팅방이 생성되었습니다. AI가 초기 인사 메시지를 보냅니다."
+            print(f"AI 응답 생성 완료: {bot_message[:50]}...")
+            # bot_message = "새 채팅방이 생성되었습니다. AI가 초기 인사 메시지를 보냅니다."
         else:
             bot_message = "기존 채팅방 답장입니다."
         # TODO: MongoDB에 채팅방과 메시지 저장 (나중에 추가)
