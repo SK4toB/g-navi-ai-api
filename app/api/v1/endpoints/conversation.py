@@ -11,7 +11,7 @@ from app.services.chat_service import ChatService
 
 router = APIRouter()
 
-@router.post("/", response_model=ChatRoomResponse)
+@router.post("", response_model=ChatRoomResponse)
 async def create_or_load_room(
     request: ChatRoomCreate,
     chat_service: ChatService = Depends(get_chat_service)
