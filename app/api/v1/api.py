@@ -9,14 +9,14 @@ api_router = APIRouter()
 # 채팅방 관련 엔드포인트
 api_router.include_router(
     conversation.router, 
-    prefix="/chatroom", 
+    prefix="/conversations", 
     tags=["conversation"]
 )
 
 # 메시지 관련 엔드포인트  
 api_router.include_router(
     message.router,
-    prefix="/chatroom",
+    prefix="/conversations",
     tags=["message"]
 )
 
