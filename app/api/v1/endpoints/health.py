@@ -44,3 +44,43 @@ async def detailed_health_check():
             "error": str(e),
             "timestamp": datetime.utcnow().isoformat()
         }
+    
+
+@router.get("/health/openai")
+async def test_openai():
+    """OpenAI API 간단한 연결 테스트"""
+    api_key = os.getenv("OPENAI_API_KEY")
+    
+    if not api_key:
+        return {
+            "status": "failed",
+            "error": "OPENAI_API_KEY가 설정되지 않았습니다",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    
+    try:
+        from openai import AsyncOpenAI
+        
+        client = AsyncOpenAI(api_key=api_key)
+        
+        # 간단한 테스트 요청
+        response = await client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": "테스트"}],
+            max_tokens=10
+        )
+
+        print(response)
+        
+        return {
+            "status": "success",
+            "response": response.choices[0].message.content,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        return {
+            "status": "failed",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
