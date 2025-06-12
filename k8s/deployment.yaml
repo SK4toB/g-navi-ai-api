@@ -20,3 +20,9 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8001
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prod-db-secret
+                  key: OPENAI_API_KEY
