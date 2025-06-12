@@ -14,14 +14,14 @@ class ChatService:
         self.graph_builder = ChatGraphBuilder()
         self.active_sessions = {}  # conversation_id -> {graph, thread_id, config}
         self.bot_message_service = BotMessageService()
-        print("ChatService 초기화 (조건부 분기 방식)")
+        print("chat_service __init__")
     
     
     async def create_chat_session(self, conversation_id: str, user_info: Dict[str, Any]) -> str:
         """
-        조건부 분기 방식 채팅 세션 생성
+        채팅 세션 생성
         """
-        print(f"조건부 분기 채팅 세션 생성: {conversation_id}")
+        print(f"conversation_id: {conversation_id} 시작")
         
         # 1. LangGraph 빌드
         compiled_graph = await self.graph_builder.build_persistent_chat_graph(conversation_id, user_info)
@@ -37,7 +37,7 @@ class ChatService:
             "user_info": user_info
         }
         
-        print(f"조건부 분기 세션 생성 완료: {conversation_id}")
+        print(f"conversation_id: {conversation_id} 세션 생성 완료")
         
         # 3. BotMessageService를 사용한 환영 메시지 생성
         initial_message = await self.bot_message_service._generate_welcome_message(user_info)

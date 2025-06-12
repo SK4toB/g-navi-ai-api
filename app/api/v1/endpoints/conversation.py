@@ -22,11 +22,8 @@ async def create_or_load_room(
     messages가 빈 리스트면 새 방, 아니면 기존 방 로드
     """
     try:
-        print(f"채팅방 요청: member_id={request.member_id}, conversation_id={request.conversation_id}")
-        print(f"사용자 정보: {request.user_info}")
-        print(f"기존 메시지 개수: {len(request.messages)}")
+        print(f"채팅방 요청: member_id={request.member_id}, conversation_id={request.conversation_id}, user_info: {request.user_info}, 기존 메시지 개수: {len(request.messages)}")
         
-        # TODO: MongoDB에서 기존 방 확인 (나중에 추가)
         # messages 리스트로 새 방인지 판단
         if len(request.messages) == 0:
             is_new_room = True
@@ -42,8 +39,6 @@ async def create_or_load_room(
                 user_info=request.user_info
             )
         
-            print(f"AI 응답 생성 완료: {bot_message[:50]}...")
-            # bot_message = "새 채팅방이 생성되었습니다. AI가 초기 인사 메시지를 보냅니다."
         else:
             bot_message = "기존 채팅방 답장입니다."
         # TODO: MongoDB에 채팅방과 메시지 저장 (나중에 추가)
