@@ -1,0 +1,44 @@
+{
+  "user_id": "jaewonyeee",
+  "session_id": "dc1d1f43-a7cd-4b35-b0cd-693d76e2bd31",
+  "timestamp": "2025-06-05T12:54:46.755801",
+  "user_profile": {
+    "name": "이재원"
+  },
+  "projects": [
+    {
+      "project_name": "금융 결제 시스템 고도화",
+      "scale": "대규모",
+      "duration": "2024.01 - 2024.12",
+      "role": "백엔드 개발 리드",
+      "skills": [
+        "Front-end Dev.",
+        "ERP_FCM",
+        "Quality Eng."
+      ]
+    },
+    {
+      "project_name": "고객 데이터 분석 플랫폼",
+      "scale": "중규모",
+      "duration": "2023.05 - 2023.12",
+      "role": "백엔드 개발자",
+      "skills": [
+        "Infra PM",
+        "AI/Data Dev.",
+        "ERP"
+      ]
+    },
+    {
+      "project_name": "사내 업무 관리 시스템",
+      "scale": "소규모",
+      "duration": "2022.08 - 2023.03",
+      "role": "풀스택 개발자",
+      "skills": [
+        "AIX",
+        "Front-end Dev.",
+        "Back-end Dev..",
+        "New Biz. Dev."
+      ]
+    }
+  ]
+}

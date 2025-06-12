@@ -8,7 +8,7 @@ async def process(state: ChatState) -> ChatState:
     
     message_text = state.get("message_text", "")
     user_info = state.get("user_info", {})
-    user_name = user_info.get("name", "사용자")
+    user_name = user_info.get("name", "이재원")
     
     # 간단한 응답 생성 (나중에 OpenAI 연동으로 대체)
     if message_text:

@@ -1,0 +1,116 @@
+# 경력 데이터 RAG 시스템 Requirements - Python 3.12 호환 버전
+# Python 3.12 지원
+
+# === 핵심 LangChain 패키지 ===
+langchain>=0.2.0
+langchain-community>=0.2.0
+langchain-core>=0.2.0
+langchain-openai>=0.1.0
+langchain-text-splitters>=0.2.0
+langgraph
+
+# === OpenAI ===
+openai>=1.30.0
+
+# === 벡터 데이터베이스 ===
+# ChromaDB (권장)
+chromadb>=0.5.0
+langchain-chroma>=0.1.0
+
+# FAISS (대안)
+faiss-cpu>=1.8.0
+
+# === 데이터 처리 ===
+pandas>=2.2.0
+numpy>=1.26.0
+
+# CSV 처리
+python-multipart>=0.0.9
+
+# === 검색 및 리트리버 ===
+# BM25 (키워드 검색)
+rank-bm25>=0.2.2
+
+# === 텍스트 처리 ===
+# 한국어 처리
+konlpy>=0.6.0
+
+# 텍스트 전처리
+nltk>=3.8.1
+regex>=2023.12.25
+
+# === 환경 설정 ===
+python-dotenv>=1.0.0
+
+# === 웹 인터페이스 (선택사항) ===
+streamlit>=1.35.0
+gradio>=4.36.0
+
+# === API 서버 (주석 처리됨) ===
+# uvicorn>=0.30.0
+
+# === 마크다운 및 HTML 변환 ===
+# 마크다운 처리
+markdown>=3.5.1
+# HTML 템플릿
+jinja2>=3.1.2
+
+# === 데이터베이스 연결 (선택사항) ===
+sqlalchemy>=2.0.30
+pymongo>=4.7.0
+
+# === 로깅 및 모니터링 ===
+loguru>=0.7.2
+
+# === 유틸리티 ===
+tqdm>=4.66.1
+requests>=2.32.0
+pydantic>=2.7.0
+
+# === 개발 도구 (선택사항) ===
+jupyter>=1.0.0
+notebook>=7.2.0
+
+# === 테스트 (선택사항) ===
+pytest>=8.2.0
+pytest-asyncio>=0.23.0
+
+# === 성능 최적화 (선택사항) ===
+# 병렬 처리
+joblib>=1.4.0
+
+# 메모리 최적화
+psutil>=5.9.8
+
+# === 임베딩 모델 (대안/실험용) ===
+sentence-transformers>=3.0.0
+transformers>=4.41.0
+torch>=2.3.0
+
+# === 데이터 시각화 (분석용) ===
+matplotlib>=3.9.0
+seaborn>=0.13.2
+plotly>=5.22.0
+
+# === 캐싱 ===
+diskcache>=5.6.3
+
+# === 문서 로더 추가 지원 ===
+docx2txt>=0.8
+openpyxl>=3.1.2
+
+# === 웹 크롤링 (외부 데이터 수집용) ===
+beautifulsoup4>=4.12.3
+selenium>=4.21.0
+
+# === 보안 ===
+cryptography>=42.0.0
+
+# === 타입 힌팅 ===
+typing-extensions>=4.12.0
+
+# === JSON 처리 ===
+ijson>=3.3.0
+
+# === 병렬/비동기 처리 ===
+aiohttp>=3.9.5

@@ -36,7 +36,7 @@ async def create_or_load_room(
             user_info=request.user_info
         )
         
-        print(f"AI 응답 생성 완료: {bot_message[:50]}...")
+        print(f"AI 응답 생성 완료: {bot_message[:200]}...")
         
         # TODO: MongoDB에 채팅방과 메시지 저장 (나중에 추가)
         

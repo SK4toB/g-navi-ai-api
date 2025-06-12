@@ -5,9 +5,9 @@ from typing import Optional
 class Settings(BaseSettings):
     # OpenAI 설정
     openai_api_key: Optional[str] = None
-    openai_model: str = "gpt-3.5-turbo"
-    openai_max_tokens: int = 1000
-    openai_temperature: float = 0.7
+    openai_model: str = "gpt-4o"
+    openai_max_tokens: int = 4096
+    openai_temperature: float = 0.3
     
     # API 설정
     api_title: str = "AI Chatbot API"
