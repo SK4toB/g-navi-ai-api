@@ -48,10 +48,10 @@ class ChatService:
         """
         조건부 분기 방식 메시지 처리
         """
-        print(f"조건부 분기 메시지 처리: {conversation_id}")
+        print(f"chat_service 조건부 분기 메시지 처리: {conversation_id}")
         
         if conversation_id not in self.active_sessions:
-            raise ValueError(f"활성화된 세션이 없습니다: {conversation_id}")
+            raise ValueError(f"chat_service 활성화된 세션이 없습니다: {conversation_id}")
         
         session = self.active_sessions[conversation_id]
         graph = session["graph"]
@@ -59,7 +59,7 @@ class ChatService:
         user_info = session.get("user_info", {})
         
         try:
-            print(f"📨 입력 메시지: {message_text}")
+            print(f"chat_service 입력 메시지: {message_text}")
             
             # 전체 상태 구성 (메시지 포함)
             input_state = {
@@ -77,23 +77,22 @@ class ChatService:
                 "bot_message": None
             }
             
-            print(f"조건부 분기 그래프 실행...")
+            print(f"chat_service langgraph 실행합니다")
             
             # 전체 그래프 실행 (조건부 분기로 메시지 처리)
             result = await graph.ainvoke(input_state, config)
             
-            print(f"조건부 분기 실행 완료")
-            print(f"실행 결과 키들: {list(result.keys())}")
+            print(f"chat_service langgraph 실행했습니다")
             
             # 최종 응답 추출
             bot_message = result.get("bot_message")
             
             if bot_message is None:
-                print("bot_message is None입니다.")
+                print("bot_message is None")
                 print(f"result 전체 내용: {result}")
-                bot_message  = "조건부 분기: 응답을 생성할 수 없습니다."
+                bot_message  = "Langgraph 응답을 생성할 수 없습니다."
             
-            print(f"조건부 분기 최종 응답: {str(bot_message )[:100]}...")
+            print(f"최종 응답: {str(bot_message )[:100]}...")
             return bot_message 
             
         except Exception as e:

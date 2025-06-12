@@ -26,9 +26,7 @@ async def send_message(
     start_time = time.time()
     
     try:
-        print("api")
         print(f"메시지 전송: conversation_id={conversation_id}, member_id={request.member_id}")
-        print(f"사용자 메시지: {request.message_text}")
         
         # LangGraph Resume 실행 (중단점에서 재개)
         bot_message = await chat_service.send_message(
@@ -40,8 +38,7 @@ async def send_message(
         end_time = time.time()
         processing_time = int((end_time - start_time) * 1000)
         
-        print(f"응답 생성 완료: {bot_message[:50]}...")
-        print(f"처리 시간: {processing_time}ms")
+        print(f"메시지 응답 생성 완료, 메시지 처리 시간: {processing_time}ms")
         
         # TODO: MongoDB에 대화 내역 저장 (나중에 추가)
         
@@ -55,13 +52,14 @@ async def send_message(
         
     except ValueError as e:
         # 세션이 없는 경우
-        print(f"❌ 세션 없음: {str(e)}")
+        print(f"세션 없음: {str(e)}")
         raise HTTPException(status_code=404, detail=f"채팅방을 찾을 수 없습니다: {conversation_id}")
     
     except Exception as e:
         # 기타 처리 오류
-        print(f"❌ 메시지 처리 실패: {str(e)}")
+        print(f"메시지 처리 실패: {str(e)}")
         raise HTTPException(status_code=500, detail=f"메시지 처리 실패: {str(e)}")
+
 
 @router.get("/{conversation_id}/status", response_model=SessionStatus)
 async def get_session_status(
@@ -73,16 +71,16 @@ async def get_session_status(
     채팅방이 활성화되어 있는지 확인
     """
     try:
-        print(f"🔍 세션 상태 확인: conversation_id={conversation_id}")
+        print(f"세션 상태 확인: conversation_id={conversation_id}")
         
         status_info = chat_service.get_session_status(conversation_id)
         
-        print(f"📊 세션 상태: {status_info}")
+        print(f"세션 상태: {status_info}")
         
         return SessionStatus(**status_info)
         
     except Exception as e:
-        print(f"❌ 상태 확인 실패: {str(e)}")
+        print(f"세션 상태 확인 실패: {str(e)}")
         raise HTTPException(status_code=500, detail=f"상태 확인 실패: {str(e)}")
 
 @router.delete("/{conversation_id}", response_model=SessionCloseResponse)
@@ -95,11 +93,11 @@ async def close_session(
     메모리에서 세션 정보 제거
     """
     try:
-        print(f"🚪 세션 종료 요청: conversation_id={conversation_id}")
+        print(f"세션 종료 요청: conversation_id={conversation_id}")
         
         await chat_service.close_chat_session(conversation_id)
         
-        print(f"✅ 세션 종료 완료: {conversation_id}")
+        print(f"세션 종료 완료: {conversation_id}")
         
         return SessionCloseResponse(
             message=f"채팅방 {conversation_id} 세션이 종료되었습니다.",
@@ -108,7 +106,7 @@ async def close_session(
         )
         
     except Exception as e:
-        print(f"❌ 세션 종료 실패: {str(e)}")
+        print(f"세션 종료 실패: {str(e)}")
         raise HTTPException(status_code=500, detail=f"세션 종료 실패: {str(e)}")
 
 # 개발/디버깅용 엔드포인트

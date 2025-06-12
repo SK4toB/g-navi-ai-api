@@ -26,9 +26,9 @@ class ChatGraphBuilder:
         """
         메시지 처리 여부 결정
         """
-        message_text = state.get("message_text ", "")
+        message_text = state.get("message_text", "")
         
-        if message_text and message_text .strip():
+        if message_text and message_text.strip():
             print(f"메시지 있음 → 처리 시작: {message_text[:30]}...")
             return "process"
         else:
