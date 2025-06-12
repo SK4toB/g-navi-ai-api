@@ -63,18 +63,34 @@ async def test_openai():
         
         client = AsyncOpenAI(api_key=api_key)
         
-        # 간단한 테스트 요청
         response = await client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": "테스트"}],
-            max_tokens=10
+            messages=[
+                {
+                    "role": "system", 
+                    "content": "당신은 시스템 상태를 확인하는 봇입니다. 한 문장으로 간단히 응답하세요."
+                },
+                {
+                    "role": "user", 
+                    "content": "OpenAI API 연결 테스트입니다. 정상 작동 확인 메시지를 보내주세요."
+                }
+            ],
+            max_tokens=50,
+            temperature=0.1
         )
 
-        print(response)
+        test_response = response.choices[0].message.content.strip()
         
         return {
             "status": "success",
-            "response": response.choices[0].message.content,
+            "message": "OpenAI API 연결 및 응답 생성 정상",
+            "test_response": test_response,
+            "model_used": response.model,
+            "tokens_used": {
+                "prompt": response.usage.prompt_tokens,
+                "completion": response.usage.completion_tokens,
+                "total": response.usage.total_tokens
+            },
             "timestamp": datetime.utcnow().isoformat()
         }
         
