@@ -1,11 +1,13 @@
 # app/api/v1/endpoints/health.py
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from datetime import datetime
 import os
+from app.api.deps import get_chat_service
+from app.services.chat_service import ChatService
 
 router = APIRouter()
 
-@router.get("/health")
+@router.get("")
 async def health_check():
     """
     시스템 헬스체크
@@ -18,7 +20,7 @@ async def health_check():
         "environment": os.getenv("ENVIRONMENT", "development")
     }
 
-@router.get("/health/detailed")
+@router.get("/detailed")
 async def detailed_health_check():
     """
     상세 헬스체크 (필요시 사용)
@@ -46,7 +48,7 @@ async def detailed_health_check():
         }
     
 
-@router.get("/health/openai")
+@router.get("/openai")
 async def test_openai():
     """OpenAI API 간단한 연결 테스트"""
     api_key = os.getenv("OPENAI_API_KEY")
@@ -98,5 +100,22 @@ async def test_openai():
         return {
             "status": "failed",
             "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    
+@router.get("/sessions/{conversation_id}")
+async def get_session_health(
+    conversation_id: str,
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """특정 채팅방 세션 헬스체크"""
+    try:
+        health_info = chat_service.get_session_health(conversation_id)
+        return health_info
+    except Exception as e:
+        return {
+            "conversation_id": conversation_id,
+            "status": "error",
+            "message": f"헬스체크 실패: {str(e)}",
             "timestamp": datetime.utcnow().isoformat()
         }

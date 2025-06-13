@@ -3,6 +3,7 @@
 from typing import Dict, Any
 from app.graphs.graph_builder import ChatGraphBuilder
 from app.services.bot_message import BotMessageService
+from datetime import datetime, timedelta
 
 class ChatService:
     """
@@ -14,10 +15,41 @@ class ChatService:
         self.graph_builder = ChatGraphBuilder()
         self.active_sessions = {}  # conversation_id -> {graph, thread_id, config}
         self.bot_message_service = BotMessageService()
+        self.session_timeout = timedelta(hours=1)
         print("chat_service __init__")
     
     
     async def create_chat_session(self, conversation_id: str, user_info: Dict[str, Any]) -> str:
+        """
+        채팅 세션 생성
+        """
+        print(f"conversation_id: {conversation_id} 시작")
+        
+        # 1. LangGraph 빌드
+        compiled_graph = await self.graph_builder.build_persistent_chat_graph(conversation_id, user_info)
+        
+        # 2. 세션 정보 저장 (실행하지 않음)
+        thread_id = f"thread_{conversation_id}"
+        config = {"configurable": {"thread_id": thread_id}}
+        
+        self.active_sessions[conversation_id] = {
+            "graph": compiled_graph,
+            "thread_id": thread_id,
+            "config": config,
+            "user_info": user_info,
+            "created_at": datetime.utcnow(),      # 생성 시간
+            "last_active": datetime.utcnow(),     # 마지막 활동 시간
+            "status": "active"                    # 세션 상태 
+        }
+        
+        print(f"conversation_id: {conversation_id} 세션 생성 완료")
+        
+        # 3. BotMessageService를 사용한 환영 메시지 생성
+        initial_message = await self.bot_message_service._generate_welcome_message(user_info)
+        
+        return initial_message
+    
+    async def load_chat_session(self, conversation_id: str, user_info: Dict[str, Any]) -> str:
         """
         채팅 세션 생성
         """
@@ -44,6 +76,7 @@ class ChatService:
         
         return initial_message
     
+
     async def send_message(self, conversation_id: str, member_id: str, message_text: str) -> str:
         """
         조건부 분기 방식 메시지 처리
@@ -53,6 +86,9 @@ class ChatService:
         if conversation_id not in self.active_sessions:
             raise ValueError(f"chat_service 활성화된 세션이 없습니다: {conversation_id}")
         
+        # 마지막 활동 시간 업데이트 (메시지 처리 전에)
+        self.active_sessions[conversation_id]["last_active"] = datetime.utcnow()
+
         session = self.active_sessions[conversation_id]
         graph = session["graph"]
         config = session["config"]
@@ -116,3 +152,41 @@ class ChatService:
                 "thread_id": self.active_sessions[conversation_id]["thread_id"]
             }
         return {"conversation_id": conversation_id, "status": "inactive"}
+
+
+    def get_session_health(self, conversation_id: str) -> Dict[str, Any]:
+        """특정 conversation_id의 세션 헬스체크"""
+        now = datetime.utcnow()
+        
+        if conversation_id not in self.active_sessions:
+            return {
+                "conversation_id": conversation_id,
+                "status": "not_found",
+                "message": "세션이 존재하지 않습니다",
+                "timestamp": now.isoformat()
+            }
+        
+        session = self.active_sessions[conversation_id]
+        created_at = session.get("created_at")
+        last_active = session.get("last_active")
+        
+        # 시간 계산
+        alive_duration = now - created_at
+        inactive_duration = now - last_active
+        
+        # 만료 여부 체크
+        is_expired = inactive_duration > self.session_timeout
+        
+        return {
+            "conversation_id": conversation_id,
+            "status": "expired" if is_expired else "active",
+            "created_at": created_at.isoformat(),
+            "last_active": last_active.isoformat(),
+            "alive_minutes": int(alive_duration.total_seconds() / 60),
+            "inactive_minutes": int(inactive_duration.total_seconds() / 60),
+            "timeout_minutes": int(self.session_timeout.total_seconds() / 60),
+            "expires_in_minutes": max(0, int((self.session_timeout - inactive_duration).total_seconds() / 60)),
+            "thread_id": session.get("thread_id"),
+            "message": "정상 활성화된 세션입니다" if not is_expired else f"{int(inactive_duration.total_seconds() / 60)}분 비활성으로 만료되었습니다",
+            "timestamp": now.isoformat()
+        }

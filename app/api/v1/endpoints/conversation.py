@@ -33,15 +33,18 @@ async def create_or_load_room(
             print("채팅방 로드")
 
         if is_new_room:
-            # LangGraph 서비스로 초기 메시지 생성
             bot_message = await chat_service.create_chat_session(
                 conversation_id=request.conversation_id,
                 user_info=request.user_info
             )
         
         else:
-            bot_message = "기존 채팅방 답장입니다."
-        # TODO: MongoDB에 채팅방과 메시지 저장 (나중에 추가)
+            bot_message = await chat_service.load_chat_session(
+                conversation_id=request.conversation_id,
+                user_info=request.user_info,
+                previous_messages=request.messages
+            )
+        
         
         return ChatRoomResponse(
             conversationId=request.conversation_id,
