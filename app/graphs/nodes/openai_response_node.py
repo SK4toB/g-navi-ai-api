@@ -4,20 +4,9 @@ import os
 from typing import List, Dict, Any
 from app.graphs.state import ChatState
 
-# 전역 대화 히스토리 매니저 (싱글톤)
-_history_manager = None
-
-def get_history_manager():
-    """대화 히스토리 매니저 싱글톤 인스턴스 반환"""
-    global _history_manager
-    if _history_manager is None:
-        from app.services.conversation_history_manager import ConversationHistoryManager
-        _history_manager = ConversationHistoryManager(max_messages=20)
-    return _history_manager
-
 async def process(state: ChatState) -> ChatState:
-    """OpenAI를 활용한 응답 생성 노드 - 세션 기반 대화 히스토리"""
-    print("OpenAI Response Node (세션 기반): 응답 생성 시작")
+    """OpenAI를 활용한 응답 생성 노드 - 의존성 주입 방식"""
+    print("OpenAI Response Node (의존성 주입): 응답 생성 시작")
     
     message_text = state.get("message_text", "")
     user_info = state.get("user_info", {})
@@ -29,7 +18,7 @@ async def process(state: ChatState) -> ChatState:
     api_key = os.getenv("OPENAI_API_KEY")
     
     if not api_key:
-        print("⚠️ OpenAI API 키가 없습니다. 기본 응답을 사용합니다.")
+        print("OpenAI API 키가 없습니다. 기본 응답을 사용합니다.")
         bot_message = f"안녕하세요 {user_name}님! OpenAI API 키가 설정되지 않아 기본 응답을 드립니다: '{message_text}'"
         state["bot_message"] = bot_message
         return state
@@ -45,8 +34,11 @@ async def process(state: ChatState) -> ChatState:
         
         print(f"OpenAI API 호출 중... (모델: {model})")
         
-        # 대화 히스토리 매니저에서 이전 대화 가져오기
-        history_manager = get_history_manager()
+        # 의존성 주입을 통한 대화 히스토리 매니저 얻기
+        from app.core.dependencies import get_service_container
+        container = get_service_container()
+        history_manager = container.history_manager
+        
         conversation_history = history_manager.get_history(conversation_id)
         
         # 시스템 프롬프트 구성
@@ -93,7 +85,10 @@ async def process(state: ChatState) -> ChatState:
         state["bot_message"] = fallback_message
         
         # 실패한 경우에도 사용자 메시지는 히스토리에 저장
-        history_manager = get_history_manager()
+        from app.core.dependencies import get_service_container
+        container = get_service_container()
+        history_manager = container.history_manager
+        
         history_manager.add_message(conversation_id, "user", message_text, {
             "member_id": member_id,
             "user_name": user_name
@@ -158,3 +153,11 @@ def _build_messages_for_openai(
     messages.append({"role": "user", "content": current_message})
     
     return messages
+
+
+# 하위 호환성을 위한 함수 (DEPRECATED)
+def get_history_manager():
+    """DEPRECATED: app.core.dependencies.get_history_manager 사용"""
+    from app.core.dependencies import get_service_container
+    container = get_service_container()
+    return container.history_manager

@@ -7,9 +7,12 @@ import asyncio
 
 from app.graphs.state import ChatState
 from app.graphs.nodes import (
-    intent_node, embedding_node, memory_node,
-    similarity_node, profiling_node, connection_node, output_node,
-    user_input_node, openai_response_node
+    user_input_node, 
+    retrieve_chat_history_node,
+    analyze_intent_node,
+    retrieve_additional_data_node,
+    format_response_node,
+    openai_response_node
 )
 
 class ChatGraphBuilder:
@@ -46,14 +49,11 @@ class ChatGraphBuilder:
         
         # 노드들 추가
         workflow.add_node("message_check", user_input_node.process)     # 메시지 확인
-        workflow.add_node("intent_analysis", intent_node.process)
-        workflow.add_node("embedding", embedding_node.process)
-        workflow.add_node("memory_search", memory_node.process)
-        workflow.add_node("similarity_check", similarity_node.process)
-        workflow.add_node("profiling", profiling_node.process)
-        workflow.add_node("connection_check", connection_node.process)
+        workflow.add_node("retrieve_chat_history", retrieve_chat_history_node.process)   # 1단계: 대화이력 검색
+        workflow.add_node("analyze_intent", analyze_intent_node.process)                 # 2단계: 의도 분석
+        workflow.add_node("retrieve_additional_data", retrieve_additional_data_node.process)  # 3단계: 추가 데이터 수집 
+        workflow.add_node("format_response", format_response_node.process)               # 4단계: 응답 포맷팅
         workflow.add_node("openai_response", openai_response_node.process)
-        # workflow.add_node("output_generation", output_node.process)
         workflow.add_node("wait_state", self._create_wait_node())      # 대기 상태
         
         # 시작점
@@ -64,23 +64,19 @@ class ChatGraphBuilder:
             "message_check",
             self._should_process_message,
             {
-                "process": "intent_analysis",  # 메시지 있으면 처리
+                "process": "retrieve_chat_history",  # 메시지 있으면 1단계부터 처리
                 "wait": "wait_state"           # 메시지 없으면 대기
             }
         )
         
         # 메인 처리 플로우
-        workflow.add_edge("intent_analysis", "embedding")
-        workflow.add_edge("embedding", "memory_search")
-        workflow.add_edge("memory_search", "similarity_check")
-        workflow.add_edge("similarity_check", "profiling")
-        workflow.add_edge("profiling", "connection_check")
-        workflow.add_edge("connection_check", "openai_response")
-        # workflow.add_edge("connection_check", "output_generation")
+        workflow.add_edge("retrieve_chat_history", "analyze_intent")           # 1단계 → 2단계
+        workflow.add_edge("analyze_intent", "retrieve_additional_data")        # 2단계 → 3단계
+        workflow.add_edge("retrieve_additional_data", "format_response")       # 3단계 → 4단계
+        workflow.add_edge("format_response", "openai_response")
         
         # 처리 완료 후 종료
         workflow.add_edge("openai_response", END)
-        # workflow.add_edge("output_generation", END)
         workflow.add_edge("wait_state", END)
         
         # 컴파일 (interrupt 없음)
