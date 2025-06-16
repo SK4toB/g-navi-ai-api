@@ -114,11 +114,12 @@ class ChatGraphBuilder:
             }
         )
         
-        # G.Navi 5단계 워크플로우
+        # G.Navi 5단계 워크플로우 (4단계 건너뛰기)
         workflow.add_edge("retrieve_chat_history", "analyze_intent")
         workflow.add_edge("analyze_intent", "retrieve_additional_data")
-        workflow.add_edge("retrieve_additional_data", "generate_recommendation")
-        workflow.add_edge("generate_recommendation", "format_response")
+        # workflow.add_edge("retrieve_additional_data", "generate_recommendation")  # 임시 주석 처리
+        # workflow.add_edge("generate_recommendation", "format_response")  # 임시 주석 처리
+        workflow.add_edge("retrieve_additional_data", "format_response")  # 직접 포맷팅으로 이동
         
         # 처리 완료 후 종료
         workflow.add_edge("format_response", END)
@@ -264,36 +265,41 @@ class ChatGraphBuilder:
         return state
     
     def _generate_recommendation_node(self, state: ChatState) -> ChatState:
-        """4단계: 맞춤형 추천 생성"""
-        start_time = datetime.now()
+        """4단계: 맞춤형 추천 생성 (임시 주석 처리)"""
+        # start_time = datetime.now()
         
-        try:
-            self.logger.info("=== 4단계: 맞춤형 추천 생성 ===")
-            
-            # 세션 정보에서 사용자 데이터 가져오기
-            user_data = self.get_user_info_from_session(state)
-            
-            recommendation = self.recommendation_agent.generate_personalized_recommendation(
-                user_question=state.get("user_question", ""),
-                user_data=user_data,
-                intent_analysis=state.get("intent_analysis", {}),
-                career_cases=state.get("career_cases", []),
-                external_trends=state.get("external_trends", [])
-            )
-            
-            state["recommendation"] = recommendation
-            state["processing_log"].append("맞춤형 추천 생성 완료")
-            
-            self.logger.info("맞춤형 추천 생성 완료")
-            
-        except Exception as e:
-            error_msg = f"추천 생성 실패: {e}"
-            self.logger.error(error_msg)
-            state["error_messages"].append(error_msg)
-            state["recommendation"] = {"error": str(e)}
+        # try:
+        #     self.logger.info("=== 4단계: 맞춤형 추천 생성 ===")
+        #     
+        #     # 세션 정보에서 사용자 데이터 가져오기
+        #     user_data = self.get_user_info_from_session(state)
+        #     
+        #     recommendation = self.recommendation_agent.generate_personalized_recommendation(
+        #         user_question=state.get("user_question", ""),
+        #         user_data=user_data,
+        #         intent_analysis=state.get("intent_analysis", {}),
+        #         career_cases=state.get("career_cases", []),
+        #         external_trends=state.get("external_trends", [])
+        #     )
+        #     
+        #     state["recommendation"] = recommendation
+        #     state["processing_log"].append("맞춤형 추천 생성 완료")
+        #     
+        #     self.logger.info("맞춤형 추천 생성 완료")
+        #     
+        # except Exception as e:
+        #     error_msg = f"추천 생성 실패: {e}"
+        #     self.logger.error(error_msg)
+        #     state["error_messages"].append(error_msg)
+        #     state["recommendation"] = {"error": str(e)}
         
-        processing_time = (datetime.now() - start_time).total_seconds()
-        state["processing_log"].append(f"4단계 처리 시간: {processing_time:.2f}초")
+        # processing_time = (datetime.now() - start_time).total_seconds()
+        # state["processing_log"].append(f"4단계 처리 시간: {processing_time:.2f}초")
+        
+        # 임시로 빈 추천 데이터 설정
+        self.logger.info("=== 4단계: 맞춤형 추천 생성 (SKIP) ===")
+        state.setdefault("recommendation", {})
+        state["processing_log"].append("4단계 건너뛰기 - 직접 포맷팅으로 이동")
         
         return state
     

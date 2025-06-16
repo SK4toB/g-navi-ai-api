@@ -133,7 +133,7 @@ class ChatGraphBuilder:
 ### 🧠 IntentAnalysisAgent (`app/graphs/nodes/analyzer.py`)
 - **범용적 의도 분석**: 모든 질문 유형을 단일 LLM으로 처리
 - **구조화된 JSON 응답**: 질문 유형, 복잡도, 키워드 추출
-- **심층 분석 모드** 판단
+- **적응적 분석**: 질문 복잡도에 따른 유연한 처리
 
 ### 💡 RecommendationAgent (`app/graphs/nodes/advisor.py`)
 - **실제 커리어 사례 기반** 추천
@@ -145,7 +145,7 @@ class ChatGraphBuilder:
 - **LLM 기반 적응적 포맷팅**
 - **질문 유형별 맞춤 응답**
 - **마크다운 → HTML 변환**
-- **심층 분석 모드** 지원
+- **동적 콘텐츠 구성**: 사용자 요청에 맞는 최적화된 응답
 
 ## 데이터 플로우
 
@@ -162,7 +162,7 @@ class ChatState(TypedDict):
     intent_analysis: Dict[str, Any]       # 2단계
     career_cases: List[Any]              # 3단계
     external_trends: List[Dict]          # 3단계
-    recommendation: Dict[str, Any]        # 4단계
+    recommendation: Dict[str, Any]        # 4단계 (COT 생각해서 넣었으나, 성능 문제로 현재는 제외시킴)
     final_response: Dict[str, Any]        # 5단계
     
     # 메타데이터

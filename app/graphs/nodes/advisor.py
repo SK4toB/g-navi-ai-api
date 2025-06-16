@@ -48,14 +48,14 @@ class RecommendationAgent:
 
 한국어로 친근하면서도 전문적인 톤으로 작성해주세요."""
 
-        # 커리어 사례 요약 - Document와 dict 모두 처리 (컨텍스트 길이 제한)
+        # 커리어 사례 요약 - Document와 dict 모두 처리 (상세 정보 포함)
         career_examples = ""
         career_cases_data = []
         
         if career_cases:
             examples = []
-            # 최대 2개 사례만 사용하여 컨텍스트 길이 제한
-            limited_cases = career_cases[:2]
+            # 최대 6개 사례 사용하여 더 많은 참고 자료 제공
+            limited_cases = career_cases[:6]
             
             for i, case in enumerate(limited_cases, 1):
                 # 딕셔너리 형태로 변환된 경우
@@ -70,22 +70,38 @@ class RecommendationAgent:
                     continue
                 
                 if content:
-                    # 컨텐츠 길이 제한 (200자로 축소)
-                    truncated_content = content[:200] + "..." if len(content) > 200 else content
+                    # 컨텐츠 길이를 500자로 확장하여 더 상세한 정보 제공
+                    detailed_content = content[:500] + "..." if len(content) > 500 else content
                     
+                    # 더 자세한 사례 정보 구성
                     example = f"""사례 {i}: {metadata.get('name', '익명')} ({metadata.get('current_position', '직책미상')})
-- 경력: {metadata.get('total_experience', '미상')} | 도메인: {metadata.get('primary_domain', '미상')}
-- 핵심스킬: {', '.join(metadata.get('current_skills', [])[:3]) if metadata.get('current_skills') else '미상'}
-- 요약: {truncated_content}"""
+- 총 경력: {metadata.get('total_experience', '미상')} | 현재 연차: {metadata.get('experience_years', '미상')}
+- 주요 도메인: {metadata.get('primary_domain', '미상')} | 보조 도메인: {metadata.get('secondary_domain', '미상')}
+- 핵심 기술: {', '.join(metadata.get('current_skills', [])[:5]) if metadata.get('current_skills') else '미상'}
+- 관심 분야: {', '.join(metadata.get('interests', [])[:3]) if metadata.get('interests') else '미상'}
+- 커리어 목표: {metadata.get('career_goal', '미상')}
+- 전환점/성장 포인트: {metadata.get('transition_point', '미상')}
+- 성공 요인: {metadata.get('success_factors', '미상')}
+- 현재 프로젝트: {metadata.get('current_project', '미상')}
+- 상세 내용: {detailed_content}"""
                     
                     examples.append(example.strip())
                     
+                    # 상세한 메타데이터 저장
                     career_cases_data.append({
                         "name": metadata.get('name', '익명'),
                         "position": metadata.get('current_position', ''),
-                        "experience": metadata.get('total_experience', ''),
-                        "domain": metadata.get('primary_domain', ''),
-                        "skills": metadata.get('current_skills', [])[:3]
+                        "total_experience": metadata.get('total_experience', ''),
+                        "experience_years": metadata.get('experience_years', ''),
+                        "primary_domain": metadata.get('primary_domain', ''),
+                        "secondary_domain": metadata.get('secondary_domain', ''),
+                        "current_skills": metadata.get('current_skills', []),
+                        "interests": metadata.get('interests', []),
+                        "career_goal": metadata.get('career_goal', ''),
+                        "transition_point": metadata.get('transition_point', ''),
+                        "success_factors": metadata.get('success_factors', ''),
+                        "current_project": metadata.get('current_project', ''),
+                        "detailed_content": detailed_content
                     })
             
             career_examples = "\n\n".join(examples)
@@ -131,7 +147,7 @@ class RecommendationAgent:
             compressed_intent = self._compress_intent_analysis(intent_analysis)
             
             # 디버깅을 위한 로그 추가
-            self.logger.info(f"사용 가능한 커리어 사례 수: {len(career_cases)} (사용: {min(2, len(career_cases))})")
+            self.logger.info(f"사용 가능한 커리어 사례 수: {len(career_cases)} (사용: {min(6, len(career_cases))})")
             self.logger.info(f"외부 트렌드 수: {len(external_trends)} (사용: {min(3, len(external_trends))})")
             
             # 첫 번째 시도 - 압축된 데이터로 시도
@@ -175,15 +191,30 @@ class RecommendationAgent:
             if not has_career_references and career_cases:
                 self.logger.warning("응답에 커리어 사례 참조가 누락되었을 수 있습니다. 추가 처리 필요")
                 
-                # 사례 정보 추가
-                career_info_section = "\n\n### 참고할 만한 커리어 사례 및 롤모델\n\n"
-                for i, doc in enumerate(career_cases[:2], 1):
-                    metadata = doc.metadata
-                    career_info_section += f"**사례 {i}: {metadata.get('name', 'Unknown')}**\n"
-                    career_info_section += f"- 현재 포지션: {metadata.get('current_position', 'Unknown')}\n"
-                    career_info_section += f"- 주요 도메인: {metadata.get('primary_domain', 'Unknown')}\n"
-                    career_info_section += f"- 커리어 전환점: {metadata.get('transition_point', 'Unknown')}\n"
-                    career_info_section += f"- 핵심 성공 요소: {metadata.get('success_factors', 'Unknown')}\n\n"
+                # 사례 정보 추가 - 더 상세한 정보 포함
+                career_info_section = "\n\n### 📋 참고할 만한 커리어 사례 및 롤모델\n\n"
+                for i, doc in enumerate(career_cases[:4], 1):  # 최대 4개 사례 표시
+                    if isinstance(doc, dict):
+                        metadata = doc.get('metadata', {})
+                        content = doc.get('content', '')
+                    else:
+                        metadata = doc.metadata if hasattr(doc, 'metadata') else {}
+                        content = doc.page_content if hasattr(doc, 'page_content') else ''
+                    
+                    career_info_section += f"**🎯 사례 {i}: {metadata.get('name', 'Unknown')}**\n"
+                    career_info_section += f"- **현재 포지션**: {metadata.get('current_position', 'Unknown')}\n"
+                    career_info_section += f"- **총 경력**: {metadata.get('total_experience', 'Unknown')} ({metadata.get('experience_years', 'Unknown')}년)\n"
+                    career_info_section += f"- **주요 도메인**: {metadata.get('primary_domain', 'Unknown')}\n"
+                    career_info_section += f"- **핵심 기술**: {', '.join(metadata.get('current_skills', [])[:5]) if metadata.get('current_skills') else 'Unknown'}\n"
+                    career_info_section += f"- **관심 분야**: {', '.join(metadata.get('interests', [])[:3]) if metadata.get('interests') else 'Unknown'}\n"
+                    career_info_section += f"- **커리어 목표**: {metadata.get('career_goal', 'Unknown')}\n"
+                    career_info_section += f"- **커리어 전환점**: {metadata.get('transition_point', 'Unknown')}\n"
+                    career_info_section += f"- **핵심 성공 요소**: {metadata.get('success_factors', 'Unknown')}\n"
+                    if content:
+                        # 내용이 있으면 요약하여 추가
+                        summary = content[:300] + "..." if len(content) > 300 else content
+                        career_info_section += f"- **경험 요약**: {summary}\n"
+                    career_info_section += "\n"
                 
                 # 원래 응답에 사례 정보 추가
                 if "결론" in response_content or "마무리" in response_content:
@@ -195,17 +226,32 @@ class RecommendationAgent:
                 else:
                     response_content += career_info_section
             
-            # 커리어 사례 정보를 recommendation에 추가
+            # 커리어 사례 정보를 recommendation에 추가 - 더 상세한 정보 포함
             career_cases_summary = []
             if career_cases:
-                for doc in career_cases[:3]:
-                    metadata = doc.metadata
+                for doc in career_cases[:5]:  # 최대 5개 사례 저장
+                    if isinstance(doc, dict):
+                        metadata = doc.get('metadata', {})
+                        content = doc.get('content', '')
+                    else:
+                        metadata = doc.metadata if hasattr(doc, 'metadata') else {}
+                        content = doc.page_content if hasattr(doc, 'page_content') else ''
+                    
                     career_cases_summary.append({
                         "name": metadata.get('name', ''),
                         "position": metadata.get('current_position', ''),
-                        "domain": metadata.get('primary_domain', ''),
+                        "total_experience": metadata.get('total_experience', ''),
+                        "experience_years": metadata.get('experience_years', ''),
+                        "primary_domain": metadata.get('primary_domain', ''),
+                        "secondary_domain": metadata.get('secondary_domain', ''),
+                        "current_skills": metadata.get('current_skills', []),
+                        "interests": metadata.get('interests', []),
+                        "career_goal": metadata.get('career_goal', ''),
                         "transition_point": metadata.get('transition_point', ''),
-                        "success_factors": metadata.get('success_factors', '')
+                        "success_factors": metadata.get('success_factors', ''),
+                        "current_project": metadata.get('current_project', ''),
+                        "content_summary": content[:200] + "..." if len(content) > 200 else content,
+                        "full_content": content  # 전체 내용도 저장
                     })
             
             recommendation = {
