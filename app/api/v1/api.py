@@ -23,5 +23,6 @@ api_router.include_router(
 # 헬스체크 관련 엔드포인트
 api_router.include_router(
     health.router,
+    prefix="/health",
     tags=["system"]
 )

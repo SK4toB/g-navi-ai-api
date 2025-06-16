@@ -19,16 +19,16 @@ class ChatGraphBuilder:
     """
     
     def __init__(self):
-        print("ChatGraphBuilder 초기화 (조건부 분기 방식)")
         self.memory_saver = MemorySaver()
+        print("ChatGraphBuilder __init__")
     
     def _should_process_message(self, state: ChatState) -> str:
         """
         메시지 처리 여부 결정
         """
-        message_text = state.get("message_text ", "")
+        message_text = state.get("message_text", "")
         
-        if message_text and message_text .strip():
+        if message_text and message_text.strip():
             print(f"메시지 있음 → 처리 시작: {message_text[:30]}...")
             return "process"
         else:
@@ -37,9 +37,9 @@ class ChatGraphBuilder:
     
     async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any]):
         """
-        조건부 분기 방식 LangGraph 빌드
+        LangGraph 빌드
         """
-        print(f"🔧 조건부 분기 LangGraph 빌드 시작: {conversation_id}")
+        print(f"{conversation_id} LangGraph 빌드 시작")
         
         # StateGraph 생성
         workflow = StateGraph(ChatState)
@@ -86,13 +86,13 @@ class ChatGraphBuilder:
             # interrupt 완전 제거
         )
         
-        print(f"✅ 조건부 분기 LangGraph 컴파일 완료: {conversation_id}")
+        print(f"{conversation_id} LangGraph 컴파일 완료")
         return compiled_graph
     
     def _create_wait_node(self):
         """대기 상태 노드 생성"""
         async def wait_node(state: ChatState) -> ChatState:
-            print("⏳ 대기 상태 - 메시지 입력 필요")
+            print("대기 상태 (메시지 입력 필요)")
             return state
         
         return wait_node

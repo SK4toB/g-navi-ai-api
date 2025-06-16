@@ -6,7 +6,7 @@ from app.graphs.state import ChatState
 
 async def process(state: ChatState) -> ChatState:
     """사용자 입력 벡터화 처리 노드 - 통일된 필드명"""
-    print(f"Embedding: {state.get('message_text', '')[:50]}...")
+    print(f"Embedding.")
     
     # TODO: 실제 임베딩 로직 구현
     # 현재는 더미 벡터 반환

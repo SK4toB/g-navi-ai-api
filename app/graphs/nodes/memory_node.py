@@ -6,7 +6,7 @@ from app.graphs.state import ChatState
 
 async def process(state: ChatState) -> ChatState:
     """과거 대화 메모리 검색 노드"""
-    print(f"Memory Search: conversation_id={state.get('conversation_id')}")
+    print(f"Memory Search")
     
     # TODO: Vector DB에서 과거 대화 검색
     # 현재는 빈 결과 반환
