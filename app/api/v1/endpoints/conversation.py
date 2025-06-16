@@ -39,12 +39,14 @@ async def create_or_load_room(
             )
         
         else:
-            bot_message = await chat_service.load_chat_session(
+            load_result = await chat_service.load_chat_session(
                 conversation_id=request.conversation_id,
                 user_info=request.user_info,
                 previous_messages=request.messages
             )
-        
+            # 로드 시에는 봇 메시지를 반환하지 않음
+            bot_message = load_result.get("message", "채팅방을 로드했습니다.")
+            print(f"로드 결과: {load_result['status']}")
         
         return ChatRoomResponse(
             conversationId=request.conversation_id,

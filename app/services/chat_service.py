@@ -4,6 +4,8 @@ from typing import Dict, Any
 from app.graphs.graph_builder import ChatGraphBuilder
 from app.services.bot_message import BotMessageService
 from datetime import datetime, timedelta
+import asyncio
+
 
 class ChatService:
     """
@@ -49,16 +51,49 @@ class ChatService:
         
         return initial_message
     
-    async def load_chat_session(self, conversation_id: str, user_info: Dict[str, Any]) -> str:
+
+    async def load_chat_session(self, conversation_id: str, user_info: Dict[str, Any], previous_messages: list = None) -> Dict[str, Any]:
         """
-        채팅 세션 생성
+        기존 채팅방 로드
+        세션이 살아있으면 재사용, 없으면 새로 생성
         """
-        print(f"conversation_id: {conversation_id} 시작")
+        print(f"채팅방 로드 요청: {conversation_id}")
         
-        # 1. LangGraph 빌드
+        # 1. 기존 세션 확인
+        if conversation_id in self.active_sessions:
+            session = self.active_sessions[conversation_id]
+            last_active = session.get("last_active", session.get("created_at"))
+            now = datetime.utcnow()
+            inactive_duration = now - last_active
+            
+            # 세션이 아직 유효한 경우
+            if inactive_duration <= self.session_timeout:
+                # 활동 시간 업데이트
+                self.active_sessions[conversation_id]["last_active"] = now
+                
+                print(f"✅ 기존 세션 재사용: {conversation_id}")
+                print(f"   - 비활성 시간: {int(inactive_duration.total_seconds() / 60)}분")
+                
+                return {
+                    "status": "session_reused",
+                    "message": "기존 세션을 재사용합니다",
+                    "conversation_id": conversation_id,
+                    "session_age_minutes": int((now - session.get("created_at")).total_seconds() / 60),
+                    "inactive_minutes": int(inactive_duration.total_seconds() / 60),
+                    "requires_initial_message": False  # 초기 메시지 불필요
+                }
+            else:
+                # 세션이 만료된 경우 - 제거 후 새로 생성
+                print(f"⚠️ 만료된 세션 발견, 새 세션으로 교체: {conversation_id}")
+                await self._close_session_internal(conversation_id)
+        
+        # 2. 새 세션 생성 (기존 create_chat_session과 동일한 로직)
+        print(f"🔄 새 세션 생성: {conversation_id}")
+        
+        # LangGraph 빌드
         compiled_graph = await self.graph_builder.build_persistent_chat_graph(conversation_id, user_info)
         
-        # 2. 세션 정보 저장 (실행하지 않음)
+        # 세션 정보 저장
         thread_id = f"thread_{conversation_id}"
         config = {"configurable": {"thread_id": thread_id}}
         
@@ -66,22 +101,55 @@ class ChatService:
             "graph": compiled_graph,
             "thread_id": thread_id,
             "config": config,
-            "user_info": user_info
+            "user_info": user_info,
+            "created_at": datetime.utcnow(),
+            "last_active": datetime.utcnow(),
+            "status": "active",
+            "load_type": "restored"  # 복원된 세션임을 표시
         }
         
-        print(f"conversation_id: {conversation_id} 세션 생성 완료")
+        # 3. TODO: 향후 대화 히스토리 복원 로직 추가 위치
+        if previous_messages and len(previous_messages) > 0:
+            print(f"📝 대화 히스토리 복원 예정: {len(previous_messages)}개 메시지")
+            # TODO: Vector DB나 LangGraph 메모리에 이전 대화 저장
+            # await self._restore_conversation_history(conversation_id, previous_messages)
         
-        # 3. BotMessageService를 사용한 환영 메시지 생성
-        initial_message = await self.bot_message_service._generate_welcome_message(user_info)
+        print(f"✅ 채팅방 로드 완료: {conversation_id}")
         
-        return initial_message
-    
+        return {
+            "status": "session_created",
+            "message": f"새 세션을 생성했습니다 ({len(previous_messages) if previous_messages else 0}개 이전 메시지)",
+            "conversation_id": conversation_id,
+            "previous_messages_count": len(previous_messages) if previous_messages else 0,
+            "requires_initial_message": False  # 로드 시에는 초기 메시지 불필요
+        }
+
+    async def _close_session_internal(self, conversation_id: str):
+        """내부 세션 종료 (정리 작업용)"""
+        if conversation_id in self.active_sessions:
+            del self.active_sessions[conversation_id]
+            print(f"세션 메모리에서 제거: {conversation_id}")
+
+    # 향후 구현 예정 메서드
+    async def _restore_conversation_history(self, conversation_id: str, previous_messages: list = None):
+        """
+        대화 히스토리 복원 (향후 구현)
+        Vector DB나 LangGraph 메모리에 이전 대화 저장
+        """
+        print(f"대화 히스토리 복원 시작: {conversation_id}")
+        
+        # TODO: 구현 예정
+        # 1. previous_messages를 파싱
+        # 2. Vector DB에 임베딩 저장
+        # 3. LangGraph 메모리에 대화 컨텍스트 저장
+        
+        pass
 
     async def send_message(self, conversation_id: str, member_id: str, message_text: str) -> str:
         """
         조건부 분기 방식 메시지 처리
         """
-        print(f"chat_service 조건부 분기 메시지 처리: {conversation_id}")
+        print(f"chat_service 메시지 처리: {conversation_id}")
         
         if conversation_id not in self.active_sessions:
             raise ValueError(f"chat_service 활성화된 세션이 없습니다: {conversation_id}")
@@ -137,11 +205,124 @@ class ChatService:
             print(f"상세 에러: {traceback.format_exc()}")
             return f"죄송합니다. 메시지 처리 중 오류가 발생했습니다: {str(e)}"
     
-    async def close_chat_session(self, conversation_id: str):
-        """채팅 세션 종료"""
-        if conversation_id in self.active_sessions:
-            del self.active_sessions[conversation_id]
-            print(f"조건부 분기 채팅 세션 종료: {conversation_id}")
+    async def close_chat_session(self, conversation_id: str) -> Dict[str, Any]:
+        """채팅 세션 수동 종료"""
+        if conversation_id not in self.active_sessions:
+            return {
+                "status": "not_found",
+                "message": f"세션 {conversation_id}을 찾을 수 없습니다",
+                "conversation_id": conversation_id,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        
+        session = self.active_sessions[conversation_id]
+        user_name = session.get("user_info", {}).get("name", "Unknown")
+        created_at = session.get("created_at")
+        now = datetime.utcnow()
+        session_age_minutes = int((now - created_at).total_seconds() / 60)
+        
+        # 세션 제거
+        del self.active_sessions[conversation_id]
+        
+        print(f"🚪 수동 세션 종료: {conversation_id} (사용자: {user_name}, 지속시간: {session_age_minutes}분)")
+        
+        return {
+            "status": "closed",
+            "message": f"세션 {conversation_id}이 성공적으로 종료되었습니다",
+            "conversation_id": conversation_id,
+            "user_name": user_name,
+            "session_age_minutes": session_age_minutes,
+            "closed_at": now.isoformat()
+        }
+
+    def close_all_sessions(self) -> Dict[str, Any]:
+        """모든 활성 세션 수동 종료"""
+        if not self.active_sessions:
+            return {
+                "status": "no_sessions",
+                "message": "종료할 활성 세션이 없습니다",
+                "closed_sessions": [],
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        
+        closed_sessions = []
+        now = datetime.utcnow()
+        
+        for conv_id, session in list(self.active_sessions.items()):
+            user_name = session.get("user_info", {}).get("name", "Unknown")
+            created_at = session.get("created_at")
+            session_age_minutes = int((now - created_at).total_seconds() / 60)
+            
+            closed_sessions.append({
+                "conversation_id": conv_id,
+                "user_name": user_name,
+                "session_age_minutes": session_age_minutes
+            })
+            
+            print(f"🚪 전체 종료: {conv_id} (사용자: {user_name})")
+        
+        # 모든 세션 제거
+        total_closed = len(self.active_sessions)
+        self.active_sessions.clear()
+        
+        print(f"✅ 전체 {total_closed}개 세션 종료 완료")
+        
+        return {
+            "status": "all_closed",
+            "message": f"총 {total_closed}개의 세션이 종료되었습니다",
+            "closed_sessions": closed_sessions,
+            "total_closed": total_closed,
+            "timestamp": now.isoformat()
+        }
+
+    def close_sessions_by_user(self, user_name: str) -> Dict[str, Any]:
+        """특정 사용자의 모든 세션 종료"""
+        if not self.active_sessions:
+            return {
+                "status": "no_sessions",
+                "message": "활성 세션이 없습니다",
+                "user_name": user_name,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        
+        user_sessions = []
+        now = datetime.utcnow()
+        
+        # 해당 사용자의 세션 찾기
+        for conv_id, session in list(self.active_sessions.items()):
+            session_user_name = session.get("user_info", {}).get("name", "")
+            
+            if session_user_name == user_name:
+                created_at = session.get("created_at")
+                session_age_minutes = int((now - created_at).total_seconds() / 60)
+                
+                user_sessions.append({
+                    "conversation_id": conv_id,
+                    "session_age_minutes": session_age_minutes
+                })
+                
+                # 세션 제거
+                del self.active_sessions[conv_id]
+                print(f"🚪 사용자별 종료: {conv_id} (사용자: {user_name})")
+        
+        if not user_sessions:
+            return {
+                "status": "user_not_found",
+                "message": f"사용자 '{user_name}'의 활성 세션을 찾을 수 없습니다",
+                "user_name": user_name,
+                "timestamp": now.isoformat()
+            }
+        
+        print(f"✅ 사용자 {user_name}의 {len(user_sessions)}개 세션 종료 완료")
+        
+        return {
+            "status": "user_sessions_closed",
+            "message": f"사용자 '{user_name}'의 {len(user_sessions)}개 세션이 종료되었습니다",
+            "user_name": user_name,
+            "closed_sessions": user_sessions,
+            "total_closed": len(user_sessions),
+            "timestamp": now.isoformat()
+        }
     
     def get_session_status(self, conversation_id: str) -> Dict[str, Any]:
         """세션 상태 조회"""

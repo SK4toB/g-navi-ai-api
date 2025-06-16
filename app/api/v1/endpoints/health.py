@@ -104,7 +104,7 @@ async def test_openai():
         }
     
 
-@router.get("/sessions/all")
+@router.get("/sessions/list")
 async def get_all_active_sessions(
     chat_service: ChatService = Depends(get_chat_service)
 ):
@@ -116,7 +116,45 @@ async def get_all_active_sessions(
             "error": f"전체 세션 조회 실패: {str(e)}",
             "timestamp": datetime.utcnow().isoformat()
         }
+
+
+@router.post("/sessions/cleanup")
+async def manual_cleanup_sessions(
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """수동으로 만료된 세션 정리"""
+    try:
+        before_count = len(chat_service.active_sessions)
+        await chat_service._perform_cleanup()
+        after_count = len(chat_service.active_sessions)
+        
+        return {
+            "message": "세션 정리 완료",
+            "sessions_before": before_count,
+            "sessions_after": after_count,
+            "cleaned_sessions": before_count - after_count,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "message": f"정리 실패: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat()
+        }
     
+
+@router.get("/sessions/cleanup-status")
+async def get_cleanup_status(
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """자동 정리 태스크 상태"""
+    return {
+        "session_timeout_minutes": int(chat_service.session_timeout.total_seconds() / 60),
+        "cleanup_interval_seconds": chat_service.cleanup_interval,
+        "cleanup_task_running": chat_service._cleanup_task is not None and not chat_service._cleanup_task.done(),
+        "total_active_sessions": len(chat_service.active_sessions),
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
 
 @router.get("/sessions/{conversation_id}")
 async def get_session_health(
@@ -132,5 +170,55 @@ async def get_session_health(
             "conversation_id": conversation_id,
             "status": "error",
             "message": f"헬스체크 실패: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+
+@router.delete("/sessions/{conversation_id}")
+async def close_session(
+    conversation_id: str,
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """특정 세션 수동 종료"""
+    try:
+        result = await chat_service.close_chat_session(conversation_id)
+        return result
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"세션 종료 실패: {str(e)}",
+            "conversation_id": conversation_id,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.delete("/sessions")
+async def close_all_sessions(
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """모든 세션 수동 종료"""
+    try:
+        result = chat_service.close_all_sessions()
+        return result
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"전체 세션 종료 실패: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.delete("/sessions/user/{user_name}")
+async def close_user_sessions(
+    user_name: str,
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """특정 사용자의 모든 세션 종료"""
+    try:
+        result = chat_service.close_sessions_by_user(user_name)
+        return result
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"사용자 세션 종료 실패: {str(e)}",
+            "user_name": user_name,
             "timestamp": datetime.utcnow().isoformat()
         }
