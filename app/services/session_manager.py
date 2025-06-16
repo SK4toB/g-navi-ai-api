@@ -76,6 +76,17 @@ class SessionManager:
         now = datetime.utcnow()
         session_age_minutes = int((now - created_at).total_seconds() / 60)
         
+        ###################################
+        # 대화 히스토리도 함께 삭제
+        try:
+            from app.graphs.nodes.openai_response_node import get_history_manager
+            history_manager = get_history_manager()
+            history_manager.clear_history(conversation_id)
+            print(f"대화 히스토리 삭제 완료: {conversation_id}")
+        except Exception as e:
+            print(f"대화 히스토리 삭제 실패: {e}")
+        ####################################
+        
         # 세션 제거
         del self.active_sessions[conversation_id]
         

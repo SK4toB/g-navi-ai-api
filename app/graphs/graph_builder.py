@@ -9,7 +9,7 @@ from app.graphs.state import ChatState
 from app.graphs.nodes import (
     intent_node, embedding_node, memory_node,
     similarity_node, profiling_node, connection_node, output_node,
-    user_input_node
+    user_input_node, openai_response_node
 )
 
 class ChatGraphBuilder:
@@ -52,7 +52,8 @@ class ChatGraphBuilder:
         workflow.add_node("similarity_check", similarity_node.process)
         workflow.add_node("profiling", profiling_node.process)
         workflow.add_node("connection_check", connection_node.process)
-        workflow.add_node("output_generation", output_node.process)
+        workflow.add_node("openai_response", openai_response_node.process)
+        # workflow.add_node("output_generation", output_node.process)
         workflow.add_node("wait_state", self._create_wait_node())      # 대기 상태
         
         # 시작점
@@ -74,10 +75,12 @@ class ChatGraphBuilder:
         workflow.add_edge("memory_search", "similarity_check")
         workflow.add_edge("similarity_check", "profiling")
         workflow.add_edge("profiling", "connection_check")
-        workflow.add_edge("connection_check", "output_generation")
+        workflow.add_edge("connection_check", "openai_response")
+        # workflow.add_edge("connection_check", "output_generation")
         
         # 처리 완료 후 종료
-        workflow.add_edge("output_generation", END)
+        workflow.add_edge("openai_response", END)
+        # workflow.add_edge("output_generation", END)
         workflow.add_edge("wait_state", END)
         
         # 컴파일 (interrupt 없음)
