@@ -103,6 +103,21 @@ async def test_openai():
             "timestamp": datetime.utcnow().isoformat()
         }
     
+
+@router.get("/sessions/all")
+async def get_all_active_sessions(
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """현재 열려있는 전체 세션 조회"""
+    try:
+        return chat_service.get_all_active_sessions()
+    except Exception as e:
+        return {
+            "error": f"전체 세션 조회 실패: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    
+
 @router.get("/sessions/{conversation_id}")
 async def get_session_health(
     conversation_id: str,

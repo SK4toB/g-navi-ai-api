@@ -190,3 +190,45 @@ class ChatService:
             "message": "정상 활성화된 세션입니다" if not is_expired else f"{int(inactive_duration.total_seconds() / 60)}분 비활성으로 만료되었습니다",
             "timestamp": now.isoformat()
         }
+
+    def get_all_active_sessions(self) -> Dict[str, Any]:
+        """현재 열려있는 전체 세션 간단 조회"""
+        now = datetime.utcnow()
+        
+        if not self.active_sessions:
+            return {
+                "total_sessions": 0,
+                "sessions": [],
+                "message": "현재 활성화된 세션이 없습니다",
+                "timestamp": now.isoformat()
+            }
+        
+        sessions_list = []
+        
+        for conv_id, session in self.active_sessions.items():
+            created_at = session.get("created_at")
+            last_active = session.get("last_active", created_at)
+            
+            # 시간 계산
+            alive_minutes = int((now - created_at).total_seconds() / 60)
+            inactive_minutes = int((now - last_active).total_seconds() / 60)
+            
+            sessions_list.append({
+                "conversation_id": conv_id,
+                "user_name": session.get("user_info", {}).get("name", "Unknown"),
+                "alive_minutes": alive_minutes,
+                "inactive_minutes": inactive_minutes,
+                "last_active": last_active.isoformat(),
+                "thread_id": session.get("thread_id")
+            })
+        
+        # inactive_minutes 기준으로 정렬 (오래 비활성인 것부터)
+        sessions_list.sort(key=lambda x: x["inactive_minutes"], reverse=True)
+        
+        return {
+            "total_sessions": len(self.active_sessions),
+            "sessions": sessions_list,
+            "session_timeout_minutes": int(self.session_timeout.total_seconds() / 60),
+            "message": f"현재 {len(self.active_sessions)}개의 세션이 활성화되어 있습니다",
+            "timestamp": now.isoformat()
+        }
