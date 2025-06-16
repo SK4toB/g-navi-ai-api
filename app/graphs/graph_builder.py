@@ -27,6 +27,9 @@ class ChatGraphBuilder:
         self.logger = logging.getLogger(__name__)
         self.memory_saver = MemorySaver()
         
+        # 세션별 정보 저장소 추가
+        self.session_store = {}  # conversation_id -> {"user_info": ..., "metadata": ...}
+        
         # G.Navi 에이전트들 초기화
         self.career_retriever_agent = Retriever()
         self.intent_analysis_agent = Analyzer()
@@ -44,9 +47,47 @@ class ChatGraphBuilder:
             print("메시지 없음 → 대기")
             return "wait"
     
+    def get_session_info(self, conversation_id: str) -> Dict[str, Any]:
+        """세션 정보 조회"""
+        return self.session_store.get(conversation_id, {})
+    
+    def get_user_info_from_session(self, state: ChatState) -> Dict[str, Any]:
+        """상태에서 사용자 정보 추출 (우선순위: state > session_store)"""
+        # 1. state에서 user_data 확인
+        user_data = state.get("user_data", {})
+        if user_data:
+            return user_data
+        
+        # 2. session_id로 session_store에서 조회
+        session_id = state.get("session_id", "")
+        if session_id:
+            session_info = self.get_session_info(session_id)
+            return session_info.get("user_info", {})
+        
+        # 3. 기본값 반환
+        return {}
+    
+    def close_session(self, conversation_id: str):
+        """세션 정보 정리"""
+        if conversation_id in self.session_store:
+            del self.session_store[conversation_id]
+            print(f"📝 GraphBuilder 세션 정보 삭제: {conversation_id}")
+    
+    def get_all_sessions(self) -> Dict[str, Dict[str, Any]]:
+        """모든 세션 정보 조회 (디버깅용)"""
+        return self.session_store.copy()
+    
     async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any]):
         """G.Navi AgentRAG LangGraph 빌드"""
         print(f"🔧 G.Navi AgentRAG LangGraph 빌드 시작: {conversation_id}")
+        
+        # 세션 정보 저장
+        self.session_store[conversation_id] = {
+            "user_info": user_info,
+            "created_at": datetime.now(),
+            "conversation_id": conversation_id
+        }
+        print(f"📝 세션 정보 저장 완료: {user_info.get('name', 'Unknown')} (대화방: {conversation_id})")
         
         # StateGraph 생성
         workflow = StateGraph(ChatState)
@@ -117,8 +158,9 @@ class ChatGraphBuilder:
         try:
             self.logger.info("=== 1단계: 과거 대화내역 검색 ===")
             
-            user_data = state.get("user_data", {})
-            user_id = user_data.get("user_id")
+            # 세션 정보에서 사용자 데이터 가져오기
+            user_data = self.get_user_info_from_session(state)
+            user_id = user_data.get("memberId") if "memberId" in user_data else user_data.get("name")
             
             if user_id:
                 self.logger.info(f"사용자 {user_id}의 과거 대화내역 검색 중...")
@@ -148,9 +190,12 @@ class ChatGraphBuilder:
         try:
             self.logger.info("=== 2단계: 의도 분석 및 상황 이해 ===")
             
+            # 세션 정보에서 사용자 데이터 가져오기
+            user_data = self.get_user_info_from_session(state)
+            
             intent_analysis = self.intent_analysis_agent.analyze_intent_and_context(
                 user_question=state.get("user_question", ""),
-                user_data=state.get("user_data", {}),
+                user_data=user_data,
                 chat_history=state.get("chat_history_results", [])
             )
             
@@ -225,9 +270,12 @@ class ChatGraphBuilder:
         try:
             self.logger.info("=== 4단계: 맞춤형 추천 생성 ===")
             
+            # 세션 정보에서 사용자 데이터 가져오기
+            user_data = self.get_user_info_from_session(state)
+            
             recommendation = self.recommendation_agent.generate_personalized_recommendation(
                 user_question=state.get("user_question", ""),
-                user_data=state.get("user_data", {}),
+                user_data=user_data,
                 intent_analysis=state.get("intent_analysis", {}),
                 career_cases=state.get("career_cases", []),
                 external_trends=state.get("external_trends", [])
@@ -269,8 +317,9 @@ class ChatGraphBuilder:
             output_dir = os.path.join(os.getcwd(), "output")
             os.makedirs(output_dir, exist_ok=True)
             
-            user_data = state.get("user_data", {})
-            user_name = user_data.get("user_profile", {}).get("name", "")
+            # 세션 정보에서 사용자 데이터 가져오기
+            user_data = self.get_user_info_from_session(state)
+            user_name = user_data.get("name", "user")
             user_name = user_name.replace(" ", "_") if user_name else "user"
             file_name = f"{user_name}_{timestamp}"
             html_path = os.path.join(output_dir, f"{file_name}.html")

@@ -1,0 +1,39 @@
+{
+    "memberId": "1",
+    "conversationId": "room1",
+    "messages": [
+        {
+            "senderType": "BOT",
+            "messageText": "안녕하세요 오현진님! Growth Navigator에 오신 것을 환영합니다. 무엇을 도와드릴까요?",
+            "timestamp": {
+                "$date": "2025-06-10T02:38:01.009Z"
+            }
+        },
+        {
+            "senderType": "USER",
+            "messageText": "안녕하셍",
+            "timestamp": {
+                "$date": "2025-06-10T04:59:15.043Z"
+            }
+        }
+    ],
+    "userInfo": {
+        "name": "오현진",
+        "projects": [
+            {
+                "project_id": 1,
+                "project_name": "스마트팩토리 구축",
+                "role": "Backend Developer",
+                "domain": "제조",
+                "scale": "대",
+                "start_date": "2023-01-15",
+                "end_date": "2023-12-31",
+                "skills": [
+                    "Back-end Dev. (Software Dev.직무)",
+                    "Application Architect (Architect 직무)",
+                    "System/Network Eng. (Cloud/Infra Eng.직무)"
+                ]
+            }
+        ]
+    }
+}

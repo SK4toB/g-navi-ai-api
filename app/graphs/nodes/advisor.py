@@ -232,16 +232,28 @@ class RecommendationAgent:
     def _compress_user_data(self, user_data: Dict[str, Any]) -> str:
         """사용자 데이터를 압축하여 컨텍스트 길이 절약"""
         try:
-            profile = user_data.get('user_profile', {})
+            # 새로운 user_info 구조에 맞게 수정
+            name = user_data.get('name', '미상')
             projects = user_data.get('projects', [])
             
-            compressed = f"""이름: {profile.get('name', '미상')}
-경력: {profile.get('experience', '미상')}
-현재 역할: {profile.get('current_role', '미상')}
-관심 분야: {profile.get('interests', '미상')}"""
+            compressed = f"""이름: {name}"""
             
             if projects:
-                compressed += f"\n주요 프로젝트: {projects[0].get('project_name', '미상')} ({projects[0].get('role', '미상')})"
+                latest_project = projects[0]
+                project_name = latest_project.get('project_name', '미상')
+                role = latest_project.get('role', '미상')
+                domain = latest_project.get('domain', '미상')
+                
+                compressed += f"""
+현재 역할: {role}
+도메인: {domain}
+주요 프로젝트: {project_name}"""
+                
+                # 프로젝트가 여러 개인 경우
+                if len(projects) > 1:
+                    compressed += f"\n총 프로젝트 경험: {len(projects)}개"
+            else:
+                compressed += "\n경력: 신규 또는 정보 없음"
                 
             return compressed
         except Exception:

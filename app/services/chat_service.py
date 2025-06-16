@@ -42,7 +42,7 @@ class ChatService:
             
             print(f"G.Navi 세션 생성 완료: {conversation_id}")
             
-            # 3. 환영 메시지 생성
+            # 3. 개인화된 환영 메시지 생성
             initial_message = await self._generate_welcome_message(user_info)
             
             return initial_message
@@ -133,8 +133,12 @@ class ChatService:
     async def close_chat_session(self, conversation_id: str):
         """채팅 세션 종료"""
         if conversation_id in self.active_sessions:
+            # GraphBuilder의 세션 정보도 함께 정리
+            self.graph_builder.close_session(conversation_id)
             del self.active_sessions[conversation_id]
             print(f"G.Navi 채팅 세션 종료: {conversation_id}")
+        else:
+            print(f"세션을 찾을 수 없음: {conversation_id}")
     
     def get_session_status(self, conversation_id: str) -> Dict[str, Any]:
         """세션 상태 조회"""
@@ -143,7 +147,8 @@ class ChatService:
             return {
                 "conversation_id": conversation_id,
                 "status": "active",
-                "thread_id": session["thread_id"]
+                "thread_id": session["thread_id"],
+                "user_info": session.get("user_info", {})
             }
         return {
             "conversation_id": conversation_id, 
@@ -151,21 +156,28 @@ class ChatService:
         }
     
     async def _generate_welcome_message(self, user_info: Dict[str, Any]) -> str:
-        """환영 메시지 생성"""
-        name = user_info.get("name", "이재원")
+        """개인화된 환영 메시지 생성"""
+        name = user_info.get("name", "사용자")
+        projects = user_info.get("projects", [])
         
-        welcome_message = f"""안녕하세요 {name}님! 👋
-
-G.Navi AI 커리어 컨설팅에 오신 것을 환영합니다.
-
-저는 여러분의 커리어 여정을 함께할 AI 컨설턴트입니다. 다음과 같은 도움을 드릴 수 있습니다:
-
-🎯 **커리어 방향성 설정**
-📈 **기술 스택 및 학습 로드맵 제안**  
-🔍 **업계 트렌드 및 전망 분석**
-💼 **이직 및 취업 전략 수립**
-🚀 **개인 프로젝트 기획 및 포트폴리오 개선**
-
-궁금한 것이 있으시면 언제든 말씀해 주세요!"""
+        # 기본 환영 메시지
+        welcome_message = f"안녕하세요 {name}님! 👋 G.Navi AI 커리어 컨설턴트입니다."
+        
+        # 프로젝트 경험이 있는 경우 개인화된 제안
+        if projects:
+            latest_project = projects[0]
+            role = latest_project.get("role", "")
+            domain = latest_project.get("domain", "")
+            
+            if role and domain:
+                welcome_message += f"\n{domain} 분야에서 {role}로 활동하고 계시는군요! 요즘 커리어 발전 방향이나 새로운 기회에 대해 고민이 있으시다면 언제든 말씀해 주세요."
+            elif role:
+                welcome_message += f"\n{role}로 활동하고 계시는군요! 커리어 발전이나 새로운 도전에 대해 궁금한 점이 있으시면 언제든 이야기해 주세요."
+            elif domain:
+                welcome_message += f"\n{domain} 분야에서 활동하고 계시는군요! 업계 동향이나 커리어 방향에 대해 궁금한 점이 있으시면 언제든 말씀해 주세요."
+            else:
+                welcome_message += "\n프로젝트 경험을 바탕으로 더 나은 커리어 방향을 함께 찾아보실까요?"
+        else:
+            welcome_message += "\n커리어 시작이나 새로운 방향 설정에 대해 궁금한 점이 있으시면 언제든 말씀해 주세요."
 
         return welcome_message

@@ -539,8 +539,8 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             chat_history = state.get("chat_history_results", [])
             
             # 사용자 정보 추출
-            user_name = user_data.get('user_profile', {}).get('name', '님')
-            session_id = user_data.get('session_id', '')
+            user_name = user_data.get('name', '님')
+            session_id = user_data.get('conversationId', '')
             
             # LLM을 위한 컨텍스트 구성
             context_data = self._prepare_context_for_llm(
@@ -581,9 +581,9 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         context_sections.append(f'사용자 질문: "{user_question}"')
         
         # 사용자 프로필 - 의미 있는 데이터만 포함
-        user_profile = user_data.get('user_profile', {})
-        if self._has_meaningful_data(user_profile):
-            user_profile_md = self._dict_to_markdown(user_profile, show_empty=False)
+        # 새로운 JSON 구조: {name: "", projects: [...]}
+        if self._has_meaningful_data(user_data):
+            user_profile_md = self._dict_to_markdown(user_data, show_empty=False)
             if user_profile_md.strip():
                 context_sections.append(f"""
 사용자 프로필:
@@ -841,7 +841,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
     def _create_fallback_response(self, user_question: str, user_data: Dict[str, Any], 
                                  recommendation: Dict[str, Any]) -> Dict[str, Any]:
         """LLM 실패 시 폴백 응답 생성 (개선된 버전)"""
-        user_name = user_data.get('user_profile', {}).get('name', '님')
+        user_name = user_data.get('name', '님')
         
         self.logger.info("폴백 응답 생성 중...")
         
@@ -933,7 +933,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             "format_type": "fallback",
             "timestamp": datetime.now().isoformat(),
             "user_name": user_name,
-            "session_id": user_data.get('session_id', ''),
+            "session_id": user_data.get('conversationId', ''),
             "components_used": ["recommendation"] if recommendation_content.strip() else ["general_advice"],
             "primary_focus": "fallback_guidance"
         }
