@@ -118,44 +118,6 @@ async def get_all_active_sessions(
         }
 
 
-@router.post("/sessions/cleanup")
-async def manual_cleanup_sessions(
-    chat_service: ChatService = Depends(get_chat_service)
-):
-    """수동으로 만료된 세션 정리"""
-    try:
-        before_count = len(chat_service.active_sessions)
-        await chat_service._perform_cleanup()
-        after_count = len(chat_service.active_sessions)
-        
-        return {
-            "message": "세션 정리 완료",
-            "sessions_before": before_count,
-            "sessions_after": after_count,
-            "cleaned_sessions": before_count - after_count,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    except Exception as e:
-        return {
-            "message": f"정리 실패: {str(e)}",
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    
-
-@router.get("/sessions/cleanup-status")
-async def get_cleanup_status(
-    chat_service: ChatService = Depends(get_chat_service)
-):
-    """자동 정리 태스크 상태"""
-    return {
-        "session_timeout_minutes": int(chat_service.session_timeout.total_seconds() / 60),
-        "cleanup_interval_seconds": chat_service.cleanup_interval,
-        "cleanup_task_running": chat_service._cleanup_task is not None and not chat_service._cleanup_task.done(),
-        "total_active_sessions": len(chat_service.active_sessions),
-        "timestamp": datetime.utcnow().isoformat()
-    }
-
-
 @router.get("/sessions/{conversation_id}")
 async def get_session_health(
     conversation_id: str,
