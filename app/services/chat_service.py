@@ -80,7 +80,6 @@ class ChatService:
                 "intent_analysis": {},
                 "career_cases": [],
                 "external_trends": [],
-                "recommendation": {},
                 "final_response": {},
                 "processing_log": [],
                 "error_messages": [],

@@ -549,9 +549,8 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         self.logger.info("LLM 기반 적응적 응답 포맷팅 시작")
         
         try:
-            # GNaviState에서 데이터 추출
+            # GNaviState에서 데이터 추출 (추천 생성 단계 제거)
             intent_analysis = state.get("intent_analysis", {})
-            recommendation = state.get("recommendation", {})
             user_data = state.get("user_data", {})
             career_cases = state.get("career_cases", [])
             external_trends = state.get("external_trends", [])
@@ -563,7 +562,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             
             # LLM을 위한 컨텍스트 구성
             context_data = self._prepare_context_for_llm(
-                user_question, intent_analysis, recommendation, 
+                user_question, intent_analysis, 
                 user_data, career_cases, external_trends, chat_history
             )
             
@@ -586,13 +585,13 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         except Exception as e:
             self.logger.error(f"LLM 기반 응답 포맷팅 실패: {e}")
             # 폴백: 간단한 응답 생성
-            return self._create_fallback_response(user_question, user_data, recommendation)
+            return self._create_fallback_response(user_question, user_data)
     
     def _prepare_context_for_llm(self, user_question: str, intent_analysis: Dict[str, Any],
-                                recommendation: Dict[str, Any], user_data: Dict[str, Any],
+                                user_data: Dict[str, Any],
                                 career_cases: List[Any], external_trends: List[Dict],
                                 chat_history: List[Any]) -> str:
-        """LLM을 위한 컨텍스트 데이터 준비 (빈 데이터 필터링 개선)"""
+        """LLM을 위한 컨텍스트 데이터 준비 (빈 데이터 필터링 개선, 추천 생성 단계 제거)"""
         
         context_sections = []
         
@@ -620,16 +619,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 {intent_analysis_md}
 """)
         
-        # 추천 결과 - 의미 있는 데이터만 포함
-        if self._has_meaningful_data(recommendation):
-            # 오류가 있는 경우 제외
-            if not recommendation.get("error"):
-                recommendation_md = self._dict_to_markdown(recommendation, show_empty=False)
-                if recommendation_md.strip():
-                    context_sections.append(f"""
-생성된 추천사항:
-{recommendation_md}
-""")
+        # 추천 결과 섹션 제거 (추천 생성 단계 제거)
         
         # 커리어 사례 - 의미 있는 데이터만 포함 (상세 정보 확장)
         meaningful_career_cases = self._filter_meaningful_career_cases(career_cases)
@@ -869,19 +859,13 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             "content_strategy": content_strategy
         }
     
-    def _create_fallback_response(self, user_question: str, user_data: Dict[str, Any], 
-                                 recommendation: Dict[str, Any]) -> Dict[str, Any]:
-        """LLM 실패 시 폴백 응답 생성 (개선된 버전)"""
+    def _create_fallback_response(self, user_question: str, user_data: Dict[str, Any]) -> Dict[str, Any]:
+        """LLM 실패 시 폴백 응답 생성 (개선된 버전, 추천 생성 단계 제거)"""
         user_name = user_data.get('name', '님')
         
         self.logger.info("폴백 응답 생성 중...")
         
-        # 추천사항을 마크다운으로 변환 (빈 데이터 제외)
-        recommendation_content = ""
-        if self._has_meaningful_data(recommendation) and not recommendation.get("error"):
-            recommendation_md = self._dict_to_markdown(recommendation, show_empty=False)
-            if recommendation_md.strip():
-                recommendation_content = recommendation_md
+        # 추천사항 섹션 제거
         
         # 사용자 질문 분석해서 간단한 응답 생성
         question_lower = user_question.lower()
@@ -948,7 +932,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 ## 📋 질문 분석
 **"{user_question}"**
 
-{recommendation_content if recommendation_content.strip() else "현재 분석을 진행중입니다. 구체적인 정보를 더 제공해주시면 보다 정확한 컨설팅을 해드릴 수 있습니다."}
+현재 분석을 진행중입니다. 구체적인 정보를 더 제공해주시면 보다 정확한 컨설팅을 해드릴 수 있습니다.
 
 ## 💡 추가 도움말
 - 구체적인 기술 스택이나 경력 단계를 알려주시면 더 맞춤형 조언을 제공할 수 있습니다.
