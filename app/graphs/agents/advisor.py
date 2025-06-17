@@ -25,7 +25,7 @@ class RecommendationAgent:
         
         # LLM 인스턴스 생성
         from langchain_openai import ChatOpenAI
-        llm = ChatOpenAI(model="gpt-4o", temperature=0.3)
+        llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
         
         system_prompt = """당신은 경력 10년 이상의 시니어 커리어 컨설턴트입니다.
 사내 구성원들의 실제 커리어 사례와 최신 업계 트렌드를 바탕으로 매우 구체적이고 실행 가능한 맞춤형 커리어 전략을 수립해주세요.

@@ -12,7 +12,7 @@ class IntentAnalysisAgent:
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self.llm = ChatOpenAI(model="gpt-4o", temperature=0.3)
+        self.llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.3)
     
     def analyze_intent_and_context(self, 
                                  user_question: str, 

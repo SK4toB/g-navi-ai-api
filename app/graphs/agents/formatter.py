@@ -774,7 +774,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                 self.client = openai.OpenAI()
             
             response = self.client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": context_data}
