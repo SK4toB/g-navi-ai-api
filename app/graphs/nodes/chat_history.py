@@ -22,11 +22,20 @@ class ChatHistoryNode:
             self.logger.info("=== 1단계: 과거 대화내역 검색 ===")
             
             # MemorySaver에서 복원된 기존 current_session_messages 확인
+            # LangGraph는 이전 실행의 상태를 자동으로 복원함
             if "current_session_messages" not in state or state["current_session_messages"] is None:
                 state["current_session_messages"] = []
-                self.logger.info("새로운 대화 세션 시작")
+                self.logger.info("새로운 대화 세션 시작 - 빈 current_session_messages 초기화")
             else:
-                self.logger.info(f"MemorySaver에서 복원된 대화 내역: {len(state['current_session_messages'])}개")
+                restored_count = len(state["current_session_messages"])
+                self.logger.info(f"MemorySaver에서 복원된 대화 내역: {restored_count}개")
+                if restored_count > 0:
+                    self.logger.info("최근 복원된 대화:")
+                    for i, msg in enumerate(state["current_session_messages"][-3:], 1):
+                        role = msg.get("role", "unknown")
+                        content = msg.get("content", "")[:100]
+                        timestamp = msg.get("timestamp", "")
+                        self.logger.info(f"  복원 {i}. [{role}] {content}... ({timestamp})")
             
             # 현재 사용자 질문을 대화 내역에 추가
             current_user_message = {
@@ -36,6 +45,7 @@ class ChatHistoryNode:
             }
             state["current_session_messages"].append(current_user_message)
             self.logger.info(f"현재 사용자 메시지 추가: {state['user_question'][:100]}...")
+            self.logger.info(f"총 current_session_messages 개수: {len(state['current_session_messages'])}개")
             
             # 세션 정보에서 사용자 데이터 가져오기
             user_data = self.graph_builder.get_user_info_from_session(state)

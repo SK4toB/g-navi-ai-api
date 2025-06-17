@@ -1,17 +1,17 @@
 # app/graphs/state.py
 # G.Navi AgentRAG 시스템의 상태 정의
 
-from typing import TypedDict, List, Dict, Any
+from typing import TypedDict, List, Dict, Any, Optional
 
-class ChatState(TypedDict):
+class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허용
     """G.Navi AgentRAG의 상태 관리"""
     
-    # === 입력 데이터 ===
+    # === 입력 데이터 (필수) ===
     user_question: str                   # 사용자 질문
     user_data: Dict[str, Any]           # 사용자 프로필 데이터
     session_id: str                     # 세션 식별자
     
-    # === 대화 내역 관리 ===
+    # === 대화 내역 관리 (MemorySaver가 관리) ===
     current_session_messages: List[Dict[str, str]]  # MemorySaver가 관리하는 현재 세션 대화 내역 (role, content, timestamp)
     
     # === G.Navi 4단계 처리 결과 ===

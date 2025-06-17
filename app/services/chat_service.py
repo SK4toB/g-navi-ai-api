@@ -69,23 +69,28 @@ class ChatService:
         
         try:
             print(f"📨 입력 메시지: {message_text}")
+            print(f"🔑 Thread ID: {config['configurable']['thread_id']}")
             
             # G.Navi 상태 구성 (기존 파라미터들을 G.Navi 형식으로 변환)
+            # MemorySaver가 current_session_messages를 복원할 수 있도록 input_state에서 제외
             input_state = {
                 "user_question": message_text,  # message_text를 user_question으로 사용
                 "user_data": user_info,         # user_info를 user_data로 사용
                 "session_id": conversation_id,  # conversation_id를 session_id로 사용
-                # 초기화될 필드들 (변수명 업데이트)
-                "current_session_messages": [],      # MemorySaver가 관리하는 현재 세션 대화 내역
+                # current_session_messages는 MemorySaver가 자동으로 복원하므로 여기서 초기화하지 않음
                 "previous_conversations_found": [],  # 검색으로 찾은 이전 대화들
                 "intent_analysis": {},
                 "career_cases": [],
                 "external_trends": [],
+                "education_courses": {},
                 "final_response": {},
                 "processing_log": [],
                 "error_messages": [],
                 "total_processing_time": 0.0
             }
+            
+            print(f"📤 Input state keys: {list(input_state.keys())}")
+            print(f"📥 current_session_messages in input: {'current_session_messages' in input_state}")
             
             print(f"G.Navi AgentRAG 실행 시작...")
             start_time = datetime.now()
