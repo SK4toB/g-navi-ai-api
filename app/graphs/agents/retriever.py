@@ -1,23 +1,25 @@
 # retriever.py
 
 import os
+import json
+import re
+import requests
+import logging
+from typing import Dict, List, Any
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.retrievers import BM25Retriever
 from langchain.retrievers import EnsembleRetriever
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
-import logging
-import json
 from langchain.schema import Document
 from datetime import datetime, timedelta
-import re
 
 from dotenv import load_dotenv
 load_dotenv()
 
 class CareerEnsembleRetrieverAgent:
-    """career_data Chroma DB에 대해 BM25+LLM 임베딩 앙상블 리트리버만 제공"""
+    """career_data Chroma DB에 대해 BM25+LLM 임베딩 앙상블 리트리버 + 교육과정 검색 제공"""
     def __init__(self, persist_directory: str = os.path.join(
             os.path.dirname(__file__), 
             "../../storage/vector_stores/career_data"
@@ -43,6 +45,30 @@ class CareerEnsembleRetrieverAgent:
         )
         self.vectorstore = None
         self.ensemble_retriever = None
+        
+        # 교육과정 관련 추가 속성
+        self.education_persist_dir = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/vector_stores/education_courses"
+        ))
+        self.education_docs_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/docs/education_courses.json"
+        ))
+        self.skill_mapping_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/docs/skill_education_mapping.json"
+        ))
+        self.deduplication_index_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/docs/course_deduplication_index.json"
+        ))
+        
+        # 지연 로딩 속성
+        self.education_vectorstore = None
+        self.skill_education_mapping = None
+        self.course_deduplication_index = None
+        
         self._load_vectorstore_and_retriever()
 
     def _load_vectorstore_and_retriever(self):
@@ -353,3 +379,504 @@ class CareerEnsembleRetrieverAgent:
             except Exception as e:
                 self.logger.error(f"Tavily 검색 중 오류: {e}")
         return results
+
+    def _load_education_resources(self):
+        """교육과정 리소스 지연 로딩"""
+        if self.education_vectorstore is None:
+            self._initialize_education_vectorstore()
+        if self.skill_education_mapping is None:
+            self._load_skill_education_mapping()
+        if self.course_deduplication_index is None:
+            self._load_deduplication_index()
+    
+    def _initialize_education_vectorstore(self):
+        """교육과정 VectorDB 초기화"""
+        try:
+            if os.path.exists(self.education_persist_dir):
+                self.education_vectorstore = Chroma(
+                    persist_directory=self.education_persist_dir,
+                    embedding_function=self.cached_embeddings,
+                    collection_name="education_courses"
+                )
+                self.logger.info("교육과정 VectorDB 로드 완료")
+            else:
+                self.logger.warning("교육과정 VectorDB가 존재하지 않습니다. utils/education_data_processor.py를 실행해주세요.")
+        except Exception as e:
+            self.logger.error(f"교육과정 VectorDB 로드 실패: {e}")
+            self.education_vectorstore = None
+    
+    def _load_skill_education_mapping(self):
+        """스킬-교육과정 매핑 로드"""
+        try:
+            if os.path.exists(self.skill_mapping_path):
+                with open(self.skill_mapping_path, "r", encoding="utf-8") as f:
+                    self.skill_education_mapping = json.load(f)
+                self.logger.info(f"스킬-교육과정 매핑 로드 완료: {len(self.skill_education_mapping)}개 스킬")
+            else:
+                self.skill_education_mapping = {}
+                self.logger.warning("스킬-교육과정 매핑 파일이 없습니다.")
+        except Exception as e:
+            self.logger.error(f"스킬-교육과정 매핑 로드 실패: {e}")
+            self.skill_education_mapping = {}
+    
+    def _load_deduplication_index(self):
+        """중복 제거 인덱스 로드"""
+        try:
+            if os.path.exists(self.deduplication_index_path):
+                with open(self.deduplication_index_path, "r", encoding="utf-8") as f:
+                    self.course_deduplication_index = json.load(f)
+                self.logger.info(f"중복 제거 인덱스 로드 완료: {len(self.course_deduplication_index)}개 그룹")
+            else:
+                self.course_deduplication_index = {}
+                self.logger.warning("중복 제거 인덱스 파일이 없습니다.")
+        except Exception as e:
+            self.logger.error(f"중복 제거 인덱스 로드 실패: {e}")
+            self.course_deduplication_index = {}
+    
+    def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
+        """교육과정 검색 메인 함수"""
+        self._load_education_resources()
+        
+        try:
+            # 1단계: 스킬 기반 빠른 필터링
+            skill_based_courses = self._skill_based_course_filter(user_profile, intent_analysis)
+            
+            # 2단계: VectorDB 의미적 검색 (VectorDB가 없으면 JSON 폴백)
+            semantic_matches = self._semantic_course_search(query, skill_based_courses)
+            
+            # 3단계: 중복 제거 및 정렬
+            deduplicated_courses = self._deduplicate_courses(semantic_matches)
+            
+            # 4단계: 결과 분석 및 학습 경로 생성
+            course_analysis = self._analyze_course_recommendations(deduplicated_courses)
+            learning_path = self._generate_learning_path(deduplicated_courses)
+            
+            return {
+                "recommended_courses": deduplicated_courses,
+                "course_analysis": course_analysis,
+                "learning_path": learning_path
+            }
+        except Exception as e:
+            self.logger.error(f"교육과정 검색 중 오류: {e}")
+            return {
+                "recommended_courses": [],
+                "course_analysis": {"message": f"교육과정 검색 중 오류가 발생했습니다: {e}"},
+                "learning_path": []
+            }
+    
+    def _skill_based_course_filter(self, user_profile: Dict, intent_analysis: Dict) -> List[Dict]:
+        """스킬 기반 1차 필터링 - JSON 인덱스 활용"""
+        filtered_courses = []
+        
+        # 사용자 현재 스킬 추출
+        current_skills = self._extract_user_skills(user_profile)
+        
+        # 의도 분석에서 목표 스킬 추출
+        target_skills = intent_analysis.get("career_history", [])
+        
+        # 검색할 스킬 목록 생성
+        search_skills = list(set(current_skills + target_skills))
+        
+        for skill_code in search_skills:
+            if skill_code in self.skill_education_mapping:
+                skill_courses = self.skill_education_mapping[skill_code]
+                
+                # College 과정 - 세분화 레벨별 추가
+                for course_type in ["specialized", "recommended", "common_required"]:
+                    if course_type in skill_courses.get("college", {}):
+                        courses = skill_courses["college"][course_type]
+                        for course in courses:
+                            course_info = course.copy()
+                            course_info["source"] = "college"
+                            course_info["skill_relevance"] = course_type
+                            course_info["target_skill"] = skill_code
+                            filtered_courses.append(course_info)
+                
+                # mySUNI 과정 추가
+                if "mysuni" in skill_courses:
+                    for course in skill_courses["mysuni"]:
+                        course_info = course.copy()
+                        course_info["source"] = "mysuni"
+                        course_info["skill_relevance"] = "general"
+                        course_info["target_skill"] = skill_code
+                        filtered_courses.append(course_info)
+        
+        self.logger.info(f"스킬 기반 필터링 결과: {len(filtered_courses)}개 과정")
+        return filtered_courses
+    
+    def _extract_user_skills(self, user_profile: Dict) -> List[str]:
+        """사용자 프로필에서 스킬 추출"""
+        skills = []
+        
+        # 직접적인 스킬 정보가 있는 경우
+        if "skills" in user_profile:
+            skills.extend(user_profile["skills"])
+        
+        # 경력 정보에서 스킬 추출
+        if "career_history" in user_profile:
+            for career in user_profile["career_history"]:
+                if "skills" in career:
+                    skills.extend(career["skills"])
+        
+        return list(set(skills))
+    
+    def _semantic_course_search(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
+        """VectorDB를 활용한 의미적 검색 (VectorDB가 없으면 JSON에서 검색)"""
+        if not self.education_vectorstore:
+            # VectorDB가 없으면 JSON 파일에서 직접 검색
+            self.logger.info("VectorDB 없음 - JSON 파일에서 검색")
+            return self._search_from_json_documents(query, filtered_courses)
+            
+        if not filtered_courses:
+            # 필터링된 과정이 없으면 전체 VectorDB에서 검색
+            docs = self.education_vectorstore.similarity_search(query, k=10)
+            courses = [self._doc_to_course_dict(doc) for doc in docs]
+        else:
+            # 필터링된 과정들의 course_id로 VectorDB에서 상세 검색
+            course_ids = [course.get("course_id") for course in filtered_courses if course.get("course_id")]
+            courses = self._search_by_course_ids(course_ids, query)
+            
+            # 필터링 정보를 VectorDB 결과에 병합
+            for course in courses:
+                for filtered_course in filtered_courses:
+                    if course.get("course_id") == filtered_course.get("course_id"):
+                        course.update(filtered_course)
+                        break
+        
+        self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정")
+        return courses
+    
+    def _search_from_json_documents(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
+        """JSON 문서에서 직접 검색 (VectorDB 대안)"""
+        try:
+            with open(self.education_docs_path, "r", encoding="utf-8") as f:
+                all_docs = json.load(f)
+        except FileNotFoundError:
+            self.logger.warning("교육과정 문서 파일이 없습니다.")
+            # 필터링된 과정이라도 반환하자
+            return filtered_courses[:10] if filtered_courses else []
+        
+        # 필터링된 과정이 있으면 우선적으로 활용
+        if filtered_courses:
+            # filtered_courses의 course_id들과 매칭되는 문서들 찾기
+            filtered_course_ids = {course.get("course_id") for course in filtered_courses}
+            matching_docs = []
+            
+            for doc in all_docs:
+                metadata = doc.get("metadata", {})
+                course_id = metadata.get("course_id")
+                
+                if course_id in filtered_course_ids:
+                    course_dict = self._doc_to_course_dict_from_json(doc)
+                    # 필터링 정보 병합
+                    for filtered_course in filtered_courses:
+                        if course_dict.get("course_id") == filtered_course.get("course_id"):
+                            course_dict.update(filtered_course)
+                            break
+                    matching_docs.append(course_dict)
+            
+            if matching_docs:
+                self.logger.info(f"필터링된 과정 기반 검색 결과: {len(matching_docs)}개")
+                return matching_docs
+        
+        # 키워드 기반 검색
+        query_keywords = query.lower().split()
+        matching_docs = []
+        
+        for doc in all_docs:
+            content = doc.get("page_content", "").lower()
+            metadata = doc.get("metadata", {})
+            
+            # 키워드 매칭 점수 계산
+            score = 0
+            for keyword in query_keywords:
+                if keyword in content:
+                    score += 1
+            
+            if score > 0:
+                course_dict = self._doc_to_course_dict_from_json(doc)
+                course_dict["match_score"] = score
+                matching_docs.append(course_dict)
+        
+        # 점수순으로 정렬
+        matching_docs.sort(key=lambda x: x.get("match_score", 0), reverse=True)
+        
+        self.logger.info(f"키워드 기반 검색 결과: {len(matching_docs)}개")
+        return matching_docs[:10]  # 상위 10개만 반환
+    
+    def _doc_to_course_dict_from_json(self, doc_data: Dict) -> Dict:
+        """JSON 문서 데이터를 과정 딕셔너리로 변환"""
+        metadata = doc_data.get("metadata", {})
+        return {
+            "course_id": metadata.get("course_id"),
+            "course_name": metadata.get("course_name", metadata.get("card_name")),
+            "source": metadata.get("source"),
+            "content": doc_data.get("page_content", ""),
+            "target_skills": metadata.get("target_skills", []),
+            "skill_relevance": metadata.get("skill_relevance"),
+            "duration_hours": metadata.get("duration_hours", metadata.get("인정학습시간")),
+            "difficulty_level": metadata.get("difficulty_level", metadata.get("난이도")),
+            "department": metadata.get("department", metadata.get("학부")),
+            "course_type": metadata.get("course_type", metadata.get("교육유형")),
+            "평점": metadata.get("평점"),
+            "이수자수": metadata.get("이수자수"),
+            "카테고리명": metadata.get("카테고리명"),
+            "채널명": metadata.get("채널명"),
+            "표준과정": metadata.get("표준과정")
+        }
+    
+    def _search_by_course_ids(self, course_ids: List[str], query: str) -> List[Dict]:
+        """특정 과정 ID들에 대한 VectorDB 검색"""
+        if not course_ids:
+            return []
+        
+        # 각 course_id에 대해 검색하고 결과 통합
+        all_docs = []
+        for course_id in course_ids[:20]:  # 최대 20개로 제한
+            try:
+                # 메타데이터 필터를 사용한 검색
+                docs = self.education_vectorstore.similarity_search(
+                    query, 
+                    k=5,
+                    filter={"course_id": course_id}
+                )
+                all_docs.extend(docs)
+            except Exception as e:
+                self.logger.warning(f"Course ID {course_id} 검색 실패: {e}")
+        
+        # 일반 검색도 수행 (백업)
+        if not all_docs:
+            all_docs = self.education_vectorstore.similarity_search(query, k=10)
+        
+        return [self._doc_to_course_dict(doc) for doc in all_docs]
+    
+    def _doc_to_course_dict(self, doc: Document) -> Dict:
+        """VectorDB Document를 과정 딕셔너리로 변환"""
+        metadata = doc.metadata or {}
+        return {
+            "course_id": metadata.get("course_id"),
+            "course_name": metadata.get("course_name", metadata.get("card_name")),
+            "source": metadata.get("source"),
+            "content": doc.page_content,
+            "target_skills": metadata.get("target_skills", []),
+            "skill_relevance": metadata.get("skill_relevance"),
+            "duration_hours": metadata.get("duration_hours", metadata.get("인정학습시간")),
+            "difficulty_level": metadata.get("difficulty_level", metadata.get("난이도")),
+            "department": metadata.get("department", metadata.get("학부")),
+            "course_type": metadata.get("course_type", metadata.get("교육유형")),
+            "평점": metadata.get("평점"),
+            "이수자수": metadata.get("이수자수"),
+            "카테고리명": metadata.get("카테고리명"),
+            "채널명": metadata.get("채널명"),
+            "표준과정": metadata.get("표준과정")
+        }
+    
+    def _deduplicate_courses(self, courses: List[Dict]) -> List[Dict]:
+        """College와 mySUNI 간 중복 과정 제거 (mySUNI 메타데이터 보존)"""
+        if not courses:
+            return []
+        
+        deduplicated = []
+        seen_courses = set()
+        
+        # 우선순위: College > mySUNI (College가 더 상세한 정보 제공)
+        def sort_priority(course):
+            source_priority = 0 if course.get("source") == "college" else 1
+            
+            if course.get("source") == "college":
+                relevance = course.get("skill_relevance", "")
+                if relevance == "specialized":
+                    relevance_priority = 0
+                elif relevance == "recommended":
+                    relevance_priority = 1
+                else:  # common_required
+                    relevance_priority = 2
+            else:
+                # mySUNI는 평점 기준 정렬
+                rating = course.get("평점", 0)
+                try:
+                    rating = float(rating) if rating else 0
+                except:
+                    rating = 0
+                relevance_priority = 5 - rating  # 평점이 높을수록 우선순위 높음
+            
+            return (source_priority, relevance_priority)
+        
+        sorted_courses = sorted(courses, key=sort_priority)
+        
+        for course in sorted_courses:
+            course_signature = self._generate_course_signature(course)
+            
+            if course_signature not in seen_courses:
+                # 중복 과정이 있는 경우 mySUNI 데이터를 College 과정에 통합
+                if course_signature in self.course_deduplication_index:
+                    duplicate_info = self.course_deduplication_index[course_signature]
+                    
+                    # College 과정이 우선이므로 mySUNI 데이터를 추가 정보로 병합
+                    if course.get("source") == "college":
+                        mysuni_data = self._find_mysuni_duplicate(duplicate_info, courses)
+                        if mysuni_data:
+                            course["mysuni_alternative"] = {
+                                "available": True,
+                                "card_name": mysuni_data.get("card_name"),
+                                "평점": mysuni_data.get("평점"),
+                                "이수자수": mysuni_data.get("이수자수"),
+                                "난이도": mysuni_data.get("난이도"),
+                                "인정학습시간": mysuni_data.get("인정학습시간"),
+                                "카테고리명": mysuni_data.get("카테고리명"),
+                                "채널명": mysuni_data.get("채널명")
+                            }
+                        else:
+                            course["mysuni_alternative"] = {"available": False}
+                    else:
+                        # mySUNI 과정인 경우 원본 데이터 유지
+                        course["mysuni_alternative"] = {"available": False}
+                    
+                    course["alternative_platforms"] = duplicate_info.get("platforms", [])
+                else:
+                    # 중복이 없는 과정인 경우
+                    if course.get("source") == "mysuni":
+                        course["mysuni_alternative"] = {"available": False}
+                
+                deduplicated.append(course)
+                seen_courses.add(course_signature)
+        
+        self.logger.info(f"중복 제거 완료: {len(courses)}개 → {len(deduplicated)}개")
+        return deduplicated
+    
+    def _generate_course_signature(self, course: Dict) -> str:
+        """과정 중복 판별을 위한 시그니처 생성"""
+        name = course.get("course_name", course.get("card_name", "")).lower().strip()
+        skills = sorted(course.get("target_skills", []))
+        
+        # 유사한 과정명 정규화
+        normalized_name = re.sub(r'[^\w\s]', '', name)
+        normalized_name = re.sub(r'\s+', ' ', normalized_name)
+        
+        return f"{normalized_name}_{','.join(skills)}"
+    
+    def _find_mysuni_duplicate(self, duplicate_info: Dict, all_courses: List[Dict]) -> Dict:
+        """중복 정보에서 mySUNI 과정 찾기"""
+        mysuni_course_info = None
+        for course_info in duplicate_info.get("courses", []):
+            if course_info.get("platform") == "mySUNI":
+                course_id = course_info.get("course_id")
+                # 전체 과정 리스트에서 해당 mySUNI 과정 찾기
+                for course in all_courses:
+                    if (course.get("source") == "mysuni" and 
+                        course.get("course_id") == course_id):
+                        mysuni_course_info = course
+                        break
+                break
+        
+        return mysuni_course_info
+    
+    def _analyze_course_recommendations(self, courses: List[Dict]) -> Dict:
+        """추천 과정 분석 결과 생성 (mySUNI 데이터 포함)"""
+        if not courses:
+            return {"message": "추천할 교육과정이 없습니다."}
+        
+        college_courses = [c for c in courses if c.get("source") == "college"]
+        mysuni_courses = [c for c in courses if c.get("source") == "mysuni"]
+        
+        # College 과정 세분화 분석
+        specialized_count = len([c for c in college_courses if c.get("skill_relevance") == "specialized"])
+        recommended_count = len([c for c in college_courses if c.get("skill_relevance") == "recommended"])
+        required_count = len([c for c in college_courses if c.get("skill_relevance") == "common_required"])
+        
+        # mySUNI 대안 정보 분석
+        college_with_mysuni_alt = len([c for c in college_courses 
+                                      if c.get("mysuni_alternative", {}).get("available")])
+        
+        # mySUNI 과정 평점 분석
+        mysuni_ratings = []
+        for c in mysuni_courses:
+            rating = c.get("평점", 0)
+            try:
+                rating = float(rating) if rating else 0
+                if rating > 0:
+                    mysuni_ratings.append(rating)
+            except:
+                continue
+        
+        avg_mysuni_rating = sum(mysuni_ratings) / len(mysuni_ratings) if mysuni_ratings else 0
+        
+        # 이수자 수 합계
+        total_enrollments = 0
+        for course in mysuni_courses:
+            enrollments_str = str(course.get("이수자수", "0"))
+            try:
+                enrollments = int(enrollments_str.replace(",", "")) if enrollments_str.replace(",", "").isdigit() else 0
+                total_enrollments += enrollments
+            except:
+                continue
+        
+        return {
+            "total_courses": len(courses),
+            "college_courses": len(college_courses),
+            "mysuni_courses": len(mysuni_courses),
+            "skill_depth_analysis": {
+                "specialized": specialized_count,
+                "recommended": recommended_count, 
+                "common_required": required_count
+            },
+            "learning_platforms": {
+                "college_available": len(college_courses) > 0,
+                "mysuni_available": len(mysuni_courses) > 0,
+                "college_with_mysuni_alternatives": college_with_mysuni_alt
+            },
+            "mysuni_quality_metrics": {
+                "average_rating": round(avg_mysuni_rating, 1),
+                "total_enrollments": total_enrollments,
+                "high_rated_courses": len([r for r in mysuni_ratings if r >= 4.5])
+            }
+        }
+    
+    def _generate_learning_path(self, courses: List[Dict]) -> List[Dict]:
+        """학습 경로 제안 생성"""
+        if not courses:
+            return []
+        
+        path = []
+        
+        # 1단계: 공통 필수 과정
+        required_courses = [c for c in courses if c.get("skill_relevance") == "common_required"]
+        if required_courses:
+            path.append({
+                "step": 1,
+                "level": "기초/필수",
+                "courses": required_courses[:2],  # 최대 2개
+                "description": "기본 지식 습득을 위한 필수 과정"
+            })
+        
+        # 2단계: 추천 과정
+        recommended_courses = [c for c in courses if c.get("skill_relevance") == "recommended"]
+        if recommended_courses:
+            path.append({
+                "step": 2,
+                "level": "확장/응용",
+                "courses": recommended_courses[:3],  # 최대 3개
+                "description": "관련 기술 확장을 위한 추천 과정"
+            })
+        
+        # 3단계: 전문화 과정
+        specialized_courses = [c for c in courses if c.get("skill_relevance") == "specialized"]
+        if specialized_courses:
+            path.append({
+                "step": 3,
+                "level": "전문/심화",
+                "courses": specialized_courses[:2],  # 최대 2개
+                "description": "전문성 강화를 위한 특화 과정"
+            })
+        
+        # mySUNI 과정은 보완/대안으로 제시
+        mysuni_courses = [c for c in courses if c.get("source") == "mysuni"]
+        if mysuni_courses:
+            path.append({
+                "step": "보완",
+                "level": "온라인/자율",
+                "courses": mysuni_courses[:3],  # 최대 3개
+                "description": "온라인으로 학습 가능한 보완 과정"
+            })
+        
+        return path

@@ -1,0 +1,211 @@
+﻿카테고리명,채널명,카드명,난이도,인정학습시간(시간),이수자수,평점,직무,Skill set
+AI,AI,[Guided Project] Btv 시청데이터를 활용한 추천 모델 개발,Intermediate,32,256,4.1,AIX,AI/Data Development
+AI,AI,[Guided Project] 석유 정제 공정 운전 데이터를 활용한 물성 예측 모델 개발,Intermediate,32,468,4.2,AIX,AI/Data Development
+AI,AI,[Guided Project] CCTV 이미지 분류 모델 개발,Intermediate,32,218,4.2,AIX,AI/Data Development
+AI,AI,[코세라] Machine Learning with Python (IBM),Basic,3.9,27,3.9,AIX,AI/Data Development
+AI,AI,[코드잇] 머신러닝 입문,Basic,25,648,4.4,AIX,AI/Data Development
+AI,AI,데이터 분석을 위한 Python 기초,Basic,7.5,"4,947",4.3,AIX,AI/Data Development
+AI,AI,[Guided Project] Wavve OTT 고객 이탈 예측 모델 개발,Intermediate,32,308,4,AIX,AI/Data Development
+AI,AI,[Guided Project] 기지국 장비 성능 통계의 EDA 및 불량 탐색,Intermediate,32,203,4.2,AIX,AI/Data Development
+AI,AI,[Guided Project] DRAM 내부 회로의 파형 예측 with Tensorflow,Intermediate,32,102,4.2,AIX,AI/Data Development
+AI,AI,CDS II_머신러닝 모델링,Basic,20,"2,318",4.1,AIX,AI/Data Development
+AI,AI,[SKADA인증] Practitioner Test 신청,Advanced,1,122,,AIX,AI/Data Development
+AI,AI,(심화) No Code CDS : 머신러닝 기초 with Orange3,Basic,5,41,4.2,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]Universal Domain Adaptation,Advanced,0.5,691,,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]Good isn't good enough,Advanced,0.4,511,,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]A New Benchmark for Evaluation of Cross-Domain Few-Shot Learning,Advanced,0.4,634,,AIX,AI/Data Development
+AI,AI,AI서비스 기획/개발 기초 [기획],Intermediate,1.5,"1,368",3.4,Architect,AI Architect
+AI,AI,AI서비스 기획/개발 기초 [구현],Intermediate,2.4,"1,432",3.9,Architect,AI Architect
+AI,AI,"[AI최신기술동향]A Review on Generative Adversarial Networks: Algorithm, Theory, and Applications",Advanced,0.5,597,,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]What's Hidden in a Randomly Weighted Neural Network,Advanced,0.5,716,,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]Rethinking the Hyperparameters for Fine-tuning,Advanced,0.3,785,,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]Direct Neural Architecture Search on Target Task and Hardware,Advanced,0.4,600,,AIX,AI/Data Development
+AI,AI,[코세라] Data Analysis with Python (IBM),Basic,1.8,314,2.9,AIX,AI/Data Development
+AI,AI,[코세라] Python for Data Science and AI (IBM),Basic,1.8,348,2.9,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] Slice-based Learning,Advanced,0.5,809,3.4,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] Dream to Control Learning Behaviors by Latent Imagination,Advanced,0.4,617,3.5,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] Learning New Tricks From Old Dogs Multi-Source Transfer Learning ,Advanced,0.3,695,3.5,AIX,AI/Data Development
+AI,AI,[코세라] Sequence Models (Stanford Univ.),Basic,5.3,436,2.8,AIX,AI/Data Development
+AI,AI,[코세라] Machine Learning (Stanford University) ,Intermediate,19.4,"1,489",2.7,AIX,AI/Data Development
+AI,AI,[코세라] Machine Learning With Big Data (USCD),Basic,4.9,874,2.7,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] Automated Relational Meta-Learning,Advanced,0.4,838,3.2,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] Bi-level Optimization Back-propagation through Optimization,Advanced,0.2,654,,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] Lagrangian Formalism for Back-propagation,Advanced,0.2,736,,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] Deep Anomaly Detection with Outlier Exposure,Advanced,0.4,917,3.3,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] Learning Finite State Representations of Recurrent Policy Networks,Advanced,0.6,"1,198",3.1,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]Revisiting the Sibling Head in Object Detector,Advanced,0.5,"1,090",3.2,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]Automatically Discovering and Learning New Visual Categories with Ranking Statistics,Advanced,0.6,"1,470",3.2,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] Mogrifier LSTM,Advanced,0.1,886,3,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]Adversarially Trained End-to-end Korean Singing Voice Synthesis System,Advanced,0.4,868,,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]Learning to zoom a Saliency-based sampling layer for neural networks,Advanced,0.3,739,,AIX,AI/Data Development
+AI,AI,[AI최신기술동향]AutoML-Zero Evolving Machine Learning Algorithms From Scratch,Advanced,0.5,"1,089",,AIX,AI/Data Development
+AI,AI,[AI최신기술동향] DDSP Differentiable Digital Signal Processing,Advanced,0.3,"1,048",,AIX,AI/Data Development
+AI,AI,[Guided Project] 공정 이미지 불량 탐지 모델 개발 with Tensorflow,Intermediate,32,198,3.9,AIX,AI/Data Development
+AI,AI,[Guided Project] SSL 기반 CCTV 이미지의 객체 탐지,Expert,32,96,4.3,AIX,AI/Data Development
+AI,AI,[Guided Project] 통화품질 VOC의 불만 유형 분류,Intermediate,32,199,4,AIX,AI/Data Development
+AI,AI,[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with Tensorflow,Intermediate,32,176,4.1,AIX,AI/Data Development
+AI,AI,[Guided Project] 공정 이미지 불량 탐지 모델 개발 with PyTorch,Intermediate,32,105,4.2,AIX,AI/Data Development
+AI,AI,[Guided Project] DRAM 내부 회로의 파형 예측 with PyTorch,Intermediate,32,174,4.2,AIX,AI/Data Development
+AI,AI,[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with PyTorch,Intermediate,32,169,4.3,AIX,AI/Data Development
+AI,AI,[딥러닝 수학 #1] 미적분학,Advanced,0.8,915,4,AIX,AI/Data Development
+AI,AI,[딥러닝 수학 #2] 확률과 통계,Advanced,1.7,674,4.2,AIX,AI/Data Development
+AI,AI,[딥러닝 수학 #3] 정보이론,Advanced,0.7,627,4.1,AIX,AI/Data Development
+AI,AI,[딥러닝 수학 #4] 선형대수,Advanced,2.7,465,4.1,AIX,AI/Data Development
+AI,AI,[딥러닝 원리 #1] Deep Learning Intro,Advanced,0.9,834,4.2,AIX,AI/Data Development
+AI,AI,[딥러닝 원리 #2] Forward Propagation,Advanced,0.9,664,4.1,AIX,AI/Data Development
+AI,AI,[딥러닝 원리 #3] Backward Propagation,Advanced,1.2,562,4.1,AIX,AI/Data Development
+AI,AI,[딥러닝 원리 #4] Pytorch 실습,Advanced,1.6,512,4,AIX,AI/Data Development
+AI,AI,[딥러닝 모델 학습 및 평가 #1] Optimization,Advanced,1.3,462,4.2,AIX,AI/Data Development
+AI,AI,"[딥러닝 모델 학습 및 평가 #2] Activation Functions, Normalization, Regularization",Advanced,1.9,422,4.2,AIX,AI/Data Development
+AI,AI,[딥러닝 기초 모듈 #1] Convolutional Neural Network,Advanced,2,467,4.2,AIX,AI/Data Development
+AI,AI,[딥러닝 기초 모듈 #2] Reccurent Neural Network,Advanced,2,422,4.2,AIX,AI/Data Development
+AI,AI,[딥러닝 기초 모듈 #3] Attention-based Neural Network,Advanced,3,405,4.2,AIX,AI/Data Development
+AI,AI,[딥러닝 기초 모듈 #4] Generative model,Advanced,2.1,378,4.1,AIX,AI/Data Development
+AI,AI,[이미지 처리 입문 #1] Image Preprocessing & Classification,Advanced,2.2,258,4.2,AIX,AI/Data Development
+AI,AI,[이미지 처리 입문 #2] Object Detection,Advanced,1.8,232,4.1,AIX,AI/Data Development
+AI,AI,[이미지 처리 입문 #3] Image Segmentation,Advanced,1.5,217,4.1,AIX,AI/Data Development
+AI,AI,[이미지 처리 입문 #5] Vision Practice,Advanced,0.5,200,4.1,AIX,AI/Data Development
+AI,AI,[자연어 처리 입문 #1] Tokenization & Embedding,Advanced,2.7,368,4.1,AIX,AI/Data Development
+AI,AI,[자연어 처리 입문 #2] Pretrained Models,Advanced,1.1,333,4.1,AIX,AI/Data Development
+AI,AI,[자연어 처리 입문 #3] Huggingface 실습,Advanced,1.2,303,4.1,AIX,AI/Data Development
+AI,AI,[자연어 처리 입문 #5] NLP Practice,Advanced,1.7,287,4.1,AIX,AI/Data Development
+AI,AI,[시계열 처리 입문 #1] Time Series Intro & Preprocessing,Advanced,0.8,296,4.2,AIX,AI/Data Development
+AI,AI,[시계열 처리 입문 #2] Forecasting Case Study,Advanced,0.5,259,4.2,AIX,AI/Data Development
+AI,AI,[시계열 처리 입문 #3] Anomaly Detection Case Study,Advanced,0.6,254,4.1,AIX,AI/Data Development
+AI,AI,[시계열 처리 입문 #4] Time Series Practice,Advanced,0.9,218,4.1,AIX,AI/Data Development
+AI,AI,[딥러닝 모델 학습 및 평가 #3] Evaluation for Classification Model,Advanced,0.9,416,4.2,AIX,AI/Data Development
+AI,AI,[이미지 처리 입문 #4] Generative model for Images,Advanced,0.6,227,4.1,AIX,AI/Data Development
+AI,AI,[자연어 처리 입문 #4] Text Generation,Advanced,1.3,320,4.1,AIX,AI/Data Development
+AI,AI,[Guided Project] 통신탑 안전 이상 감지 모델 개발,Intermediate,32,42,4.4,AIX,AI/Data Development
+AI,AI,[Guided Project] 반도체 공정의 웨이퍼 품질 개선 모델 개발,Intermediate,32,49,4.2,AIX,AI/Data Development
+AI,AI,[Guided Project] AI 모델을 활용한 철근 단가 예측,Intermediate,32,54,4.3,AIX,AI/Data Development
+AI,AI,[Guided Project] 석유 유정 펌프 이상 감지,Intermediate,32,29,3.8,AIX,AI/Data Development
+AI,AI,[Guided Project] AI 모델을 활용한 정유 공정 자율 운전 구현,Advanced,32,29,4.7,AIX,AI/Data Development
+AI,AI,[Guided Project] SSD 반도체 신뢰성 사전 예측 모델 개발,Intermediate,32,31,3.9,AIX,AI/Data Development
+AI,AI,[Guided Project] 청각장애인을 위한 소리 분류 모델 개발,Intermediate,32,25,4.6,AIX,AI/Data Development
+AI,AI,[생성형 AI #1] Large Model,Advanced,2,788,4.2,AIX,Generative AI Development
+AI,AI,[생성형 AI #2] Large Language Model,Advanced,6.6,448,4.1,AIX,Generative AI Development
+AI,AI,[생성형 AI #3] Multi-Modal Model,Advanced,0.9,448,4.1,AIX,Generative AI Development
+AI,AI,[코세라] Neural Networks and Deep Learning (Stanford University),Intermediate,6.8,650,2.8,AIX,AI/Data Development
+AI,AI,[코세라] Convolutional Neural Networks,Expert,6.7,786,2.8,AIX,Generative AI Development
+AI,AI,[코세라] Natural Language Processing in Tensorflow,Basic,1.9,405,2.8,AIX,Generative AI Development
+AI,AI,chatGPT를 통한 업무 자동화 : 1) chatGPT 활용하기,Basic,3.7,950,4,AIX,Generative AI Development
+AI,AI,chatGPT를 통한 업무 자동화 : 2) 자동화 프로세스,Basic,3.2,671,4,AIX,Generative AI Development
+AI,AI,비용을 줄이는 LLM(대규모 언어모델) Prompt Tuning,Basic,5.5,448,4.1,AIX,Generative AI Development
+AI,AI,LLM을 위한 NLP 마스터 1탄,Basic,5.3,372,4.1,AIX,Generative AI Development
+AI,AI,LLM을 위한 NLP 마스터 2탄,Basic,3.4,280,4.2,AIX,Generative AI Development
+AI,AI,Digital Me with 생성형 AI,Intermediate,56,394,,AIX,Generative AI Development
+AI,AI,Digital Me with 생성형 AI (서포터),Intermediate,16,11,,AIX,Generative AI Development
+AI,AI,[2024 이천포럼 사전학습] 생성형 AI의 이해와 전망,Basic,1,"3,264",4.3,AIX,Generative AI Development
+AI,AI,[2024 이천포럼 사전학습] Prompt Cheat Sheet & Playground 접속!!! ,Basic,3,"1,468",4.2,AIX,Generative AI Development
+AI,AI,생성형 AI가 촉발한 새로운 비즈니스와 패러다임의 변화,Basic,1.2,666,4.1,AIX,Generative AI Development
+AI,AI,LLM Essence for PO ,Basic,14,26,,Architect,AI Architect
+AI,AI,RAG를 활용하는 LLM Application 개발,Intermediate,35,26,,AIX,Generative AI Development
+AI,AI,서비스 운영을 위한 LLMOps,Intermediate,21,23,,AIX,Generative AI Development
+AI,AI,LLM Fine-Tuning,Advanced,35,23,,AIX,AI/Data Development
+AI,Data Science,Apache Kafka 이해와 활용,Basic,4.5,248,4.2,AIX,AI/Data Development
+AI,Data Science,Prometheus & Grafana 이해와 활용,Basic,3.9,301,4,AIX,AI/Data Development
+AI,Data Science,EIM의 이해,Basic,1.7,"3,897",4.1,AIX,AI/Data Development
+AI,Data Science,"Hadoop 이해와 활용 4 (HiveQL, Pig Script,HUE & Oozie, Security)",Intermediate,3,411,3.3,AIX,AI/Data Development
+AI,Data Science,"Hadoop 이해와 활용 3 (Configuration, Data Ingestion/Analytics)",Intermediate,2.9,470,3.3,AIX,AI/Data Development
+AI,Data Science,"Hadoop 이해와 활용 2 (HDFS, YARN)",Intermediate,3.1,587,3.4,AIX,AI/Data Development
+AI,Data Science,"Hadoop 이해와 활용 1 (What is Hadoop, Hadoop Distribution/Ecosystem)",Intermediate,2.9,900,3.4,AIX,AI/Data Development
+AI,Data Science,[코세라] Introduction to Big Data (UCSD),Basic,4.4,"1,608",2.7,AIX,AI/Data Development
+AI,Data Science,[코세라] Big Data Modeling and Management Systems (UCSD),Basic,4.1,"1,097",2.7,AIX,AI/Data Development
+AI,Data Science,[코세라] Big Data Integration and Processing (UCSD),Basic,5.2,"1,086",2.7,AIX,AI/Data Development
+AI,Data Science,NoSQL 이해와 활용 1 (What is NoSQL),Intermediate,1.3,"2,081",,AIX,AI/Data Development
+AI,Data Science,NoSQL 이해와 활용 2 (HBase),Intermediate,2.6,"1,295",,AIX,AI/Data Development
+AI,Data Science,NoSQL 이해와 활용 3 (Cassandra),Intermediate,2,"1,000",,AIX,AI/Data Development
+AI,Data Science,NoSQL 이해와 활용 4 (MongoDB),Intermediate,2,984,,AIX,AI/Data Development
+AI,Data Science,Scala 이해와 활용 1 (Background of Scala ~ Control Structure),Basic,6.8,445,3.8,AIX,AI/Data Development
+AI,Data Science,Scala 이해와 활용 2 (Functions ~ Collections),Intermediate,8,284,3.8,AIX,AI/Data Development
+AI,Data Science,Scala 이해와 활용 3 (Scala class & object),Intermediate,6.1,243,3.8,AIX,AI/Data Development
+AI,Data Science,"Scala 이해와 활용 4 (Function type , Programimg)",Intermediate,3.7,145,3.7,AIX,AI/Data Development
+AI,Data Science,[코세라] Data Visualization with Python (IBM),Basic,1.4,23,3.7,AIX,AI/Data Development
+AI,Data Science,[코세라] What is Data Science? (IBM),Basic,1.3,141,3.9,AIX,AI/Data Development
+AI,Data Science,[코세라] Data Analysis Using Python (University of Pennsylvania),Advanced,1.4,28,3.6,AIX,AI/Data Development
+AI,Data Science,[코드잇] 데이터 사이언스 입문,Basic,25,"1,187",4.4,AIX,AI/Data Development
+AI,Data Science,CDS I_데이터 처리와 시각화,Basic,30,"2,589",4.3,AIX,AI/Data Development
+AI,Data Science,ChatGPT를 활용한 데이터 분석(feat. 파이썬),Basic,6.3,"1,296",4.2,AIX,AI/Data Development
+AI,Data Science,[코드잇] 데이터 사이언스 정복하기,Basic,25,64,4.5,AIX,AI/Data Development
+AI,Data Science,[Elice] R 패키지로 배우는 데이터 분석,Basic,16,205,3.2,AIX,AI/Data Development
+AI,Data Science,엑셀로 배우는 데이터 전처리,Basic,2.3,"1,697",3.6,AIX,AI/Data Development
+AI,Data Science,[코세라] Exploring and Producing Data for Business Decision Making (Univ. of Illinois),Basic,5.6,299,3.1,AIX,AI/Data Development
+AI,Data Science,[코세라] Data-driven Decision Making (PwC),Basic,2.6,213,3.1,AIX,AI/Data Development
+AI,Data Science,[코세라] Data Visualization (Univ. of Illinois),Basic,6,440,2.9,AIX,AI/Data Development
+AI,Data Science,[코세라] Customer Analytics (Wharton),Basic,4.7,"11,042",2.4,AIX,AI/Data Development
+AI,Data Science,[코세라] Business Metrics for Data-Driven Companies (Duke),Basic,3.8,"10,591",2.4,AIX,AI/Data Development
+AI,Data Science,[코세라] Introduction to Data Science in Python (Univ. of Michigan),Basic,2.7,327,2.9,AIX,AI/Data Development
+AI,Data Science,[코세라] Graph Analytics for Big Data (UCSD),Basic,4.4,797,2.8,AIX,AI/Data Development
+AI,Data Science,Hello! Python,Basic,7.3,"30,735",3.4,AIX,AI/Data Development
+AI,Data Science,Data로 생각하는 인재되기 (16가지 역량),Basic,3.2,"36,393",3.4,AIX,AI/Data Development
+AI,Data Science,Customer Measure & Analytics 기본,Basic,2.6,"32,489",3.9,AIX,AI/Data Development
+AI,Data Science,[코세라] Inferential and Predictive Statistics for Business (Univ. of illinois),Basic,5.1,302,3.1,AIX,AI/Data Development
+AI,Data Science,[AI수학 #1] 선형대수 기초,Intermediate,3.7,"1,520",3.5,AIX,AI/Data Development
+AI,Data Science,[AI수학 #2] 확률통계 기초,Intermediate,4.4,"2,439",3.8,AIX,AI/Data Development
+AI,Literacy,Cloud 입문 A to Z,Basic,0.4,"36,064",4,Cloud/Infra Engneering,System/Network Engineering
+AI,Literacy,Big Data 입문 A to Z,Basic,0.5,"35,230",4,AIX,AI/Data Development
+AI,Literacy,[ Module III-② ] 생성형 AI로 차별화된 PPT 제작비법,Basic,1,"7,913",4.1,AIX,Generative AI Development
+AI,Literacy,[ Module II-① ] 프롬프트 엔지니어링 - 기본 가이드,Basic,1.7,"10,866",4.1,AIX,Generative AI Development
+AI,Literacy,[ Module II-② ] 프롬프트 엔지니어링 - 활용 가이드,Basic,1.7,"9,165",4.2,AIX,Generative AI Development
+AI,Literacy,[ Module III-① ] ChatGPT를 활용한 엑셀 자동화,Basic,1.1,"8,181",4.1,AIX,Generative AI Development
+AI,Literacy,[ Module I-① ] 생성형 AI의 이해와 전망,Basic,1,"17,357",4.3,AIX,Generative AI Development
+AI,Literacy,"[ Module I-② ] ChatGPT, LLM의 작동 원리",Basic,2,"14,579",4.2,AIX,Generative AI Development
+AI,Literacy,[ Module II-③ ] 프롬프트 엔지니어링 - 마스터 가이드,Basic,2.6,"8,237",4.2,AIX,Generative AI Development
+AI,Literacy,[ Module III-③ ] 생성형AI 200% 활용하기,Basic,2.2,"7,780",4.2,AIX,Generative AI Development
+AI,Literacy,[자료] Prompt Cheat Sheet,Basic,3,845,,AIX,Generative AI Development
+DT,Software,[Elice] 도레미 파이썬 Vol.1,Basic,16,"2,377",3.8,Software Development,Back-end Development
+DT,Software,[Elice] 도레미 파이썬 Vol.2,Basic,16,"1,330",3.7,Software Development,Back-end Development
+DT,Software,[Elice] R 프로그래밍 기초,Basic,16,366,3.3,Software Development,Back-end Development
+DT,Software,"가장 쉽게 배우는 MLOps, 기초부터 ML서비스까지!",Intermediate,9.3,113,4.2,Software Development,Back-end Development
+DT,Software,[Elice] 리눅스 기초,Basic,16,537,4.1,Software Development,Back-end Development
+DT,Software,[Elice] SQL 기초,Basic,16,"1,032",4.2,Software Development,Back-end Development
+DT,Software,[Elice] Spring 프레임워크 입문,Intermediate,16,505,3.8,Software Development,Back-end Development
+DT,Software,[Elice] Git을 사용한 버전 관리,Basic,16,589,4,Software Development,Back-end Development
+DT,Software,"Bigdata 분석을 위한 Python 이해와 활용 4 (Advanced Python Function, Exception Handling, Classes and Objects)",Intermediate,1.6,898,3.5,AIX,AI/Data Development
+DT,Software,Bigdata 분석을 위한 Python 이해와 활용 3 (Collections Data Type - List/Tuple/Set/Dictionary),Intermediate,2.8,"1,002",3.5,AIX,AI/Data Development
+DT,Software,"Bigdata 분석을 위한 Python 이해와 활용 2 (Python Functions, Decision Making, Repeating Code, Iteration)",Intermediate,1.9,"1,300",3.5,AIX,AI/Data Development
+DT,Software,"Bigdata 분석을 위한 Python 이해와 활용 1 (Why Python, Variables & Data Types, String Methods, Math Functions)",Intermediate,2.7,"2,462",3.4,AIX,AI/Data Development
+DT,Software,Hello ! Python  Essentials,Basic,4.1,"19,254",3.8,Software Development,Back-end Development
+DT,Software,Automation Anywhere RPA 기초,Intermediate,10.4,659,4.1,Software Development,Back-end Development
+DT,Software,피그마로 UI/UX 마스터하기,Basic,11.4,55,4.1,Software Development, Front-end Development
+DT,Cloud,"가장 쉽게 배우는 AWS, 기초부터 실무까지",Basic,8.9,146,4.1,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,차이를 만드는 AWS 클라우드 보안 첫걸음,Basic,4.6,73,4.1,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,뜬구름 잡지 말고 클라우드 제대로 이해하기,Basic,4.3,126,4.2,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,MS Azure 입문,Basic,2.9,76,4,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,도커/쿠버네티스의 비즈니스 활용 ,Basic,1.2,62,4,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,실무까지 한번에 끝내는 DevOps: Docker 1탄,Basic,8.4,84,4.1,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,실무까지 한번에 끝내는 DevOps: Docker 2탄,Basic,8.8,61,4.2,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,실무까지 한번에 끝내는 DevOps: Kubernetes 1탄,Basic,6.4,68,4.2,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,실무까지 한번에 끝내는 DevOps: Kubernetes 2탄,Basic,5.9,65,4.2,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,실무까지 한번에 끝내는 DevOps: Kubernetes 3탄,Basic,5.3,53,4.2,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,"Cloud Technical Essentials (Feat. Azure) 1: Azure 둘러보기, 가상서버 만들기",Intermediate,1.4,"2,412",,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,"Cloud Technical Essentials (Feat. Azure) 2:  Azure Functions 이해, Azure 스토리지 활용 및 데이터 백업/마이그레이션 방법",Intermediate,1.8,"1,695",,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,"Cloud Technical Essentials (Feat. Azure) 3: Azure VNET 생성, 부하분산 서비스 이해,  Azure DevOps 환경 ",Intermediate,2.8,"1,452",,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,"Cloud Technical Essentials (Feat. Azure) 4: Azure 모니터링/거버넌스/보안의 이해와 활용, Azure + 인공지능/IoT/블록체인",Intermediate,1.8,"1,437",,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,"[코세라] Cloud Computing Concepts, Part 1 (UIUC)",Basic,11.4,"2,021",2.7,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,[코세라] Cloud Computing Concepts: Part 2 (UIUC),Basic,9,"1,471",2.8,Cloud/Infra Engneering,System/Network Engineering
+DT,Cloud,[코세라] Cloud Networking (UIUC),Basic,8.3,"1,363",2.8,Cloud/Infra Engneering,System/Network Engineering
+일하는 방식,프로젝트 관리,"데이터 기반 고객경험 설계 방법론,  DCX 프레임워크",Basic,3,455,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,생성형 AI시대 고객이 바뀐다. 고객의 좌표가 이동한다.,Basic,3.1,703,4.3,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,"고객가치관점의 사업전략, 어떻게 수립하나요?",Basic,1,47,4.3,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,"기업의 가치 창출 시스템, 어떻게 한 눈에 볼 수 있을까요?",Basic,1,47,4.3,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,"비즈니스 모델의 성공 요소, 어떻게 검증할 수 있을까요?",Basic,1,54,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,내 제품/기술의 가치를 알고 신사업 구상하기,Advanced,1.6,55,4.3,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,"고객 Needs, 왜 알아야 할까?",Basic,0.7,49,4.3,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,"고객 Needs, 고객 가치와 연결하기",Intermediate,1.3,74,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,고객 리서치를 통한 고객 공감 업그레이드!,Advanced,4.7,50,4.3,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,고객과 시장을 사로잡는 Project Agenda 작성하기,Basic,5.9,20,4.3,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,내 업무의 고객 가치를 높이는 고객 경험 디자인,Advanced,4.5,16,4.1,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,고객 문제에 집중하여 고객 중심 제품/기술 개발하기,Intermediate,1.7,145,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,리스크를 최소화하고 고객을 확보하는 MVP,Intermediate,1.7,79,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,처음부터 끝까지 고객에 집중하는 워킹백워드 프로세스 ,Intermediate,4,92,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,"빠르고 유연하게, 스크럼 프레임워크",Intermediate,1.4,66,4.1,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,"내 업무의 모든 것, 업무 정체 파악하기",Intermediate,2.2,249,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,성공적 의사결정을 위한 리스크 관리 전략 ,Advanced,1,89,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,"리스크, 전략적으로 관리하자. ",Advanced,2.4,66,4.3,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,프로젝트 성패를 좌우하는 탄탄한 리스크 관리 기법,Basic,1.8,72,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,문제를 미리 방지하는 리스크 관리 개념과 실습 ,Intermediate,7,32,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,"가장 가까운 고객, 구성원을 통해 효율 key 찾기",Basic,2.9,174,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,프로세스 맵핑으로 효율을 위한 지도 그리기,Intermediate,1.5,195,4.2,Project Management,"Application PM, Infra PM, Solution PM"
+일하는 방식,프로젝트 관리,네 탓? 내 탓? 업무 선후관계 파악을 통한 프로세스 개선,Intermediate,1.9,99,4.2,Project Management,"Application PM, Infra PM, Solution PM"

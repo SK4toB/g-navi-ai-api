@@ -1,4 +1,4 @@
-# csv_to_vector_and_docs.py
+# careerhistory_data_processor.py
 # csv 파일을 읽어 경력 데이터를 그룹핑하고 docs과 vectordb를 한번에 생성하는 도구
 
 """

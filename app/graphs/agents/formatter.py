@@ -60,6 +60,29 @@ class ResponseFormattingAgent:
    - 사용자가 "무작위로", "최근 사례를", "구성원 사례를" 요청하면 제공된 사례들을 적극 활용
    - 각 사례의 고유한 특징과 인사이트를 상세히 설명
 
+**📚 교육과정 추천 활용 의무사항 (매우 중요!):**
+⚠️ 교육과정 정보가 제공된 경우 반드시 활용해야 합니다.
+
+1. **교육과정 숨김 절대 금지**:
+   - "교육과정 정보를 제공할 수 없습니다", "접근 권한이 없습니다" 같은 핑계 절대 금지
+   - 제공된 모든 교육과정 정보는 공개 승인된 사내 정보입니다
+
+2. **구체적 교육과정 정보 제공**:
+   - 과정명, 플랫폼(SKALA College/mySUNI), 학습시간, 평점 등 구체적 정보 직접 언급
+   - "OO 과정(SKALA College, 40시간)" 또는 "OO 과정(mySUNI, 4.8점/5.0)" 형태로 명시
+
+3. **학습 경로 제시**:
+   - 단계별 학습 순서와 각 과정의 목적을 명확히 설명
+   - 기초 → 응용 → 전문화 순서로 체계적 학습 경로 제안
+
+4. **플랫폼별 특징 설명**:
+   - SKALA College: 집합교육, 전문화 과정, 실습 중심
+   - mySUNI: 온라인 자율학습, 평점 시스템, 언제든 수강 가능
+
+5. **교육과정 요청 시 필수 대응**:
+   - "교육", "학습", "스킬 향상", "과정 추천" 요청 시 반드시 구체적 과정 정보 제공
+   - College와 mySUNI 옵션을 모두 제시하여 사용자가 선택할 수 있도록
+
 **중요 규칙:**
 - 모든 응답(분석, 전략, 최종 답변 등)은 반드시 한국어로 작성해야 합니다.
 - 영어, 혼합어, 번역체가 아닌 자연스러운 한국어로 작성하세요.
@@ -555,6 +578,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             career_cases = state.get("career_cases", [])
             external_trends = state.get("external_trends", [])
             chat_history = state.get("chat_history_results", [])
+            education_courses = state.get("education_courses", {})  # 교육과정 정보 추가
             
             # 사용자 정보 추출
             user_name = user_data.get('name', '님')
@@ -563,7 +587,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             # LLM을 위한 컨텍스트 구성
             context_data = self._prepare_context_for_llm(
                 user_question, intent_analysis, 
-                user_data, career_cases, external_trends, chat_history
+                user_data, career_cases, external_trends, chat_history, education_courses
             )
             
             # LLM 호출하여 적응적 응답 생성
@@ -590,8 +614,8 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
     def _prepare_context_for_llm(self, user_question: str, intent_analysis: Dict[str, Any],
                                 user_data: Dict[str, Any],
                                 career_cases: List[Any], external_trends: List[Dict],
-                                chat_history: List[Any]) -> str:
-        """LLM을 위한 컨텍스트 데이터 준비 (빈 데이터 필터링 개선, 추천 생성 단계 제거)"""
+                                chat_history: List[Any], education_courses: Dict[str, Any] = None) -> str:
+        """LLM을 위한 컨텍스트 데이터 준비 (빈 데이터 필터링 개선)"""
         
         context_sections = []
         
@@ -672,6 +696,12 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             # 실제로 추가된 트렌드가 있는 경우만 컨텍스트에 포함
             if added_trends > 0:
                 context_sections.append(trend_section)
+        
+        # 교육과정 정보 - 새로 추가
+        if education_courses and self._has_meaningful_education_data(education_courses):
+            education_section = self._format_education_courses_for_llm(education_courses)
+            if education_section.strip():
+                context_sections.append(education_section)
         
         # 대화 히스토리 - 의미 있는 데이터만 포함
         meaningful_history = self._filter_meaningful_chat_history(chat_history)
@@ -1365,3 +1395,190 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             self.logger.warning(f"상세 커리어 사례 마크다운 생성 실패: {e}")
             # 폴백: 기본 방식 사용
             return self._dict_to_markdown(case, show_empty=show_empty)
+    
+    def _has_meaningful_education_data(self, education_courses: Dict[str, Any]) -> bool:
+        """교육과정 데이터에 의미 있는 정보가 있는지 확인"""
+        if not education_courses:
+            return False
+        
+        # 추천 교육과정이 있는지 확인
+        recommended_courses = education_courses.get("recommended_courses", [])
+        if recommended_courses and len(recommended_courses) > 0:
+            return True
+        
+        # 학습 경로가 있는지 확인
+        learning_path = education_courses.get("learning_path", [])
+        if learning_path and len(learning_path) > 0:
+            return True
+        
+        return False
+    
+    def _format_education_courses_for_llm(self, education_courses: Dict[str, Any]) -> str:
+        """교육과정 정보를 LLM용 텍스트로 포맷팅"""
+        if not education_courses:
+            return ""
+        
+        sections = []
+        
+        # 교육과정 분석 정보
+        course_analysis = education_courses.get("course_analysis", {})
+        recommended_courses = education_courses.get("recommended_courses", [])
+        learning_path = education_courses.get("learning_path", [])
+        
+        if not recommended_courses and not learning_path:
+            return ""
+        
+        sections.append("📚 **추천 교육과정 (SKALA College + mySUNI)**:")
+        sections.append("**⚠️ 중요 사항: 다음은 실제 사내 교육과정 정보입니다.**")
+        sections.append("**사용자가 교육, 학습, 스킬 향상을 요청하는 경우 반드시 아래 과정들을 직접 활용하세요!**\n")
+        
+        # 추천 교육과정 상세 정보
+        if recommended_courses:
+            sections.append("### 🎯 **추천 교육과정 목록:**")
+            
+            for i, course in enumerate(recommended_courses[:8], 1):  # 최대 8개
+                course_info = self._format_single_course(course, i)
+                if course_info.strip():
+                    sections.append(course_info)
+        
+        # 학습 경로 정보
+        if learning_path:
+            sections.append("\n### 📈 **단계별 학습 경로:**")
+            for step in learning_path:
+                step_info = self._format_learning_step(step)
+                if step_info.strip():
+                    sections.append(step_info)
+        
+        # 교육과정 분석 통계
+        if course_analysis and isinstance(course_analysis, dict):
+            sections.append("\n### 📊 **교육과정 분석:**")
+            
+            total_courses = course_analysis.get("total_courses", 0)
+            college_courses = course_analysis.get("college_courses", 0)
+            mysuni_courses = course_analysis.get("mysuni_courses", 0)
+            
+            if total_courses > 0:
+                sections.append(f"- **총 추천 과정**: {total_courses}개")
+                sections.append(f"- **SKALA College**: {college_courses}개")
+                sections.append(f"- **mySUNI**: {mysuni_courses}개")
+            
+            # 스킬 깊이 분석
+            skill_analysis = course_analysis.get("skill_depth_analysis", {})
+            if skill_analysis:
+                specialized = skill_analysis.get("specialized", 0)
+                recommended = skill_analysis.get("recommended", 0)
+                common_required = skill_analysis.get("common_required", 0)
+                
+                if specialized + recommended + common_required > 0:
+                    sections.append(f"- **전문화 과정**: {specialized}개")
+                    sections.append(f"- **추천 과정**: {recommended}개")
+                    sections.append(f"- **기초/필수 과정**: {common_required}개")
+            
+            # mySUNI 품질 지표
+            mysuni_metrics = course_analysis.get("mysuni_quality_metrics", {})
+            if mysuni_metrics:
+                avg_rating = mysuni_metrics.get("average_rating", 0)
+                total_enrollments = mysuni_metrics.get("total_enrollments", 0)
+                high_rated = mysuni_metrics.get("high_rated_courses", 0)
+                
+                if avg_rating > 0:
+                    sections.append(f"- **mySUNI 평균 평점**: {avg_rating}/5.0")
+                if total_enrollments > 0:
+                    sections.append(f"- **총 이수자 수**: {total_enrollments:,}명")
+                if high_rated > 0:
+                    sections.append(f"- **고평점 과정**: {high_rated}개 (4.5점 이상)")
+        
+        sections.append("\n**🚨 교육과정 활용 규칙 (매우 중요!):**")
+        sections.append("1. **과정 숨김 금지**: '교육과정을 제공할 수 없습니다' 같은 핑계 절대 금지!")
+        sections.append("2. **구체적 활용**: 과정명, 학습시간, 플랫폼, 평점 등 구체적 정보 직접 언급")
+        sections.append("3. **학습 경로 제시**: 단계별 학습 순서와 각 과정의 목적 설명")
+        sections.append("4. **플랫폼 선택권**: College와 mySUNI 옵션을 모두 제시하여 사용자가 선택하도록")
+        
+        return "\n".join(sections)
+    
+    def _format_single_course(self, course: Dict[str, Any], index: int) -> str:
+        """개별 교육과정 정보 포맷팅"""
+        if not course:
+            return ""
+        
+        lines = []
+        course_name = course.get("course_name", course.get("card_name", ""))
+        source = course.get("source", "")
+        
+        if not course_name:
+            return ""
+        
+        lines.append(f"**{index}. {course_name}**")
+        
+        # 플랫폼 정보
+        if source == "college":
+            lines.append(f"   - **플랫폼**: SKALA College")
+            lines.append(f"   - **학부**: {course.get('학부', course.get('department', 'N/A'))}")
+            lines.append(f"   - **과정유형**: {course.get('표준과정', 'N/A')}")
+            lines.append(f"   - **학습시간**: {course.get('duration_hours', 'N/A')}시간")
+            
+            # 전문성 수준
+            skill_relevance = course.get('skill_relevance', '')
+            if skill_relevance == "specialized":
+                lines.append(f"   - **수준**: 전문화 과정")
+            elif skill_relevance == "recommended":
+                lines.append(f"   - **수준**: 추천 과정")
+            elif skill_relevance == "common_required":
+                lines.append(f"   - **수준**: 기초/필수 과정")
+            
+            # mySUNI 대안 정보
+            mysuni_alt = course.get("mysuni_alternative", {})
+            if mysuni_alt.get("available"):
+                lines.append(f"   - **mySUNI 대안**: {mysuni_alt.get('card_name', '')} (평점: {mysuni_alt.get('평점', 'N/A')}/5.0)")
+                
+        elif source == "mysuni":
+            lines.append(f"   - **플랫폼**: mySUNI")
+            lines.append(f"   - **카테고리**: {course.get('카테고리명', '')} > {course.get('채널명', '')}")
+            lines.append(f"   - **난이도**: {course.get('난이도', course.get('difficulty_level', 'N/A'))}")
+            lines.append(f"   - **학습시간**: {course.get('인정학습시간', course.get('duration_hours', 'N/A'))}시간")
+            
+            # 평점과 이수자 수
+            rating = course.get('평점', 0)
+            enrollments = course.get('이수자수', '0')
+            if rating and rating > 0:
+                lines.append(f"   - **평점**: {rating}/5.0 ({enrollments}명 이수)")
+            
+            lines.append(f"   - **학습방식**: 온라인 자율학습")
+        
+        # 대상 스킬
+        target_skills = course.get('target_skills', [])
+        if target_skills:
+            lines.append(f"   - **대상 스킬**: {', '.join(target_skills[:3])}")  # 최대 3개만 표시
+        
+        return "\n".join(lines)
+    
+    def _format_learning_step(self, step: Dict[str, Any]) -> str:
+        """학습 경로 단계 포맷팅"""
+        if not step:
+            return ""
+        
+        lines = []
+        step_num = step.get("step", "")
+        level = step.get("level", "")
+        description = step.get("description", "")
+        courses = step.get("courses", [])
+        
+        if step_num == "보완":
+            lines.append(f"**🔄 {step_num} - {level}**")
+        else:
+            lines.append(f"**📚 {step_num}단계 - {level}**")
+        
+        if description:
+            lines.append(f"   {description}")
+        
+        if courses:
+            lines.append(f"   **추천 과정 ({len(courses)}개):**")
+            for i, course in enumerate(courses[:3], 1):  # 최대 3개
+                course_name = course.get("course_name", course.get("card_name", ""))
+                source = course.get("source", "")
+                duration = course.get("duration_hours", course.get("인정학습시간", "N/A"))
+                
+                platform = "SKALA College" if source == "college" else "mySUNI"
+                lines.append(f"   {i}. {course_name} ({platform}, {duration}시간)")
+        
+        return "\n".join(lines)
