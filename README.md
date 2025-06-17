@@ -16,9 +16,10 @@ G.Navi는 **AgentRAG(Agent-based Retrieval Augmented Generation)** 아키텍처�
 
 ### 🎯 핵심 특징
 - **4단계 AgentRAG 워크플로우**로 구조화된 추론 과정
-- **LangGraph 기반** 상태 관리 및 워크플로우 엔진
+- **LangGraph + MemorySaver 기반** 상태 관리 및 대화 지속성
 - **실제 커리어 사례** 기반 추천 시스템
 - **적응적 응답 포맷팅**으로 사용자 맞춤형 출력
+- **대화 연속성 지원**으로 맥락을 유지하는 멀티턴 대화
 
 ## 시스템 아키텍처
 
@@ -33,7 +34,7 @@ graph TB
     subgraph "🧠 G.Navi AgentRAG Core"
         D[ChatService]
         E[ChatGraphBuilder]
-        F[LangGraph Workflow]
+        F[LangGraph Workflow + MemorySaver]
     end
     
     subgraph "🔧 AI Agents"
@@ -46,7 +47,7 @@ graph TB
         K[(ChromaDB VectorStore)]
         L[CSV Career Data]
         M[External Trends API]
-        N[Chat History JSON]
+        N[Education Courses Data]
     end
     
     subgraph "🤖 LLM Services"
@@ -80,7 +81,7 @@ G.Navi의 핵심인 **4단계 AgentRAG 워크플로우**는 다음과 같습니�
 ```mermaid
 flowchart TD
     Start([사용자 질문 입력]) --> Check{메시지 확인}
-    Check -->|메시지 있음| Step1[1️⃣ 과거 대화내역 검색]
+    Check -->|메시지 있음| Step1[1️⃣ 현재 세션 대화내역 관리]
     Check -->|메시지 없음| Wait[⏳ 대기 상태]
     
     Step1 --> Step2[2️⃣ 의도 분석 및 상황 이해]
@@ -89,24 +90,33 @@ flowchart TD
     Step4 --> End([최종 응답 반환])
     Wait --> End
     
+    subgraph "Step1 Details"
+        Step1A[MemorySaver에서<br/>이전 대화 복원]
+        Step1B[현재 메시지<br/>대화 내역에 추가]
+    end
+    
     subgraph "Step3 Details"
         Step3A[커리어 사례 검색<br/>BM25 + Embedding 앙상블]
         Step3B[외부 트렌드 검색<br/>Tavily API]
+        Step3C[교육과정 정보<br/>검색 및 추천]
     end
     
+    Step1 --> Step1A
+    Step1 --> Step1B
     Step3 --> Step3A
     Step3 --> Step3B
+    Step3 --> Step3C
 ```
 
 ### 📊 각 단계별 상세 설명
 
-| 단계 | 담당 Agent | 주요 기능 | 출력 |
-|------|------------|-----------|------|
+| 단계 | 담당 Node | 주요 기능 | 출력 |
+|------|-----------|-----------|------|
 | **0단계** | MessageCheckNode | 메시지 유무 확인 및 상태 초기화 | 조건부 분기 |
-| **1단계** | CareerEnsembleRetriever | 사용자별 과거 대화내역 검색 | `chat_history_results` |
-| **2단계** | IntentAnalysisAgent | 질문 의도 분석 및 상황 파악 | `intent_analysis` |
-| **3단계** | CareerEnsembleRetriever | 유사 커리어 사례 + 트렌드 검색 | `career_cases`, `external_trends` |
-| **4단계** | ResponseFormattingAgent | 질문 유형별 적응적 응답 생성 | `final_response` |
+| **1단계** | ChatHistoryNode | MemorySaver 기반 현재 세션 대화 관리 | `current_session_messages` |
+| **2단계** | IntentAnalysisNode | 질문 의도 분석 및 상황 파악 | `intent_analysis` |
+| **3단계** | DataRetrievalNode | 커리어 사례 + 트렌드 + 교육과정 검색 | `career_cases`, `external_trends`, `education_courses` |
+| **4단계** | ResponseFormattingNode | 질문 유형별 적응적 응답 생성 | `final_response` |
 
 ## 핵심 컴포넌트
 
@@ -116,13 +126,16 @@ class ChatGraphBuilder:
     """G.Navi AgentRAG 시스템의 LangGraph 빌더"""
     
     async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any]):
-        # 4단계 노드 구성 (추천 생성 단계 제거)
+        # 4단계 노드 구성 + MemorySaver 통합
         workflow.add_node("message_check", self.message_check_node.create_node())
-        workflow.add_node("retrieve_chat_history", self.chat_history_node.retrieve_chat_history_node)
+        workflow.add_node("manage_session_history", self.chat_history_node.retrieve_chat_history_node)
         workflow.add_node("analyze_intent", self.intent_analysis_node.analyze_intent_node)
         workflow.add_node("retrieve_additional_data", self.data_retrieval_node.retrieve_additional_data_node)
         workflow.add_node("format_response", self.response_formatting_node.format_response_node)
         workflow.add_node("wait_state", self.wait_node.create_node())
+        
+        # MemorySaver를 통한 대화 지속성 보장
+        compiled_graph = workflow.compile(checkpointer=self.memory_saver)
 ```
 
 ### 🔍 CareerEnsembleRetriever (`app/graphs/agents/retriever.py`)
@@ -142,23 +155,27 @@ class ChatGraphBuilder:
 - **마크다운 → HTML 변환**
 - **동적 콘텐츠 구성**: 사용자 요청에 맞는 최적화된 응답
 - **실제 커리어 사례 통합**: 검색된 사례를 활용한 구체적 조언 제공
+- **대화 연속성**: 이전 대화 맥락을 고려한 응답 생성
 
 ## 데이터 플로우
 
 ### 📊 ChatState 구조
 ```python
-class ChatState(TypedDict):
-    # 입력 데이터
+class ChatState(TypedDict, total=False):  # 선택적 필드 허용
+    # 입력 데이터 (필수)
     user_question: str
     user_data: Dict[str, Any]
     session_id: str
     
-    # 4단계 처리 결과 (추천 생성 단계 제거)
-    chat_history_results: List[Any]      # 1단계
-    intent_analysis: Dict[str, Any]       # 2단계
-    career_cases: List[Any]              # 3단계
-    external_trends: List[Dict]          # 3단계
-    final_response: Dict[str, Any]        # 4단계
+    # 대화 내역 관리 (MemorySaver가 자동 관리)
+    current_session_messages: List[Dict[str, str]]  # role, content, timestamp
+    
+    # 4단계 처리 결과
+    intent_analysis: Dict[str, Any]       # 2단계: 의도 분석
+    career_cases: List[Any]              # 3단계: 커리어 사례
+    external_trends: List[Dict]          # 3단계: 외부 트렌드
+    education_courses: Dict[str, Any]    # 3단계: 교육과정 추천
+    final_response: Dict[str, Any]        # 4단계: 최종 응답
     
     # 메타데이터
     processing_log: List[str]
@@ -173,28 +190,37 @@ sequenceDiagram
     participant API as FastAPI
     participant Service as ChatService
     participant Graph as LangGraph
-    participant Agents as AI Agents
+    participant MemorySaver as MemorySaver
+    participant Nodes as 노드들
     participant LLM as GPT-4o
     
     User->>API: POST /chatroom/{id}/messages
     API->>Service: send_message()
     Service->>Graph: ainvoke(ChatState)
     
+    Graph->>MemorySaver: 이전 세션 상태 복원
+    MemorySaver-->>Graph: current_session_messages 복원
+    
     Graph->>Graph: 0️⃣ message_check (조건부 분기)
     
-    Graph->>Agents: 1️⃣ retrieve_chat_history
-    Graph->>Agents: 2️⃣ analyze_intent
-    Agents->>LLM: 의도 분석 요청
-    LLM-->>Agents: JSON 구조 응답
+    Graph->>Nodes: 1️⃣ manage_session_history
+    Note over Nodes: 현재 메시지를 대화 내역에 추가
     
-    Graph->>Agents: 3️⃣ retrieve_additional_data
-    Agents->>ChromaDB: 커리어 사례 검색
-    Agents->>Tavily: 외부 트렌드 검색
+    Graph->>Nodes: 2️⃣ analyze_intent
+    Nodes->>LLM: 의도 분석 요청
+    LLM-->>Nodes: JSON 구조 응답
     
-    Graph->>Agents: 4️⃣ format_response
-    Agents->>LLM: 적응적 포맷팅 (커리어 사례 포함)
-    LLM-->>Agents: 최종 마크다운 응답
+    Graph->>Nodes: 3️⃣ retrieve_additional_data
+    Nodes->>ChromaDB: 커리어 사례 검색
+    Nodes->>Tavily: 외부 트렌드 검색
+    Nodes->>System: 교육과정 정보 검색
     
+    Graph->>Nodes: 4️⃣ format_response
+    Nodes->>LLM: 적응적 포맷팅 (이전 대화 참조 + 사례 포함)
+    LLM-->>Nodes: 최종 마크다운 응답
+    Note over Nodes: AI 응답을 current_session_messages에 추가
+    
+    Graph->>MemorySaver: 업데이트된 상태 저장 (대화 내역 포함)
     Graph-->>Service: ChatState 결과
     Service-->>API: 문자열 응답
     API-->>User: JSON Response
@@ -207,18 +233,18 @@ sequenceDiagram
 app/
 ├── graphs/
 │   ├── __init__.py
-│   ├── graph_builder.py          # LangGraph 워크플로우 빌더
-│   ├── state.py                  # ChatState 정의
+│   ├── graph_builder.py          # LangGraph 워크플로우 빌더 + MemorySaver
+│   ├── state.py                  # ChatState 정의 (대화 지속성 지원)
 │   ├── agents/                   # AI 에이전트들
 │   │   ├── retriever.py         # 커리어 데이터 검색
 │   │   ├── analyzer.py          # 의도 분석
-│   │   └── formatter.py         # 응답 포맷팅
+│   │   └── formatter.py         # 응답 포맷팅 (대화 맥락 포함)
 │   └── nodes/                    # LangGraph 노드들 (모듈화)
 │       ├── message_check.py     # 메시지 확인 노드
-│       ├── chat_history.py      # 대화내역 검색 노드
+│       ├── chat_history.py      # 현재 세션 대화 관리 노드 (MemorySaver 연동)
 │       ├── intent_analysis.py   # 의도 분석 노드
 │       ├── data_retrieval.py    # 추가 데이터 검색 노드
-│       ├── response_formatting.py # 응답 포맷팅 노드
+│       ├── response_formatting.py # 응답 포맷팅 노드 (대화 연속성 지원)
 │       └── wait_node.py         # 대기 상태 노드
 ├── services/
 │   └── chat_service.py          # 채팅 서비스 로직
@@ -238,11 +264,16 @@ app/
 G.Navi는 유지보수성과 확장성을 위해 각 처리 단계를 독립적인 노드 클래스로 분리했습니다:
 
 - **`MessageCheckNode`**: 메시지 유무 확인 및 상태 초기화
-- **`ChatHistoryNode`**: 사용자별 과거 대화내역 검색
+- **`ChatHistoryNode`**: MemorySaver 기반 현재 세션 대화 내역 관리
 - **`IntentAnalysisNode`**: LLM 기반 의도 분석 및 상황 파악
-- **`DataRetrievalNode`**: 커리어 사례 및 외부 트렌드 검색
-- **`ResponseFormattingNode`**: 적응적 응답 포맷팅 및 HTML 변환
+- **`DataRetrievalNode`**: 커리어 사례, 외부 트렌드, 교육과정 검색
+- **`ResponseFormattingNode`**: 적응적 응답 포맷팅 및 HTML 변환 (이전 대화 참조)
 - **`WaitNode`**: 메시지 대기 상태 처리
+
+### 🧠 MemorySaver 기반 대화 지속성
+- **자동 상태 복원**: thread_id 기반으로 이전 대화 자동 복원
+- **세션 관리**: `current_session_messages`를 통한 대화 내역 지속성
+- **컨텍스트 인식**: LLM이 이전 대화를 참조하여 연속성 있는 응답 생성
 
 각 노드는 독립적으로 테스트 가능하며, 새로운 처리 단계를 쉽게 추가할 수 있는 구조입니다.
 
@@ -254,7 +285,7 @@ G.Navi는 유지보수성과 확장성을 위해 각 처리 단계를 독립적�
 - **Uvicorn**: ASGI 서버
 
 ### 🤖 AI/ML Stack
-- **LangGraph**: 워크플로우 오케스트레이션
+- **LangGraph**: 워크플로우 오케스트레이션 + MemorySaver
 - **LangChain**: LLM 추상화 및 체이닝
 - **OpenAI GPT-4o**: 핵심 추론 엔진
 - **ChromaDB**: 벡터 데이터베이스
@@ -374,14 +405,15 @@ kubectl apply -f k8s/service.yaml
 - **토큰 사용량**: OpenAI API 비용 모니터링
 - **검색 정확도**: 커리어 사례 매칭 품질
 - **사용자 만족도**: 응답 품질 평가
+- **대화 연속성**: 멀티턴 대화의 맥락 유지 품질
 
 ### 📝 로깅 구조
 ```python
 # 처리 로그 예시
 processing_log = [
-    "과거 대화내역 검색 완료: 3개 (사용자: user123)",
+    "현재 세션 대화 내역 관리 완료: 3개",
     "의도 분석 및 상황 이해 완료",
-    "추가 데이터 검색 완료: 커리어 사례 5개, 트렌드 정보 3개",
+    "추가 데이터 검색 완료: 커리어 사례 5개, 트렌드 정보 3개, 교육과정 8개",
     "적응적 응답 포맷팅 완료 (유형: specific_consultation)",
     "1단계 처리 시간: 0.85초",
     "2단계 처리 시간: 2.34초",
@@ -392,4 +424,4 @@ processing_log = [
 
 ---
 
-> **G.Navi AI Agent**는 실제 사내 커리어 데이터와 AI의 추론 능력을 결합하여, 개인화되고 실행 가능한 커리어 조언을 제공하는 차세대 AI 컨설팅 시스템입니다.
+> **G.Navi AI Agent**는 실제 사내 커리어 데이터와 AI의 추론 능력을 결합하여, 개인화되고 실행 가능한 커리어 조언을 제공하는 차세대 AI 컨설팅 시스템입니다. MemorySaver 기반의 대화 지속성으로 사용자와의 자연스러운 멀티턴 대화를 지원합니다.
