@@ -19,7 +19,7 @@ class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허�
     career_cases: List[Any]                         # 3단계: 커리어 사례 검색
     external_trends: List[Dict[str, str]]           # 3단계: 트렌드 정보 검색
     education_courses: Dict[str, Any]               # 3단계: 교육과정 추천 결과 (새로 추가)
-    final_response: Dict[str, Any]                  # 4단계: 최종 응답
+    final_response: Dict[str, Any]                  # 4단계: 최종 응답 (적응적 포맷팅)
     
     # === 메타데이터 및 로깅 ===
     processing_log: List[str]                       # 처리 로그 추적

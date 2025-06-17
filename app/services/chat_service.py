@@ -10,7 +10,7 @@ from app.graphs.graph_builder import ChatGraphBuilder
 class ChatService:
     """
     G.Navi AgentRAG 채팅 서비스
-    5단계 워크플로우를 통한 커리어 컨설팅
+    4단계 워크플로우를 통한 커리어 컨설팅
     """
     
     def __init__(self):
@@ -54,7 +54,7 @@ class ChatService:
     
     async def send_message(self, conversation_id: str, member_id: str, message_text: str) -> str:
         """
-        G.Navi 메시지 처리 (5단계 AgentRAG 워크플로우)
+        G.Navi 메시지 처리 (4단계 AgentRAG 워크플로우)
         기존 시그니처 유지하되 내부는 G.Navi 방식으로 처리
         """
         print(f"G.Navi 메시지 처리: {conversation_id}")
@@ -94,7 +94,7 @@ class ChatService:
             print(f"G.Navi AgentRAG 실행 시작...")
             start_time = datetime.now()
             
-            # 전체 그래프 실행 (5단계 워크플로우)
+            # 전체 그래프 실행 (4단계 워크플로우)
             result = await graph.ainvoke(input_state, config)
             
             end_time = datetime.now()

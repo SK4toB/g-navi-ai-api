@@ -15,7 +15,7 @@ class MessageCheckNode:
         async def message_check_node(state: ChatState) -> ChatState:
             print("📝 메시지 확인 및 상태 초기화")
             
-            # 상태 초기화 (추천 생성 단계 제거)
+            # 상태 초기화
             state.setdefault("chat_history_results", [])
             state.setdefault("intent_analysis", {})
             state.setdefault("career_cases", [])

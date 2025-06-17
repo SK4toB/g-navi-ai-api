@@ -18,6 +18,7 @@ G.Navi는 **AgentRAG(Agent-based Retrieval Augmented Generation)** 아키텍처�
 - **4단계 AgentRAG 워크플로우**로 구조화된 추론 과정
 - **LangGraph + MemorySaver 기반** 상태 관리 및 대화 지속성
 - **실제 커리어 사례** 기반 추천 시스템
+- **회사 비전 및 가치 반영** 커리어 가이드 제공
 - **적응적 응답 포맷팅**으로 사용자 맞춤형 출력
 - **대화 연속성 지원**으로 맥락을 유지하는 멀티턴 대화
 
@@ -48,11 +49,12 @@ graph TB
         L[CSV Career Data]
         M[External Trends API]
         N[Education Courses Data]
+        O[Company Vision Data]
     end
     
     subgraph "🤖 LLM Services"
-        O[OpenAI GPT-4o]
-        P[OpenAI Embeddings]
+        P[OpenAI GPT-4o]
+        Q[OpenAI Embeddings]
     end
     
     A --> D
@@ -66,10 +68,11 @@ graph TB
     G --> L
     G --> M
     G --> N
+    G --> O
     
-    H --> O
-    I --> O
-    G --> P
+    H --> P
+    I --> P
+    G --> Q
 ```
 
 ## AgentRAG 워크플로우
@@ -115,7 +118,7 @@ flowchart TD
 | **0단계** | MessageCheckNode | 메시지 유무 확인 및 상태 초기화 | 조건부 분기 |
 | **1단계** | ChatHistoryNode | MemorySaver 기반 현재 세션 대화 관리 | `current_session_messages` |
 | **2단계** | IntentAnalysisNode | 질문 의도 분석 및 상황 파악 | `intent_analysis` |
-| **3단계** | DataRetrievalNode | 커리어 사례 + 트렌드 + 교육과정 검색 | `career_cases`, `external_trends`, `education_courses` |
+| **3단계** | DataRetrievalNode | 커리어 사례 + 트렌드 + 교육과정 + 회사 비전 검색 | `career_cases`, `external_trends`, `education_courses` |
 | **4단계** | ResponseFormattingNode | 질문 유형별 적응적 응답 생성 | `final_response` |
 
 ## 핵심 컴포넌트
@@ -142,6 +145,7 @@ class ChatGraphBuilder:
 - **BM25 + Embedding 앙상블 검색**
 - **ChromaDB** 벡터 스토어 활용
 - **Tavily API** 외부 트렌드 검색
+- **회사 비전 정보** 자동 통합
 - **캐시 기반 임베딩** 최적화
 
 ### 🧠 IntentAnalysisAgent (`app/graphs/agents/analyzer.py`)
@@ -152,6 +156,7 @@ class ChatGraphBuilder:
 ### 📝 ResponseFormattingAgent (`app/graphs/agents/formatter.py`)
 - **LLM 기반 적응적 포맷팅**
 - **질문 유형별 맞춤 응답**
+- **회사 비전 및 가치 반영** 커리어 가이드
 - **마크다운 → HTML 변환**
 - **동적 콘텐츠 구성**: 사용자 요청에 맞는 최적화된 응답
 - **실제 커리어 사례 통합**: 검색된 사례를 활용한 구체적 조언 제공
@@ -172,7 +177,7 @@ class ChatState(TypedDict, total=False):  # 선택적 필드 허용
     
     # 4단계 처리 결과
     intent_analysis: Dict[str, Any]       # 2단계: 의도 분석
-    career_cases: List[Any]              # 3단계: 커리어 사례
+    career_cases: List[Any]              # 3단계: 커리어 사례 (회사 비전 포함)
     external_trends: List[Dict]          # 3단계: 외부 트렌드
     education_courses: Dict[str, Any]    # 3단계: 교육과정 추천
     final_response: Dict[str, Any]        # 4단계: 최종 응답

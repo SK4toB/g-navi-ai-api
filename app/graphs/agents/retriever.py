@@ -64,10 +64,17 @@ class CareerEnsembleRetrieverAgent:
             "../../storage/docs/course_deduplication_index.json"
         ))
         
+        # 회사 비전 관련 추가 속성
+        self.company_vision_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/docs/company_vision.json"
+        ))
+        
         # 지연 로딩 속성
         self.education_vectorstore = None
         self.skill_education_mapping = None
         self.course_deduplication_index = None
+        self.company_vision_data = None
         
         self._load_vectorstore_and_retriever()
 
@@ -112,7 +119,7 @@ class CareerEnsembleRetrieverAgent:
             return []
         
         # 기본 검색 수행
-        all_docs = self.ensemble_retriever.get_relevant_documents(query)
+        all_docs = self.ensemble_retriever.invoke(query)
         
         # 최근 키워드 감지 및 연도 추출
         recent_keywords = ['최근', '최신', 'recent', '요즘', '지금', '현재', '새로운', '신규', '트렌드']
@@ -186,9 +193,25 @@ class CareerEnsembleRetrieverAgent:
                         continue
             
             self.logger.info(f"시간 필터링 완료: 전체 {len(all_docs)}개 → 필터링된 {len(filtered_docs)}개 문서")
-            return filtered_docs[:k]
+            final_docs = filtered_docs[:k]
+        else:
+            final_docs = all_docs[:k]
         
-        return all_docs[:k]
+        # 회사 비전 정보를 결과에 추가 (커리어 관련 질문인 경우)
+        career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직']
+        if any(keyword in query.lower() for keyword in career_keywords):
+            company_vision = self._load_company_vision()
+            if company_vision:
+                # 회사 비전을 Document 형태로 추가
+                vision_content = self._format_company_vision_for_context(company_vision)
+                vision_doc = Document(
+                    page_content=vision_content,
+                    metadata={"type": "company_vision", "source": "company_vision.json"}
+                )
+                final_docs.append(vision_doc)
+                self.logger.info("회사 비전 정보가 검색 결과에 추가되었습니다.")
+        
+        return final_docs
     
     def _extract_years_from_query(self, query: str) -> dict:
         """쿼리에서 연도 관련 정보 추출"""
@@ -433,6 +456,80 @@ class CareerEnsembleRetrieverAgent:
             self.logger.error(f"중복 제거 인덱스 로드 실패: {e}")
             self.course_deduplication_index = {}
     
+    def _load_company_vision(self):
+        """회사 비전 데이터 로드"""
+        if self.company_vision_data is not None:
+            return self.company_vision_data
+            
+        try:
+            if os.path.exists(self.company_vision_path):
+                with open(self.company_vision_path, "r", encoding="utf-8") as f:
+                    self.company_vision_data = json.load(f)
+                self.logger.info("회사 비전 데이터 로드 완료")
+            else:
+                self.company_vision_data = {}
+                self.logger.warning("회사 비전 파일이 없습니다.")
+        except Exception as e:
+            self.logger.error(f"회사 비전 데이터 로드 실패: {e}")
+            self.company_vision_data = {}
+        
+        return self.company_vision_data
+    
+    def _format_company_vision_for_context(self, vision_data: Dict) -> str:
+        """회사 비전 데이터를 컨텍스트용 텍스트로 포맷팅"""
+        if not vision_data:
+            return ""
+        
+        sections = []
+        
+        # 회사 기본 정보
+        if vision_data.get('company_name'):
+            sections.append(f"회사명: {vision_data['company_name']}")
+        
+        # 비전
+        if vision_data.get('vision'):
+            vision = vision_data['vision']
+            sections.append(f"비전: {vision.get('title', '')}")
+            if vision.get('description'):
+                sections.append(f"비전 설명: {vision['description']}")
+        
+        # 핵심 가치
+        if vision_data.get('core_values'):
+            values_text = []
+            for value in vision_data['core_values']:
+                values_text.append(f"- {value.get('name', '')}: {value.get('description', '')}")
+            if values_text:
+                sections.append("핵심 가치:\n" + "\n".join(values_text))
+        
+        # 전략 방향
+        if vision_data.get('strategic_directions'):
+            strategy_text = []
+            for direction in vision_data['strategic_directions']:
+                strategy_text.append(f"- {direction.get('category', '')}: {direction.get('description', '')}")
+            if strategy_text:
+                sections.append("전략 방향:\n" + "\n".join(strategy_text))
+        
+        # 인재 개발
+        if vision_data.get('talent_development'):
+            talent = vision_data['talent_development']
+            sections.append(f"인재 개발 철학: {talent.get('philosophy', '')}")
+            if talent.get('focus_areas'):
+                focus_text = []
+                for area in talent['focus_areas']:
+                    focus_text.append(f"- {area.get('area', '')}: {area.get('description', '')}")
+                if focus_text:
+                    sections.append("역량 개발 중점 영역:\n" + "\n".join(focus_text))
+        
+        # 커리어 가이드 원칙
+        if vision_data.get('career_guidance_principles'):
+            principles_text = []
+            for principle in vision_data['career_guidance_principles']:
+                principles_text.append(f"- {principle.get('principle', '')}: {principle.get('description', '')}")
+            if principles_text:
+                sections.append("커리어 가이드 원칙:\n" + "\n".join(principles_text))
+        
+        return "\n\n".join(sections)
+
     def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
         """교육과정 검색 메인 함수"""
         self._load_education_resources()

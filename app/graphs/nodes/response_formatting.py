@@ -19,10 +19,10 @@ class ResponseFormattingNode:
         self.logger = logging.getLogger(__name__)
 
     def format_response_node(self, state: ChatState) -> ChatState:
-        """5단계: 적응적 응답 포맷팅"""
+        """4단계: 적응적 응답 포맷팅"""
         start_time = datetime.now()
         try:
-            self.logger.info("=== 5단계: 적응적 응답 포맷팅 ===")
+            self.logger.info("=== 4단계: 적응적 응답 포맷팅 ===")
             
             final_response = self.response_formatting_agent.format_adaptive_response(
                 user_question=state.get("user_question", ""),
@@ -78,7 +78,7 @@ class ResponseFormattingNode:
             state["final_response"] = {"error": str(e)}
         
         processing_time = (datetime.now() - start_time).total_seconds()
-        state["processing_log"].append(f"5단계 처리 시간: {processing_time:.2f}초")
+        state["processing_log"].append(f"4단계 처리 시간: {processing_time:.2f}초")
         
         # 총 처리 시간 계산
         total_time = sum(

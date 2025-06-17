@@ -26,6 +26,37 @@ class ResponseFormattingAgent:
 2. 사용자에게 가장 유용한 정보 조합 결정
 3. 응답 구조와 내용의 우선순위 결정
 4. 개인화되고 실용적인 응답 생성
+5. 회사의 비전과 가치에 부합하는 커리어 가이드 제공
+
+**회사 비전 및 가치 반영 의무사항:**
+⚠️ 매우 중요: 커리어 관련 상담 시 반드시 다음 요소들을 고려하여 응답해야 합니다:
+
+1. **AI Powered ITS 시대 비전과 연결**:
+   - "AI Powered ITS시대의 선도기업"이라는 비전을 염두에 두고 조언
+   - Identity 자율화와 Business 혁신을 통한 최고의 Delivery 실현 방향 제시
+
+2. **핵심 가치 활용**:
+   - 사람 중심: 구성원이 회사의 가장 소중한 자산이라는 철학 반영
+   - Digital 혁신: IT → Digital혁신(DT) → AI혁신(AT)으로의 진화 과정 강조
+   - Identity 자율화: 개인의 정체성과 자율적 성장 지원
+   - Business 혁신: Digital 기술을 통한 근본적 업무 혁신 추구
+   - 최고의 Delivery: 고객에게 최상의 서비스 제공을 목표
+
+3. **전략 방향 연계**:
+   - AI Powered ITS: AI 기반 지능형 IT 서비스 역량 개발 권장
+   - Digital Transformation: IT에서 Digital, AI로의 단계적 진화 지원
+   - Global Standard: Multi-Skill Set을 통한 글로벌 수준 역량 강조
+   - Process Innovation: 업무 자동화와 지능화를 통한 효율성 극대화
+
+4. **인재 개발 철학 반영**:
+   - "사람이 우리의 가장 소중한 자산"이라는 철학으로 개인 성장 중요성 강조
+   - Multi-Skill Set, Digital & AI 역량, 자율적 성장, Global 수준 역량 개발 방향 제시
+
+5. **커리어 가이드 원칙 적용**:
+   - 자기주도적 성장: Identity 자율화를 통한 스스로의 발전
+   - 지속적 혁신: IT → Digital → AI 기술 진화에 능동적 참여
+   - 다양성과 포용: Multi-Skill Set과 다양한 배경의 포용
+   - 글로벌 경쟁력: Global 수준의 전문가로 성장
 
 **응답 구성 시 고려사항:**
 - 사용자 질문의 복잡도와 구체성
@@ -34,11 +65,12 @@ class ResponseFormattingAgent:
 - 실행 가능한 조언 제공
 - 적절한 길이와 구조
 - 질문의 복잡도에 따른 적응적 응답 제공
+- 회사 비전과 가치에 부합하는 방향성 제시
 
 **질문 유형별 응답 접근법:**
 - **인사/일반 대화**: "안녕하세요", "감사합니다" 등 → 간단하고 친근한 응답, 사례 활용 없이 기본적인 도움 제안
-- **일반적 문의**: 진로 고민, 기술 트렌드 등 → 적절한 수준의 조언, 관련성 있는 경우에만 사례 활용
-- **구체적 상담**: 특정 기술 전환, 커리어 계획 등 → 상세한 분석과 사례 적극 활용
+- **일반적 문의**: 진로 고민, 기술 트렌드 등 → 적절한 수준의 조언, 관련성 있는 경우에만 사례 활용, 회사 가치와 연결
+- **구체적 상담**: 특정 기술 전환, 커리어 계획 등 → 상세한 분석과 사례 적극 활용, 회사 비전과 개인 목표 연계
 
 **🔑 커리어 사례 활용 의무사항 (절대적 중요!):**
 ⚠️ 매우 중요: 제공된 커리어 사례가 있고 사용자가 구체적인 커리어 상담이나 사례 요청을 한 경우 반드시 실제 사례를 직접 활용해야 합니다.
@@ -417,7 +449,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             'updated_at': '수정일',
             'user_id': '사용자 ID',
             'session_id': '세션 ID',
-            'recommendations': '추천사항',
             'analysis': '분석',
             'complexity': '복잡도',
             'keywords': '키워드',
@@ -436,7 +467,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             'success_factors': '성공 요인',
             'model_used': '사용 모델',
             'timestamp': '생성 시간',
-            'recommendation_content': '추천 내용',
             'career_cases_summary': '커리어 사례 요약',
             'source_trends': '트렌드 소스 수',
             'confidence_score': '신뢰도',
@@ -574,7 +604,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         self.logger.info("LLM 기반 적응적 응답 포맷팅 시작")
         
         try:
-            # GNaviState에서 데이터 추출 (추천 생성 단계 제거)
+            # GNaviState에서 데이터 추출
             intent_analysis = state.get("intent_analysis", {})
             user_data = state.get("user_data", {})
             career_cases = state.get("career_cases", [])
@@ -663,7 +693,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 {intent_analysis_md}
 """)
         
-        # 추천 결과 섹션 제거 (추천 생성 단계 제거)
+        # 추천 결과 섹션은 제거됨
         
         # 커리어 사례 - 의미 있는 데이터만 포함 (상세 정보 확장)
         meaningful_career_cases = self._filter_meaningful_career_cases(career_cases)
@@ -718,10 +748,20 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                 context_sections.append(trend_section)
         
         # 교육과정 정보 - 새로 추가
-        if education_courses and self._has_meaningful_education_data(education_courses):
-            education_section = self._format_education_courses_for_llm(education_courses)
-            if education_section.strip():
+        if education_courses:
+            # 교육과정 정보를 간단히 문자열로 변환
+            try:
+                education_section = f"**📚 교육과정 정보**:\n{str(education_courses)[:500]}..."
                 context_sections.append(education_section)
+            except Exception as e:
+                self.logger.warning(f"교육과정 정보 처리 실패: {e}")
+        
+        # 회사 비전 정보 - 커리어 관련 질문인 경우 추가
+        career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직', '가치']
+        if any(keyword in user_question.lower() for keyword in career_keywords):
+            company_vision_section = self._get_company_vision_context()
+            if company_vision_section.strip():
+                context_sections.append(company_vision_section)
         
         # 과거 대화 검색 기능 제거됨 (현재 세션 대화만 위에서 처리)
         
@@ -893,73 +933,11 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         }
     
     def _create_fallback_response(self, user_question: str, user_data: Dict[str, Any]) -> Dict[str, Any]:
-        """LLM 실패 시 폴백 응답 생성 (개선된 버전, 추천 생성 단계 제거)"""
+        """LLM 실패 시 간단한 폴백 응답 생성"""
         user_name = user_data.get('name', '님')
         
         self.logger.info("폴백 응답 생성 중...")
         
-        # 추천사항 섹션 제거
-        
-        # 사용자 질문 분석해서 간단한 응답 생성
-        question_lower = user_question.lower()
-        
-        # 질문 유형별 맞춤 응답
-        if any(keyword in question_lower for keyword in ['msa', '마이크로서비스', '아키텍처']):
-            tech_advice = """
-## 🏗️ MSA 전환 가이드
-
-### 기술적 준비사항
-- **컨테이너화**: Docker, Kubernetes 학습
-- **API 설계**: RESTful API, GraphQL 이해
-- **서비스 메시**: Istio, Linkerd 등 검토
-- **모니터링**: 분산 추적, 로깅 시스템 구축
-
-### 조직적 준비사항
-- **팀 구조**: 각 서비스별 전담팀 구성
-- **데브옵스**: CI/CD 파이프라인 고도화
-- **문서화**: API 문서, 운영 가이드 체계화
-"""
-            recommendation_content = tech_advice
-            
-        elif any(keyword in question_lower for keyword in ['리더', '팀장', '리더십']):
-            leadership_advice = """
-## 👥 기술 리더십 개발 로드맵
-
-### 1단계: 기술적 신뢰 구축 (1-3개월)
-- 코드 리뷰 품질 향상
-- 기술 블로깅, 지식 공유
-- 멘토링 경험 쌓기
-
-### 2단계: 커뮤니케이션 스킬 (3-6개월)
-- 비개발자와의 소통 연습
-- 프로젝트 진행상황 보고
-- 갈등 조정 경험
-
-### 3단계: 전략적 사고 (6-12개월)
-- 기술 로드맵 수립
-- 팀 성과 측정 및 개선
-- 채용 및 온보딩 프로세스 참여
-"""
-            recommendation_content = leadership_advice
-            
-        elif any(keyword in question_lower for keyword in ['풀스택', '프론트엔드', 'frontend']):
-            fullstack_advice = """
-## 🌐 백엔드에서 풀스택으로 확장
-
-### 추천 학습 순서
-1. **JavaScript 생태계**: ES6+, TypeScript
-2. **리액트 기초**: 컴포넌트, 상태관리, 라이프사이클
-3. **CSS 프레임워크**: Tailwind CSS, Styled Components
-4. **상태관리**: Redux, Zustand, React Query
-5. **빌드 도구**: Vite, Webpack 이해
-
-### 프로젝트 아이디어
-- 개인 대시보드 만들기
-- REST API와 연동된 ToDo 앱
-- 실시간 채팅 애플리케이션
-"""
-            recommendation_content = fullstack_advice
-
         content = f"""# {user_name}님을 위한 커리어 컨설팅
 
 ## 📋 질문 분석
@@ -982,7 +960,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             "timestamp": datetime.now().isoformat(),
             "user_name": user_name,
             "session_id": user_data.get('conversationId', ''),
-            "components_used": ["recommendation"] if recommendation_content.strip() else ["general_advice"],
+            "components_used": ["general_advice"],
             "primary_focus": "fallback_guidance"
         }
         
@@ -992,24 +970,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         self.logger.info(f"폴백 응답 생성 완료: {len(content)}자")
         return result
 
-    def format_final_response(self,
-                            user_question: str,
-                            recommendation: Dict[str, Any],
-                            user_data: Dict[str, Any],
-                            intent_analysis: Dict[str, Any] = None) -> Dict[str, Any]:
-        """호환성을 위한 레거시 메서드 - 새로운 적응적 포맷팅으로 리다이렉트"""
-        # GNaviState 형태로 변환하여 새로운 메서드 호출
-        state = {
-            "user_question": user_question,
-            "recommendation": recommendation,
-            "user_data": user_data,
-            "intent_analysis": intent_analysis or {},
-            "career_cases": [],
-            "external_trends": [],
-            "chat_history_results": []
-        }
-        return self.format_adaptive_response(user_question, state)
-    
     def format_data_for_display(self, data: Any, output_format: str = "html", show_empty: bool = True) -> str:
         """
         임의의 데이터를 사용자 친화적인 형태로 포맷팅
@@ -1399,189 +1359,86 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             # 폴백: 기본 방식 사용
             return self._dict_to_markdown(case, show_empty=show_empty)
     
-    def _has_meaningful_education_data(self, education_courses: Dict[str, Any]) -> bool:
-        """교육과정 데이터에 의미 있는 정보가 있는지 확인"""
-        if not education_courses:
-            return False
-        
-        # 추천 교육과정이 있는지 확인
-        recommended_courses = education_courses.get("recommended_courses", [])
-        if recommended_courses and len(recommended_courses) > 0:
-            return True
-        
-        # 학습 경로가 있는지 확인
-        learning_path = education_courses.get("learning_path", [])
-        if learning_path and len(learning_path) > 0:
-            return True
-        
-        return False
-    
-    def _format_education_courses_for_llm(self, education_courses: Dict[str, Any]) -> str:
-        """교육과정 정보를 LLM용 텍스트로 포맷팅"""
-        if not education_courses:
+    def _get_company_vision_context(self) -> str:
+        """회사 비전 정보를 LLM 컨텍스트용으로 포맷팅"""
+        try:
+            import os
+            import json
+            
+            # 회사 비전 파일 경로
+            vision_path = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 
+                "../../storage/docs/company_vision.json"
+            ))
+            
+            if not os.path.exists(vision_path):
+                return ""
+            
+            with open(vision_path, "r", encoding="utf-8") as f:
+                vision_data = json.load(f)
+            
+            if not vision_data:
+                return ""
+            
+            sections = []
+            sections.append("🏢 **회사 비전 및 가치 (커리어 가이드에 반영)**:")
+            sections.append("")
+            
+            # 회사 기본 정보
+            if vision_data.get('company_name'):
+                sections.append(f"**회사명**: {vision_data['company_name']}")
+            
+            # 비전
+            if vision_data.get('vision'):
+                vision = vision_data['vision']
+                sections.append(f"**비전**: {vision.get('title', '')}")
+                if vision.get('description'):
+                    sections.append(f"*{vision['description']}*")
+            
+            sections.append("")
+            
+            # 핵심 가치
+            if vision_data.get('core_values'):
+                sections.append("**핵심 가치**:")
+                for value in vision_data['core_values']:
+                    sections.append(f"- **{value.get('name', '')}**: {value.get('description', '')}")
+                sections.append("")
+            
+            # 전략 방향
+            if vision_data.get('strategic_directions'):
+                sections.append("**전략 방향**:")
+                for direction in vision_data['strategic_directions']:
+                    sections.append(f"- **{direction.get('category', '')}**: {direction.get('description', '')}")
+                sections.append("")
+            
+            # 인재 개발
+            if vision_data.get('talent_development'):
+                talent = vision_data['talent_development']
+                sections.append(f"**인재 개발 철학**: {talent.get('philosophy', '')}")
+                if talent.get('focus_areas'):
+                    sections.append("**역량 개발 중점 영역**:")
+                    for area in talent['focus_areas']:
+                        sections.append(f"- **{area.get('area', '')}**: {area.get('description', '')}")
+                sections.append("")
+            
+            # 커리어 가이드 원칙
+            if vision_data.get('career_guidance_principles'):
+                sections.append("**커리어 가이드 원칙**:")
+                for principle in vision_data['career_guidance_principles']:
+                    sections.append(f"- **{principle.get('principle', '')}**: {principle.get('description', '')}")
+                sections.append("")
+            
+            # 적용 가이드라인
+            sections.append("**⚠️ 중요: 회사 비전 활용 지침**")
+            sections.append("- 커리어 상담 시 개인의 목표와 AI Powered ITS 비전을 연결하여 조언")
+            sections.append("- 핵심 가치(사람 중심, Digital 혁신, Identity 자율화, Business 혁신, 최고의 Delivery)와 일치하는 방향 제시")
+            sections.append("- Multi-Skill Set을 통한 글로벌 수준의 전문가 육성 강조")
+            sections.append("- IT → Digital → AI로의 기술 진화에 능동적 적응과 자기주도적 성장 강조")
+            sections.append("- Process 혁신과 업무 자동화/지능화를 반영한 커리어 방향 제안")
+            sections.append("- Offshoring 대응을 위한 글로벌 경쟁력 확보 방안 제시")
+            
+            return "\n".join(sections)
+            
+        except Exception as e:
+            self.logger.error(f"회사 비전 컨텍스트 생성 실패: {e}")
             return ""
-        
-        sections = []
-        
-        # 교육과정 분석 정보
-        course_analysis = education_courses.get("course_analysis", {})
-        recommended_courses = education_courses.get("recommended_courses", [])
-        learning_path = education_courses.get("learning_path", [])
-        
-        if not recommended_courses and not learning_path:
-            return ""
-        
-        sections.append("📚 **추천 교육과정 (SKALA College + mySUNI)**:")
-        sections.append("**⚠️ 중요 사항: 다음은 실제 사내 교육과정 정보입니다.**")
-        sections.append("**사용자가 교육, 학습, 스킬 향상을 요청하는 경우 반드시 아래 과정들을 직접 활용하세요!**\n")
-        
-        # 추천 교육과정 상세 정보
-        if recommended_courses:
-            sections.append("### 🎯 **추천 교육과정 목록:**")
-            
-            for i, course in enumerate(recommended_courses[:8], 1):  # 최대 8개
-                course_info = self._format_single_course(course, i)
-                if course_info.strip():
-                    sections.append(course_info)
-        
-        # 학습 경로 정보
-        if learning_path:
-            sections.append("\n### 📈 **단계별 학습 경로:**")
-            for step in learning_path:
-                step_info = self._format_learning_step(step)
-                if step_info.strip():
-                    sections.append(step_info)
-        
-        # 교육과정 분석 통계
-        if course_analysis and isinstance(course_analysis, dict):
-            sections.append("\n### 📊 **교육과정 분석:**")
-            
-            total_courses = course_analysis.get("total_courses", 0)
-            college_courses = course_analysis.get("college_courses", 0)
-            mysuni_courses = course_analysis.get("mysuni_courses", 0)
-            
-            if total_courses > 0:
-                sections.append(f"- **총 추천 과정**: {total_courses}개")
-                sections.append(f"- **SKALA College**: {college_courses}개")
-                sections.append(f"- **mySUNI**: {mysuni_courses}개")
-            
-            # 스킬 깊이 분석
-            skill_analysis = course_analysis.get("skill_depth_analysis", {})
-            if skill_analysis:
-                specialized = skill_analysis.get("specialized", 0)
-                recommended = skill_analysis.get("recommended", 0)
-                common_required = skill_analysis.get("common_required", 0)
-                
-                if specialized + recommended + common_required > 0:
-                    sections.append(f"- **전문화 과정**: {specialized}개")
-                    sections.append(f"- **추천 과정**: {recommended}개")
-                    sections.append(f"- **기초/필수 과정**: {common_required}개")
-            
-            # mySUNI 품질 지표
-            mysuni_metrics = course_analysis.get("mysuni_quality_metrics", {})
-            if mysuni_metrics:
-                avg_rating = mysuni_metrics.get("average_rating", 0)
-                total_enrollments = mysuni_metrics.get("total_enrollments", 0)
-                high_rated = mysuni_metrics.get("high_rated_courses", 0)
-                
-                if avg_rating > 0:
-                    sections.append(f"- **mySUNI 평균 평점**: {avg_rating}/5.0")
-                if total_enrollments > 0:
-                    sections.append(f"- **총 이수자 수**: {total_enrollments:,}명")
-                if high_rated > 0:
-                    sections.append(f"- **고평점 과정**: {high_rated}개 (4.5점 이상)")
-        
-        sections.append("\n**🚨 교육과정 활용 규칙 (매우 중요!):**")
-        sections.append("1. **과정 숨김 금지**: '교육과정을 제공할 수 없습니다' 같은 핑계 절대 금지!")
-        sections.append("2. **구체적 활용**: 과정명, 학습시간, 플랫폼, 평점 등 구체적 정보 직접 언급")
-        sections.append("3. **학습 경로 제시**: 단계별 학습 순서와 각 과정의 목적 설명")
-        sections.append("4. **플랫폼 선택권**: College와 mySUNI 옵션을 모두 제시하여 사용자가 선택하도록")
-        
-        return "\n".join(sections)
-    
-    def _format_single_course(self, course: Dict[str, Any], index: int) -> str:
-        """개별 교육과정 정보 포맷팅"""
-        if not course:
-            return ""
-        
-        lines = []
-        course_name = course.get("course_name", course.get("card_name", ""))
-        source = course.get("source", "")
-        
-        if not course_name:
-            return ""
-        
-        lines.append(f"**{index}. {course_name}**")
-        
-        # 플랫폼 정보
-        if source == "college":
-            lines.append(f"   - **플랫폼**: SKALA College")
-            lines.append(f"   - **학부**: {course.get('학부', course.get('department', 'N/A'))}")
-            lines.append(f"   - **과정유형**: {course.get('표준과정', 'N/A')}")
-            lines.append(f"   - **학습시간**: {course.get('duration_hours', 'N/A')}시간")
-            
-            # 전문성 수준
-            skill_relevance = course.get('skill_relevance', '')
-            if skill_relevance == "specialized":
-                lines.append(f"   - **수준**: 전문화 과정")
-            elif skill_relevance == "recommended":
-                lines.append(f"   - **수준**: 추천 과정")
-            elif skill_relevance == "common_required":
-                lines.append(f"   - **수준**: 기초/필수 과정")
-            
-            # mySUNI 대안 정보
-            mysuni_alt = course.get("mysuni_alternative", {})
-            if mysuni_alt.get("available"):
-                lines.append(f"   - **mySUNI 대안**: {mysuni_alt.get('card_name', '')} (평점: {mysuni_alt.get('평점', 'N/A')}/5.0)")
-                
-        elif source == "mysuni":
-            lines.append(f"   - **플랫폼**: mySUNI")
-            lines.append(f"   - **카테고리**: {course.get('카테고리명', '')} > {course.get('채널명', '')}")
-            lines.append(f"   - **난이도**: {course.get('난이도', course.get('difficulty_level', 'N/A'))}")
-            lines.append(f"   - **학습시간**: {course.get('인정학습시간', course.get('duration_hours', 'N/A'))}시간")
-            
-            # 평점과 이수자 수
-            rating = course.get('평점', 0)
-            enrollments = course.get('이수자수', '0')
-            if rating and rating > 0:
-                lines.append(f"   - **평점**: {rating}/5.0 ({enrollments}명 이수)")
-            
-            lines.append(f"   - **학습방식**: 온라인 자율학습")
-        
-        # 대상 스킬
-        target_skills = course.get('target_skills', [])
-        if target_skills:
-            lines.append(f"   - **대상 스킬**: {', '.join(target_skills[:3])}")  # 최대 3개만 표시
-        
-        return "\n".join(lines)
-    
-    def _format_learning_step(self, step: Dict[str, Any]) -> str:
-        """학습 경로 단계 포맷팅"""
-        if not step:
-            return ""
-        
-        lines = []
-        step_num = step.get("step", "")
-        level = step.get("level", "")
-        description = step.get("description", "")
-        courses = step.get("courses", [])
-        
-        if step_num == "보완":
-            lines.append(f"**🔄 {step_num} - {level}**")
-        else:
-            lines.append(f"**📚 {step_num}단계 - {level}**")
-        
-        if description:
-            lines.append(f"   {description}")
-        
-        if courses:
-            lines.append(f"   **추천 과정 ({len(courses)}개):**")
-            for i, course in enumerate(courses[:3], 1):  # 최대 3개
-                course_name = course.get("course_name", course.get("card_name", ""))
-                source = course.get("source", "")
-                duration = course.get("duration_hours", course.get("인정학습시간", "N/A"))
-                
-                platform = "SKALA College" if source == "college" else "mySUNI"
-                lines.append(f"   {i}. {course_name} ({platform}, {duration}시간)")
-        
-        return "\n".join(lines)
