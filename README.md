@@ -15,7 +15,7 @@
 G.Navi는 **AgentRAG(Agent-based Retrieval Augmented Generation)** 아키텍처를 기반으로 한 AI 커리어 컨설팅 시스템입니다. 사내 구성원들의 실제 커리어 사례와 최신 업계 트렌드를 분석하여 개인화된 커리어 조언을 제공합니다.
 
 ### 🎯 핵심 특징
-- **5단계 AgentRAG 워크플로우**로 구조화된 추론 과정
+- **4단계 AgentRAG 워크플로우**로 구조화된 추론 과정
 - **LangGraph 기반** 상태 관리 및 워크플로우 엔진
 - **실제 커리어 사례** 기반 추천 시스템
 - **적응적 응답 포맷팅**으로 사용자 맞춤형 출력
@@ -39,8 +39,7 @@ graph TB
     subgraph "🔧 AI Agents"
         G[CareerEnsembleRetriever]
         H[IntentAnalysisAgent]
-        I[RecommendationAgent]
-        J[ResponseFormattingAgent]
+        I[ResponseFormattingAgent]
     end
     
     subgraph "💾 Data Sources"
@@ -61,7 +60,6 @@ graph TB
     F --> G
     F --> H
     F --> I
-    F --> J
     
     G --> K
     G --> L
@@ -70,24 +68,26 @@ graph TB
     
     H --> O
     I --> O
-    J --> O
     G --> P
 ```
 
 ## AgentRAG 워크플로우
 
-G.Navi의 핵심인 **5단계 AgentRAG 워크플로우**는 다음과 같습니다:
+G.Navi의 핵심인 **4단계 AgentRAG 워크플로우**는 다음과 같습니다:
 
-### 🔄 5단계 처리 과정
+### 🔄 4단계 처리 과정
 
 ```mermaid
 flowchart TD
-    Start([사용자 질문 입력]) --> Step1[1️⃣ 과거 대화내역 검색]
+    Start([사용자 질문 입력]) --> Check{메시지 확인}
+    Check -->|메시지 있음| Step1[1️⃣ 과거 대화내역 검색]
+    Check -->|메시지 없음| Wait[⏳ 대기 상태]
+    
     Step1 --> Step2[2️⃣ 의도 분석 및 상황 이해]
     Step2 --> Step3[3️⃣ 추가 데이터 검색]
-    Step3 --> Step4[4️⃣ 맞춤형 추천 생성]
-    Step4 --> Step5[5️⃣ 적응적 응답 포맷팅]
-    Step5 --> End([최종 응답 반환])
+    Step3 --> Step4[4️⃣ 적응적 응답 포맷팅]
+    Step4 --> End([최종 응답 반환])
+    Wait --> End
     
     subgraph "Step3 Details"
         Step3A[커리어 사례 검색<br/>BM25 + Embedding 앙상블]
@@ -102,11 +102,11 @@ flowchart TD
 
 | 단계 | 담당 Agent | 주요 기능 | 출력 |
 |------|------------|-----------|------|
+| **0단계** | MessageCheckNode | 메시지 유무 확인 및 상태 초기화 | 조건부 분기 |
 | **1단계** | CareerEnsembleRetriever | 사용자별 과거 대화내역 검색 | `chat_history_results` |
 | **2단계** | IntentAnalysisAgent | 질문 의도 분석 및 상황 파악 | `intent_analysis` |
 | **3단계** | CareerEnsembleRetriever | 유사 커리어 사례 + 트렌드 검색 | `career_cases`, `external_trends` |
-| **4단계** | RecommendationAgent | 개인화된 커리어 전략 수립 | `recommendation` |
-| **5단계** | ResponseFormattingAgent | 질문 유형별 적응적 응답 생성 | `final_response` |
+| **4단계** | ResponseFormattingAgent | 질문 유형별 적응적 응답 생성 | `final_response` |
 
 ## 핵심 컴포넌트
 
@@ -116,36 +116,32 @@ class ChatGraphBuilder:
     """G.Navi AgentRAG 시스템의 LangGraph 빌더"""
     
     async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any]):
-        # 5단계 노드 구성
-        workflow.add_node("retrieve_chat_history", self._retrieve_chat_history_node)
-        workflow.add_node("analyze_intent", self._analyze_intent_node)
-        workflow.add_node("retrieve_additional_data", self._retrieve_additional_data_node)
-        workflow.add_node("generate_recommendation", self._generate_recommendation_node)
-        workflow.add_node("format_response", self._format_response_node)
+        # 4단계 노드 구성 (추천 생성 단계 제거)
+        workflow.add_node("message_check", self.message_check_node.create_node())
+        workflow.add_node("retrieve_chat_history", self.chat_history_node.retrieve_chat_history_node)
+        workflow.add_node("analyze_intent", self.intent_analysis_node.analyze_intent_node)
+        workflow.add_node("retrieve_additional_data", self.data_retrieval_node.retrieve_additional_data_node)
+        workflow.add_node("format_response", self.response_formatting_node.format_response_node)
+        workflow.add_node("wait_state", self.wait_node.create_node())
 ```
 
-### 🔍 CareerEnsembleRetriever (`app/graphs/nodes/retriever.py`)
+### 🔍 CareerEnsembleRetriever (`app/graphs/agents/retriever.py`)
 - **BM25 + Embedding 앙상블 검색**
 - **ChromaDB** 벡터 스토어 활용
 - **Tavily API** 외부 트렌드 검색
 - **캐시 기반 임베딩** 최적화
 
-### 🧠 IntentAnalysisAgent (`app/graphs/nodes/analyzer.py`)
+### 🧠 IntentAnalysisAgent (`app/graphs/agents/analyzer.py`)
 - **범용적 의도 분석**: 모든 질문 유형을 단일 LLM으로 처리
 - **구조화된 JSON 응답**: 질문 유형, 복잡도, 키워드 추출
 - **적응적 분석**: 질문 복잡도에 따른 유연한 처리
 
-### 💡 RecommendationAgent (`app/graphs/nodes/advisor.py`)
-- **실제 커리어 사례 기반** 추천
-- **최신 트렌드 연계** 미래 지향적 조언
-- **단계별 실행 계획** 수립
-- **참고 롤모델** 제시
-
-### 📝 ResponseFormattingAgent (`app/graphs/nodes/formatter.py`)
+### 📝 ResponseFormattingAgent (`app/graphs/agents/formatter.py`)
 - **LLM 기반 적응적 포맷팅**
 - **질문 유형별 맞춤 응답**
 - **마크다운 → HTML 변환**
 - **동적 콘텐츠 구성**: 사용자 요청에 맞는 최적화된 응답
+- **실제 커리어 사례 통합**: 검색된 사례를 활용한 구체적 조언 제공
 
 ## 데이터 플로우
 
@@ -157,13 +153,12 @@ class ChatState(TypedDict):
     user_data: Dict[str, Any]
     session_id: str
     
-    # 5단계 처리 결과
+    # 4단계 처리 결과 (추천 생성 단계 제거)
     chat_history_results: List[Any]      # 1단계
     intent_analysis: Dict[str, Any]       # 2단계
     career_cases: List[Any]              # 3단계
     external_trends: List[Dict]          # 3단계
-    recommendation: Dict[str, Any]        # 4단계 (COT 생각해서 넣었으나, 성능 문제로 현재는 제외시킴)
-    final_response: Dict[str, Any]        # 5단계
+    final_response: Dict[str, Any]        # 4단계
     
     # 메타데이터
     processing_log: List[str]
@@ -185,6 +180,8 @@ sequenceDiagram
     API->>Service: send_message()
     Service->>Graph: ainvoke(ChatState)
     
+    Graph->>Graph: 0️⃣ message_check (조건부 분기)
+    
     Graph->>Agents: 1️⃣ retrieve_chat_history
     Graph->>Agents: 2️⃣ analyze_intent
     Agents->>LLM: 의도 분석 요청
@@ -194,18 +191,60 @@ sequenceDiagram
     Agents->>ChromaDB: 커리어 사례 검색
     Agents->>Tavily: 외부 트렌드 검색
     
-    Graph->>Agents: 4️⃣ generate_recommendation
-    Agents->>LLM: 맞춤형 추천 생성
-    LLM-->>Agents: 커리어 전략 응답
-    
-    Graph->>Agents: 5️⃣ format_response
-    Agents->>LLM: 적응적 포맷팅
+    Graph->>Agents: 4️⃣ format_response
+    Agents->>LLM: 적응적 포맷팅 (커리어 사례 포함)
     LLM-->>Agents: 최종 마크다운 응답
     
     Graph-->>Service: ChatState 결과
     Service-->>API: 문자열 응답
     API-->>User: JSON Response
 ```
+
+## 📁 프로젝트 구조
+
+### 🗂️ 핵심 디렉토리 구조
+```
+app/
+├── graphs/
+│   ├── __init__.py
+│   ├── graph_builder.py          # LangGraph 워크플로우 빌더
+│   ├── state.py                  # ChatState 정의
+│   ├── agents/                   # AI 에이전트들
+│   │   ├── retriever.py         # 커리어 데이터 검색
+│   │   ├── analyzer.py          # 의도 분석
+│   │   └── formatter.py         # 응답 포맷팅
+│   └── nodes/                    # LangGraph 노드들 (모듈화)
+│       ├── message_check.py     # 메시지 확인 노드
+│       ├── chat_history.py      # 대화내역 검색 노드
+│       ├── intent_analysis.py   # 의도 분석 노드
+│       ├── data_retrieval.py    # 추가 데이터 검색 노드
+│       ├── response_formatting.py # 응답 포맷팅 노드
+│       └── wait_node.py         # 대기 상태 노드
+├── services/
+│   └── chat_service.py          # 채팅 서비스 로직
+├── api/
+│   └── v1/
+│       └── endpoints/
+│           └── chat.py          # 채팅 API 엔드포인트
+├── data/                        # 데이터 파일들
+│   ├── csv/                     # 커리어 히스토리 CSV
+│   └── json/                    # 채팅 히스토리 JSON
+└── storage/                     # 벡터 스토어 및 캐시
+    ├── vector_stores/           # ChromaDB 데이터
+    └── cache/                   # 임베딩 캐시
+```
+
+### 🔧 모듈화된 노드 시스템
+G.Navi는 유지보수성과 확장성을 위해 각 처리 단계를 독립적인 노드 클래스로 분리했습니다:
+
+- **`MessageCheckNode`**: 메시지 유무 확인 및 상태 초기화
+- **`ChatHistoryNode`**: 사용자별 과거 대화내역 검색
+- **`IntentAnalysisNode`**: LLM 기반 의도 분석 및 상황 파악
+- **`DataRetrievalNode`**: 커리어 사례 및 외부 트렌드 검색
+- **`ResponseFormattingNode`**: 적응적 응답 포맷팅 및 HTML 변환
+- **`WaitNode`**: 메시지 대기 상태 처리
+
+각 노드는 독립적으로 테스트 가능하며, 새로운 처리 단계를 쉽게 추가할 수 있는 구조입니다.
 
 ## 기술 스택
 
@@ -343,13 +382,11 @@ processing_log = [
     "과거 대화내역 검색 완료: 3개 (사용자: user123)",
     "의도 분석 및 상황 이해 완료",
     "추가 데이터 검색 완료: 커리어 사례 5개, 트렌드 정보 3개",
-    "맞춤형 추천 생성 완료",
     "적응적 응답 포맷팅 완료 (유형: specific_consultation)",
     "1단계 처리 시간: 0.85초",
     "2단계 처리 시간: 2.34초",
     "3단계 처리 시간: 1.92초",
-    "4단계 처리 시간: 4.17초",
-    "5단계 처리 시간: 3.28초"
+    "4단계 처리 시간: 3.28초"
 ]
 ```
 
