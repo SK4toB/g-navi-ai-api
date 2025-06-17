@@ -103,9 +103,9 @@ class ChatGraphBuilder:
         # StateGraph 생성
         workflow = StateGraph(ChatState)
         
-        # G.Navi 4단계 노드들 추가 (추천 생성 단계 제거)
+        # G.Navi 4단계 노드들 추가
         workflow.add_node("message_check", self.message_check_node.create_node())
-        workflow.add_node("retrieve_chat_history", self.chat_history_node.retrieve_chat_history_node)
+        workflow.add_node("manage_session_history", self.chat_history_node.retrieve_chat_history_node)  # 이름 변경
         workflow.add_node("analyze_intent", self.intent_analysis_node.analyze_intent_node)
         workflow.add_node("retrieve_additional_data", self.data_retrieval_node.retrieve_additional_data_node)
         workflow.add_node("format_response", self.response_formatting_node.format_response_node)
@@ -119,13 +119,13 @@ class ChatGraphBuilder:
             "message_check",
             self._should_process_message,
             {
-                "process": "retrieve_chat_history",
+                "process": "manage_session_history",  # 노드명 변경
                 "wait": "wait_state"
             }
         )
         
         # G.Navi 4단계 워크플로우
-        workflow.add_edge("retrieve_chat_history", "analyze_intent")
+        workflow.add_edge("manage_session_history", "analyze_intent")  # 노드명 변경
         workflow.add_edge("analyze_intent", "retrieve_additional_data")
         workflow.add_edge("retrieve_additional_data", "format_response")
         

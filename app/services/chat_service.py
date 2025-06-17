@@ -78,7 +78,6 @@ class ChatService:
                 "user_data": user_info,         # user_info를 user_data로 사용
                 "session_id": conversation_id,  # conversation_id를 session_id로 사용
                 # current_session_messages는 MemorySaver가 자동으로 복원하므로 여기서 초기화하지 않음
-                "previous_conversations_found": [],  # 검색으로 찾은 이전 대화들
                 "intent_analysis": {},
                 "career_cases": [],
                 "external_trends": [],

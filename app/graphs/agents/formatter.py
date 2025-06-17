@@ -579,7 +579,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             user_data = state.get("user_data", {})
             career_cases = state.get("career_cases", [])
             external_trends = state.get("external_trends", [])
-            previous_conversations_found = state.get("previous_conversations_found", [])  # 검색된 이전 대화들
+            # previous_conversations_found 제거 (과거 대화 검색 기능 제거)
             current_session_messages = state.get("current_session_messages", [])  # MemorySaver에서 관리되는 현재 세션 대화 내역
             education_courses = state.get("education_courses", {})  # 교육과정 정보 추가
             
@@ -587,11 +587,11 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             user_name = user_data.get('name', '님')
             session_id = user_data.get('conversationId', '')
             
-            # LLM을 위한 컨텍스트 구성
+            # LLM을 위한 컨텍스트 구성 (과거 대화 검색 제거)
             context_data = self._prepare_context_for_llm(
                 user_question, intent_analysis, 
                 user_data, career_cases, external_trends, 
-                previous_conversations_found, current_session_messages, education_courses
+                current_session_messages, education_courses
             )
             
             # LLM 호출하여 적응적 응답 생성
@@ -618,9 +618,9 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
     def _prepare_context_for_llm(self, user_question: str, intent_analysis: Dict[str, Any],
                                 user_data: Dict[str, Any],
                                 career_cases: List[Any], external_trends: List[Dict],
-                                previous_conversations_found: List[Any], current_session_messages: List[Dict],
+                                current_session_messages: List[Dict],
                                 education_courses: Dict[str, Any] = None) -> str:
-        """LLM을 위한 컨텍스트 데이터 준비 (빈 데이터 필터링 개선)"""
+        """LLM을 위한 컨텍스트 데이터 준비 (현재 세션 대화만 사용)"""
         
         context_sections = []
         
@@ -723,24 +723,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             if education_section.strip():
                 context_sections.append(education_section)
         
-        # 대화 히스토리 - 의미 있는 데이터만 포함
-        meaningful_history = self._filter_meaningful_chat_history(previous_conversations_found)
-        if meaningful_history:
-            history_section = "📚 과거 대화 기록 (참고용):\n"
-            history_section += "사용자의 이전 질문과 답변 패턴을 참고하여 개인화된 응답을 생성하세요.\n\n"
-            added_history = 0
-            for i, chat in enumerate(meaningful_history[:3]):  # 최근 3개로 확장
-                chat_formatted = self._format_chat_history_item(chat)
-                if chat_formatted.strip():
-                    added_history += 1
-                    history_section += f"### 💬 대화 세션 {added_history}\n{chat_formatted}\n\n"
-            
-            if added_history > 0:
-                history_section += "**📋 대화 히스토리 활용 지침:**\n"
-                history_section += "- 사용자의 이전 관심사와 질문 패턴을 파악하여 연관성 있는 조언 제공\n"
-                history_section += "- 이전 대화에서 언급된 기술이나 목표와 연결하여 일관성 있는 답변 구성\n"
-                history_section += "- 사용자의 발전 과정을 고려한 단계적 조언 제공\n"
-                context_sections.append(history_section)
+        # 과거 대화 검색 기능 제거됨 (현재 세션 대화만 위에서 처리)
         
         # 전체 컨텍스트 구성
         context = "\n".join(context_sections)
