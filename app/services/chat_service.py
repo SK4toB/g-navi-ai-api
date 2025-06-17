@@ -75,8 +75,9 @@ class ChatService:
                 "user_question": message_text,  # message_text를 user_question으로 사용
                 "user_data": user_info,         # user_info를 user_data로 사용
                 "session_id": conversation_id,  # conversation_id를 session_id로 사용
-                # 초기화될 필드들
-                "chat_history_results": [],
+                # 초기화될 필드들 (변수명 업데이트)
+                "current_session_messages": [],      # MemorySaver가 관리하는 현재 세션 대화 내역
+                "previous_conversations_found": [],  # 검색으로 찾은 이전 대화들
                 "intent_analysis": {},
                 "career_cases": [],
                 "external_trends": [],

@@ -579,7 +579,8 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             user_data = state.get("user_data", {})
             career_cases = state.get("career_cases", [])
             external_trends = state.get("external_trends", [])
-            chat_history = state.get("chat_history_results", [])
+            previous_conversations_found = state.get("previous_conversations_found", [])  # 검색된 이전 대화들
+            current_session_messages = state.get("current_session_messages", [])  # MemorySaver에서 관리되는 현재 세션 대화 내역
             education_courses = state.get("education_courses", {})  # 교육과정 정보 추가
             
             # 사용자 정보 추출
@@ -589,7 +590,8 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             # LLM을 위한 컨텍스트 구성
             context_data = self._prepare_context_for_llm(
                 user_question, intent_analysis, 
-                user_data, career_cases, external_trends, chat_history, education_courses
+                user_data, career_cases, external_trends, 
+                previous_conversations_found, current_session_messages, education_courses
             )
             
             # LLM 호출하여 적응적 응답 생성
@@ -616,13 +618,29 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
     def _prepare_context_for_llm(self, user_question: str, intent_analysis: Dict[str, Any],
                                 user_data: Dict[str, Any],
                                 career_cases: List[Any], external_trends: List[Dict],
-                                chat_history: List[Any], education_courses: Dict[str, Any] = None) -> str:
+                                previous_conversations_found: List[Any], current_session_messages: List[Dict],
+                                education_courses: Dict[str, Any] = None) -> str:
         """LLM을 위한 컨텍스트 데이터 준비 (빈 데이터 필터링 개선)"""
         
         context_sections = []
         
+        # 현재 세션 대화 내역 (MemorySaver에서 관리) - 이전 대화 참조용
+        if current_session_messages and len(current_session_messages) > 1:  # 현재 메시지 외에 이전 대화가 있는 경우
+            context_sections.append("💬 **현재 세션 대화 내역** (이전 대화 참조용):")
+            # 최근 10개 대화만 포함 (너무 길어지지 않도록)
+            recent_history = current_session_messages[-11:-1]  # 마지막은 현재 사용자 메시지이므로 제외
+            for i, msg in enumerate(recent_history, 1):
+                role = "사용자" if msg.get("role") == "user" else "AI"
+                content = msg.get("content", "")
+                if len(content) > 200:  # 너무 긴 내용은 요약
+                    content = content[:200] + "..."
+                timestamp = msg.get("timestamp", "")
+                context_sections.append(f"{i}. [{role}] {content}")
+            context_sections.append("")  # 빈 줄 추가
+        
         # 사용자 질문
-        context_sections.append(f'사용자 질문: "{user_question}"')
+        context_sections.append(f'**현재 사용자 질문**: "{user_question}"')
+        context_sections.append("")  # 빈 줄 추가
         
         # 사용자 프로필 - 의미 있는 데이터만 포함
         # 새로운 JSON 구조: {name: "", projects: [...]}
@@ -706,7 +724,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                 context_sections.append(education_section)
         
         # 대화 히스토리 - 의미 있는 데이터만 포함
-        meaningful_history = self._filter_meaningful_chat_history(chat_history)
+        meaningful_history = self._filter_meaningful_chat_history(previous_conversations_found)
         if meaningful_history:
             history_section = "📚 과거 대화 기록 (참고용):\n"
             history_section += "사용자의 이전 질문과 답변 패턴을 참고하여 개인화된 응답을 생성하세요.\n\n"

@@ -11,8 +11,11 @@ class ChatState(TypedDict):
     user_data: Dict[str, Any]           # 사용자 프로필 데이터
     session_id: str                     # 세션 식별자
     
-    # === G.Navi 4단계 처리 결과 (추천 생성 단계 제거) ===
-    chat_history_results: List[Any]                 # 1단계: 대화이력 검색 결과
+    # === 대화 내역 관리 ===
+    current_session_messages: List[Dict[str, str]]  # MemorySaver가 관리하는 현재 세션 대화 내역 (role, content, timestamp)
+    
+    # === G.Navi 4단계 처리 결과 ===
+    previous_conversations_found: List[Any]         # 1단계: 검색으로 찾은 이전 대화들
     intent_analysis: Dict[str, Any]                 # 2단계: 의도 분석 결과
     career_cases: List[Any]                         # 3단계: 커리어 사례 검색
     external_trends: List[Dict[str, str]]           # 3단계: 트렌드 정보 검색

@@ -55,6 +55,19 @@ class ResponseFormattingNode:
             state["final_response"] = final_response
             state["processing_log"].append(f"적응적 응답 포맷팅 완료 (유형: {final_response['format_type']})")
             
+            # AI 응답을 current_session_messages에 추가하여 MemorySaver가 저장하도록 함
+            if "current_session_messages" not in state:
+                state["current_session_messages"] = []
+            
+            assistant_message = {
+                "role": "assistant",
+                "content": final_response.get("formatted_content", ""),
+                "timestamp": datetime.now().isoformat(),
+                "format_type": final_response.get("format_type", "adaptive")
+            }
+            state["current_session_messages"].append(assistant_message)
+            self.logger.info(f"AI 응답을 current_session_messages에 추가 (총 {len(state['current_session_messages'])}개 메시지)")
+            
             self.logger.info(f"HTML 파일 저장 완료: {html_path}")
             self.logger.info("적응적 응답 포맷팅 완료")
             
