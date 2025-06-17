@@ -138,7 +138,7 @@ class EducationDataProcessor:
                 "채널명": row.get("채널명", ""),
                 "태그명": row.get("태그명", ""),
                 "난이도": row.get("난이도", ""),
-                "인정학습시간": self._parse_numeric(row.get("인정학습시간", 0)),
+                "인정학습시간": self._parse_numeric(row.get("인정학습시간(시간)", 0)),
                 "평점": self._parse_numeric(row.get("평점", 0)),
                 "이수자수": str(row.get("이수자수", "0")),
                 "직무": self._parse_skill_list(row.get("직무", "")),
