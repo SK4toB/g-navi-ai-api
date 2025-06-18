@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     chroma_host: str = "chromadb-1.chromadb"  # k8s 내부 접근
     chroma_port: int = 8000
     chroma_auth_provider: str = "basic"
-    chroma_auth_credentials: Optional[str] = None  # 환경변수에서 읽어옴 (필수)
+    chroma_auth_credentials: Optional[str] = None  # 환경변수에서 읽어옴
     chroma_collection_name: str = "gnavi4_dev_conversations"  # 기본값은 개발용
     
     # 외부 접근용 (개발/테스트 시)
