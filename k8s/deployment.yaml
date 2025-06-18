@@ -37,5 +37,11 @@ spec:
                   key: CHROMA_AUTH_CREDENTIALS
             - name: CHROMA_COLLECTION_NAME
               value: "gnavi4_prod_collection"
+            - name: CAREER_CHROMA_COLLECTION_NAME
+              value: "gnavi4_career_history_prod"
             - name: CHROMA_USE_EXTERNAL
               value: "false"
+            - name: VECTORDB_CACHE_DIR # gnavi-ai Pod 내 임시 캐시 경로
+              value: "/tmp/embedding_cache"
+            - name: CAREER_CSV_PATH
+              value: "/app/data/csv/career_history_v2.csv"
