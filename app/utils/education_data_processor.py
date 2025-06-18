@@ -110,6 +110,7 @@ class EducationDataProcessor:
                 "특화직무": self._parse_skill_list(row.get("특화 직무 및 Skill set", "")),
                 "추천직무": self._parse_skill_list(row.get("추천 직무 및 Skill set", "")),
                 "공통필수직무": self._parse_skill_list(row.get("공통 필수 직무 및 Skill set", "")),
+                "url": self._clean_url(row.get("URL", "")),
             }
             
             # 스킬 매핑
@@ -143,6 +144,7 @@ class EducationDataProcessor:
                 "이수자수": str(row.get("이수자수", "0")),
                 "직무": self._parse_skill_list(row.get("직무", "")),
                 "skillset": self._parse_skill_list(row.get("Skill set", "")),
+                "url": self._clean_url(row.get("URL", "")),
             }
             
             # 스킬 매핑
@@ -173,6 +175,25 @@ class EducationDataProcessor:
             return float(value)
         except:
             return 0.0
+    
+    def _clean_url(self, url_value) -> str:
+        """URL 값을 정리하고 검증"""
+        if pd.isna(url_value) or not url_value:
+            return ""
+        
+        url_str = str(url_value).strip()
+        
+        # 기본적인 URL 형태 검증
+        if url_str and not url_str.startswith(('http://', 'https://')):
+            # 프로토콜이 없으면 https:// 추가
+            if url_str.startswith('www.') or '.' in url_str:
+                url_str = f"https://{url_str}"
+        
+        # 유효한 URL인지 기본 검증
+        if url_str and ('.' in url_str) and (url_str.startswith(('http://', 'https://'))):
+            return url_str
+        
+        return ""
             
     def _map_skills_to_codes(self, skill_names: List[str], skill_data: pd.DataFrame) -> List[str]:
         """스킬명을 스킬 코드로 매핑"""
@@ -223,7 +244,8 @@ class EducationDataProcessor:
                     "course_name": course["course_name"],
                     "학부": course["학부"],
                     "표준과정": course["표준과정"],
-                    "학습시간": course["학습시간"]
+                    "학습시간": course["학습시간"],
+                    "url": course["url"]
                 }
                 
                 skill_mapping[skill_code]["college"][category].append(college_info)
@@ -246,7 +268,8 @@ class EducationDataProcessor:
                     "난이도": course["난이도"],
                     "인정학습시간": course["인정학습시간"],
                     "평점": course["평점"],
-                    "이수자수": course["이수자수"]
+                    "이수자수": course["이수자수"],
+                    "url": course["url"]
                 }
                 
                 skill_mapping[skill_code]["mysuni"].append(mysuni_info)
@@ -290,6 +313,7 @@ class EducationDataProcessor:
                             "course_id": course["course_id"],
                             "name": course["course_name"],
                             "primary": True,
+                            "url": course["url"],
                             "metadata": {
                                 "학부": course["학부"],
                                 "표준과정": course["표준과정"],
@@ -302,6 +326,7 @@ class EducationDataProcessor:
                             "course_id": course["course_id"],
                             "name": course["card_name"],
                             "primary": False,
+                            "url": course["url"],
                             "metadata": {
                                 "평점": course["평점"],
                                 "이수자수": course["이수자수"],
@@ -342,7 +367,8 @@ class EducationDataProcessor:
                 "department": course["학부"],
                 "course_type": course["교육유형"],
                 "학부": course["학부"],
-                "표준과정": course["표준과정"]
+                "표준과정": course["표준과정"],
+                "url": course["url"]
             }
             
             # 스킬 관련성 결정
@@ -370,7 +396,8 @@ class EducationDataProcessor:
                 "인정학습시간": course["인정학습시간"],
                 "평점": course["평점"],
                 "이수자수": course["이수자수"],
-                "skill_relevance": "general"
+                "skill_relevance": "general",
+                "url": course["url"]
             }
             
             documents.append(Document(page_content=content, metadata=metadata))
@@ -388,6 +415,7 @@ class EducationDataProcessor:
 학습유형: {course['학습유형']}
 학습시간: {course['학습시간']}시간
 공개여부: {course['공개여부']}
+URL: {course['url'] if course['url'] else '정보 없음'}
 
 특화 직무: {'; '.join(course['특화직무'])}
 추천 직무: {'; '.join(course['추천직무'])}
@@ -408,6 +436,7 @@ class EducationDataProcessor:
 인정학습시간: {course['인정학습시간']}시간
 평점: {course['평점']}/5.0
 이수자수: {course['이수자수']}명
+URL: {course['url'] if course['url'] else '정보 없음'}
 
 직무: {'; '.join(course['직무'])}
 스킬셋: {'; '.join(course['skillset'])}
