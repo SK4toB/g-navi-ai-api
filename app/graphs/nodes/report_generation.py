@@ -22,10 +22,10 @@ class ReportGenerationNode:
         5단계: 보고서 생성 노드
         사용자 요청에 보고서 생성 의도가 있으면 HTML 보고서를 생성
         """
-        start_time = time.time()
+        start_time = time.perf_counter()  # 더 정밀한 시간 측정
         
         try:
-            print("\n🔧 [5단계] 보고서 생성 분석 시작...")
+            print(f"\n🔧 [5단계] 보고서 생성 분석 시작... (시작시간: {start_time})")
             
             # 기본 정보 추출
             user_question = state.get("user_question", "")
@@ -34,18 +34,24 @@ class ReportGenerationNode:
             
             self.logger.info(f"보고서 생성 검토: {user_question[:50]}...")
             
-            # 보고서 생성 필요성 판단
+            # 보고서 생성 필요성 판단 시간 측정
+            analysis_start = time.perf_counter()
             should_generate = self.report_generator.should_generate_report(
                 user_question, user_data
             )
+            analysis_time = time.perf_counter() - analysis_start
+            print(f"🔍 보고서 필요성 판단 시간: {analysis_time * 1000:.1f}ms")
             
             if should_generate:
                 print("📊 보고서 생성 필요 → HTML 파일 생성 중...")
                 
-                # HTML 보고서 생성
+                # HTML 보고서 생성 시간 측정
+                generation_start = time.perf_counter()
                 report_path = self.report_generator.generate_html_report(
                     final_response, user_data, state
                 )
+                generation_time = time.perf_counter() - generation_start
+                print(f"📝 HTML 보고서 생성 시간: {generation_time * 1000:.1f}ms")
                 
                 if report_path:
                     print(f"✅ 보고서 생성 완료: {report_path}")
@@ -72,24 +78,47 @@ class ReportGenerationNode:
                 state["report_generated"] = False
                 state["report_skip_reason"] = "사용자 요청에 보고서 생성 의도 없음"
             
-            # 5단계 처리 시간 계산 및 로그 추가
-            step5_time = time.time() - start_time
+            # 5단계 처리 시간 계산 및 로그 추가 (정밀도 향상)
+            end_time = time.perf_counter()
+            step5_time = end_time - start_time
             processing_log = state.get("processing_log", [])
-            processing_log.append(f"5단계 처리 시간: {step5_time:.2f}초")
+            
+            # 마이크로초 단위까지 표시
+            if step5_time < 0.001:  # 1ms 미만인 경우 마이크로초로 표시
+                time_display = f"{step5_time * 1000000:.0f}μs"
+            elif step5_time < 0.01:  # 10ms 미만인 경우 밀리초로 표시
+                time_display = f"{step5_time * 1000:.1f}ms"
+            else:
+                time_display = f"{step5_time:.3f}초"
+            
+            processing_log.append(f"5단계 처리 시간: {time_display}")
             state["processing_log"] = processing_log
             
-            print(f"⏱️  [5단계] 보고서 생성 처리 완료: {step5_time:.2f}초")
+            print(f"⏱️  [5단계] 보고서 생성 처리 완료: {time_display}")
+            print(f"📊 상세시간 - 시작: {start_time:.6f}, 종료: {end_time:.6f}, 차이: {step5_time:.6f}초")
             
             return state
             
         except Exception as e:
             self.logger.error(f"보고서 생성 노드 오류: {e}")
             
-            # 오류 발생 시에도 처리 시간 기록
-            step5_time = time.time() - start_time
+            # 오류 발생 시에도 처리 시간 기록 (정밀도 향상)
+            end_time = time.perf_counter()
+            step5_time = end_time - start_time
             processing_log = state.get("processing_log", [])
-            processing_log.append(f"5단계 처리 시간 (오류): {step5_time:.2f}초")
+            
+            # 마이크로초 단위까지 표시
+            if step5_time < 0.001:  # 1ms 미만인 경우 마이크로초로 표시
+                time_display = f"{step5_time * 1000000:.0f}μs"
+            elif step5_time < 0.01:  # 10ms 미만인 경우 밀리초로 표시
+                time_display = f"{step5_time * 1000:.1f}ms"
+            else:
+                time_display = f"{step5_time:.3f}초"
+                
+            processing_log.append(f"5단계 처리 시간 (오류): {time_display}")
             state["processing_log"] = processing_log
+            
+            print(f"❌ [5단계] 보고서 생성 오류 완료: {time_display} (오류: {e})")
             
             state["report_generated"] = False
             state["report_error"] = str(e)
