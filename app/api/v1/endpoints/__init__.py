@@ -5,6 +5,7 @@ from . import session_management
 from . import conversation_history
 from . import embedding
 from . import memory
+from . import chroma
 
 __all__ = [
     "conversation",
@@ -13,5 +14,6 @@ __all__ = [
     "session_management",
     "conversation_history", 
     "embedding",
-    "memory"
+    "memory",
+    "chroma"
 ]

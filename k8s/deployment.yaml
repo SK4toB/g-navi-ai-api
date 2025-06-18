@@ -26,3 +26,16 @@ spec:
                 secretKeyRef:
                   name: prod-db-secret
                   key: OPENAI_API_KEY
+            - name: CHROMA_HOST
+              value: "chromadb-1.chromadb"
+            - name: CHROMA_PORT
+              value: "8000"
+            - name: CHROMA_AUTH_CREDENTIALS
+              valueFrom:
+                secretKeyRef:
+                  name: prod-db-secret
+                  key: CHROMA_AUTH_CREDENTIALS
+            - name: CHROMA_COLLECTION_NAME
+              value: "gnavi4_prod_collection"
+            - name: CHROMA_USE_EXTERNAL
+              value: "false"
