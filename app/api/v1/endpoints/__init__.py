@@ -15,5 +15,5 @@ __all__ = [
     "conversation_history", 
     "embedding",
     "memory",
-    "chroma"
+    "chroma",
 ]
