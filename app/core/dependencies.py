@@ -5,7 +5,7 @@ from fastapi import Depends
 
 from app.services.chat_service import ChatService
 from app.services.conversation_history_manager import ConversationHistoryManager
-
+from app.services.chroma_service import ChromaService
 
 class ServiceContainer:
     """
@@ -16,6 +16,7 @@ class ServiceContainer:
     def __init__(self):
         self._chat_service = None
         self._history_manager = None
+        self._chroma_service = None
         print("ServiceContainer 초기화")
     
     @property
@@ -33,6 +34,14 @@ class ServiceContainer:
             print("ChatService 싱글톤 생성")
             self._chat_service = ChatService(session_timeout_hours=1)
         return self._chat_service
+
+    @property
+    def chroma_service(self) -> ChromaService:
+        """ChromaService 싱글톤"""
+        if self._chroma_service is None:
+            print("ChromaService 싱글톤 생성")
+            self._chroma_service = ChromaService()
+        return self._chroma_service
 
 
 @lru_cache()
@@ -54,3 +63,10 @@ def get_history_manager(
 ) -> ConversationHistoryManager:
     """ConversationHistoryManager 의존성 주입"""
     return container.history_manager
+
+
+def get_chroma_service(
+    container: Annotated[ServiceContainer, Depends(get_service_container)]
+) -> ChromaService:
+    """ChromaService 의존성 주입"""
+    return container.chroma_service
