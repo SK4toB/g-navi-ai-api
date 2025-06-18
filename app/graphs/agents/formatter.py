@@ -34,46 +34,41 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
 1. **커리어사례** (구체적상담시 필수활용):
    - "EMP-123456: 김OO님의 경우..." 형태로 구체적 언급
    - 보안핑계 절대금지, 실제 프로젝트/기술스택/성공요인 상세설명
+   - 📌중요: 최대 3개까지만 제시하여 핵심 사례에 집중
 
 2. **교육과정** (교육요청시 필수활용):
    - 과정명, 교육유형(mySUNI/사내/외부), 학습시간, 평점, 이수자수 명시
    - URL 제공된 경우만 [과정명](URL) 형태, 없으면 텍스트만
    - ⚠️절대금지: 임의URL생성, URL추측
+   - 📌중요: 최대 3개까지만 추천하여 집중도 높이기
 
 **질문유형별 접근:**
 • 인사/일반: 간단친근, 기본도움제안
 • 일반문의: 적절조언, 회사가치연결
 • 구체적상담: 상세분석, 사례적극활용, 비전연계
 
-**응답형식 (JSON만, 마크다운블록 사용금지):**
-{
-    "analysis": {
-        "question_type": "greeting/general_inquiry/specific_consultation/technical_advice",
-        "user_intent": "의도요약",
-        "complexity_level": "1-5",
-        "key_focus_areas": ["영역들"],
-        "information_completeness": "1-5",
-        "should_use_career_cases": "true/false"
-    },
-    "content_strategy": {
-        "primary_components": ["데이터컴포넌트들"],
-        "response_structure": ["구조섹션들"],
-        "tone_and_style": "casual/professional/detailed",
-        "length_target": "brief/medium/comprehensive",
-        "analysis_depth": "basic/intermediate/advanced"
-    },
-    "formatted_response": {
-        "title": "응답제목",
-        "content": "마크다운응답내용",
-        "call_to_action": "추가행동유도"
-    }
-}
+**응답형식 (마크다운으로 직접 응답):**
+- 사용자 이름을 포함한 제목으로 시작
+- 마크다운 형식으로 구조화된 응답
+- 마지막에 격려 메시지와 추가 질문 유도
 
 **중요제약:**
 - 모든내용 한국어작성 (영어/번역체금지)
-- 실제줄바꿈사용 (\\n이스케이프금지)
+- JSON 형식으로 응답하지 말고 직접 마크다운으로 응답
 - 제공된원본URL만사용, 임의생성절대금지
 - 커리어사례는 텍스트만, 가짜링크금지
+
+**응답 예시:**
+# 김철수님을 위한 커리어 컨설팅
+
+안녕하세요 김철수님! 질문 내용을 보니...
+
+## 🎯 맞춤 조언
+
+...
+
+---
+*추가 질문이 있으시면 언제든 말씀해 주세요!*
 """
 
     def _dict_to_markdown(self, data: Union[Dict, List, Any], depth: int = 0, show_empty: bool = True) -> str:
@@ -176,7 +171,7 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
     def format_adaptive_response(self,
                                 user_question: str,
                                 state: Dict[str, Any]) -> Dict[str, Any]:
-        """LLM 기반 적응적 응답 포맷팅 - AI가 질문 분석부터 응답 구성까지 전체를 담당"""
+        """LLM 기반 적응적 응답 포맷팅 - 직접 마크다운 응답"""
         self.logger.info("LLM 기반 적응적 응답 포맷팅 시작")
         
         try:
@@ -184,8 +179,8 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
             intent_analysis = state.get("intent_analysis", {})
             user_data = state.get("user_data", {})
             career_cases = state.get("career_cases", [])
-            current_session_messages = state.get("current_session_messages", [])  # MemorySaver에서 관리되는 현재 세션 대화 내역
-            education_courses = state.get("education_courses", {})  # 교육과정 정보 추가
+            current_session_messages = state.get("current_session_messages", [])
+            education_courses = state.get("education_courses", {})
             
             # 사용자 정보 추출
             user_name = user_data.get('name', '님')
@@ -198,16 +193,20 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
                 current_session_messages, education_courses
             )
             
-            # LLM 호출하여 적응적 응답 생성
-            llm_response = self._call_llm_for_adaptive_formatting(context_data)
+            # LLM 호출하여 직접 마크다운 응답 생성
+            formatted_content = self._call_llm_for_adaptive_formatting(context_data)
             
-            # LLM 응답 파싱 및 최종 형태로 변환
-            formatted_result = self._process_llm_response(
-                llm_response, user_name, session_id
-            )
+            # 최종 응답 구성
+            result = {
+                "formatted_content": formatted_content,
+                "format_type": "adaptive",
+                "timestamp": datetime.now().isoformat(),
+                "user_name": user_name,
+                "session_id": session_id
+            }
             
-            self.logger.info(f"LLM 기반 응답 포맷팅 완료: {formatted_result.get('format_type', 'adaptive')}")
-            return formatted_result
+            self.logger.info("LLM 기반 마크다운 응답 포맷팅 완료")
+            return result
             
         except Exception as e:
             self.logger.error(f"LLM 기반 응답 포맷팅 실패: {e}")
@@ -226,9 +225,7 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
                 "format_type": "fallback",
                 "timestamp": datetime.now().isoformat(),
                 "user_name": user_name,
-                "session_id": user_data.get('conversationId', ''),
-                "components_used": ["fallback"],
-                "primary_focus": "error_fallback"
+                "session_id": user_data.get('conversationId', '')
             }
     
     def _prepare_context_for_llm(self, user_question: str, intent_analysis: Dict[str, Any],
@@ -564,9 +561,6 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
 7. **과정 설명**
 
 **📖 자연스러운 교육과정 설명 방식 (필수!):**
-
-✅ **자연스럽고 따뜻한 추천 방식:**
-
 "○○님이 관심 있어하실 만한 과정을 몇 개 골라봤어요! 
 
 ### [mySUNI]AI 데이터 센터 시장 특집(VOD)
@@ -602,7 +596,9 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
 - 딥러닝의 기본 개념부터 실습까지 모두 포함되어 있어서, 이론만 배우고 끝나는 게 아니라 직접 손으로 해볼 수 있어요. 처음엔 어려울 수 있지만 하나하나 따라하다 보면 어느새 딥러닝 전문가가 되어 있을 거예요!
 
 ---
-**[[학습하기](https://samsungu.ac.kr/course/deeplearning)]**"
+**[[학습하기](https://samsungu.ac.kr/course/deeplearning)]**
+
+**📌 중요**: 교육과정은 최대 3개까지만 추천하여 집중도를 높이고 선택의 부담을 줄여주세요!"
 
 **교육과정 제목 형식 지침 (반드시 준수!):**
 - **mySUNI 과정**: [mySUNI]과정명(VOD) 또는 [mySUNI]과정명(온라인)
@@ -641,15 +637,15 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
 """
         return context
     
-    def _call_llm_for_adaptive_formatting(self, context_data: str) -> Dict[str, Any]:
-        """LLM 호출하여 적응적 응답 생성"""
+    def _call_llm_for_adaptive_formatting(self, context_data: str) -> str:
+        """LLM 호출하여 적응적 응답 생성 - 직접 마크다운 반환"""
         try:
             # OpenAI 클라이언트 지연 초기화
             if self.client is None:
                 self.client = openai.OpenAI()
             
             response = self.client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": context_data}
@@ -657,26 +653,10 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
                 temperature=0.3
             )
             
-            # JSON 응답 파싱 (개선된 버전)
+            # 직접 텍스트 응답 반환
             response_text = response.choices[0].message.content
-            self.logger.debug(f"LLM 원본 응답 (첫 200자): {response_text[:200]}...")
-            
-            # JSON 추출 및 파싱 시도
-            try:
-                parsed_json = json.loads(response_text)
-                self.logger.info("LLM JSON 응답 파싱 성공")
-                return parsed_json
-            except json.JSONDecodeError:
-                self.logger.warning("JSON 파싱 실패, 기본 응답 생성")
-                return {
-                    "analysis": {"question_type": "general", "complexity_level": "3"},
-                    "content_strategy": {"primary_components": ["text_response"]},
-                    "formatted_response": {
-                        "title": "커리어 컨설팅",
-                        "content": response_text,
-                        "call_to_action": "추가 질문이 있으시면 언제든 말씀해 주세요."
-                    }
-                }
+            self.logger.info(f"LLM 마크다운 응답 생성 완료 (길이: {len(response_text)}자)")
+            return response_text
             
         except Exception as e:
             self.logger.error(f"LLM 호출 실패: {e}")

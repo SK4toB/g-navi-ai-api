@@ -19,7 +19,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class CareerEnsembleRetrieverAgent:
-    """career_data Chroma DB에 대해 BM25+LLM 임베딩 앙상블 리트리버 + 교육과정 검색 제공"""
+    """career_data Chroma DB에 대해 BM25+LLM 임베딩 앙상블 리트리버 + 교육과정 검색 제공
+    - 커리어 사례: 최대 3개까지 검색
+    - 교육과정: 최대 3개까지 검색
+    """
     def __init__(self, persist_directory: str = os.path.join(
             os.path.dirname(__file__), 
             "../../storage/vector_stores/career_data"
@@ -502,7 +505,7 @@ class CareerEnsembleRetrieverAgent:
         return "\n\n".join(sections)
 
     def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
-        """교육과정 검색 메인 함수"""
+        """교육과정 검색 메인 함수 - 최대 3개까지만 검색"""
         self._load_education_resources()
         
         try:
@@ -522,9 +525,14 @@ class CareerEnsembleRetrieverAgent:
             # 4단계: 중복 제거 및 정렬
             deduplicated_courses = self._deduplicate_courses(semantic_matches)
             
+            # 최종적으로 3개까지만 제한
+            deduplicated_courses = deduplicated_courses[:3]
+            
             # 5단계: 결과 분석 및 학습 경로 생성
             course_analysis = self._analyze_course_recommendations(deduplicated_courses)
             learning_path = self._generate_learning_path(deduplicated_courses)
+            
+            self.logger.info(f"교육과정 검색 완료: 최종 {len(deduplicated_courses)}개 과정 반환")
             
             return {
                 "recommended_courses": deduplicated_courses,
@@ -596,15 +604,15 @@ class CareerEnsembleRetrieverAgent:
         return list(set(skills))
     
     def _semantic_course_search(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
-        """VectorDB를 활용한 의미적 검색 (VectorDB가 없으면 JSON에서 검색)"""
+        """VectorDB를 활용한 의미적 검색 (VectorDB가 없으면 JSON에서 검색) - 3개까지만 검색"""
         if not self.education_vectorstore:
             # VectorDB가 없으면 JSON 파일에서 직접 검색
             self.logger.info("VectorDB 없음 - JSON 파일에서 검색")
             return self._search_from_json_documents(query, filtered_courses)
             
         if not filtered_courses:
-            # 필터링된 과정이 없으면 전체 VectorDB에서 검색
-            docs = self.education_vectorstore.similarity_search(query, k=10)
+            # 필터링된 과정이 없으면 전체 VectorDB에서 검색 (3개로 제한)
+            docs = self.education_vectorstore.similarity_search(query, k=3)
             courses = [self._doc_to_course_dict(doc) for doc in docs]
             # 원본 데이터로 상세 정보 보강
             courses = [self._enrich_course_with_original_data(course) for course in courses]
@@ -623,18 +631,20 @@ class CareerEnsembleRetrieverAgent:
             # 원본 데이터로 상세 정보 보강
             courses = [self._enrich_course_with_original_data(course) for course in courses]
         
-        self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정")
+        # 결과를 3개로 제한
+        courses = courses[:3]
+        self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정 (3개로 제한)")
         return courses
     
     def _search_from_json_documents(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
-        """JSON 문서에서 직접 검색 (VectorDB 대안)"""
+        """JSON 문서에서 직접 검색 (VectorDB 대안) - 3개까지만 검색"""
         try:
             with open(self.education_docs_path, "r", encoding="utf-8") as f:
                 all_docs = json.load(f)
         except FileNotFoundError:
             self.logger.warning("교육과정 문서 파일이 없습니다.")
-            # 필터링된 과정이라도 반환하자
-            return filtered_courses[:10] if filtered_courses else []
+            # 필터링된 과정이라도 반환하자 (3개로 제한)
+            return filtered_courses[:3] if filtered_courses else []
         
         # 필터링된 과정이 있으면 우선적으로 활용
         if filtered_courses:
@@ -656,7 +666,9 @@ class CareerEnsembleRetrieverAgent:
                     matching_docs.append(course_dict)
             
             if matching_docs:
-                self.logger.info(f"필터링된 과정 기반 검색 결과: {len(matching_docs)}개")
+                # 3개로 제한
+                matching_docs = matching_docs[:3]
+                self.logger.info(f"필터링된 과정 기반 검색 결과: {len(matching_docs)}개 (3개로 제한)")
                 return matching_docs
         
         # 키워드 기반 검색
@@ -681,8 +693,10 @@ class CareerEnsembleRetrieverAgent:
         # 점수순으로 정렬
         matching_docs.sort(key=lambda x: x.get("match_score", 0), reverse=True)
         
-        self.logger.info(f"키워드 기반 검색 결과: {len(matching_docs)}개")
-        return matching_docs[:10]  # 상위 10개만 반환
+        # 3개로 제한
+        matching_docs = matching_docs[:3]
+        self.logger.info(f"키워드 기반 검색 결과: {len(matching_docs)}개 (3개로 제한)")
+        return matching_docs
     
     def _doc_to_course_dict_from_json(self, doc_data: Dict) -> Dict:
         """JSON 문서 데이터를 과정 딕셔너리로 변환"""
@@ -707,28 +721,33 @@ class CareerEnsembleRetrieverAgent:
         }
     
     def _search_by_course_ids(self, course_ids: List[str], query: str) -> List[Dict]:
-        """특정 과정 ID들에 대한 VectorDB 검색"""
+        """특정 과정 ID들에 대한 VectorDB 검색 - 3개까지만 검색"""
         if not course_ids:
             return []
         
         # 각 course_id에 대해 검색하고 결과 통합
         all_docs = []
-        for course_id in course_ids[:20]:  # 최대 20개로 제한
+        for course_id in course_ids[:10]:  # 검색할 course_id는 최대 10개로 제한
             try:
                 # 메타데이터 필터를 사용한 검색
                 docs = self.education_vectorstore.similarity_search(
                     query, 
-                    k=5,
+                    k=1,  # 각 과정당 1개씩만 가져와서 전체적으로 3개 제한 유지
                     filter={"course_id": course_id}
                 )
                 all_docs.extend(docs)
+                # 이미 3개가 되면 중단
+                if len(all_docs) >= 3:
+                    break
             except Exception as e:
                 self.logger.warning(f"Course ID {course_id} 검색 실패: {e}")
         
-        # 일반 검색도 수행 (백업)
+        # 일반 검색도 수행 (백업) - 3개로 제한
         if not all_docs:
-            all_docs = self.education_vectorstore.similarity_search(query, k=10)
+            all_docs = self.education_vectorstore.similarity_search(query, k=3)
         
+        # 결과를 3개로 제한
+        all_docs = all_docs[:3]
         return [self._doc_to_course_dict(doc) for doc in all_docs]
     
     def _doc_to_course_dict(self, doc: Document) -> Dict:
