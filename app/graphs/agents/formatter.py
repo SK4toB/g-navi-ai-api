@@ -16,16 +16,43 @@ class ResponseFormattingAgent:
         self.logger = logging.getLogger(__name__)
         self.client = None  # OpenAI 클라이언트를 지연 초기화
         
-        # LLM을 위한 시스템 프롬프트
         self.system_prompt = """
-당신은 G.Navi AI 커리어 컨설팅 시스템의 응답 포맷팅 전문가입니다.
-사용자의 질문과 수집된 데이터를 분석하여 가장 적합한 형태로 응답을 구성해야 합니다.
+당신은 G.Navi AI 커리어 컨설팅 시스템의 전문 상담사입니다.
+사용자와 자연스럽고 따뜻한 대화를 나누며, 마치 경험이 풍부한 선배나 멘토처럼 친근하면서도 전문적인 조언을 제공합니다.
+
+**💬 대화 톤과 스타일 (매우 중요!):**
+1. **자연스럽고 따뜻한 톤**: 딱딱한 업무 문서가 아닌, 친근한 상담사처럼 대화하세요
+2. **공감과 격려**: 사용자의 상황에 공감하고 긍정적인 격려를 포함하세요
+3. **개인화된 호칭**: 사용자 이름을 자연스럽게 활용하고 "님"보다는 상황에 맞는 친근한 표현 사용
+4. **부드러운 전환**: 정보 나열이 아닌 자연스러운 대화 흐름으로 구성
+5. **실용적 조언**: 단순 정보 제공을 넘어서 실제 도움이 되는 구체적 조언 포함
+
+**🎯 교육과정 추천 시 자연스러운 대화법:**
+❌ **딱딱한 표현 (피해야 할 것):**
+"다음은 추천 교육과정입니다:"
+"아래 과정들을 확인해보세요:"
+
+✅ **자연스러운 표현 (추천):**
+"○○님의 관심 분야를 보니 이런 과정들이 딱 맞을 것 같아요!"
+"지금 상황에서 가장 도움이 될 만한 과정들을 골라봤는데요,"
+"○○님께서 말씀하신 목표를 위해서는 이런 과정들을 추천드려요."
+"요즘 이 분야에서 인기 있는 과정들 중에서 특별히 좋은 것들을 소개해드릴게요!"
+
+**교육과정 설명 시 대화형 접근법:**
+❌ **기계적 나열:**
+"- 학습시간: 25시간
+- 난이도: 초급"
+
+✅ **자연스러운 설명:**
+"이 과정은 25시간 정도 투자하시면 되고, 초급자분들도 부담 없이 시작할 수 있어요."
+"학습 시간은 25시간 정도인데, 주말에 조금씩 공부하시면 한 달 안에 충분히 마칠 수 있을 거예요."
+"난이도는 초급 수준이라 처음 시작하시는 분들께 정말 좋습니다!"
 
 **역할:**
 1. 사용자 질문의 의도와 성격을 분석
-2. 사용자에게 가장 유용한 정보 조합 결정
-3. 응답 구조와 내용의 우선순위 결정
-4. 개인화되고 실용적인 응답 생성
+2. 사용자에게 가장 유용한 정보 조합 결정  
+3. 자연스럽고 따뜻한 대화 톤으로 응답 구성
+4. 개인화되고 실용적인 조언을 상담사처럼 제공
 5. 회사의 비전과 가치에 부합하는 커리어 가이드 제공
 
 **회사 비전 및 가치 반영 의무사항:**
@@ -92,7 +119,7 @@ class ResponseFormattingAgent:
    - 사용자가 "무작위로", "최근 사례를", "구성원 사례를" 요청하면 제공된 사례들을 적극 활용
    - 각 사례의 고유한 특징과 인사이트를 상세히 설명
 
-**📚 교육과정 추천 활용 의무사항 (매우 중요!):**
+**교육과정 추천 활용 의무사항 (매우 중요!):**
 ⚠️ 교육과정 정보가 제공된 경우 반드시 활용해야 합니다.
 
 1. **교육과정 숨김 절대 금지**:
@@ -771,7 +798,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         # 교육과정 정보 - 새로 추가
         if education_courses:
             try:
-                education_section = "**📚 교육과정 정보 (URL 포함)**:\n"
+                education_section = "**교육과정 정보 (URL 포함)**:\n"
                 
                 # 교육과정 데이터가 딕셔너리이고 recommended_courses가 있는 경우
                 if isinstance(education_courses, dict) and 'recommended_courses' in education_courses:
@@ -784,8 +811,8 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                             duration = course.get('duration_hours', course.get('인정학습시간', '정보 없음'))
                             
                             education_section += f"\n=== {i+1}. {course_name} ===\n"
-                            education_section += f"📖 출처: {source}\n"
-                            education_section += f"⏰ 학습시간: {duration}시간\n"
+                            education_section += f"출처: {source}\n"
+                            education_section += f"학습시간: {duration}시간\n"
                             
                             # mySUNI 과정의 경우 추가 상세 정보 제공
                             if source == 'mysuni':
@@ -797,18 +824,18 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                                 skills = course.get('skillset', course.get('직무', []))
                                 
                                 if category:
-                                    education_section += f"🏷️ 카테고리: {category}\n"
+                                    education_section += f"카테고리: {category}\n"
                                 if channel:
-                                    education_section += f"📺 채널: {channel}\n"
+                                    education_section += f"채널: {channel}\n"
                                 if difficulty:
-                                    education_section += f"📊 난이도: {difficulty}\n"
+                                    education_section += f"난이도: {difficulty}\n"
                                 if rating:
-                                    education_section += f"⭐ 평점: {rating}/5.0\n"
+                                    education_section += f"평점: {rating}/5.0\n"
                                 if enrollments:
-                                    education_section += f"👥 이수자수: {enrollments}명\n"
+                                    education_section += f"이수자수: {enrollments}명\n"
                                 if skills and isinstance(skills, list) and skills:
                                     skills_str = ', '.join(skills[:3])  # 최대 3개만 표시
-                                    education_section += f"🔧 관련 스킬: {skills_str}\n"
+                                    education_section += f"관련 스킬: {skills_str}\n"
                             
                             # College 과정의 경우 추가 정보
                             elif source == 'college':
@@ -817,18 +844,18 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                                 standard_course = course.get('표준과정', '')
                                 
                                 if department:
-                                    education_section += f"🏢 학부: {department}\n"
+                                    education_section += f"학부: {department}\n"
                                 if course_type:
-                                    education_section += f"📋 교육유형: {course_type}\n"
+                                    education_section += f"교육유형: {course_type}\n"
                                 if standard_course:
-                                    education_section += f"📚 표준과정: {standard_course}\n"
+                                    education_section += f"표준과정: {standard_course}\n"
                             
-                            # URL 정보
+                            # URL 정보 - 학습하기 형태로 변경
                             if url and url.strip() and url != '정보 없음':
-                                education_section += f"� 실제URL: {url}\n"
-                                education_section += f"⚠️ 링크 형태: [{course_name}]({url})\n"
+                                education_section += f"실제URL: {url}\n"
+                                education_section += f"---\n**[학습하기]({url})**\n"
                             else:
-                                education_section += f"� URL: 정보 없음 (텍스트만: {course_name})\n"
+                                education_section += f"URL: 정보 없음 (텍스트만: {course_name})\n"
                             
                             education_section += "\n"
                 
@@ -842,8 +869,8 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                             duration = course.get('duration_hours', course.get('인정학습시간', '정보 없음'))
                             
                             education_section += f"\n=== {i+1}. {course_name} ===\n"
-                            education_section += f"📖 출처: {source}\n"
-                            education_section += f"⏰ 학습시간: {duration}시간\n"
+                            education_section += f"출처: {source}\n"
+                            education_section += f"학습시간: {duration}시간\n"
                             
                             # 추가 상세 정보 제공 (mySUNI/College 구분)
                             if source == 'mysuni':
@@ -854,31 +881,32 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                                 skills = course.get('skillset', course.get('직무', []))
                                 
                                 if category:
-                                    education_section += f"🏷️ 카테고리: {category}\n"
+                                    education_section += f"카테고리: {category}\n"
                                 if difficulty:
-                                    education_section += f"📊 난이도: {difficulty}\n"
+                                    education_section += f"난이도: {difficulty}\n"
                                 if rating:
-                                    education_section += f"⭐ 평점: {rating}/5.0\n"
+                                    education_section += f"평점: {rating}/5.0\n"
                                 if enrollments:
-                                    education_section += f"👥 이수자수: {enrollments}명\n"
+                                    education_section += f"이수자수: {enrollments}명\n"
                                 if skills and isinstance(skills, list) and skills:
                                     skills_str = ', '.join(skills[:3])
-                                    education_section += f"🔧 관련 스킬: {skills_str}\n"
+                                    education_section += f"관련 스킬: {skills_str}\n"
                             
                             elif source == 'college':
                                 department = course.get('department', course.get('학부', ''))
                                 course_type = course.get('course_type', course.get('교육유형', ''))
                                 
                                 if department:
-                                    education_section += f"🏢 학부: {department}\n"
+                                    education_section += f"학부: {department}\n"
                                 if course_type:
-                                    education_section += f"📋 교육유형: {course_type}\n"
+                                    education_section += f"교육유형: {course_type}\n"
                             
+                            # URL 정보 - 학습하기 형태로 변경
                             if url and url.strip() and url != '정보 없음':
-                                education_section += f"� 실제URL: {url}\n"
-                                education_section += f"⚠️ 링크 형태: [{course_name}]({url})\n"
+                                education_section += f"실제URL: {url}\n"
+                                education_section += f"---\n**[학습하기]({url})**\n"
                             else:
-                                education_section += f"� URL: 정보 없음 (텍스트만: {course_name})\n"
+                                education_section += f"URL: 정보 없음 (텍스트만: {course_name})\n"
                             
                             education_section += "\n"
                 
@@ -886,12 +914,12 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                 else:
                     education_section += f"{str(education_courses)[:300]}...\n"
                 
-                education_section += "\n🚨 중요한 교육과정 정보 제공 규칙:\n"
+                education_section += "\n중요한 교육과정 정보 제공 규칙:\n"
                 education_section += "- 위 정보를 활용하여 사용자에게 풍부하고 상세한 교육과정 정보 제공\n"
                 education_section += "- mySUNI 과정: 평점, 이수자수, 난이도, 카테고리 등 모든 정보 활용\n"
                 education_section += "- College 과정: 학부, 교육유형, 표준과정 등 상세 정보 활용\n"
                 education_section += "- 사용자가 과정 선택 시 판단할 수 있는 충분한 정보 제공\n"
-                education_section += "- URL 규칙: 실제URL만 사용, [과정명](실제_URL) 형태로 링크 생성\n"
+                education_section += "- URL 규칙: 실제URL만 사용, [학습하기](실제_URL) 형태로 링크 생성\n"
                 education_section += "- 절대 임의의 URL 생성 금지 (example.com, company.com 등)"
                 
                 context_sections.append(education_section)
@@ -899,7 +927,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             except Exception as e:
                 self.logger.warning(f"교육과정 정보 처리 실패: {e}")
                 # 폴백으로 간단한 형태라도 제공
-                context_sections.append(f"**📚 교육과정 정보**: {str(education_courses)[:200]}...")
+                context_sections.append(f"**교육과정 정보**: {str(education_courses)[:200]}...")
         
         # 회사 비전 정보 - 커리어 관련 질문인 경우 추가
         career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직', '가치']
@@ -992,54 +1020,97 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 - 사례 제공 시 보안 제한이나 접근 제한을 언급하지 마세요
 - 구체적인 사례와 경험을 직접적으로 활용하여 실용적인 조언을 제공하세요
 
-**🎓 교육과정 추천 시 필수 정보 제공 규칙:**
+**교육과정 추천 시 필수 정보 제공 규칙:**
 ⚠️ **매우 중요**: mySUNI/College 교육과정 추천 시 반드시 다음 정보들을 포함하여 상세하게 제공하세요!
 
 **mySUNI 과정의 경우 반드시 포함해야 할 정보:**
 1. **과정명** (링크 포함 - 실제 URL이 있는 경우에만)
-2. **학습시간** (⏰ 아이콘과 함께)
-3. **카테고리** (🏷️ 아이콘과 함께) 
-4. **난이도** (📊 아이콘과 함께 - 초급/중급/고급 등)
-5. **평점** (⭐ 아이콘과 함께 - X.X/5.0 형태)
-6. **이수자수** (👥 아이콘과 함께 - N명 형태)
-7. **채널명** (📺 아이콘과 함께)
-8. **관련 직무/스킬** (🔧 아이콘과 함께)
-9. **과정 설명** (📝 아이콘과 함께)
+2. **학습시간**
+3. **카테고리** 
+4. **난이도** (초급/중급/고급 등)
+5. **평점** (X.X/5.0 형태)
+6. **이수자수** (N명 형태)
+7. **채널명**
+8. **관련 직무/스킬**
+9. **과정 설명**
 
 **College 과정의 경우 반드시 포함해야 할 정보:**
 1. **과정명** (링크 포함 - 실제 URL이 있는 경우에만)
-2. **학습시간** (⏰ 아이콘과 함께)
-3. **학부** (🏢 아이콘과 함께)
-4. **교육유형** (📋 아이콘과 함께)
-5. **표준과정** (📚 아이콘과 함께)
-6. **특화직무/추천직무** (🔧 아이콘과 함께)
-7. **과정 설명** (📝 아이콘과 함께)
+2. **학습시간**
+3. **학부**
+4. **교육유형**
+5. **표준과정**
+6. **특화직무/추천직무**
+7. **과정 설명**
 
-**교육과정 표시 예시 (절대 따라하세요!):**
+**📖 자연스러운 교육과정 설명 방식 (필수!):**
 
-### ⭐ AI 데이터 센터 시장 특집
-- ⏰ **학습시간**: 0.67시간
-- 🏷️ **카테고리**: Data Science & AI
-- 📊 **난이도**: 초급
-- ⭐ **평점**: 4.2/5.0
-- 👥 **이수자수**: 1,245명
-- 📺 **채널**: mySUNI Tech Channel
-- 🔧 **관련 스킬**: AI, 데이터센터, 시장분석
-- 📝 **설명**: AI 데이터 센터의 최신 동향과 시장 전망에 대해 배울 수 있는 과정입니다. 업계 전문가들의 인사이트와 실제 사례를 통해 AI 인프라의 미래를 이해할 수 있습니다.
-- 🔗 **수강링크**: [AI 데이터 센터 시장 특집](https://company.mysuni.com/course/12345)
+✅ **자연스럽고 따뜻한 추천 방식:**
 
-❌ **절대 금지되는 부실한 표시:**
-"AI 데이터 센터 시장 특집
-학습시간: 0.67시간
-설명: AI 데이터 센터의 최신 동향과 시장 전망에 대해 배울 수 있는 과정입니다."
+"○○님이 관심 있어하실 만한 과정을 몇 개 골라봤어요! 
 
-✅ **올바른 풍부한 정보 제공:**
-위의 예시처럼 평점, 이수자수, 난이도, 카테고리 등 모든 제공된 정보를 활용하여 사용자가 과정을 제대로 평가하고 선택할 수 있도록 도와주세요!
+### [mySUNI]AI 데이터 센터 시장 특집(VOD)
+이 과정은 정말 짧고 알찬 편이에요! 겨우 40분 정도만 투자하시면 되니까 점심시간에도 충분히 들을 수 있을 거예요. 
+- **학습시간**: 0.67시간 (점심시간에도 OK!)
+- **카테고리**: Cloud
+- **난이도**: 초급 (처음 접하시는 분들도 부담 없어요)
+- **평점**: 4.5/5.0 (리뷰가 정말 좋아요!)
+- **이수자수**: 150명 (많은 분들이 만족하셨네요)
+- **채널**: mySUNI
+- **관련 스킬**: 데이터 센터, AI
+- 요즘 AI 데이터 센터가 정말 핫한 분야잖아요! 업계 전문가들의 생생한 이야기와 실제 사례를 통해 AI 인프라의 미래를 한눈에 볼 수 있어서 추천드려요. 특히 시장 전망까지 다뤄서 비즈니스 감각도 기를 수 있을 것 같아요.
 
-**📚 교육과정 URL 처리 예시:**
-올바른 예시:
-- URL이 있는 경우: "[[Guided Project] Btv 시청데이터를 활용한 추천 모델 개발](https://www.google.com/ai)"
-- URL이 없는 경우: "[Guided Project] Btv 시청데이터를 활용한 추천 모델 개발"
+---
+**[[학습하기](https://content.samsung.com/study/ai-datacenter)]**
+
+### [사내과정]ZCP (SK Container Platform) 컨테이너 관리 플랫폼 아키텍처 이해와 활용(Hands-On)
+컨테이너 기술은 현대의 클라우드 환경에서 매우 중요하죠. 이 과정은 4시간 정도 소요되며, 실습 중심으로 진행돼요.
+- **학습시간**: 4.0시간
+- **카테고리**: Cloud
+- **난이도**: 중급
+- 클라우드 인프라를 구축하고 관리하는 데 필요한 실질적인 기술을 배울 수 있어요. 실습이 포함된 과정이라 직접 경험해보면서 배우기 때문에 현업에 바로 적용하기 좋습니다!
+
+---
+**[[학습하기](https://mysuni.sk.com/suni-main/course/zcp-container)]**
+
+### [사내과정]딥러닝 입문(오프라인집합)  
+딥러닝을 처음 시작하시는 거라면 이 과정이 정말 좋을 것 같아요!
+- **학습시간**: 17.8시간 (주말에 조금씩 하시면 한 달 정도면 충분해요)
+- **난이도**: 기초 (차근차근 설명해줘서 따라가기 쉬워요)
+- **평점**: 4.3/5.0 
+- **이수자수**: 1,200명 (검증된 인기 과정이에요!)
+- 딥러닝의 기본 개념부터 실습까지 모두 포함되어 있어서, 이론만 배우고 끝나는 게 아니라 직접 손으로 해볼 수 있어요. 처음엔 어려울 수 있지만 하나하나 따라하다 보면 어느새 딥러닝 전문가가 되어 있을 거예요!
+
+---
+**[[학습하기](https://samsungu.ac.kr/course/deeplearning)]**"
+
+**교육과정 제목 형식 지침 (반드시 준수!):**
+- **mySUNI 과정**: [mySUNI]과정명(VOD) 또는 [mySUNI]과정명(온라인)
+- **사내과정/College**: [사내과정]과정명(오프라인집합) 또는 [사내과정]과정명(온라인)
+- **제목에는 절대 URL 링크를 넣지 마세요!**
+- **URL은 구분선(---)과 함께 [학습하기] 형태로 분리하여 제공**
+- **실제 URL이 없는 경우 [학습하기] 링크 자체를 생략**
+- **N/A, 정보 없음 등의 값은 표시하지 말 것**
+
+**교육과정 제목 작성 규칙:**
+1. source가 "mysuni"인 경우: ### [mySUNI]과정명(VOD)
+2. source가 "college"인 경우: ### [사내과정]과정명(오프라인집합)
+3. 과정명에서 대괄호는 제거: "[코드잇] 머신러닝 입문" → "코드잇 머신러닝 입문"
+4. 제목에는 링크를 달지 않고 순수 텍스트로만 작성
+5. **중요**: 평점, 이수자수, 카테고리 등의 정보가 "N/A", "정보 없음" 등인 경우 해당 항목 자체를 표시하지 말 것
+
+❌ **딱딱하고 기계적인 방식 (피하세요!):**
+"다음은 추천 교육과정입니다:
+
+### AI 데이터 센터 시장 특집
+- 학습시간: 0.67시간
+- 카테고리: Cloud
+- 난이도: 초급
+- 평점: 4.5/5.0
+- 이수자수: 150명
+- 채널: mySUNI
+- 관련 스킬: 데이터 센터, AI
+- 설명: AI 데이터 센터의 최신 동향과 시장 전망에 대해 배울 수 있는 과정입니다."
 
 잘못된 예시 (절대 하지 마세요):
 - "[과정명](https://company.com/course)" (임의 URL 생성)
