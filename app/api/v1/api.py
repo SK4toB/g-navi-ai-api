@@ -7,7 +7,8 @@ from app.api.v1.endpoints import (
     message, 
     health, 
     session_management, 
-    conversation_history
+    conversation_history,
+    chroma
 )
 
 api_router = APIRouter()
@@ -45,4 +46,11 @@ api_router.include_router(
     conversation_history.router,
     prefix="/conversation-history",
     tags=["conversation-history"]
+)
+
+# ChromaDB 관련 엔드포인트
+api_router.include_router(
+    chroma.router,
+    prefix="/chroma",
+    tags=["vector-database"]
 )
