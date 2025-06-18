@@ -8,6 +8,7 @@ import markdown
 from datetime import datetime
 from app.graphs.state import ChatState
 from app.graphs.agents.formatter import ResponseFormattingAgent
+from app.graphs.agents.report_generator import ReportGeneratorAgent
 
 
 class ResponseFormattingNode:
@@ -16,6 +17,7 @@ class ResponseFormattingNode:
     def __init__(self, graph_builder_instance):
         self.graph_builder = graph_builder_instance
         self.response_formatting_agent = ResponseFormattingAgent()
+        self.report_generator = ReportGeneratorAgent()
         self.logger = logging.getLogger(__name__)
 
     def format_response_node(self, state: ChatState) -> ChatState:
@@ -29,26 +31,27 @@ class ResponseFormattingNode:
                 state=state
             )
             
-            # HTML 변환
+            # 기본 HTML 변환 (화면 표시용)
             final_response["html_content"] = self._convert_markdown_to_html(final_response["formatted_content"])
             self.logger.info("마크다운 HTML 변환 완료")
             
-            # HTML 파일 저장
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_dir = os.path.join(os.getcwd(), "output")
-            os.makedirs(output_dir, exist_ok=True)
-            
-            # 세션 정보에서 사용자 데이터 가져오기
+            # 사용자 요청에 따라 보고서 파일 생성 여부 결정
+            user_question = state.get("user_question", "")
             user_data = self.graph_builder.get_user_info_from_session(state)
-            user_name = user_data.get("name", "user")
-            user_name = user_name.replace(" ", "_") if user_name else "user"
-            file_name = f"{user_name}_{timestamp}"
-            html_path = os.path.join(output_dir, f"{file_name}.html")
             
-            with open(html_path, "w", encoding="utf-8") as f:
-                f.write(final_response["html_content"])
+            if self.report_generator.should_generate_report(user_question, user_data):
+                html_path = self.report_generator.generate_html_report(final_response, user_data, state)
+                if html_path:
+                    final_response["html_path"] = html_path
+                    final_response["report_generated"] = True
+                    self.logger.info(f"보고서 파일 생성 완료: {html_path}")
+                else:
+                    final_response["report_generated"] = False
+                    self.logger.warning("보고서 파일 생성 실패")
+            else:
+                final_response["report_generated"] = False
+                self.logger.info("보고서 생성이 필요하지 않은 요청")
             
-            final_response["html_path"] = html_path
             final_response["format_type"] = final_response.get("format_type", "adaptive")
             
             # bot_message 설정 (기본 출력 형식)
@@ -68,8 +71,13 @@ class ResponseFormattingNode:
             state["current_session_messages"].append(assistant_message)
             self.logger.info(f"AI 응답을 current_session_messages에 추가 (총 {len(state['current_session_messages'])}개 메시지)")
             
-            self.logger.info(f"HTML 파일 저장 완료: {html_path}")
             self.logger.info("적응적 응답 포맷팅 완료")
+            
+        except Exception as e:
+            error_msg = f"응답 포맷팅 실패: {e}"
+            self.logger.error(error_msg)
+            state["error_messages"].append(error_msg)
+            state["final_response"] = {"error": str(e)}
             
         except Exception as e:
             error_msg = f"응답 포맷팅 실패: {e}"

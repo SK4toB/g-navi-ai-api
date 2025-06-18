@@ -183,21 +183,15 @@ class ResponseFormattingAgent:
 - 개행이 필요한 곳에서는 실제 줄바꿈을 사용하고, \\n 같은 이스케이프 문자를 사용하지 마세요.
 
 **링크 및 참조 관련 중요 규칙:**
-- 커리어 사례 데이터에는 실제 URL이 없으므로 "(자세히 보기)", "(더보기)", "[링크]" 같은 클릭 가능한 링크 표현을 절대 사용하지 마세요.
-- 외부 트렌드 데이터에만 실제 URL이 포함되어 있으므로, 이 경우에만 링크 형태로 제공하세요.
-- 커리어 사례는 단순히 텍스트 정보로만 제공하고, 추가 링크나 버튼 형태의 표현은 사용하지 마세요.
-- 실제 URL이 명시적으로 제공된 경우에만 링크로 표시하세요.
-
-⚠️ 반드시 제공된 원본 데이터의 URL 필드만 사용하세요!
+- 교육과정 데이터: 제공된 실제 URL만 사용하여 [과정명](URL) 형태로 표시, URL 없으면 텍스트만 표시
+- 외부 트렌드 데이터: 실제 URL이 포함된 경우에만 링크 형태로 제공
+- 커리어 사례: 텍스트 정보로만 제공, 링크나 버튼 표현 사용 금지
+- ⚠️ 절대 금지: URL 추측, 임의 URL 생성, 가짜 링크 생성
 
 **중요: 응답 형식**
 반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트나 설명은 포함하지 마세요.
 JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 마세요.
 순수한 JSON만 반환하세요.
-
-⚠️ 교육과정 링크 사용 시 주의사항:
-- 제공된 교육과정 데이터의 "url" 필드에 실제 URL이 있는 경우에만 [과정명](URL) 형태 사용
-- URL이 없거나 비어있으면 과정명만 텍스트로 표시
 - 절대 임의의 URL을 생성하지 마세요
 
 {
@@ -219,8 +213,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
     "formatted_response": {
         "title": "응답 제목",
         "content": "마크다운 형식의 응답 내용",
-        "call_to_action": "추가 행동 유도 메시지",
-        "additional_questions": ["더 나은 분석을 위한 추가 질문들 (선택사항)"]
+        "call_to_action": "추가 행동 유도 메시지"
     }
 }
 """
@@ -235,8 +228,8 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             
             markdown_lines = []
             for key, value in data.items():
-                # 키 정리 (한글 키 우선, 영문 키는 한글로 번역 시도)
-                display_key = self._format_key_name(key)
+                # 키 정리 (언더스코어를 공백으로 변환하고 타이틀 케이스 적용)
+                display_key = key.replace('_', ' ').title()
                 
                 if isinstance(value, (dict, list)):
                     nested_content = self._dict_to_markdown(value, depth + 1, show_empty)
@@ -307,165 +300,12 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         # 기타 의미있는 필드들 추가
         for key, value in trend.items():
             if key not in ['url', 'link', 'source', 'title', 'name', 'content', 'summary', 'description']:
-                display_key = self._format_key_name(key)
+                display_key = key.replace('_', ' ').title()
                 formatted_value = self._format_value(value)
                 if formatted_value:
                     result_parts.append(f"**{display_key}**: {formatted_value}")
         
         return "\n".join(result_parts) if result_parts else ""
-    
-    # formatter.py의 간소화된 필터링 메서드
-    def _filter_meaningful_career_cases(self, career_cases: List[Any]) -> List[Any]:
-        """커리어 사례 필터링 - 완화된 버전 (빈 내용이 아니면 모두 포함)"""
-        if not career_cases:
-            return []
-        
-        meaningful_cases = []
-        
-        for case in career_cases:
-            # 이미 딕셔너리로 변환된 경우
-            if isinstance(case, dict) and 'content' in case:
-                content = case.get('content', '')
-                # 필터링 기준을 매우 완화 - 빈 문자열이 아니면 모두 포함
-                if content and str(content).strip():
-                    meaningful_cases.append(case)
-            
-            # Document 객체인 경우 (fallback)
-            elif hasattr(case, 'page_content'):
-                content = case.page_content
-                # 빈 내용이 아니면 모두 포함
-                if content and str(content).strip():
-                    meaningful_cases.append({
-                        'content': content,
-                        'metadata': case.metadata if hasattr(case, 'metadata') else {},
-                        'source': 'document_object'
-                    })
-        
-        self.logger.info(f"커리어 사례 필터링: {len(meaningful_cases)}개 (원본: {len(career_cases)}개)")
-        return meaningful_cases
-
-    def _filter_meaningful_trends(self, external_trends: List[Dict]) -> List[Dict]:
-        """의미 있는 외부 트렌드만 필터링"""
-        if not external_trends:
-            return []
-        
-        meaningful_trends = []
-        for trend in external_trends:
-            if not isinstance(trend, dict):
-                continue
-                
-            # 필수 필드가 있는지 확인
-            has_title = trend.get('title') and not self._is_empty_value(trend.get('title'))
-            has_content = (trend.get('content') or trend.get('summary') or 
-                          trend.get('description')) and not self._is_empty_value(
-                              trend.get('content') or trend.get('summary') or trend.get('description'))
-            
-            if has_title or has_content:
-                meaningful_trends.append(trend)
-        
-        self.logger.info(f"외부 트렌드 필터링: {len(meaningful_trends)}개 (원본: {len(external_trends)}개)")
-        return meaningful_trends
-
-    def _filter_meaningful_chat_history(self, chat_history: List[Any]) -> List[Any]:
-        """의미 있는 대화 히스토리만 필터링 (완화된 기준)"""
-        if not chat_history:
-            return []
-        
-        meaningful_history = []
-        for chat in chat_history:
-            if not isinstance(chat, dict):
-                continue
-                
-            # 기본적인 세션 정보가 있으면 포함 (매우 완화된 기준)
-            has_session_id = chat.get('session_id') and not self._is_empty_value(chat.get('session_id'))
-            has_user_id = chat.get('user_id') and not self._is_empty_value(chat.get('user_id'))
-            
-            # messages 배열이 있고 비어있지 않은지 확인
-            messages = chat.get('messages', [])
-            has_messages = isinstance(messages, list) and len(messages) > 0
-            
-            # messages 내용 확인
-            has_meaningful_messages = False
-            if has_messages:
-                for message in messages:
-                    if isinstance(message, dict):
-                        content = message.get('content', '')
-                        role = message.get('role', '')
-                        # 내용이 있고 역할이 있으면 의미있는 메시지로 간주
-                        if content and not self._is_empty_value(content) and role:
-                            has_meaningful_messages = True
-                            break
-            
-            # 레거시 format 지원 (question/response 필드)
-            has_question = chat.get('question') and not self._is_empty_value(chat.get('question'))
-            has_response = chat.get('response') and not self._is_empty_value(chat.get('response'))
-            
-            # 다음 중 하나라도 만족하면 포함 (매우 관대한 기준)
-            if (has_session_id or has_user_id or has_meaningful_messages or 
-                has_question or has_response):
-                meaningful_history.append(chat)
-        
-        self.logger.info(f"대화 히스토리 필터링 : {len(meaningful_history)}개 (원본: {len(chat_history)}개)")
-        return meaningful_history
-    
-    def _has_meaningful_data(self, data: Union[Dict, List, Any]) -> bool:
-        """데이터에 의미있는 내용이 있는지 확인 (개선된 버전)"""
-        if not data:
-            return False
-        
-        if isinstance(data, dict):
-            # 오류 상태인 경우 의미 없는 데이터로 간주
-            if data.get("error"):
-                return False
-                
-            for key, value in data.items():
-                if key == "error":  # 에러 필드는 건너뛰기
-                    continue
-                    
-                if not self._is_empty_value(value):
-                    if isinstance(value, (dict, list)):
-                        if self._has_meaningful_data(value):
-                            return True
-                    else:
-                        # 문자열이 충분히 긴지 확인을 완화 (1자 이상이면 OK)
-                        if isinstance(value, str) and len(value.strip()) >= 1:
-                            return True
-                        elif not isinstance(value, str):
-                            return True
-            return False
-        
-        elif isinstance(data, list):
-            for item in data:
-                if not self._is_empty_value(item):
-                    if isinstance(item, (dict, list)):
-                        if self._has_meaningful_data(item):
-                            return True
-                    else:
-                        return True
-            return False
-        
-        else:
-            return not self._is_empty_value(data)
-    
-    def _is_empty_value(self, value: Any) -> bool:
-        """값이 비어있는지 확인 (개선된 버전)"""
-        if value is None:
-            return True
-        if isinstance(value, str):
-            stripped = value.strip()
-            if not stripped:
-                return True
-            # 의미 없는 값들 확인
-            empty_indicators = ['*정보 없음*', '정보 없음', '', 'N/A', 'n/a', 'null', 
-                               'undefined', 'None', '빈 목록', '내용 없음', 'no data']
-            if stripped.lower() in [indicator.lower() for indicator in empty_indicators]:
-                return True
-            # 너무 짧은 문자열 필터링을 완화 (1자 이상이면 OK)
-            if len(stripped) < 1:
-                return True
-        if isinstance(value, (list, dict)) and not value:
-            return True
-        return False
     
     def _create_dict_summary(self, data: dict) -> str:
         """딕셔너리를 간단한 요약 문자열로 변환"""
@@ -475,61 +315,12 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         # 모든 필드 포함
         items = []
         for key, value in data.items():
-            display_key = self._format_key_name(key)
+            display_key = key.replace('_', ' ').title()
             formatted_value = self._format_value(value)
             if formatted_value:
                 items.append(f"{display_key}: {formatted_value}")
         
         return " | ".join(items) if items else ""
-    
-    def _format_key_name(self, key: str) -> str:
-        """키 이름을 사용자 친화적으로 포맷팅"""
-        # 일반적인 영문 키를 한글로 매핑 (확장된 버전)
-        key_mapping = {
-            'name': '이름',
-            'title': '제목',
-            'content': '내용',
-            'summary': '요약',
-            'description': '설명',
-            'type': '유형',
-            'status': '상태',
-            'date': '날짜',
-            'created_at': '생성일',
-            'updated_at': '수정일',
-            'user_id': '사용자 ID',
-            'session_id': '세션 ID',
-            'analysis': '분석',
-            'complexity': '복잡도',
-            'keywords': '키워드',
-            'interests': '관심분야',
-            'experience': '경험',
-            'skills': '기술',
-            'career_goal': '커리어 목표',
-            'current_job': '현재 직무',
-            'company': '회사',
-            'industry': '산업',
-            'salary': '연봉',
-            'location': '위치',
-            'position': '직위',
-            'domain': '분야',
-            'transition_point': '전환 시점',
-            'success_factors': '성공 요인',
-            'model_used': '사용 모델',
-            'timestamp': '생성 시간',
-            'career_cases_summary': '커리어 사례 요약',
-            'source_trends': '트렌드 소스 수',
-            'confidence_score': '신뢰도',
-            'has_career_references': '커리어 참고 자료 여부',
-            'experience_years': '경력 년수',
-            'age': '나이',
-            'education': '학력',
-            'certification': '자격증',
-            'project': '프로젝트',
-            'achievement': '성과',
-            'goal': '목표'
-        }
-        
-        return key_mapping.get(key.lower(), key)
     
     def _format_value(self, value: Any, show_empty: bool = True) -> str:
         """값을 사용자 친화적으로 포맷팅"""
@@ -559,92 +350,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             return processed_value
         else:
             return str(value) if str(value) != 'None' else ("*정보 없음*" if show_empty else "")
-    
-    def _markdown_to_html(self, markdown_text: str) -> str:
-        """마크다운 텍스트를 HTML로 변환"""
-        try:
-            # 이스케이프 문자 처리
-            processed_text = markdown_text.replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r')
-            
-            # markdown 라이브러리를 사용하여 HTML 변환
-            html = markdown.markdown(
-                processed_text,
-                extensions=['extra', 'codehilite', 'toc'],
-                extension_configs={
-                    'codehilite': {
-                        'css_class': 'highlight'
-                    }
-                }
-            )
-            return html
-        except Exception as e:
-            self.logger.warning(f"마크다운 to HTML 변환 실패: {e}")
-            # 폴백: 기본 HTML 태그로 변환
-            return self._simple_markdown_to_html(markdown_text)
-    
-    def _simple_markdown_to_html(self, text: str) -> str:
-        """간단한 마크다운 to HTML 변환 (폴백용)"""
-        # 이스케이프 문자 처리
-        html = text.replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r')
-        
-        # 기본적인 마크다운 요소들만 변환
-        # 헤더 변환
-        html = re.sub(r'^### (.*$)', r'<h3>\1</h3>', html, flags=re.MULTILINE)
-        html = re.sub(r'^## (.*$)', r'<h2>\1</h2>', html, flags=re.MULTILINE)
-        html = re.sub(r'^# (.*$)', r'<h1>\1</h1>', html, flags=re.MULTILINE)
-        
-        # 굵은 글씨 변환
-        html = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html)
-        
-        # 기울임 변환
-        html = re.sub(r'\*(.*?)\*', r'<em>\1</em>', html)
-        
-        # 리스트 변환 (간단한 버전)
-        lines = html.split('\n')
-        in_list = False
-        result_lines = []
-        
-        for line in lines:
-            if line.strip().startswith('- '):
-                if not in_list:
-                    result_lines.append('<ul>')
-                    in_list = True
-                item_text = line.strip()[2:]
-                result_lines.append(f'<li>{item_text}</li>')
-            else:
-                if in_list:
-                    result_lines.append('</ul>')
-                    in_list = False
-                result_lines.append(line)
-        
-        if in_list:
-            result_lines.append('</ul>')
-        
-        # 줄바꿈 처리 개선
-        html = '\n'.join(result_lines)
-        # 빈 줄은 문단 분리로, 단일 줄바꿈은 br 태그로
-        html = re.sub(r'\n\s*\n', '</p><p>', html)
-        html = html.replace('\n', '<br>')
-        html = f'<p>{html}</p>'
-        
-        # 빈 문단 제거
-        html = re.sub(r'<p>\s*</p>', '', html)
-        
-        return html
-    
-    def _convert_data_to_html(self, data: Any) -> str:
-        """입력 데이터를 타입에 따라 적절한 HTML로 변환"""
-        if isinstance(data, str):
-            # 문자열인 경우 마크다운으로 가정하고 HTML 변환
-            return self._markdown_to_html(data)
-        elif isinstance(data, (dict, list)):
-            # dict/list인 경우 마크다운으로 변환 후 HTML 변환
-            markdown_text = self._dict_to_markdown(data)
-            return self._markdown_to_html(markdown_text)
-        else:
-            # 기타 타입은 문자열로 변환 후 HTML 변환
-            text = self._format_value(data)
-            return self._markdown_to_html(text)
 
     def format_adaptive_response(self,
                                 user_question: str,
@@ -680,18 +385,30 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                 llm_response, user_name, session_id
             )
             
-            # 응답 내용을 HTML로 변환
-            formatted_result["formatted_content_html"] = self._convert_data_to_html(
-                formatted_result.get("formatted_content", "")
-            )
-            
             self.logger.info(f"LLM 기반 응답 포맷팅 완료: {formatted_result.get('format_type', 'adaptive')}")
             return formatted_result
             
         except Exception as e:
             self.logger.error(f"LLM 기반 응답 포맷팅 실패: {e}")
             # 폴백: 간단한 응답 생성
-            return self._create_fallback_response(user_question, user_data)
+            user_name = user_data.get('name', '님')
+            fallback_content = f"""# {user_name}님을 위한 커리어 컨설팅
+
+현재 시스템 처리 중 일시적인 문제가 발생했습니다.
+잠시 후 다시 시도해 주시거나, 더 구체적인 질문으로 다시 문의해 주세요.
+
+---
+*G.Navi AI가 {user_name}님의 커리어 성장을 응원합니다!*
+"""
+            return {
+                "formatted_content": fallback_content,
+                "format_type": "fallback",
+                "timestamp": datetime.now().isoformat(),
+                "user_name": user_name,
+                "session_id": user_data.get('conversationId', ''),
+                "components_used": ["fallback"],
+                "primary_focus": "error_fallback"
+            }
     
     def _prepare_context_for_llm(self, user_question: str, intent_analysis: Dict[str, Any],
                                 user_data: Dict[str, Any],
@@ -722,7 +439,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         
         # 사용자 프로필 - 의미 있는 데이터만 포함
         # 새로운 JSON 구조: {name: "", projects: [...]}
-        if self._has_meaningful_data(user_data):
+        if user_data and isinstance(user_data, dict) and any(user_data.values()):
             user_profile_md = self._dict_to_markdown(user_data, show_empty=False)
             if user_profile_md.strip():
                 context_sections.append(f"""
@@ -731,7 +448,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 """)
         
         # 의도 분석 - 의미 있는 데이터만 포함
-        if self._has_meaningful_data(intent_analysis):
+        if intent_analysis and isinstance(intent_analysis, dict) and any(intent_analysis.values()):
             # 오류가 있는 경우 제외
             if not intent_analysis.get("error"):
                 intent_analysis_md = self._dict_to_markdown(intent_analysis, show_empty=False)
@@ -741,10 +458,8 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 {intent_analysis_md}
 """)
         
-        # 추천 결과 섹션은 제거됨
-        
         # 커리어 사례 - 의미 있는 데이터만 포함 (상세 정보 확장)
-        meaningful_career_cases = self._filter_meaningful_career_cases(career_cases)
+        meaningful_career_cases = career_cases if career_cases else []
         if meaningful_career_cases:
             career_section = "💼 **실제 사내 커리어 사례 (사용 필수!)**:\n"
             career_section += "**⚠️ 중요 사항: 다음 사례들은 모두 실제 익명화된 사내 구성원들의 커리어 정보입니다.**\n"
@@ -781,7 +496,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         
         
         # 외부 트렌드 - 의미 있는 데이터만 포함
-        meaningful_trends = self._filter_meaningful_trends(external_trends)
+        meaningful_trends = external_trends if external_trends else []
         if meaningful_trends:
             trend_section = "관련 산업 트렌드 (실제 웹사이트 링크 포함):\n"
             added_trends = 0
@@ -1088,7 +803,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 - **mySUNI 과정**: [mySUNI]과정명(VOD) 또는 [mySUNI]과정명(온라인)
 - **사내과정/College**: [사내과정]과정명(오프라인집합) 또는 [사내과정]과정명(온라인)
 - **제목에는 절대 URL 링크를 넣지 마세요!**
-- **URL은 구분선(---)과 함께 [학습하기] 형태로 분리하여 제공**
+- **URL은 구분선(---) 다음 줄에 [학습하기] 형태로 제공**
 - **실제 URL이 없는 경우 [학습하기] 링크 자체를 생략**
 - **N/A, 정보 없음 등의 값은 표시하지 말 것**
 
@@ -1142,18 +857,21 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             self.logger.debug(f"LLM 원본 응답 (첫 200자): {response_text[:200]}...")
             
             # JSON 추출 및 파싱 시도
-            parsed_json = self._extract_and_parse_json(response_text)
-            if parsed_json:
-                # JSON 구조 검증
-                if self._validate_json_structure(parsed_json):
-                    self.logger.info("LLM JSON 응답 파싱 성공")
-                    return parsed_json
-                else:
-                    self.logger.warning("JSON 구조가 유효하지 않음, 텍스트 추출로 전환")
-            
-            # JSON 파싱 실패 시 텍스트에서 정보 추출 시도
-            self.logger.warning("JSON 파싱 실패, 텍스트에서 정보 추출 시도")
-            return self._extract_info_from_text(response_text)
+            try:
+                parsed_json = json.loads(response_text)
+                self.logger.info("LLM JSON 응답 파싱 성공")
+                return parsed_json
+            except json.JSONDecodeError:
+                self.logger.warning("JSON 파싱 실패, 기본 응답 생성")
+                return {
+                    "analysis": {"question_type": "general", "complexity_level": "3"},
+                    "content_strategy": {"primary_components": ["text_response"]},
+                    "formatted_response": {
+                        "title": "커리어 컨설팅",
+                        "content": response_text,
+                        "call_to_action": "추가 질문이 있으시면 언제든 말씀해 주세요."
+                    }
+                }
             
         except Exception as e:
             self.logger.error(f"LLM 호출 실패: {e}")
@@ -1185,15 +903,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         # 이스케이프 문자 처리
         call_to_action = call_to_action.replace('\\n', '\n').replace('\\t', '\t').replace('\\r', '\r')
         
-        # 추가 질문이 있는 경우 포함
-        additional_questions = formatted_response.get("additional_questions", [])
-        if additional_questions and isinstance(additional_questions, list):
-            final_content += "\n\n## 🤔 더 정확한 분석을 위한 추가 질문"
-            final_content += "\n더 맞춤형 조언을 제공하기 위해 다음 사항들을 알려주시면 도움이 됩니다:\n"
-            for i, question in enumerate(additional_questions[:5], 1):  # 최대 5개까지만
-                if question and isinstance(question, str):
-                    final_content += f"{i}. {question}\n"
-        
         if not final_content.endswith("---"):
             final_content += f"\n\n---\n*{call_to_action}*"
         
@@ -1209,283 +918,26 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             "information_completeness": analysis.get("information_completeness", 3),
             "should_use_career_cases": analysis.get("should_use_career_cases", False),
             "analysis_depth": content_strategy.get("analysis_depth", "basic"),
-            "has_additional_questions": bool(formatted_response.get("additional_questions")),
             "llm_analysis": analysis,
             "content_strategy": content_strategy
         }
     
-    def _create_fallback_response(self, user_question: str, user_data: Dict[str, Any]) -> Dict[str, Any]:
-        """LLM 실패 시 간단한 폴백 응답 생성"""
-        user_name = user_data.get('name', '님')
-        
-        self.logger.info("폴백 응답 생성 중...")
-        
-        content = f"""# {user_name}님을 위한 커리어 컨설팅
-
-## 📋 질문 분석
-**"{user_question}"**
-
-현재 분석을 진행중입니다. 구체적인 정보를 더 제공해주시면 보다 정확한 컨설팅을 해드릴 수 있습니다.
-
-## 💡 추가 도움말
-- 구체적인 기술 스택이나 경력 단계를 알려주시면 더 맞춤형 조언을 제공할 수 있습니다.
-- 현재 진행 중인 프로젝트나 학습 계획이 있다면 함께 말씀해 주세요.
-- 단기적/장기적 커리어 목표를 구체적으로 설명해 주시면 더 나은 로드맵을 제시할 수 있습니다.
-
----
-*G.Navi AI가 {user_name}님의 커리어 성장을 응원합니다!*
-"""
-        
-        result = {
-            "formatted_content": content,
-            "format_type": "fallback",
-            "timestamp": datetime.now().isoformat(),
-            "user_name": user_name,
-            "session_id": user_data.get('conversationId', ''),
-            "components_used": ["general_advice"],
-            "primary_focus": "fallback_guidance"
-        }
-        
-        # HTML 버전도 생성
-        result["formatted_content_html"] = self._convert_data_to_html(content)
-        
-        self.logger.info(f"폴백 응답 생성 완료: {len(content)}자")
-        return result
-
-    def format_data_for_display(self, data: Any, output_format: str = "html", show_empty: bool = True) -> str:
+    def format_data_for_display(self, data: Any, output_format: str = "markdown", show_empty: bool = True) -> str:
         """
         임의의 데이터를 사용자 친화적인 형태로 포맷팅
         
         Args:
             data: 포맷팅할 데이터 (dict, list, str 등)
-            output_format: 출력 형식 ("html" 또는 "markdown")
+            output_format: 출력 형식 ("markdown"만 지원)
             show_empty: 빈 값들도 표시할지 여부
         
         Returns:
-            포맷팅된 문자열
+            포맷팅된 마크다운 문자열
         """
-        if output_format.lower() == "markdown":
-            if isinstance(data, str):
-                return data
-            else:
-                return self._dict_to_markdown(data, show_empty=show_empty)
-        else:  # HTML
-            if isinstance(data, str):
-                return self._markdown_to_html(data)
-            else:
-                markdown_text = self._dict_to_markdown(data, show_empty=show_empty)
-                return self._markdown_to_html(markdown_text)
-    
-    def _extract_and_parse_json(self, response_text: str) -> Optional[Dict[str, Any]]:
-        """LLM 응답에서 JSON을 추출하고 파싱"""
-        try:
-            # 1. 직접 JSON 파싱 시도
-            return json.loads(response_text)
-        except json.JSONDecodeError:
-            pass
-        
-        try:
-            # 2. 마크다운 코드 블록에서 JSON 추출 시도
-            json_pattern = r'```(?:json)?\s*(\{.*?\})\s*```'
-            matches = re.findall(json_pattern, response_text, re.DOTALL | re.IGNORECASE)
-            
-            for match in matches:
-                try:
-                    return json.loads(match.strip())
-                except json.JSONDecodeError:
-                    continue
-            
-            # 3. 중괄호로 둘러싸인 JSON 추출 시도
-            brace_pattern = r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
-            matches = re.findall(brace_pattern, response_text, re.DOTALL)
-            
-            for match in matches:
-                try:
-                    return json.loads(match.strip())
-                except json.JSONDecodeError:
-                    continue
-                    
-        except Exception as e:
-            self.logger.warning(f"JSON 추출 중 오류: {e}")
-        
-        return None
-    
-    def _extract_info_from_text(self, response_text: str) -> Dict[str, Any]:
-        """JSON 파싱 실패 시 텍스트에서 정보를 추출하여 구조화"""
-        self.logger.info("텍스트에서 정보 추출 중...")
-        
-        # 기본 구조
-        result = {
-            "analysis": {"question_type": "general", "complexity_level": "3"},
-            "content_strategy": {"primary_components": ["text_response"]},
-            "formatted_response": {
-                "title": "커리어 컨설팅 결과",
-                "content": "",
-                "call_to_action": "추가 질문이 있으시면 언제든 말씀해 주세요."
-            }
-        }
-        
-        try:
-            # 텍스트 정리
-            cleaned_text = response_text.strip()
-            
-            # JSON 파싱 오류 관련 텍스트 제거
-            cleaned_text = re.sub(r'```(?:json)?\s*', '', cleaned_text)
-            cleaned_text = re.sub(r'```\s*', '', cleaned_text)
-            
-            # 제목 추출 시도
-            title_patterns = [
-                r'^#\s*(.+?)(?:\n|$)',
-                r'제목[:\s]*(.+?)(?:\n|$)',
-                r'title[:\s]*["\']?(.+?)["\']?(?:\n|$)'
-            ]
-            
-            for pattern in title_patterns:
-                match = re.search(pattern, cleaned_text, re.IGNORECASE | re.MULTILINE)
-                if match:
-                    title = match.group(1).strip()
-                    if title and len(title) < 100:  # 제목이 너무 길지 않은 경우
-                        result["formatted_response"]["title"] = title
-                        break
-            
-            # 내용 추출 - 의미있는 텍스트만
-            content_lines = []
-            for line in cleaned_text.split('\n'):
-                line = line.strip()
-                if line and not line.startswith('{') and not line.endswith('}'):
-                    # JSON 관련 라인 제외
-                    if not any(keyword in line.lower() for keyword in 
-                             ['json', 'parse', 'error', '```', 'analysis', 'content_strategy']):
-                        content_lines.append(line)
-            
-            if content_lines:
-                content = '\n'.join(content_lines[:20])  # 최대 20줄까지만
-                # 너무 짧거나 의미없는 내용 필터링
-                if len(content.strip()) > 50:
-                    result["formatted_response"]["content"] = content
-                else:
-                    result["formatted_response"]["content"] = "상세한 커리어 조언을 생성하는 중 문제가 발생했습니다. 다시 질문해 주시면 더 나은 답변을 제공해드리겠습니다."
-            else:
-                result["formatted_response"]["content"] = "죄송합니다. 응답 생성에 일시적인 문제가 발생했습니다. 다시 시도해 주세요."
-            
-            self.logger.info(f"텍스트에서 정보 추출 완료: 제목={result['formatted_response']['title']}, 내용 길이={len(result['formatted_response']['content'])}")
-            
-        except Exception as e:
-            self.logger.error(f"텍스트 정보 추출 실패: {e}")
-            result["formatted_response"]["content"] = "응답 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
-        
-        return result
-
-    def _validate_json_structure(self, json_data: Dict[str, Any]) -> bool:
-        """JSON 응답 구조가 올바른지 검증"""
-        try:
-            # 필수 키들이 있는지 확인
-            required_keys = ["analysis", "content_strategy", "formatted_response"]
-            if not all(key in json_data for key in required_keys):
-                self.logger.warning(f"필수 키 누락: {[key for key in required_keys if key not in json_data]}")
-                return False
-            
-            # formatted_response 내부 구조 확인
-            formatted_response = json_data.get("formatted_response", {})
-            if not isinstance(formatted_response, dict):
-                self.logger.warning("formatted_response가 딕셔너리가 아님")
-                return False
-            
-            # content 필드가 있고 비어있지 않은지 확인
-            content = formatted_response.get("content", "")
-            if not content or len(content.strip()) < 10:
-                self.logger.warning("content 필드가 비어있거나 너무 짧음")
-                return False
-            
-            # 선택적 필드들 검증 (있으면 타입 체크)
-            analysis = json_data.get("analysis", {})
-            
-            if "should_use_career_cases" in analysis:
-                if not isinstance(analysis["should_use_career_cases"], (bool, str)):
-                    self.logger.warning("should_use_career_cases 필드 타입 오류")
-                    return False
-            
-            if "additional_questions" in formatted_response:
-                if not isinstance(formatted_response["additional_questions"], list):
-                    self.logger.warning("additional_questions 필드가 리스트가 아님")
-                    return False
-            
-            self.logger.debug("JSON 구조 검증 통과")
-            return True
-            
-        except Exception as e:
-            self.logger.error(f"JSON 구조 검증 중 오류: {e}")
-            return False
-    
-    def _format_chat_history_item(self, chat: Dict[str, Any]) -> str:
-        """대화 히스토리 항목을 읽기 쉬운 형태로 포맷팅"""
-        if not isinstance(chat, dict):
-            return ""
-        
-        result_parts = []
-        
-        # 세션 기본 정보
-        session_id = chat.get('session_id', '')
-        user_id = chat.get('user_id', '')
-        timestamp = chat.get('timestamp', '')
-        
-        if session_id:
-            result_parts.append(f"**세션 ID**: {session_id}")
-        if timestamp:
-            # 타임스탬프를 읽기 쉬운 형태로 변환
-            try:
-                from datetime import datetime
-                if 'T' in timestamp:
-                    dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
-                    formatted_time = dt.strftime('%Y년 %m월 %d일 %H:%M')
-                    result_parts.append(f"**날짜**: {formatted_time}")
-                else:
-                    result_parts.append(f"**날짜**: {timestamp}")
-            except:
-                result_parts.append(f"**날짜**: {timestamp}")
-        
-        # 메시지 내용 포맷팅
-        messages = chat.get('messages', [])
-        if isinstance(messages, list) and messages:
-            result_parts.append("\n**대화 내용**:")
-            for i, message in enumerate(messages[:4]):  # 최대 4개 메시지만
-                if isinstance(message, dict):
-                    role = message.get('role', '')
-                    content = message.get('content', '')
-                    
-                    if content and not self._is_empty_value(content):
-                        # 역할 한글화
-                        role_korean = {'user': '사용자', 'assistant': 'AI', 'system': '시스템'}.get(role, role)
-                        
-                        # 내용이 너무 길면 요약
-                        if len(content) > 150:
-                            content = f"{content[:150]}..."
-                        
-                        result_parts.append(f"- **{role_korean}**: {content}")
-        
-        # 레거시 format 지원
-        elif chat.get('question') or chat.get('response'):
-            question = chat.get('question', '')
-            response = chat.get('response', '')
-            
-            if question and not self._is_empty_value(question):
-                if len(question) > 150:
-                    question = f"{question[:150]}..."
-                result_parts.append(f"**질문**: {question}")
-            
-            if response and not self._is_empty_value(response):
-                if len(response) > 150:
-                    response = f"{response[:150]}..."
-                result_parts.append(f"**답변**: {response}")
-        
-        # 컨텍스트 정보 (있는 경우)
-        context = chat.get('context', {})
-        if isinstance(context, dict) and context:
-            session_summary = context.get('session_summary', '')
-            if session_summary and not self._is_empty_value(session_summary):
-                result_parts.append(f"**세션 요약**: {session_summary}")
-        
-        return "\n".join(result_parts) if result_parts else ""
+        if isinstance(data, str):
+            return data
+        else:
+            return self._dict_to_markdown(data, show_empty=show_empty)
     
     def _create_detailed_career_case_markdown(self, case: Union[Dict, Any], show_empty: bool = True) -> str:
         """커리어 사례를 상세하게 마크다운으로 변환 (확장된 정보 포함)"""
