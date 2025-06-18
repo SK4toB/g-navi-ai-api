@@ -374,36 +374,6 @@ class CareerEnsembleRetrieverAgent:
             self.logger.error(f"chat_history.json 로드 실패: {e}")
             return []
 
-    def search_external_trends_with_tavily(self, trend_keywords: list) -> list:
-        """Tavily API를 이용한 트렌드 검색 (간단 버전)"""
-        import requests
-        import os
-        tavily_api_key = os.getenv("TAVILY_API_KEY")
-        if not tavily_api_key:
-            self.logger.warning("Tavily API Key가 설정되어 있지 않습니다.")
-            return []
-        results = []
-        for keyword in trend_keywords[:2]:  # 상위 2개 키워드만
-            try:
-                response = requests.post(
-                    "https://api.tavily.com/search",
-                    json={"query": keyword, "num_results": 2},
-                    headers={"Authorization": f"Bearer {tavily_api_key}"}
-                )
-                if response.status_code == 200:
-                    data = response.json()
-                    for item in data.get("results", []):
-                        results.append({
-                            "title": item.get("title", ""),
-                            "url": item.get("url", ""),
-                            "snippet": item.get("snippet", "")
-                        })
-                else:
-                    self.logger.warning(f"Tavily 검색 실패: {response.status_code} {response.text}")
-            except Exception as e:
-                self.logger.error(f"Tavily 검색 중 오류: {e}")
-        return results
-
     def _load_education_resources(self):
         """교육과정 리소스 지연 로딩"""
         if self.education_vectorstore is None:

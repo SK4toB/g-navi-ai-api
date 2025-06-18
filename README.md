@@ -100,14 +100,12 @@ flowchart TD
     
     subgraph "Step3 Details"
         Step3A[커리어 사례 검색<br/>BM25 + Embedding 앙상블]
-        Step3B[외부 트렌드 검색<br/>Tavily API]
         Step3C[교육과정 정보<br/>검색 및 추천]
     end
     
     Step1 --> Step1A
     Step1 --> Step1B
     Step3 --> Step3A
-    Step3 --> Step3B
     Step3 --> Step3C
 ```
 
@@ -118,7 +116,7 @@ flowchart TD
 | **0단계** | MessageCheckNode | 메시지 유무 확인 및 상태 초기화 | 조건부 분기 |
 | **1단계** | ChatHistoryNode | MemorySaver 기반 현재 세션 대화 관리 | `current_session_messages` |
 | **2단계** | IntentAnalysisNode | 질문 의도 분석 및 상황 파악 | `intent_analysis` |
-| **3단계** | DataRetrievalNode | 커리어 사례 + 트렌드 + 교육과정 + 회사 비전 검색 | `career_cases`, `external_trends`, `education_courses` |
+| **3단계** | DataRetrievalNode | 커리어 사례 + 교육과정 + 회사 비전 검색 | `career_cases`, `education_courses` |
 | **4단계** | ResponseFormattingNode | 질문 유형별 적응적 응답 생성 | `final_response` |
 
 ## 핵심 컴포넌트
@@ -144,7 +142,6 @@ class ChatGraphBuilder:
 ### 🔍 CareerEnsembleRetriever (`app/graphs/agents/retriever.py`)
 - **BM25 + Embedding 앙상블 검색**
 - **ChromaDB** 벡터 스토어 활용
-- **Tavily API** 외부 트렌드 검색
 - **회사 비전 정보** 자동 통합
 - **캐시 기반 임베딩** 최적화
 
@@ -178,7 +175,6 @@ class ChatState(TypedDict, total=False):  # 선택적 필드 허용
     # 4단계 처리 결과
     intent_analysis: Dict[str, Any]       # 2단계: 의도 분석
     career_cases: List[Any]              # 3단계: 커리어 사례 (회사 비전 포함)
-    external_trends: List[Dict]          # 3단계: 외부 트렌드
     education_courses: Dict[str, Any]    # 3단계: 교육과정 추천
     final_response: Dict[str, Any]        # 4단계: 최종 응답
     
@@ -217,7 +213,6 @@ sequenceDiagram
     
     Graph->>Nodes: 3️⃣ retrieve_additional_data
     Nodes->>ChromaDB: 커리어 사례 검색
-    Nodes->>Tavily: 외부 트렌드 검색
     Nodes->>System: 교육과정 정보 검색
     
     Graph->>Nodes: 4️⃣ format_response
@@ -300,7 +295,6 @@ G.Navi는 유지보수성과 확장성을 위해 각 처리 단계를 독립적�
 - **Pandas**: 구조화된 데이터 처리
 - **BM25**: 키워드 기반 검색
 - **Ensemble Retriever**: 하이브리드 검색
-- **Tavily API**: 외부 트렌드 데이터
 
 ### 🚀 Deployment
 - **Docker**: 컨테이너화
@@ -372,7 +366,7 @@ pip install -r requirements.txt
 
 # 환경변수 설정
 cp .env.example .env
-# OPENAI_API_KEY, TAVILY_API_KEY 설정
+# OPENAI_API_KEY 설정
 ```
 
 ### 🚀 로컬 실행

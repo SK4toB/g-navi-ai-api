@@ -30,30 +30,20 @@ class DataRetrievalNode:
             career_query = " ".join(career_keywords[:2])
             career_cases = self.career_retriever_agent.retrieve(career_query, k=3)
             
-            # 기존 외부 트렌드 검색
-            trend_keywords = intent_analysis.get("external_trends", [])
-            if not trend_keywords:
-                trend_keywords = [user_question]
-            external_trends = self.career_retriever_agent.search_external_trends_with_tavily(trend_keywords[:2])
-            
-            if len(external_trends) > 3:
-                external_trends = external_trends[:3]
-            
             # 새로운 교육과정 검색 추가
             education_results = self._search_education_courses(state, intent_analysis)
             
             # 상태 업데이트
             state["career_cases"] = career_cases
-            state["external_trends"] = external_trends
+            state["external_trends"] = []  # 외부 트렌드 검색 비활성화
             state["education_courses"] = education_results  # 새로 추가
             
             state["processing_log"].append(
                 f"추가 데이터 검색 완료: 커리어 사례 {len(career_cases)}개, "
-                f"트렌드 정보 {len(external_trends)}개, "
                 f"교육과정 {len(education_results.get('recommended_courses', []))}개"
             )
             self.logger.info(
-                f"커리어 사례 {len(career_cases)}개, 트렌드 정보 {len(external_trends)}개, "
+                f"커리어 사례 {len(career_cases)}개, "
                 f"교육과정 {len(education_results.get('recommended_courses', []))}개 검색 완료"
             )
             

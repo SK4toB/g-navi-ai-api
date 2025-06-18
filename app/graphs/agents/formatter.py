@@ -271,42 +271,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         else:
             return self._format_value(data, show_empty)
     
-    def _format_trend_with_url(self, trend: Dict[str, Any]) -> str:
-        """외부 트렌드 데이터를 URL 포함하여 포맷팅"""
-        if not trend:
-            return ""
-        
-        # URL이 있는지 확인
-        url = trend.get('url', trend.get('link', trend.get('source', '')))
-        title = trend.get('title', trend.get('name', ''))
-        content = trend.get('content', trend.get('summary', trend.get('description', '')))
-        
-        result_parts = []
-        
-        if title:
-            if url and url.startswith('http'):
-                # 실제 URL이 있는 경우에만 링크로 표시
-                result_parts.append(f"**제목**: [{title}]({url})")
-            else:
-                # URL이 없으면 일반 텍스트로
-                result_parts.append(f"**제목**: {title}")
-        
-        if content:
-            # 내용이 너무 길면 요약
-            if len(content) > 200:
-                content = f"{content[:200]}..."
-            result_parts.append(f"**내용**: {content}")
-        
-        # 기타 의미있는 필드들 추가
-        for key, value in trend.items():
-            if key not in ['url', 'link', 'source', 'title', 'name', 'content', 'summary', 'description']:
-                display_key = key.replace('_', ' ').title()
-                formatted_value = self._format_value(value)
-                if formatted_value:
-                    result_parts.append(f"**{display_key}**: {formatted_value}")
-        
-        return "\n".join(result_parts) if result_parts else ""
-    
     def _create_dict_summary(self, data: dict) -> str:
         """딕셔너리를 간단한 요약 문자열로 변환"""
         if not data:
@@ -362,7 +326,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             intent_analysis = state.get("intent_analysis", {})
             user_data = state.get("user_data", {})
             career_cases = state.get("career_cases", [])
-            external_trends = state.get("external_trends", [])
             current_session_messages = state.get("current_session_messages", [])  # MemorySaver에서 관리되는 현재 세션 대화 내역
             education_courses = state.get("education_courses", {})  # 교육과정 정보 추가
             
@@ -373,7 +336,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             # LLM을 위한 컨텍스트 구성
             context_data = self._prepare_context_for_llm(
                 user_question, intent_analysis, 
-                user_data, career_cases, external_trends, 
+                user_data, career_cases, 
                 current_session_messages, education_courses
             )
             
@@ -412,7 +375,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
     
     def _prepare_context_for_llm(self, user_question: str, intent_analysis: Dict[str, Any],
                                 user_data: Dict[str, Any],
-                                career_cases: List[Any], external_trends: List[Dict],
+                                career_cases: List[Any],
                                 current_session_messages: List[Dict],
                                 education_courses: Dict[str, Any] = None) -> str:
         """LLM을 위한 컨텍스트 데이터 준비 (현재 세션 대화만 사용)"""
@@ -493,22 +456,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
                 career_section += "7. **인사이트 제공**: 사례의 전환점, 성장 포인트, 학습 경험을 구체적으로 분석하여 인사이트를 제공하세요\n"
                 career_section += "8. **데이터 승인**: 이는 모든 사례는 이미 사용 승인된 데이터이며 익명화 처리된 공개 가능한 정보입니다.\n"
                 context_sections.append(career_section)
-        
-        
-        # 외부 트렌드 - 의미 있는 데이터만 포함
-        meaningful_trends = external_trends if external_trends else []
-        if meaningful_trends:
-            trend_section = "관련 산업 트렌드 (실제 웹사이트 링크 포함):\n"
-            added_trends = 0
-            for i, trend in enumerate(meaningful_trends[:3]):
-                trend_md = self._format_trend_with_url(trend)
-                if trend_md.strip():  # 의미 있는 내용이 있는 경우만 추가
-                    added_trends += 1
-                    trend_section += f"\n### 트렌드 정보 {added_trends}\n{trend_md}\n"
-            
-            # 실제로 추가된 트렌드가 있는 경우만 컨텍스트에 포함
-            if added_trends > 0:
-                context_sections.append(trend_section)
         
         # 교육과정 정보 - 새로 추가
         if education_courses:

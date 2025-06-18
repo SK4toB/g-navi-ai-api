@@ -19,7 +19,6 @@ class MessageCheckNode:
             state.setdefault("chat_history_results", [])
             state.setdefault("intent_analysis", {})
             state.setdefault("career_cases", [])
-            state.setdefault("external_trends", [])
             state.setdefault("final_response", {})
             state.setdefault("processing_log", [])
             state.setdefault("error_messages", [])

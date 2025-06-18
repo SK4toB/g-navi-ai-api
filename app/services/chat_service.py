@@ -80,7 +80,6 @@ class ChatService:
                 # current_session_messages는 MemorySaver가 자동으로 복원하므로 여기서 초기화하지 않음
                 "intent_analysis": {},
                 "career_cases": [],
-                "external_trends": [],
                 "education_courses": {},
                 "final_response": {},
                 "processing_log": [],

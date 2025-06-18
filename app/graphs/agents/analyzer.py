@@ -36,14 +36,13 @@ class IntentAnalysisAgent:
 
 중요: 다른 텍스트 없이 오직 아래 형태의 JSON만 출력하세요. 마크다운 코드 블록이나 추가 설명은 절대 포함하지 마세요.
 
-{{"primary_interest": "주요 관심사", "urgency": "긴급도", "complexity": 복잡도숫자, "question_type": "질문유형", "career_history": ["키워드1", "키워드2"], "external_trends": ["트렌드1", "트렌드2"], "requires_full_analysis": true, "response_strategy": "comprehensive"}}
+{{"primary_interest": "주요 관심사", "urgency": "긴급도", "complexity": 복잡도숫자, "question_type": "질문유형", "career_history": ["키워드1", "키워드2"], "requires_full_analysis": true, "response_strategy": "comprehensive"}}
 
 - primary_interest: 커리어 전환, 스킬 개발, 이직 준비, 인사/소개, 일반 상담 등
 - urgency: 높음, 보통, 낮음 중 하나
 - complexity: 1-5 사이의 숫자 (1=간단, 5=복합적)
 - question_type: 인사형, 구체적, 추상적, 탐색적 중 하나
-- career_history: 커리어 사례 검색용 키워드 배열 (최대 3개)
-- external_trends: 트렌드 검색용 키워드 배열 (최대 2개)"""
+- career_history: 커리어 사례 검색용 키워드 배열 (최대 3개)"""
 
         prompt = ChatPromptTemplate.from_messages([
             ("system", system_prompt),
