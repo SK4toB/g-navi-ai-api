@@ -101,14 +101,18 @@ class ResponseFormattingAgent:
 
 2. **구체적 교육과정 정보 제공**:
    - 과정명, 교육유형(mySUNI 과정/사내과정/외부과정), 학습시간, 평점 등 구체적 정보 직접 언급
-   - "OO 과정(mySUNI 과정, 40시간)" 또는 "OO 과정(사내과정, 4.8점/5.0)" 형태로 명시
+   - mySUNI 과정의 경우: 카테고리, 채널, 난이도, 평점, 이수자수, 관련 스킬까지 상세히 제공
+   - College 과정의 경우: 학부, 교육유형, 표준과정 등 상세 정보 포함
+   - "OO 과정(mySUNI 과정, 40시간, 평점 4.2/5.0, 이수자 256명)" 형태로 풍부하게 명시
    - "플랫폼: SKALA College" 대신 교육유형을 구체적으로 표시: "교육유형: mySUNI 과정" / "교육유형: 사내과정" / "교육유형: 외부과정"
 
 3. **URL 하이퍼링크 처리 (신규 추가!):**
-   - 교육과정 데이터에 URL이 포함된 경우 반드시 마크다운 링크 형태로 제공: [과정명](URL)
-   - URL이 없는 경우에만 과정명만 텍스트로 표시
-   - 예시: "[생성형 AI 기초](https://www.example.com/course1)" 또는 "생성형 AI 기초 (URL 정보 없음)"
-   - 사용자가 실제로 클릭할 수 있는 링크를 제공하여 접근성 향상
+   - ⚠️ 절대 중요: 교육과정 데이터에서 제공된 실제 URL만 사용하세요. 임의의 URL을 생성하거나 추측하지 마세요.
+   - 제공된 데이터에 "url" 필드가 있고 실제 URL 값이 있는 경우에만 마크다운 링크 형태로 제공: [과정명](실제_제공된_URL)
+   - URL 필드가 비어있거나 "정보 없음" 등인 경우 과정명만 텍스트로 표시
+   - 예시: "[생성형 AI 기초](https://www.google.com/ai)" (실제 제공된 URL) 또는 "생성형 AI 기초" (URL 없는 경우)
+   - 절대 금지: 임의 URL 생성, URL 추측, 가짜 링크 생성
+   - 반드시 제공된 원본 데이터의 URL 필드 값만 사용하세요
 
 4. **학습 경로 제시**:
    - 단계별 학습 순서와 각 과정의 목적을 명확히 설명
@@ -123,6 +127,7 @@ class ResponseFormattingAgent:
    - "교육", "학습", "스킬 향상", "과정 추천" 요청 시 반드시 구체적 과정 정보 제공
    - 교육유형(mySUNI 과정, 사내과정, 외부과정)을 명시하여 사용자가 선택할 수 있도록
    - URL이 있는 과정은 클릭 가능한 링크로 제공
+   - mySUNI 과정의 경우: 평점, 이수자수, 난이도, 카테고리 등 상세 정보 포함하여 사용자가 선택 기준을 가질 수 있도록
 
 **중요 규칙:**
 - 모든 응답(분석, 전략, 최종 답변 등)은 반드시 한국어로 작성해야 합니다.
@@ -133,10 +138,12 @@ class ResponseFormattingAgent:
 
 **링크 및 참조 관련 중요 규칙:**
 - 커리어 사례 데이터에는 실제 URL이 없으므로 "(자세히 보기)", "(더보기)", "[링크]" 같은 클릭 가능한 링크 표현을 절대 사용하지 마세요.
-- 교육과정 데이터에는 실제 URL이 포함되어 있으므로, 이 경우 반드시 [과정명](URL) 형태의 마크다운 링크로 제공하세요.
+- 교육과정 데이터: ⚠️ 반드시 제공된 원본 데이터의 "url" 필드 값만 사용하세요. 임의의 URL을 생성하거나 추측하지 마세요.
+  - 실제 URL이 제공된 경우: [과정명](제공된_실제_URL) 형태로 표시
+  - URL이 없거나 비어있는 경우: 과정명만 텍스트로 표시
 - 외부 트렌드 데이터에도 실제 URL이 포함되어 있으므로, 이 경우에만 링크 형태로 제공하세요.
 - 커리어 사례는 단순히 텍스트 정보로만 제공하고, 추가 링크나 버튼 형태의 표현은 사용하지 마세요.
-- 실제 URL이 명시적으로 제공된 경우에만 링크로 표시하세요.
+- ⚠️ 절대 금지: URL 추측, 임의 URL 생성, 가짜 링크 생성
 - 제공된 커리어 사례는 모두 공개 가능한 정보이므로 구체적인 Employee ID, 경력 내용, 프로젝트 경험을 그대로 언급하세요
 - "사례 1 (EMP-123456)" 형태로 구체적인 직원 ID와 함께 언급하되, 실제 경험과 성과를 상세히 설명하세요
 - 실제 사례를 언급할 때는 구체적인 기술 스택, 프로젝트 내용, 커리어 전환 과정, 성공 요인을 상세히 제공하세요
@@ -154,10 +161,17 @@ class ResponseFormattingAgent:
 - 커리어 사례는 단순히 텍스트 정보로만 제공하고, 추가 링크나 버튼 형태의 표현은 사용하지 마세요.
 - 실제 URL이 명시적으로 제공된 경우에만 링크로 표시하세요.
 
+⚠️ 반드시 제공된 원본 데이터의 URL 필드만 사용하세요!
+
 **중요: 응답 형식**
 반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트나 설명은 포함하지 마세요.
 JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 마세요.
 순수한 JSON만 반환하세요.
+
+⚠️ 교육과정 링크 사용 시 주의사항:
+- 제공된 교육과정 데이터의 "url" 필드에 실제 URL이 있는 경우에만 [과정명](URL) 형태 사용
+- URL이 없거나 비어있으면 과정명만 텍스트로 표시
+- 절대 임의의 URL을 생성하지 마세요
 
 {
     "analysis": {
@@ -617,7 +631,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             user_data = state.get("user_data", {})
             career_cases = state.get("career_cases", [])
             external_trends = state.get("external_trends", [])
-            # previous_conversations_found 제거 (과거 대화 검색 기능 제거)
             current_session_messages = state.get("current_session_messages", [])  # MemorySaver에서 관리되는 현재 세션 대화 내역
             education_courses = state.get("education_courses", {})  # 교육과정 정보 추가
             
@@ -625,7 +638,7 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             user_name = user_data.get('name', '님')
             session_id = user_data.get('conversationId', '')
             
-            # LLM을 위한 컨텍스트 구성 (과거 대화 검색 제거)
+            # LLM을 위한 컨텍스트 구성
             context_data = self._prepare_context_for_llm(
                 user_question, intent_analysis, 
                 user_data, career_cases, external_trends, 
@@ -757,12 +770,136 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
         
         # 교육과정 정보 - 새로 추가
         if education_courses:
-            # 교육과정 정보를 간단히 문자열로 변환
             try:
-                education_section = f"**📚 교육과정 정보**:\n{str(education_courses)[:500]}..."
+                education_section = "**📚 교육과정 정보 (URL 포함)**:\n"
+                
+                # 교육과정 데이터가 딕셔너리이고 recommended_courses가 있는 경우
+                if isinstance(education_courses, dict) and 'recommended_courses' in education_courses:
+                    courses = education_courses['recommended_courses'][:8]  # 최대 8개로 확장
+                    for i, course in enumerate(courses):
+                        if isinstance(course, dict):
+                            course_name = course.get('course_name', course.get('card_name', '과정명 없음'))
+                            url = course.get('url', '')
+                            source = course.get('source', '알 수 없음')
+                            duration = course.get('duration_hours', course.get('인정학습시간', '정보 없음'))
+                            
+                            education_section += f"\n=== {i+1}. {course_name} ===\n"
+                            education_section += f"📖 출처: {source}\n"
+                            education_section += f"⏰ 학습시간: {duration}시간\n"
+                            
+                            # mySUNI 과정의 경우 추가 상세 정보 제공
+                            if source == 'mysuni':
+                                category = course.get('카테고리명', '')
+                                channel = course.get('채널명', '')
+                                difficulty = course.get('난이도', course.get('difficulty_level', ''))
+                                rating = course.get('평점', '')
+                                enrollments = course.get('이수자수', '')
+                                skills = course.get('skillset', course.get('직무', []))
+                                
+                                if category:
+                                    education_section += f"🏷️ 카테고리: {category}\n"
+                                if channel:
+                                    education_section += f"📺 채널: {channel}\n"
+                                if difficulty:
+                                    education_section += f"📊 난이도: {difficulty}\n"
+                                if rating:
+                                    education_section += f"⭐ 평점: {rating}/5.0\n"
+                                if enrollments:
+                                    education_section += f"👥 이수자수: {enrollments}명\n"
+                                if skills and isinstance(skills, list) and skills:
+                                    skills_str = ', '.join(skills[:3])  # 최대 3개만 표시
+                                    education_section += f"🔧 관련 스킬: {skills_str}\n"
+                            
+                            # College 과정의 경우 추가 정보
+                            elif source == 'college':
+                                department = course.get('department', course.get('학부', ''))
+                                course_type = course.get('course_type', course.get('교육유형', ''))
+                                standard_course = course.get('표준과정', '')
+                                
+                                if department:
+                                    education_section += f"🏢 학부: {department}\n"
+                                if course_type:
+                                    education_section += f"📋 교육유형: {course_type}\n"
+                                if standard_course:
+                                    education_section += f"📚 표준과정: {standard_course}\n"
+                            
+                            # URL 정보
+                            if url and url.strip() and url != '정보 없음':
+                                education_section += f"� 실제URL: {url}\n"
+                                education_section += f"⚠️ 링크 형태: [{course_name}]({url})\n"
+                            else:
+                                education_section += f"� URL: 정보 없음 (텍스트만: {course_name})\n"
+                            
+                            education_section += "\n"
+                
+                # 교육과정 데이터가 리스트인 경우
+                elif isinstance(education_courses, list):
+                    for i, course in enumerate(education_courses[:8]):  # 최대 8개로 확장
+                        if isinstance(course, dict):
+                            course_name = course.get('course_name', course.get('card_name', '과정명 없음'))
+                            url = course.get('url', '')
+                            source = course.get('source', '알 수 없음')
+                            duration = course.get('duration_hours', course.get('인정학습시간', '정보 없음'))
+                            
+                            education_section += f"\n=== {i+1}. {course_name} ===\n"
+                            education_section += f"📖 출처: {source}\n"
+                            education_section += f"⏰ 학습시간: {duration}시간\n"
+                            
+                            # 추가 상세 정보 제공 (mySUNI/College 구분)
+                            if source == 'mysuni':
+                                category = course.get('카테고리명', '')
+                                difficulty = course.get('난이도', '')
+                                rating = course.get('평점', '')
+                                enrollments = course.get('이수자수', '')
+                                skills = course.get('skillset', course.get('직무', []))
+                                
+                                if category:
+                                    education_section += f"🏷️ 카테고리: {category}\n"
+                                if difficulty:
+                                    education_section += f"📊 난이도: {difficulty}\n"
+                                if rating:
+                                    education_section += f"⭐ 평점: {rating}/5.0\n"
+                                if enrollments:
+                                    education_section += f"👥 이수자수: {enrollments}명\n"
+                                if skills and isinstance(skills, list) and skills:
+                                    skills_str = ', '.join(skills[:3])
+                                    education_section += f"🔧 관련 스킬: {skills_str}\n"
+                            
+                            elif source == 'college':
+                                department = course.get('department', course.get('학부', ''))
+                                course_type = course.get('course_type', course.get('교육유형', ''))
+                                
+                                if department:
+                                    education_section += f"🏢 학부: {department}\n"
+                                if course_type:
+                                    education_section += f"📋 교육유형: {course_type}\n"
+                            
+                            if url and url.strip() and url != '정보 없음':
+                                education_section += f"� 실제URL: {url}\n"
+                                education_section += f"⚠️ 링크 형태: [{course_name}]({url})\n"
+                            else:
+                                education_section += f"� URL: 정보 없음 (텍스트만: {course_name})\n"
+                            
+                            education_section += "\n"
+                
+                # 기타 형태의 데이터
+                else:
+                    education_section += f"{str(education_courses)[:300]}...\n"
+                
+                education_section += "\n🚨 중요한 교육과정 정보 제공 규칙:\n"
+                education_section += "- 위 정보를 활용하여 사용자에게 풍부하고 상세한 교육과정 정보 제공\n"
+                education_section += "- mySUNI 과정: 평점, 이수자수, 난이도, 카테고리 등 모든 정보 활용\n"
+                education_section += "- College 과정: 학부, 교육유형, 표준과정 등 상세 정보 활용\n"
+                education_section += "- 사용자가 과정 선택 시 판단할 수 있는 충분한 정보 제공\n"
+                education_section += "- URL 규칙: 실제URL만 사용, [과정명](실제_URL) 형태로 링크 생성\n"
+                education_section += "- 절대 임의의 URL 생성 금지 (example.com, company.com 등)"
+                
                 context_sections.append(education_section)
+                
             except Exception as e:
                 self.logger.warning(f"교육과정 정보 처리 실패: {e}")
+                # 폴백으로 간단한 형태라도 제공
+                context_sections.append(f"**📚 교육과정 정보**: {str(education_courses)[:200]}...")
         
         # 회사 비전 정보 - 커리어 관련 질문인 경우 추가
         career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직', '가치']
@@ -770,8 +907,6 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
             company_vision_section = self._get_company_vision_context()
             if company_vision_section.strip():
                 context_sections.append(company_vision_section)
-        
-        # 과거 대화 검색 기능 제거됨 (현재 세션 대화만 위에서 처리)
         
         # 전체 컨텍스트 구성
         context = "\n".join(context_sections)
@@ -788,6 +923,14 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 
 위 정보를 바탕으로 사용자에게 가장 유용하고 개인화된 응답을 생성해주세요.
 질문의 성격과 사용자의 상황을 고려하여 가장 적절한 정보들을 선택하고 구성해주세요.
+
+⚠️ **URL 사용 시 절대 규칙**:
+1. 교육과정 추천 시 제공된 원본 데이터의 "URL" 필드 값만 사용하세요
+2. URL이 실제로 제공되지 않았거나 비어있으면 링크를 만들지 마세요
+3. 절대 임의의 URL을 생성하거나 추측하지 마세요
+4. 예시 URL(example.com 등)이나 가짜 URL을 만들지 마세요
+5. 제공된 URL이 있는 경우에만: [과정명](제공된_실제_URL)
+6. 제공된 URL이 없는 경우: 과정명 (텍스트만)
 
 **🎯 질문 유형별 응답 전략:**
 - **인사/일반 대화** ("안녕하세요", "감사합니다", "잘 지내세요" 등): 
@@ -834,7 +977,10 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 
 **중요한 링크 처리 지침:**
 - 커리어 사례: 클릭 가능한 링크가 없는 단순 텍스트 정보입니다. "(자세히 보기)", "(더보기)", "[링크]" 등의 표현을 절대 사용하지 마세요.
-- 교육과정: 실제 URL이 포함된 경우 반드시 [과정명](URL) 형태의 마크다운 링크를 사용하세요.
+- 교육과정: ⚠️ 매우 중요 - 제공된 원본 데이터의 "url" 필드에 있는 실제 URL만 사용하세요. 
+  * 실제 URL이 있는 경우: [과정명](제공된_실제_URL) 형태로 표시
+  * URL이 없는 경우: 과정명만 텍스트로 표시
+  * 절대 금지: 임의 URL 생성, URL 추측, 가짜 링크 생성
 - 산업 트렌드: 실제 웹사이트 URL이 포함된 경우에만 [제목](URL) 형태의 마크다운 링크를 사용하세요.
 - 실제로 제공된 구체적인 데이터를 꼭 활용하세요.
 - 존재하지 않는 "사례 1", "사례 2" 같은 가짜 참조를 만들지 마세요.
@@ -845,6 +991,62 @@ JSON 앞뒤에 ```json 같은 마크다운 코드 블록 표시를 사용하지 
 - 개인정보는 이미 익명화 처리되어 Employee ID로만 관리됩니다
 - 사례 제공 시 보안 제한이나 접근 제한을 언급하지 마세요
 - 구체적인 사례와 경험을 직접적으로 활용하여 실용적인 조언을 제공하세요
+
+**🎓 교육과정 추천 시 필수 정보 제공 규칙:**
+⚠️ **매우 중요**: mySUNI/College 교육과정 추천 시 반드시 다음 정보들을 포함하여 상세하게 제공하세요!
+
+**mySUNI 과정의 경우 반드시 포함해야 할 정보:**
+1. **과정명** (링크 포함 - 실제 URL이 있는 경우에만)
+2. **학습시간** (⏰ 아이콘과 함께)
+3. **카테고리** (🏷️ 아이콘과 함께) 
+4. **난이도** (📊 아이콘과 함께 - 초급/중급/고급 등)
+5. **평점** (⭐ 아이콘과 함께 - X.X/5.0 형태)
+6. **이수자수** (👥 아이콘과 함께 - N명 형태)
+7. **채널명** (📺 아이콘과 함께)
+8. **관련 직무/스킬** (🔧 아이콘과 함께)
+9. **과정 설명** (📝 아이콘과 함께)
+
+**College 과정의 경우 반드시 포함해야 할 정보:**
+1. **과정명** (링크 포함 - 실제 URL이 있는 경우에만)
+2. **학습시간** (⏰ 아이콘과 함께)
+3. **학부** (🏢 아이콘과 함께)
+4. **교육유형** (📋 아이콘과 함께)
+5. **표준과정** (📚 아이콘과 함께)
+6. **특화직무/추천직무** (🔧 아이콘과 함께)
+7. **과정 설명** (📝 아이콘과 함께)
+
+**교육과정 표시 예시 (절대 따라하세요!):**
+
+### ⭐ AI 데이터 센터 시장 특집
+- ⏰ **학습시간**: 0.67시간
+- 🏷️ **카테고리**: Data Science & AI
+- 📊 **난이도**: 초급
+- ⭐ **평점**: 4.2/5.0
+- 👥 **이수자수**: 1,245명
+- 📺 **채널**: mySUNI Tech Channel
+- 🔧 **관련 스킬**: AI, 데이터센터, 시장분석
+- 📝 **설명**: AI 데이터 센터의 최신 동향과 시장 전망에 대해 배울 수 있는 과정입니다. 업계 전문가들의 인사이트와 실제 사례를 통해 AI 인프라의 미래를 이해할 수 있습니다.
+- 🔗 **수강링크**: [AI 데이터 센터 시장 특집](https://company.mysuni.com/course/12345)
+
+❌ **절대 금지되는 부실한 표시:**
+"AI 데이터 센터 시장 특집
+학습시간: 0.67시간
+설명: AI 데이터 센터의 최신 동향과 시장 전망에 대해 배울 수 있는 과정입니다."
+
+✅ **올바른 풍부한 정보 제공:**
+위의 예시처럼 평점, 이수자수, 난이도, 카테고리 등 모든 제공된 정보를 활용하여 사용자가 과정을 제대로 평가하고 선택할 수 있도록 도와주세요!
+
+**📚 교육과정 URL 처리 예시:**
+올바른 예시:
+- URL이 있는 경우: "[[Guided Project] Btv 시청데이터를 활용한 추천 모델 개발](https://www.google.com/ai)"
+- URL이 없는 경우: "[Guided Project] Btv 시청데이터를 활용한 추천 모델 개발"
+
+잘못된 예시 (절대 하지 마세요):
+- "[과정명](https://company.com/course)" (임의 URL 생성)
+- "[과정명](https://example.com)" (예시 URL 사용)  
+- "[과정명](링크)" (가짜 링크)
+
+⚠️ 반드시 제공된 원본 데이터의 URL 필드만 사용하세요!
 """
         return context
     

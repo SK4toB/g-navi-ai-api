@@ -30,6 +30,7 @@ class CareerEnsembleRetrieverAgent:
 
         self.persist_directory = os.path.abspath(persist_directory)
         self.cache_directory = os.path.abspath(cache_directory)
+        self.base_dir = os.path.dirname(os.path.dirname(__file__))  # app 디렉토리
         self.logger = logging.getLogger(__name__)
         os.makedirs(self.persist_directory, exist_ok=True)
         os.makedirs(self.cache_directory, exist_ok=True)
@@ -535,16 +536,23 @@ class CareerEnsembleRetrieverAgent:
         self._load_education_resources()
         
         try:
+            # 사용자의 교육과정 소스 선호도 확인
+            preferred_source = self._get_preferred_education_source(query, user_profile, intent_analysis)
+            
             # 1단계: 스킬 기반 빠른 필터링
             skill_based_courses = self._skill_based_course_filter(user_profile, intent_analysis)
             
             # 2단계: VectorDB 의미적 검색 (VectorDB가 없으면 JSON 폴백)
             semantic_matches = self._semantic_course_search(query, skill_based_courses)
             
-            # 3단계: 중복 제거 및 정렬
+            # 3단계: 선호도에 따른 소스 필터링
+            if preferred_source:
+                semantic_matches = self._filter_by_preferred_source(semantic_matches, preferred_source)
+            
+            # 4단계: 중복 제거 및 정렬
             deduplicated_courses = self._deduplicate_courses(semantic_matches)
             
-            # 4단계: 결과 분석 및 학습 경로 생성
+            # 5단계: 결과 분석 및 학습 경로 생성
             course_analysis = self._analyze_course_recommendations(deduplicated_courses)
             learning_path = self._generate_learning_path(deduplicated_courses)
             
@@ -628,6 +636,8 @@ class CareerEnsembleRetrieverAgent:
             # 필터링된 과정이 없으면 전체 VectorDB에서 검색
             docs = self.education_vectorstore.similarity_search(query, k=10)
             courses = [self._doc_to_course_dict(doc) for doc in docs]
+            # 원본 데이터로 상세 정보 보강
+            courses = [self._enrich_course_with_original_data(course) for course in courses]
         else:
             # 필터링된 과정들의 course_id로 VectorDB에서 상세 검색
             course_ids = [course.get("course_id") for course in filtered_courses if course.get("course_id")]
@@ -639,6 +649,9 @@ class CareerEnsembleRetrieverAgent:
                     if course.get("course_id") == filtered_course.get("course_id"):
                         course.update(filtered_course)
                         break
+            
+            # 원본 데이터로 상세 정보 보강
+            courses = [self._enrich_course_with_original_data(course) for course in courses]
         
         self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정")
         return courses
@@ -719,7 +732,8 @@ class CareerEnsembleRetrieverAgent:
             "이수자수": metadata.get("이수자수"),
             "카테고리명": metadata.get("카테고리명"),
             "채널명": metadata.get("채널명"),
-            "표준과정": metadata.get("표준과정")
+            "표준과정": metadata.get("표준과정"),
+            "url": metadata.get("url")  # URL 필드 추가
         }
     
     def _search_by_course_ids(self, course_ids: List[str], query: str) -> List[Dict]:
@@ -765,7 +779,8 @@ class CareerEnsembleRetrieverAgent:
             "이수자수": metadata.get("이수자수"),
             "카테고리명": metadata.get("카테고리명"),
             "채널명": metadata.get("채널명"),
-            "표준과정": metadata.get("표준과정")
+            "표준과정": metadata.get("표준과정"),
+            "url": metadata.get("url")  # URL 필드 추가
         }
     
     def _deduplicate_courses(self, courses: List[Dict]) -> List[Dict]:
@@ -977,3 +992,122 @@ class CareerEnsembleRetrieverAgent:
             })
         
         return path
+
+    def _load_original_course_data(self):
+        """원본 교육과정 상세 데이터 로드"""
+        if not hasattr(self, 'original_mysuni_data'):
+            try:
+                mysuni_path = os.path.abspath(os.path.join(
+                    os.path.dirname(__file__), 
+                    "../../storage/docs/mysuni_courses_detailed.json"
+                ))
+                with open(mysuni_path, "r", encoding="utf-8") as f:
+                    self.original_mysuni_data = json.load(f)
+                self.logger.info(f"mySUNI 원본 데이터 로드 완료: {len(self.original_mysuni_data)}개")
+            except FileNotFoundError:
+                self.logger.warning("mySUNI 원본 데이터 파일을 찾을 수 없습니다.")
+                self.original_mysuni_data = []
+                
+        if not hasattr(self, 'original_college_data'):
+            try:
+                college_path = os.path.abspath(os.path.join(
+                    os.path.dirname(__file__), 
+                    "../../storage/docs/college_courses_detailed.json"
+                ))
+                with open(college_path, "r", encoding="utf-8") as f:
+                    self.original_college_data = json.load(f)
+                self.logger.info(f"College 원본 데이터 로드 완료: {len(self.original_college_data)}개")
+            except FileNotFoundError:
+                self.logger.warning("College 원본 데이터 파일을 찾을 수 없습니다.")
+                self.original_college_data = []
+
+    def _enrich_course_with_original_data(self, course: Dict) -> Dict:
+        """VectorDB 검색 결과를 원본 데이터의 상세 정보로 보강"""
+        self._load_original_course_data()
+        
+        course_id = course.get("course_id")
+        source = course.get("source")
+        
+        if not course_id:
+            return course
+            
+        # mySUNI 과정인 경우
+        if source == "mysuni":
+            for original in self.original_mysuni_data:
+                if original.get("course_id") == course_id:
+                    # 원본 데이터의 상세 정보로 업데이트
+                    course.update({
+                        "카테고리명": original.get("카테고리명"),
+                        "채널명": original.get("채널명"),
+                        "태그명": original.get("태그명"),
+                        "난이도": original.get("난이도"),
+                        "평점": original.get("평점"),
+                        "이수자수": original.get("이수자수"),
+                        "직무": original.get("직무", []),
+                        "skillset": original.get("skillset", []),
+                        "url": original.get("url")
+                    })
+                    break
+                    
+        # College 과정인 경우
+        elif source == "college":
+            for original in self.original_college_data:
+                if original.get("course_id") == course_id:
+                    # 원본 데이터의 상세 정보로 업데이트
+                    course.update({
+                        "학부": original.get("학부"),
+                        "표준과정": original.get("표준과정"),
+                        "사업별교육체계": original.get("사업별교육체계"),
+                        "교육유형": original.get("교육유형"),
+                        "학습유형": original.get("학습유형"),
+                        "공개여부": original.get("공개여부"),
+                        "특화직무": original.get("특화직무", []),
+                        "추천직무": original.get("추천직무", []),
+                        "공통필수직무": original.get("공통필수직무", []),
+                        "url": original.get("url")
+                    })
+                    break
+        
+        return course
+    
+    def _get_preferred_education_source(self, query: str, user_profile: Dict, intent_analysis: Dict) -> str:
+        """사용자의 교육과정 소스 선호도 감지"""
+        # 1. 사용자 질문에서 명시적 언급 확인
+        query_lower = query.lower()
+        if 'mysuni' in query_lower or 'my suni' in query_lower:
+            return 'mysuni'
+        elif 'college' in query_lower or '컬리지' in query_lower:
+            return 'college'
+        
+        # 2. 사용자 프로필에서 선호도 확인
+        preferred_source = user_profile.get('preferred_education_source', '')
+        if preferred_source in ['mysuni', 'college']:
+            return preferred_source
+        
+        # 3. 의도 분석에서 선호도 확인
+        intent_preferred = intent_analysis.get('preferred_source', '')
+        if intent_preferred in ['mysuni', 'college']:
+            return intent_preferred
+        
+        # 기본값: 선호도 없음
+        return ''
+    
+    def _filter_by_preferred_source(self, courses: List[Dict], preferred_source: str) -> List[Dict]:
+        """선호하는 교육과정 소스로 필터링"""
+        if not preferred_source or not courses:
+            return courses
+        
+        # 선호 소스의 과정들 먼저 추출
+        preferred_courses = [course for course in courses if course.get('source') == preferred_source]
+        
+        # 선호 소스의 과정이 충분히 있으면 그것만 반환 (최소 3개)
+        if len(preferred_courses) >= 3:
+            self.logger.info(f"{preferred_source} 과정 {len(preferred_courses)}개로 필터링")
+            return preferred_courses
+        
+        # 선호 소스의 과정이 부족하면 다른 소스도 포함하되 선호 소스 우선 정렬
+        other_courses = [course for course in courses if course.get('source') != preferred_source]
+        result = preferred_courses + other_courses[:7-len(preferred_courses)]  # 최대 7개까지
+        
+        self.logger.info(f"{preferred_source} 우선 필터링: {len(preferred_courses)}개 + 기타 {len(result)-len(preferred_courses)}개")
+        return result
