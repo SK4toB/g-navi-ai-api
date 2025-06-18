@@ -15,11 +15,12 @@
 G.Navi는 **AgentRAG(Agent-based Retrieval Augmented Generation)** 아키텍처를 기반으로 한 AI 커리어 컨설팅 시스템입니다. 사내 구성원들의 실제 커리어 사례와 최신 업계 트렌드를 분석하여 개인화된 커리어 조언을 제공합니다.
 
 ### 🎯 핵심 특징
-- **4단계 AgentRAG 워크플로우**로 구조화된 추론 과정
+- **5단계 AgentRAG 워크플로우**로 구조화된 추론 과정
 - **LangGraph + MemorySaver 기반** 상태 관리 및 대화 지속성
 - **실제 커리어 사례** 기반 추천 시스템
 - **회사 비전 및 가치 반영** 커리어 가이드 제공
 - **적응적 응답 포맷팅**으로 사용자 맞춤형 출력
+- **스마트 HTML 보고서 생성** 기능
 - **대화 연속성 지원**으로 맥락을 유지하는 멀티턴 대화
 
 ## 시스템 아키텍처
@@ -42,6 +43,7 @@ graph TB
         G[CareerEnsembleRetriever]
         H[IntentAnalysisAgent]
         I[ResponseFormattingAgent]
+        J[ReportGeneratorAgent]
     end
     
     subgraph "💾 Data Sources"
@@ -63,6 +65,7 @@ graph TB
     F --> G
     F --> H
     F --> I
+    F --> J
     
     G --> K
     G --> L
@@ -77,9 +80,9 @@ graph TB
 
 ## AgentRAG 워크플로우
 
-G.Navi의 핵심인 **4단계 AgentRAG 워크플로우**는 다음과 같습니다:
+G.Navi의 핵심인 **5단계 AgentRAG 워크플로우**는 다음과 같습니다:
 
-### 🔄 4단계 처리 과정
+### 🔄 5단계 처리 과정
 
 ```mermaid
 flowchart TD
@@ -90,7 +93,8 @@ flowchart TD
     Step1 --> Step2[2️⃣ 의도 분석 및 상황 이해]
     Step2 --> Step3[3️⃣ 추가 데이터 검색]
     Step3 --> Step4[4️⃣ 적응적 응답 포맷팅]
-    Step4 --> End([최종 응답 반환])
+    Step4 --> Step5[5️⃣ 스마트 보고서 생성]
+    Step5 --> End([최종 응답 반환])
     Wait --> End
     
     subgraph "Step1 Details"
@@ -103,10 +107,20 @@ flowchart TD
         Step3C[교육과정 정보<br/>검색 및 추천]
     end
     
+    subgraph "Step5 Details"
+        Step5A{보고서 생성<br/>필요 여부 판단}
+        Step5B[HTML 보고서<br/>파일 생성]
+        Step5C[최종 응답에<br/>보고서 경로 추가]
+    end
+    
     Step1 --> Step1A
     Step1 --> Step1B
     Step3 --> Step3A
     Step3 --> Step3C
+    Step5 --> Step5A
+    Step5A -->|필요시| Step5B
+    Step5B --> Step5C
+    Step5A -->|불필요시| End
 ```
 
 ### 📊 각 단계별 상세 설명
@@ -118,6 +132,7 @@ flowchart TD
 | **2단계** | IntentAnalysisNode | 질문 의도 분석 및 상황 파악 | `intent_analysis` |
 | **3단계** | DataRetrievalNode | 커리어 사례 + 교육과정 + 회사 비전 검색 | `career_cases`, `education_courses` |
 | **4단계** | ResponseFormattingNode | 질문 유형별 적응적 응답 생성 | `final_response` |
+| **5단계** | ReportGenerationNode | 스마트 HTML 보고서 생성 (조건부) | `report_path`, `report_generated` |
 
 ## 핵심 컴포넌트
 
@@ -127,12 +142,13 @@ class ChatGraphBuilder:
     """G.Navi AgentRAG 시스템의 LangGraph 빌더"""
     
     async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any]):
-        # 4단계 노드 구성 + MemorySaver 통합
+        # 5단계 노드 구성 + MemorySaver 통합
         workflow.add_node("message_check", self.message_check_node.create_node())
         workflow.add_node("manage_session_history", self.chat_history_node.retrieve_chat_history_node)
         workflow.add_node("analyze_intent", self.intent_analysis_node.analyze_intent_node)
         workflow.add_node("retrieve_additional_data", self.data_retrieval_node.retrieve_additional_data_node)
         workflow.add_node("format_response", self.response_formatting_node.format_response_node)
+        workflow.add_node("generate_report", self.report_generation_node.generate_report_node)
         workflow.add_node("wait_state", self.wait_node.create_node())
         
         # MemorySaver를 통한 대화 지속성 보장
@@ -159,6 +175,12 @@ class ChatGraphBuilder:
 - **실제 커리어 사례 통합**: 검색된 사례를 활용한 구체적 조언 제공
 - **대화 연속성**: 이전 대화 맥락을 고려한 응답 생성
 
+### 📊 ReportGeneratorAgent (`app/graphs/agents/report_generator.py`)
+- **스마트 보고서 생성 판단**: 사용자 요청 의도 분석
+- **HTML 보고서 자동 생성**: 마크다운을 스타일드 HTML로 변환
+- **조건부 실행**: 보고서 필요시에만 생성
+- **파일 관리**: output 디렉토리에 timestamp 기반 파일명으로 저장
+
 ## 데이터 플로우
 
 ### 📊 ChatState 구조
@@ -172,11 +194,13 @@ class ChatState(TypedDict, total=False):  # 선택적 필드 허용
     # 대화 내역 관리 (MemorySaver가 자동 관리)
     current_session_messages: List[Dict[str, str]]  # role, content, timestamp
     
-    # 4단계 처리 결과
+    # 5단계 처리 결과
     intent_analysis: Dict[str, Any]       # 2단계: 의도 분석
     career_cases: List[Any]              # 3단계: 커리어 사례 (회사 비전 포함)
     education_courses: Dict[str, Any]    # 3단계: 교육과정 추천
     final_response: Dict[str, Any]        # 4단계: 최종 응답
+    report_generated: bool               # 5단계: 보고서 생성 여부
+    report_path: str                     # 5단계: 생성된 보고서 파일 경로
     
     # 메타데이터
     processing_log: List[str]
@@ -220,6 +244,15 @@ sequenceDiagram
     LLM-->>Nodes: 최종 마크다운 응답
     Note over Nodes: AI 응답을 current_session_messages에 추가
     
+    Graph->>Nodes: 5️⃣ generate_report
+    Note over Nodes: 보고서 생성 필요 여부 판단
+    alt 보고서 생성 필요
+        Nodes->>System: HTML 보고서 파일 생성
+        Note over Nodes: 보고서 경로를 최종 응답에 추가
+    else 보고서 생성 불필요
+        Note over Nodes: 보고서 생성 건너뛰기
+    end
+    
     Graph->>MemorySaver: 업데이트된 상태 저장 (대화 내역 포함)
     Graph-->>Service: ChatState 결과
     Service-->>API: 문자열 응답
@@ -238,13 +271,15 @@ app/
 │   ├── agents/                   # AI 에이전트들
 │   │   ├── retriever.py         # 커리어 데이터 검색
 │   │   ├── analyzer.py          # 의도 분석
-│   │   └── formatter.py         # 응답 포맷팅 (대화 맥락 포함)
+│   │   ├── formatter.py         # 응답 포맷팅 (대화 맥락 포함)
+│   │   └── report_generator.py  # 보고서 생성
 │   └── nodes/                    # LangGraph 노드들 (모듈화)
 │       ├── message_check.py     # 메시지 확인 노드
 │       ├── chat_history.py      # 현재 세션 대화 관리 노드 (MemorySaver 연동)
 │       ├── intent_analysis.py   # 의도 분석 노드
 │       ├── data_retrieval.py    # 추가 데이터 검색 노드
 │       ├── response_formatting.py # 응답 포맷팅 노드 (대화 연속성 지원)
+│       ├── report_generation.py # 보고서 생성 노드
 │       └── wait_node.py         # 대기 상태 노드
 ├── services/
 │   └── chat_service.py          # 채팅 서비스 로직
@@ -268,7 +303,20 @@ G.Navi는 유지보수성과 확장성을 위해 각 처리 단계를 독립적�
 - **`IntentAnalysisNode`**: LLM 기반 의도 분석 및 상황 파악
 - **`DataRetrievalNode`**: 커리어 사례, 외부 트렌드, 교육과정 검색
 - **`ResponseFormattingNode`**: 적응적 응답 포맷팅 및 HTML 변환 (이전 대화 참조)
+- **`ReportGenerationNode`**: 스마트 HTML 보고서 생성 (조건부 실행)
 - **`WaitNode`**: 메시지 대기 상태 처리
+
+### 📊 스마트 보고서 생성 시스템
+5단계 `ReportGenerationNode`는 다음과 같은 조건에서 HTML 보고서를 자동 생성합니다:
+
+**자동 생성 조건:**
+- 보고서 관련 키워드 감지: "보고서", "리포트", "문서", "저장", "다운로드", "html" 등
+- 상세한 질문 (100자 이상)으로 깊이 있는 분석 요청 시
+
+**생성 결과:**
+- 스타일드 HTML 파일 (`output/사용자명_타임스탬프.html`)
+- 최종 응답에 보고서 파일 경로 자동 추가
+- 실패 시 에러 로깅 및 graceful 처리
 
 ### 🧠 MemorySaver 기반 대화 지속성
 - **자동 상태 복원**: thread_id 기반으로 이전 대화 자동 복원
@@ -405,6 +453,7 @@ kubectl apply -f k8s/service.yaml
 - **검색 정확도**: 커리어 사례 매칭 품질
 - **사용자 만족도**: 응답 품질 평가
 - **대화 연속성**: 멀티턴 대화의 맥락 유지 품질
+- **보고서 생성률**: 조건부 보고서 생성 비율 및 품질
 
 ### 📝 로깅 구조
 ```python
@@ -414,13 +463,15 @@ processing_log = [
     "의도 분석 및 상황 이해 완료",
     "추가 데이터 검색 완료: 커리어 사례 5개, 트렌드 정보 3개, 교육과정 8개",
     "적응적 응답 포맷팅 완료 (유형: specific_consultation)",
+    "보고서 생성 검토: 키워드 감지됨 → HTML 보고서 생성",
     "1단계 처리 시간: 0.85초",
-    "2단계 처리 시간: 2.34초",
+    "2단계 처리 시간: 2.34초", 
     "3단계 처리 시간: 1.92초",
-    "4단계 처리 시간: 3.28초"
+    "4단계 처리 시간: 3.28초",
+    "5단계 처리 시간: 1.15초"
 ]
 ```
 
 ---
 
-> **G.Navi AI Agent**는 실제 사내 커리어 데이터와 AI의 추론 능력을 결합하여, 개인화되고 실행 가능한 커리어 조언을 제공하는 차세대 AI 컨설팅 시스템입니다. MemorySaver 기반의 대화 지속성으로 사용자와의 자연스러운 멀티턴 대화를 지원합니다.
+> **G.Navi AI Agent**는 실제 사내 커리어 데이터와 AI의 추론 능력을 결합하여, 개인화되고 실행 가능한 커리어 조언을 제공하는 차세대 AI 컨설팅 시스템입니다. MemorySaver 기반의 대화 지속성과 스마트 보고서 생성 기능으로 사용자와의 자연스러운 멀티턴 대화 및 체계적인 커리어 분석을 지원합니다.
