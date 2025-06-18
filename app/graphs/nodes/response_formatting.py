@@ -71,6 +71,14 @@ class ResponseFormattingNode:
             state["current_session_messages"].append(assistant_message)
             self.logger.info(f"AI 응답을 current_session_messages에 추가 (총 {len(state['current_session_messages'])}개 메시지)")
             
+            # 4단계 완료 상세 로그 출력
+            content_length = len(final_response.get("formatted_content", ""))
+            format_type = final_response.get("format_type", "adaptive")
+            
+            print(f"✅ [4단계] 적응적 응답 포맷팅 완료")
+            print(f"📊 응답 유형: {format_type}, 길이: {content_length}자")
+            print(f"🔧 HTML 변환: {'완료' if final_response.get('html_content') else '실패'}")
+            
             self.logger.info("적응적 응답 포맷팅 완료")
             
         except Exception as e:

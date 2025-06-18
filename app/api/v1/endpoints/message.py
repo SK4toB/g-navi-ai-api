@@ -40,8 +40,13 @@ async def send_message(
         end_time = time.time()
         processing_time = int((end_time - start_time) * 1000)
         
-        print(f"응답 생성 완료: {bot_message[:50]}...")
-        print(f"처리 시간: {processing_time}ms")
+        # 응답 길이와 유형 정보 추출
+        response_length = len(bot_message)
+        response_preview = bot_message[:350].replace('\n', ' ') if bot_message else "빈 응답"
+        
+        print(f"✅ [메시지 처리 완료] 길이: {response_length}자, 시간: {processing_time}ms")
+        print(f"📝 응답 미리보기: {response_preview}{'...' if len(bot_message) > 350 else ''}")
+        print(f"🔗 대화방 ID: {conversation_id}")
         
         # TODO: MongoDB에 대화 내역 저장 (나중에 추가)
         

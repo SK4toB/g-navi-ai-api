@@ -36,7 +36,14 @@ async def create_or_load_room(
             user_info=request.user_info
         )
         
-        print(f"AI 응답 생성 완료: {bot_message[:200]}...")
+        # 응답 길이와 사용자 정보 출력
+        response_length = len(bot_message)
+        user_name = request.user_info.get('name', 'Unknown')
+        response_preview = bot_message[:350].replace('\n', ' ') if bot_message else "빈 응답"
+        
+        print(f"✅ [채팅방 생성 완료] 사용자: {user_name}, 응답 길이: {response_length}자")
+        print(f"📝 초기 응답 미리보기: {response_preview}{'...' if len(bot_message) > 350 else ''}")
+        print(f"🆔 대화방: {request.conversation_id}")
         
         # TODO: MongoDB에 채팅방과 메시지 저장 (나중에 추가)
         
