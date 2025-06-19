@@ -16,6 +16,7 @@ class ChatState(TypedDict):
     intent_analysis: Optional[Dict[str, Any]]                 # 2단계: 의도 분석 결과
     career_cases: Optional[List[Any]]                         # 3단계: 커리어 사례 검색
     external_trends: Optional[List[Dict[str, str]]]           # 3단계: 트렌드 정보 검색
+    education_courses: Dict[str, Any]                         # 교육과정 추천 결과
     final_response: Optional[Dict[str, Any]]                  # 4단계: 최종 응답
     
     # 최종 출력
