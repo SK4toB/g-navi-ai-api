@@ -16,6 +16,8 @@ class ReportGeneratorAgent:
     
     def should_generate_report(self, user_question: str, user_data: Dict[str, Any]) -> bool:
         """사용자 요청을 분석하여 보고서 생성이 필요한지 판단"""
+        return True # 기본적으로 보고서 생성 필요(강제적 설정)
+
         # 보고서 생성 키워드들
         report_keywords = [
             "보고서", "report", "리포트", "문서", "저장", "다운로드", 

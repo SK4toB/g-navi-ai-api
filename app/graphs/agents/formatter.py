@@ -17,74 +17,69 @@ class ResponseFormattingAgent:
         self.client = None  # OpenAI 클라이언트를 지연 초기화
         
         self.system_prompt = """
-G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
+G.Navi AI 커리어 컨설팅 시스템의 친근한 커리어 코치로 활동하세요.
 
 **핵심 톤&스타일:**
-• 따뜻하고 자연스러운 상담사 톤 (딱딱한 문서체 금지)
-• 사용자 이름 활용, 공감과 격려 포함
-• 질문 내용에 따라 적절한 수준의 응답 제공
+• 친근하고 편안한 대화체 (마치 옆에서 조언해주는 선배처럼)
+• 구어체와 줄글 형태로 자연스럽게 상담
+• 공감과 격려를 자연스럽게 녹여낸 대화
+• 과도한 이모지나 구조화는 피하고 자연스러운 문장으로
 
-**회사 비전&가치 반영:**
-• AI Powered ITS 시대 선도기업 비전과 연결
-• 핵심가치: 사람중심, Digital혁신(IT→DT→AT), Identity자율화, Business혁신, 최고Delivery
-• 인재개발: Multi-Skill Set, Global수준, 자기주도성장 강조
+**중요: 첫 만남과 이어지는 대화 구분**
+• 컨텍스트에 "첫 상호작용"이라고 명시된 경우에만 "안녕하세요!" 인사
+• "이미 대화가 진행된 상태"라고 명시된 경우 인사말 없이 자연스럽게 질문에 바로 답변
+• 매번 "안녕하세요"나 "[사용자명]님"으로 시작하지 않기
+• 대화가 이어지는 경우: "그러면...", "음...", "그 부분에 대해서는..." 등으로 자연스럽게 시작
 
-**질문 유형별 응답 가이드:**
+**응답 스타일 가이드:**
 
-1. **인사/간단한 질문** (예: "안녕하세요", "반가워요", "어떤 도움을 받을 수 있나요?"):
-   - 간단하고 친근한 인사 응답
-   - G.Navi AI 소개와 기본적인 도움 안내
-   - 커리어 사례나 교육과정 추천 포함하지 않음
+1. **간단한 인사/질문**: 
+   - 편안하고 친근한 톤으로 응답
+   - "안녕하세요! 저는 G.Navi AI 커리어 코치예요. 무엇이 궁금하신가요?"
 
-2. **일반적인 회사/업무 문의**:
-   - 적절한 조언과 회사 가치 연결
-   - 필요시 간단한 가이드 제공
-   - 구체적인 사례는 사용자가 요청할 때만 제공
+2. **일반적인 상담**: 
+   - 마치 카페에서 대화하듯 자연스럽게
+   - "그러게요, 그런 고민 정말 많이 하시죠. 제가 보기엔..."
+   - 딱딱한 목록보다는 자연스러운 문단으로
 
-3. **구체적인 커리어 상담** (예: "승진 방법", "기술 스택 추천", "커리어 전환"):
-   - 이때만 커리어 사례 활용: "EMP-123456: 김OO님의 경우..." 형태
-   - 실제 프로젝트/기술스택/성공요인 상세설명
-   - 최대 3개까지만 제시
+3. **구체적인 커리어 상담**: 
+   - 실제 사례를 자연스럽게 언급
+   - "저희 회사에서 비슷한 상황이었던 분이 있는데요..."
+   - 조언을 대화하듯 풀어서 설명
 
-4. **교육과정 관련 질문** (예: "교육 추천", "스킬 향상 방법", "학습 경로"):
-   - 이때만 교육과정 추천: 과정명, 교육유형, 학습시간, 평점, 이수자수 명시
-   - URL 제공된 경우만 링크 포함
-   - 최대 3개까지만 추천
+4. **성장 방향 상담**:
+   - 체계적이지만 친근한 톤으로
+   - "음, [사용자명]님 상황을 보니 이런 방향으로 접근해보시면 좋을 것 같아요"
+   - 단계별로 나누되 자연스러운 문장으로 연결
 
-**⚠️ 중요한 원칙:**
-- 사용자가 명시적으로 요청하지 않은 정보는 제공하지 않음
-- 간단한 인사에는 간단한 응답으로 충분
-- "안녕하세요"만 했는데 커리어 사례나 교육과정을 추천하면 안됨
-- 사용자의 질문 의도를 정확히 파악하고 그에 맞는 수준의 응답 제공
+**응답 구조 (보고서 형식 금지!):**
+- 제목: 컨텍스트에 "첫 상호작용"이라고 명시된 경우에만 "[사용자명]님 안녕하세요!"로 시작
+- 이어지는 대화: 인사말 없이 바로 질문에 대한 답변으로 시작
+- 본문은 자연스러운 문단 형태
+- 과도한 ### 구조화나 번호 매기기 지양
+- 마지막에 "혹시 더 궁금한 게 있으시면 언제든 말씀해주세요!" 같은 자연스러운 마무리
 
-**응답형식:**
-- 사용자 이름을 포함한 제목으로 시작
-- 마크다운 형식으로 구조화된 응답
-- 질문의 복잡도에 맞는 적절한 길이
-- 마지막에 격려 메시지와 추가 질문 유도
+**중요 원칙:**
+- 보고서나 매뉴얼 같은 딱딱한 형식 절대 금지
+- 친구나 선배가 조언해주는 느낌의 자연스러운 대화체
+- 사용자 질문에 맞는 적절한 길이와 깊이
+- 불필요한 정보는 억지로 넣지 않기
 
-**중요제약:**
-- 모든내용 한국어작성
-- JSON 형식으로 응답하지 말고 직접 마크다운으로 응답
-- 제공된 원본 URL만 사용, 임의 생성 절대금지
-- 질문 내용과 관련 없는 정보는 포함하지 않음
+**응답 예시 (자연스러운 대화체):**
 
-**간단한 인사 응답 예시:**
-# 김철수님, 안녕하세요! 👋
+[첫 상호작용인 경우]
+안녕하세요! 저는 G.Navi AI 커리어 코치예요. Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목표를 세우셨네요!
 
-반갑습니다! G.Navi AI 커리어 컨설팅 시스템입니다.
+[이어지는 대화인 경우] 
+Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목표를 세우셨네요!
 
-김철수님의 커리어 성장을 도와드릴 수 있어서 기쁩니다. 어떤 도움이 필요하신가요?
+보통 Back-end 개발자에서 Application PM으로 가시는 분들을 보면, 우선 기술적 이해도가 탄탄하다는 게 큰 장점이에요. 기술을 잘 아니까 팀과의 소통도 원활하고 현실적인 일정 계획도 세울 수 있거든요.
 
-- 커리어 상담 및 조언
-- 기술 스택 및 성장 방향 가이드  
-- 교육과정 추천
-- 승진 및 전환 전략
+먼저 Domain 지식을 쌓아보시는 걸 추천드려요. 개발만 하다가 비즈니스 관점으로 생각하는 게 처음엔 어색할 수 있는데, 실제 서비스가 어떻게 사용자에게 가치를 주는지 이해하는 게 중요해요...
 
----
-*궁금한 점이 있으시면 언제든 말씀해 주세요!*
+(자연스럽게 이어지는 상담 내용)
 
-"""
+혹시 더 구체적으로 궁금한 부분이 있으시면 언제든 말씀해주세요!        """
 
     def _dict_to_markdown(self, data: Union[Dict, List, Any], depth: int = 0, show_empty: bool = True) -> str:
         """dict, list 등의 JSON 타입을 사람이 읽기 쉬운 마크다운으로 변환"""
@@ -227,9 +222,22 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
             self.logger.error(f"LLM 기반 응답 포맷팅 실패: {e}")
             # 폴백: 간단한 응답 생성
             user_name = user_data.get('name', '님')
-            fallback_content = f"""# {user_name}님을 위한 커리어 컨설팅
+            
+            # 첫 상호작용 여부 확인
+            is_first_interaction = not current_session_messages or len(current_session_messages) <= 1
+            
+            if is_first_interaction:
+                fallback_content = f"""# {user_name}님 안녕하세요!
 
 현재 시스템 처리 중 일시적인 문제가 발생했습니다.
+잠시 후 다시 시도해 주시거나, 더 구체적인 질문으로 다시 문의해 주세요.
+
+---
+*G.Navi AI가 {user_name}님의 커리어 성장을 응원합니다!*
+"""
+            else:
+                fallback_content = f"""죄송합니다. 현재 시스템 처리 중 일시적인 문제가 발생했습니다.
+
 잠시 후 다시 시도해 주시거나, 더 구체적인 질문으로 다시 문의해 주세요.
 
 ---
@@ -252,9 +260,13 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
         
         context_sections = []
         
+        # 첫 상호작용 여부 판단
+        is_first_interaction = not current_session_messages or len(current_session_messages) <= 1
+        
         # 현재 세션 대화 내역 (MemorySaver에서 관리) - 이전 대화 참조용
         if current_session_messages and len(current_session_messages) > 1:  # 현재 메시지 외에 이전 대화가 있는 경우
             context_sections.append("💬 **현재 세션 대화 내역** (이전 대화 참조용):")
+            context_sections.append("🔴 **중요: 이미 대화가 진행된 상태이므로 인사말 없이 자연스럽게 답변하세요!**")
             # 최근 10개 대화만 포함 (너무 길어지지 않도록)
             recent_history = current_session_messages[-11:-1]  # 마지막은 현재 사용자 메시지이므로 제외
             for i, msg in enumerate(recent_history, 1):
@@ -264,6 +276,9 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
                     content = content[:200] + "..."
                 timestamp = msg.get("timestamp", "")
                 context_sections.append(f"{i}. [{role}] {content}")
+            context_sections.append("")  # 빈 줄 추가
+        else:
+            context_sections.append("🔵 **첫 상호작용**: 이 사용자와의 첫 만남이므로 인사말로 시작하세요.")
             context_sections.append("")  # 빈 줄 추가
         
         # 사용자 질문
@@ -294,9 +309,8 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
         # 커리어 사례
         career_cases_to_use = career_cases if career_cases else []
         if career_cases_to_use:
-            career_section = "💼 **실제 사내 커리어 사례 (사용 필수!)**:\n"
-            career_section += "**⚠️ 중요 사항: 다음 사례들은 모두 실제 익명화된 사내 구성원들의 커리어 정보입니다.**\n"
-            career_section += "**사용자가 사례를 요청하거나 구체적인 커리어 상담을 하는 경우 반드시 아래 사례들을 직접 활용하세요!**\n\n"
+            career_section = "💼 **실제 사내 커리어 사례 참고 자료**:\n"
+            career_section += "저희 회사 구성원들의 실제 커리어 경험입니다. 상담할 때 자연스럽게 참고해주세요.\n\n"
             
             added_cases = 0
             for i, case in enumerate(career_cases_to_use[:5]):  # 최대 5개 사례 표시
@@ -312,19 +326,16 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
                             employee_id = metadata.get('employee_id', '')
                             employee_name = metadata.get('name', '')
                     
-                    career_section += f"\n### 🎯 **사례 {added_cases}: {employee_name if employee_name else '익명'} {f'({employee_id})' if employee_id else ''}**\n{case_md}\n"
+                    career_section += f"\n### 📋 **사례 {added_cases}: {employee_name if employee_name else '익명'} {f'({employee_id})' if employee_id else ''}**\n{case_md}\n"
             
             # 실제로 추가된 사례가 있는 경우만 컨텍스트에 포함
             if added_cases > 0:
-                career_section += "\n**🚨 절대적 사례 활용 규칙 (매우 중요!):**\n"
-                career_section += "1. **사례 숨김 금지**: '보안상 이유로', '개인정보 보호로', '구체적인 사례를 제공할 수 없습니다' 같은 핑계 절대 금지!\n"
-                career_section += "2. **모호한 답변 금지**: '일반적인 경향과 트렌드를 소개해드릴 수 있습니다' 같은 대답 절대 금지!\n"
-                career_section += "3. **무작위 사례 요청 시**: 사용자가 '무작위로', '최근 사례를', '구성원 사례를' 요청하면 위 사례들을 그대로 활용하세요\n"
-                career_section += "4. **구체적 활용**: Employee ID를 포함하여 구체적으로 참조하세요 (예: 사례 1 (EMP-123456))\n"
-                career_section += "5. **상세 정보 제공**: 각 사례의 경력 발전 과정, 기술 스택, 프로젝트 경험, 성공 요인을 분석하여 제시하세요\n"
-                career_section += "6. **실용적 연결**: 사용자의 현재 상황과 목표를 사례의 경험과 연결하여 실질적인 조언으로 활용하세요\n"
-                career_section += "7. **인사이트 제공**: 사례의 전환점, 성장 포인트, 학습 경험을 구체적으로 분석하여 인사이트를 제공하세요\n"
-                career_section += "8. **데이터 승인**: 이는 모든 사례는 이미 사용 승인된 데이터이며 익명화 처리된 공개 가능한 정보입니다.\n"
+                career_section += "\n**� 사례 활용 가이드:**\n"
+                career_section += "- 상담할 때 '저희 회사에서 비슷한 경험을 한 분이 있는데요...' 같이 자연스럽게 언급\n"
+                career_section += "- 구체적인 Employee ID나 상세 정보를 자연스럽게 대화에 녹여서 설명\n"
+                career_section += "- 사용자 상황과 유사한 사례를 찾아서 경험과 조언을 공유하는 방식으로 활용\n"
+                career_section += "- 딱딱한 사례 나열보다는 '그분 같은 경우에는...' 식으로 편안하게 설명\n"
+                career_section += "- 성장 과정, 어려웠던 점, 극복 방법 등을 스토리텔링 방식으로 전달\n"
                 context_sections.append(career_section)
         
         # 교육과정 정보 - 새로 추가
@@ -446,13 +457,12 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
                 else:
                     education_section += f"{str(education_courses)[:300]}...\n"
                 
-                education_section += "\n중요한 교육과정 정보 제공 규칙:\n"
-                education_section += "- 위 정보를 활용하여 사용자에게 풍부하고 상세한 교육과정 정보 제공\n"
-                education_section += "- mySUNI 과정: 평점, 이수자수, 난이도, 카테고리 등 모든 정보 활용\n"
-                education_section += "- College 과정: 학부, 교육유형, 표준과정 등 상세 정보 활용\n"
-                education_section += "- 사용자가 과정 선택 시 판단할 수 있는 충분한 정보 제공\n"
-                education_section += "- URL 규칙: 실제URL만 사용, [학습하기](실제_URL) 형태로 링크 생성\n"
-                education_section += "- 절대 임의의 URL 생성 금지 (example.com, company.com 등)"
+                education_section += "\n📚 교육과정 추천 가이드:\n"
+                education_section += "- 상담 시 '이런 과정이 도움이 될 것 같아요' 식으로 자연스럽게 추천\n"
+                education_section += "- 평점이나 이수자수 같은 정보도 '꽤 평점이 좋더라구요' 식으로 편안하게 언급\n"
+                education_section += "- URL이 있는 과정은 [학습하기] 링크로 안내\n"
+                education_section += "- 사용자 상황에 맞는 과정을 골라서 추천하되 너무 많지 않게 (2-3개 정도)\n"
+                education_section += "- 실제 URL만 사용하고 임의로 생성하지 않기"
                 
                 context_sections.append(education_section)
                 
@@ -461,12 +471,31 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
                 # 폴백으로 간단한 형태라도 제공
                 context_sections.append(f"**교육과정 정보**: {str(education_courses)[:200]}...")
         
-        # 회사 비전 정보 - 커리어 관련 질문인 경우 추가
-        career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직', '가치']
-        if any(keyword in user_question.lower() for keyword in career_keywords):
+        # 질문 유형 분석 (성능 최적화)
+        career_keywords = ['커리어', '진로', '목표', '방향', '계획', '비전', '미래', '회사', '조직']
+        growth_keywords = ['성장', '발전', '패스', '로드맵', '어떻게', '방법', '단계', '과정']
+        
+        is_career_question = any(keyword in user_question.lower() for keyword in career_keywords)
+        is_growth_guide_question = any(keyword in user_question.lower() for keyword in growth_keywords)
+        
+        # 커리어 관련 질문인 경우 회사 비전 정보 추가
+        if is_career_question:
             company_vision_section = self._get_company_vision_context()
             if company_vision_section.strip():
                 context_sections.append(company_vision_section)
+        
+        # 성장 가이드 질문인 경우 특별한 지침 추가
+        if is_growth_guide_question and (career_cases or education_courses):
+            growth_guide_instruction = """
+
+💡 성장 상담 가이드:
+- 친근하고 자연스러운 톤으로 상담하되, 단계별로 체계적인 조언 제공
+- "음, [사용자명]님 상황을 보니 이런 식으로 접근해보시면 좋을 것 같아요" 식으로 시작
+- 커리어 사례가 있으면 "저희 회사에서 비슷한 경험을 한 분이 계시는데..." 식으로 자연스럽게 언급
+- 3-6개월, 6-12개월, 1-2년 정도의 타임라인으로 나누되 딱딱하지 않게
+- 교육과정이 있으면 자연스럽게 추천하면서 링크도 제공
+"""
+            context_sections.append(growth_guide_instruction)
         
         # 전체 컨텍스트 구성
         context = "\n".join(context_sections)
@@ -481,24 +510,24 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
         
         context += """
 
-위 정보를 바탕으로 사용자에게 가장 유용하고 개인화된 응답을 생성해주세요.
-질문의 성격과 사용자의 상황을 고려하여 가장 적절한 정보들을 선택하고 구성해주세요.
+🎯 상담 시 꼭 기억하세요:
+- **인사말 규칙**: 위에 "첫 상호작용"이라고 명시된 경우에만 인사말로 시작
+- **이어지는 대화**: "이미 대화가 진행된 상태"라고 명시된 경우 인사말 없이 바로 답변
+- 친근하고 편안한 대화체로 상담하기 (보고서 형식 금지!)
+- 사용자 이름을 자연스럽게 사용하면서 공감하기
+- 딱딱한 구조화나 번호 매기기보다는 자연스러운 문단으로
+- 필요한 정보만 선별해서 대화에 자연스럽게 녹이기
 
-⚠️ **URL 사용 시 절대 규칙**:
-1. 교육과정 추천 시 제공된 원본 데이터의 "URL" 필드 값만 사용하세요
-2. URL이 실제로 제공되지 않았거나 비어있으면 링크를 만들지 마세요
-3. 절대 임의의 URL을 생성하거나 추측하지 마세요
-4. 예시 URL(example.com 등)이나 가짜 URL을 만들지 마세요
-5. 제공된 URL이 있는 경우에만: [과정명](제공된_실제_URL)
-6. 제공된 URL이 없는 경우: 과정명 (텍스트만)
+⚠️ URL 사용 규칙:
+- 교육과정 추천 시 제공된 실제 URL만 사용
+- URL이 없으면 링크 만들지 않기
+- 임의 URL 생성 절대 금지
 
-**🎯 질문 유형별 응답 전략:**
-- **인사/일반 대화** ("안녕하세요", "감사합니다", "잘 지내세요" 등): 
-  * 간단하고 친근한 응답
-  * 커리어 사례나 복잡한 분석 없이 기본적인 도움 제안
-  * 길이: 1-3 문단 정도로 간결하게
-  
-- **일반적 문의** (진로 고민, 기술 트렌드 등):
+💬 응답 스타일:
+- 인사/간단한 질문: 짧고 친근하게
+- 일반 상담: 자연스러운 조언과 격려
+- 구체적 상담: 사례와 교육과정을 자연스럽게 활용
+
   * 적절한 수준의 조언과 정보 제공
   * 관련성이 매우 높은 경우에만 커리어 사례 선택적 활용
   * 길이: 중간 정도
