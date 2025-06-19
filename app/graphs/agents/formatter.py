@@ -8,6 +8,8 @@ import os
 import json
 import markdown
 import re
+# SVG 다이어그램 생성을 위한 import 추가
+from app.utils.svg_diagram_generator import GrowthDiagramGenerator
 
 class ResponseFormattingAgent:
     """LLM 기반 적응적 응답 포맷팅 에이전트 - AI가 질문 유형과 컨텍스트를 분석하여 최적화된 응답 생성"""
@@ -15,6 +17,8 @@ class ResponseFormattingAgent:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.client = None  # OpenAI 클라이언트를 지연 초기화
+        # SVG 다이어그램 생성기 초기화
+        self.diagram_generator = GrowthDiagramGenerator()
         
         self.system_prompt = """
 G.Navi AI 커리어 컨설팅 시스템의 친근한 커리어 코치로 활동하세요.
@@ -652,13 +656,6 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
 - **실제 URL이 없는 경우 [학습하기] 링크 자체를 생략**
 - **N/A, 정보 없음 등의 값은 표시하지 말 것**
 
-**교육과정 제목 작성 규칙:**
-1. source가 "mysuni"인 경우: ### [mySUNI]과정명(VOD)
-2. source가 "college"인 경우: ### [사내과정]과정명(오프라인집합)
-3. 과정명에서 대괄호는 제거: "[코드잇] 머신러닝 입문" → "코드잇 머신러닝 입문"
-4. 제목에는 링크를 달지 않고 순수 텍스트로만 작성
-5. **중요**: 평점, 이수자수, 카테고리 등의 정보가 "N/A", "정보 없음" 등인 경우 해당 항목 자체를 표시하지 말 것
-
 ❌ **딱딱하고 기계적인 방식 (피하세요!):**
 "다음은 추천 교육과정입니다:
 
@@ -1005,3 +1002,254 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
         except Exception as e:
             self.logger.error(f"회사 비전 컨텍스트 생성 실패: {e}")
             return ""
+    
+    # ==================== SVG 다이어그램 생성 메서드들 ====================
+    
+    def generate_growth_diagram(self, user_question: str, state: Dict[str, Any]) -> Optional[str]:
+        """성장 방향 상담용 다이어그램 생성"""
+        try:
+            # 성장 방향 관련 키워드 검사
+            growth_keywords = [
+                "성장", "커리어", "발전", "진로", "전환", "로드맵", "계획", 
+                "목표", "미래", "스킬", "역량", "승진", "이직", "경력"
+            ]
+            
+            if not any(keyword in user_question for keyword in growth_keywords):
+                return None
+            
+            # 사용자 데이터에서 정보 추출
+            user_data = state.get("user_data", {})
+            intent_analysis = state.get("intent_analysis", {})
+            
+            # 다이어그램 데이터 구성
+            diagram_data = self._extract_growth_diagram_data(user_data, intent_analysis, user_question)
+            
+            if not diagram_data:
+                return None
+            
+            # 다이어그램 타입에 따라 생성
+            diagram_type = diagram_data.get('type', 'career_path')
+            
+            if diagram_type == 'skill_development':
+                return self.diagram_generator.generate_skill_development_diagram(diagram_data)
+            else:
+                return self.diagram_generator.generate_career_path_diagram(diagram_data)
+                
+        except Exception as e:
+            self.logger.warning(f"성장 다이어그램 생성 실패: {e}")
+            return None
+    
+    def _extract_growth_diagram_data(self, user_data: Dict[str, Any], intent_analysis: Dict[str, Any], user_question: str) -> Optional[Dict[str, Any]]:
+        """사용자 데이터로부터 다이어그램 생성용 데이터 추출"""
+        try:
+            # 현재 역할 추출
+            current_role = self._extract_current_role(user_data)
+            
+            # 목표 역할 추출 (질문에서 추출)
+            target_role = self._extract_target_role(user_question)
+            
+            # 스킬 관련 질문인지 확인
+            skill_keywords = ["스킬", "기술", "역량", "능력", "학습", "공부"]
+            is_skill_focused = any(keyword in user_question for keyword in skill_keywords)
+            
+            if is_skill_focused:
+                # 스킬 개발 다이어그램 데이터
+                skills = self._extract_skills_from_data(user_data)
+                return {
+                    'type': 'skill_development',
+                    'skills': skills
+                }
+            else:
+                # 커리어 패스 다이어그램 데이터
+                steps = self._generate_growth_steps(current_role, target_role)
+                skills = self._extract_required_skills(current_role, target_role)
+                
+                return {
+                    'type': 'career_path',
+                    'current_role': current_role,
+                    'target_role': target_role,
+                    'steps': steps,
+                    'skills': skills
+                }
+                
+        except Exception as e:
+            self.logger.warning(f"다이어그램 데이터 추출 실패: {e}")
+            return None
+    
+    def _extract_current_role(self, user_data: Dict[str, Any]) -> str:
+        """사용자 데이터에서 현재 역할 추출"""
+        # 프로젝트 데이터에서 최근 역할 추출
+        projects = user_data.get('projects', [])
+        if projects and isinstance(projects, list):
+            recent_project = projects[0]  # 첫 번째가 최신이라고 가정
+            if isinstance(recent_project, dict):
+                role = recent_project.get('role', '')
+                if role:
+                    return role
+        
+        # 이름에서 역할 추출 시도 (예: "홍길동_개발자")
+        name = user_data.get('name', '')
+        if '_' in name:
+            parts = name.split('_')
+            if len(parts) > 1:
+                return parts[1]
+        
+        return "현재 역할"
+    
+    def _extract_target_role(self, user_question: str) -> str:
+        """질문에서 목표 역할 추출"""
+        # 일반적인 역할 키워드들
+        role_patterns = {
+            'PM': ['PM', '프로젝트 매니저', 'Project Manager'],
+            'Tech Lead': ['테크리드', 'Tech Lead', '기술리더'],
+            'Architect': ['아키텍트', 'Architect', '설계자'],
+            'CTO': ['CTO', '기술이사', 'Chief Technology Officer'],
+            'Data Scientist': ['데이터 사이언티스트', 'Data Scientist', '데이터분석가'],
+            'DevOps': ['데브옵스', 'DevOps', '인프라'],
+            'Full Stack': ['풀스택', 'Full Stack', '전체 개발자'],
+            'Backend': ['백엔드', 'Backend', '서버개발자'],
+            'Frontend': ['프론트엔드', 'Frontend', '웹개발자']
+        }
+        
+        for role, keywords in role_patterns.items():
+            if any(keyword.lower() in user_question.lower() for keyword in keywords):
+                return role
+        
+        return "목표 역할"
+    
+    def _generate_growth_steps(self, current_role: str, target_role: str) -> List[str]:
+        """현재 역할에서 목표 역할로의 성장 단계 생성"""
+        # 기본적인 성장 단계들
+        common_steps = [
+            "현재 업무 역량 강화",
+            "관련 기술 스킬 습득",
+            "리더십 경험 쌓기",
+            "목표 역할 경험 확보"
+        ]
+        
+        # 특정 역할 전환에 따른 맞춤 단계
+        role_specific_steps = {
+            ('개발자', 'PM'): [
+                "프로젝트 일정 관리 경험",
+                "팀 커뮤니케이션 스킬 개발",
+                "비즈니스 도메인 이해",
+                "PM 자격증 취득"
+            ],
+            ('Backend', 'Tech Lead'): [
+                "시스템 아키텍처 설계 경험",
+                "주니어 개발자 멘토링",
+                "기술 의사결정 리더십",
+                "크로스 팀 협업 강화"
+            ]
+        }
+        
+        # 특정 패턴이 있으면 사용, 없으면 기본 단계 사용
+        key = (current_role, target_role)
+        return role_specific_steps.get(key, common_steps)
+    
+    def _extract_skills_from_data(self, user_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """사용자 데이터에서 스킬 정보 추출"""
+        skills = []
+        
+        # 프로젝트에서 사용한 기술들 추출
+        projects = user_data.get('projects', [])
+        technologies = set()
+        
+        for project in projects[:3]:  # 최근 3개 프로젝트만
+            if isinstance(project, dict):
+                tech_list = project.get('technologies', [])
+                if isinstance(tech_list, list):
+                    technologies.update(tech_list)
+        
+        # 기술들을 스킬 객체로 변환
+        for i, tech in enumerate(list(technologies)[:8]):  # 최대 8개
+            skills.append({
+                'name': tech,
+                'current_level': 3 + (i % 3),  # 3-5 레벨로 랜덤
+                'target_level': 5,
+                'importance': 'high' if i < 3 else 'medium'
+            })
+        
+        # 기본 스킬이 없으면 일반적인 스킬들 추가
+        if not skills:
+            default_skills = [
+                {'name': 'Communication', 'current_level': 3, 'target_level': 5, 'importance': 'high'},
+                {'name': 'Problem Solving', 'current_level': 4, 'target_level': 5, 'importance': 'high'},
+                {'name': 'Leadership', 'current_level': 2, 'target_level': 4, 'importance': 'medium'},
+                {'name': 'Technical Skills', 'current_level': 4, 'target_level': 5, 'importance': 'high'}
+            ]
+            skills = default_skills
+        
+        return skills
+    
+    def _extract_required_skills(self, current_role: str, target_role: str) -> List[Dict[str, str]]:
+        """목표 역할에 필요한 스킬들 추출"""
+        role_skills = {
+            'PM': [
+                {'name': 'Project Management', 'importance': 'high'},
+                {'name': 'Communication', 'importance': 'high'},
+                {'name': 'Risk Management', 'importance': 'medium'},
+                {'name': 'Agile/Scrum', 'importance': 'high'}
+            ],
+            'Tech Lead': [
+                {'name': 'System Design', 'importance': 'high'},
+                {'name': 'Mentoring', 'importance': 'high'},
+                {'name': 'Code Review', 'importance': 'medium'},
+                {'name': 'Technical Decision Making', 'importance': 'high'}
+            ],
+            'Architect': [
+                {'name': 'System Architecture', 'importance': 'high'},
+                {'name': 'Design Patterns', 'importance': 'high'},
+                {'name': 'Performance Optimization', 'importance': 'medium'},
+                {'name': 'Technology Evaluation', 'importance': 'high'}
+            ]
+        }
+        
+        return role_skills.get(target_role, [
+            {'name': 'Core Skills', 'importance': 'high'},
+            {'name': 'Communication', 'importance': 'medium'},
+            {'name': 'Problem Solving', 'importance': 'medium'}
+        ])
+    
+    def format_response_with_diagram(self, user_question: str, state: Dict[str, Any]) -> Dict[str, Any]:
+        """다이어그램이 포함된 응답 포맷팅"""
+        try:
+            # 기본 응답 생성
+            basic_response = self.format_adaptive_response(user_question, state)
+            
+            # 성장 관련 질문인지 확인하고 다이어그램 생성
+            diagram_svg = self.generate_growth_diagram(user_question, state)
+            
+            if diagram_svg:
+                # 다이어그램을 HTML로 포함 (더 모던한 스타일)
+                diagram_html = f"""
+<div class="growth-diagram" style="margin: 20px 0; text-align: center;">
+    <div style="border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; background: linear-gradient(135deg, #F9FAFB 0%, #FFFFFF 100%); box-shadow: 0 1px 3px rgba(0,0,0,0.1); max-width: 650px; margin: 0 auto;">
+        {diagram_svg}
+    </div>
+    <p style="font-size: 11px; color: #9CA3AF; margin-top: 12px; font-style: italic;">
+        💡 위 다이어그램은 현재 상황을 바탕으로 자동 생성된 성장 가이드입니다
+    </p>
+</div>
+"""
+                
+                # 기존 응답에 다이어그램 추가
+                content = basic_response.get('formatted_content', '')
+                if '혹시 더 궁금한' in content:
+                    # 마무리 문장 앞에 다이어그램 삽입
+                    parts = content.rsplit('혹시 더 궁금한', 1)
+                    enhanced_content = parts[0] + diagram_html + '\n\n혹시 더 궁금한' + parts[1]
+                else:
+                    # 끝에 다이어그램 추가
+                    enhanced_content = content + '\n\n' + diagram_html
+                
+                basic_response['formatted_content'] = enhanced_content
+                basic_response['has_diagram'] = True
+                basic_response['diagram_type'] = 'growth_path'
+            
+            return basic_response
+            
+        except Exception as e:
+            self.logger.error(f"다이어그램 포함 응답 생성 실패: {e}")
+            # 폴백: 기본 응답만 반환
+            return self.format_adaptive_response(user_question, state)
