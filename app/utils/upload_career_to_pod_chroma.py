@@ -121,10 +121,9 @@ class ChromaPodUploader:
         create_data = {
             "name": self.pod_collection_name,
             "metadata": {
-                "description": "G.Navi 경력 데이터 프로덕션 컬렉션",
-                "created_from": "local_upload",
-                "embedding_model": "text-embedding-3-small",
-                "dimensions": 1536
+                "description": "gnavi4 career history data",
+                "dimensions": 1536,
+                "embedding_model": "text-embedding-3-small"
             }
         }
         
