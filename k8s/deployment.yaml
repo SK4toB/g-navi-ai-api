@@ -52,4 +52,4 @@ spec:
       volumes:
         - name: storage-volume
           persistentVolumeClaim:
-            claimName: efs-sc-gnavi4-backend
+            claimName: efs-sc-gnavi4
