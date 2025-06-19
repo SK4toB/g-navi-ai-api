@@ -20,11 +20,6 @@ class Settings(BaseSettings):
     chroma_external_url: Optional[str] = "https://chromadb-1.skala25a.project.skala-ai.com"
     chroma_use_external: bool = True  # 개발환경 기본값은 외부 URL 사용
 
-    # 경력 데이터 벡터 DB 설정
-    career_chroma_collection_name: str = "gnavi4_career_history"
-    vectordb_cache_dir: str = "app/storage/cache/embedding_cache"  # 로컬 개발용 경로
-    career_csv_path: str = "app/data/csv/career_history_v2.csv"  # 로컬 개발용 경로
-
     # API 설정
     api_title: str = "AI Chatbot API"
     api_version: str = "1.0.0"
@@ -38,10 +33,6 @@ class Settings(BaseSettings):
     # CORS 설정
     cors_origins: list = ["*"]
 
-    def get_career_collection_name(self) -> str:
-        """경력 데이터 컬렉션명 반환"""
-        return self.career_chroma_collection_name
-    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
