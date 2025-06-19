@@ -17,6 +17,7 @@ class ServiceContainer:
         self._chat_service = None
         self._history_manager = None
         self._chroma_service = None
+        self._career_vectordb_service = None
         print("ServiceContainer 초기화")
     
     @property
@@ -43,7 +44,7 @@ class ServiceContainer:
             self._chroma_service = ChromaService()
         return self._chroma_service
 
-
+    
 @lru_cache()
 def get_service_container() -> ServiceContainer:
     """서비스 컨테이너 싱글톤 - 앱 전체에서 하나만 생성"""

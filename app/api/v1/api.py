@@ -8,7 +8,7 @@ from app.api.v1.endpoints import (
     health, 
     session_management, 
     conversation_history,
-    chroma
+    chroma,
 )
 
 api_router = APIRouter()
