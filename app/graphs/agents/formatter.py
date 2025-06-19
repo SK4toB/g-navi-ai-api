@@ -270,7 +270,7 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
         context_sections.append(f'**현재 사용자 질문**: "{user_question}"')
         context_sections.append("")  # 빈 줄 추가
         
-        # 사용자 프로필 - 의미 있는 데이터만 포함
+        # 사용자 프로필
         # 새로운 JSON 구조: {name: "", projects: [...]}
         if user_data and isinstance(user_data, dict) and any(user_data.values()):
             user_profile_md = self._dict_to_markdown(user_data, show_empty=False)
@@ -280,7 +280,7 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
 {user_profile_md}
 """)
         
-        # 의도 분석 - 의미 있는 데이터만 포함
+        # 의도 분석
         if intent_analysis and isinstance(intent_analysis, dict) and any(intent_analysis.values()):
             # 오류가 있는 경우 제외
             if not intent_analysis.get("error"):
@@ -291,17 +291,17 @@ G.Navi AI 커리어 컨설팅 시스템의 전문 상담사로 활동하세요.
 {intent_analysis_md}
 """)
         
-        # 커리어 사례 - 의미 있는 데이터만 포함 (상세 정보 확장)
-        meaningful_career_cases = career_cases if career_cases else []
-        if meaningful_career_cases:
+        # 커리어 사례
+        career_cases_to_use = career_cases if career_cases else []
+        if career_cases_to_use:
             career_section = "💼 **실제 사내 커리어 사례 (사용 필수!)**:\n"
             career_section += "**⚠️ 중요 사항: 다음 사례들은 모두 실제 익명화된 사내 구성원들의 커리어 정보입니다.**\n"
             career_section += "**사용자가 사례를 요청하거나 구체적인 커리어 상담을 하는 경우 반드시 아래 사례들을 직접 활용하세요!**\n\n"
             
             added_cases = 0
-            for i, case in enumerate(meaningful_career_cases[:5]):  # 최대 5개 사례 표시
+            for i, case in enumerate(career_cases_to_use[:5]):  # 최대 5개 사례 표시
                 case_md = self._create_detailed_career_case_markdown(case, show_empty=False)
-                if case_md.strip():  # 의미 있는 내용이 있는 경우만 추가
+                if case_md.strip():  # 내용이 있는 경우만 추가
                     added_cases += 1
                     # Employee ID 추출 시도
                     employee_id = ""

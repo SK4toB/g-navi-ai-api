@@ -17,7 +17,7 @@ class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허�
     # === G.Navi 4단계 처리 결과 ===
     intent_analysis: Dict[str, Any]                 # 2단계: 의도 분석 결과
     career_cases: List[Any]                         # 3단계: 커리어 사례 검색
-    education_courses: Dict[str, Any]               # 3단계: 교육과정 추천 결과 (새로 추가)
+    education_courses: Dict[str, Any]               # 3단계: 교육과정 추천 결과
     final_response: Dict[str, Any]                  # 4단계: 최종 응답 (적응적 포맷팅)
     
     # === 메타데이터 및 로깅 ===

@@ -42,9 +42,7 @@ class IntentAnalysisNode:
             state["error_messages"].append(error_msg)
             state["intent_analysis"] = {
                 "error": str(e),
-                "question_type": "professional",
-                "requires_full_analysis": True,
-                "simple_response": False
+                "career_history": []
             }
         
         processing_time = (datetime.now() - start_time).total_seconds()
