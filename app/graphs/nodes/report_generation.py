@@ -19,22 +19,30 @@ class ReportGenerationNode:
     
     def generate_report_node(self, state: ChatState) -> ChatState:
         """
-        5단계: 보고서 생성 노드
-        사용자 요청에 보고서 생성 의도가 있으면 HTML 보고서를 생성
+        6단계: 보고서 생성 노드 (다이어그램 통합 포함)
+        - Mermaid 다이어그램을 최종 응답에 통합
+        - 사용자 요청에 보고서 생성 의도가 있으면 HTML 보고서 생성
         """
         start_time = time.perf_counter()  # 더 정밀한 시간 측정
         
         try:
-            print(f"\n🔧 [5단계] 보고서 생성 분석 시작... (시작시간: {start_time})")
+            print(f"\n🔧 [6단계] 최종 보고서 생성 시작... (시작시간: {start_time})")
             
             # 기본 정보 추출
             user_question = state.get("user_question", "")
-            final_response = state.get("final_response", {})
+            formatted_response = state.get("formatted_response", {})
+            mermaid_diagram = state.get("mermaid_diagram", "")
+            diagram_generated = state.get("diagram_generated", False)
             user_data = state.get("user_data", {})
+            
+            # 1. 다이어그램을 최종 응답에 통합
+            final_response = self._integrate_diagram_to_response(
+                formatted_response, mermaid_diagram, diagram_generated
+            )
             
             self.logger.info(f"보고서 생성 검토: {user_question[:50]}...")
             
-            # 보고서 생성 필요성 판단 시간 측정
+            # 2. 보고서 생성 필요성 판단 시간 측정
             analysis_start = time.perf_counter()
             should_generate = self.report_generator.should_generate_report(
                 user_question, user_data
@@ -68,7 +76,6 @@ class ReportGenerationNode:
                         # 마크다운 하이퍼링크 형식으로 추가
                         report_link = f"[📊 {report_filename}](file://{report_path})"
                         final_response["formatted_content"] += f"\n\n📊 **보고서가 생성되었습니다**\n\n{report_link}\n\n> 💡 링크를 클릭하면 생성된 HTML 보고서를 바로 열어볼 수 있습니다."
-                        state["final_response"] = final_response
                 else:
                     print("❌ 보고서 생성 실패")
                     state["report_generated"] = False
@@ -77,6 +84,9 @@ class ReportGenerationNode:
                 print("ℹ️  보고서 생성 불필요 → 건너뛰기")
                 state["report_generated"] = False
                 state["report_skip_reason"] = "사용자 요청에 보고서 생성 의도 없음"
+            
+            # 최종 응답 저장
+            state["final_response"] = final_response
             
             # 5단계 처리 시간 계산 및 로그 추가 (정밀도 향상)
             end_time = time.perf_counter()
@@ -123,3 +133,82 @@ class ReportGenerationNode:
             state["report_generated"] = False
             state["report_error"] = str(e)
             return state
+        
+    def _integrate_diagram_to_response(self, 
+                                     formatted_response: Dict[str, Any],
+                                     mermaid_diagram: str,
+                                     diagram_generated: bool) -> Dict[str, Any]:
+        """
+        포맷된 응답에 Mermaid 다이어그램을 통합
+        
+        Args:
+            formatted_response: 포맷터에서 생성된 응답
+            mermaid_diagram: 생성된 Mermaid 다이어그램 코드
+            diagram_generated: 다이어그램 생성 성공 여부
+            
+        Returns:
+            Dict[str, Any]: 다이어그램이 통합된 최종 응답
+        """
+        
+        try:
+            # 응답 복사
+            final_response = formatted_response.copy() if formatted_response else {}
+            
+            # 다이어그램이 생성되지 않았으면 원본 응답 반환
+            if not diagram_generated or not mermaid_diagram or not mermaid_diagram.strip():
+                print("ℹ️  다이어그램 없음 → 원본 응답 사용")
+                return final_response
+            
+            # 포맷된 콘텐츠 추출
+            formatted_content = final_response.get("formatted_content", "")
+            if not formatted_content:
+                print("⚠️ 포맷된 콘텐츠가 없어 다이어그램 통합 불가")
+                return final_response
+            
+            # 다이어그램 섹션 생성
+            diagram_section = f"""
+
+---
+
+```mermaid
+{mermaid_diagram.strip()}
+```
+
+*위 다이어그램은 설명 내용을 구조적으로 시각화한 것입니다.*
+
+---
+"""
+            
+            # 마무리 부분(G.Navi 멘트 등) 찾아서 그 앞에 다이어그램 삽입
+            lines = formatted_content.split('\n')
+            insert_index = len(lines)
+            
+            # 역순으로 검색하여 마무리 부분 찾기
+            for i in range(len(lines) - 1, -1, -1):
+                line = lines[i].strip()
+                if (line.startswith('*G.Navi') or line.startswith('---') or 
+                    '응원합니다' in line or '궁금한' in line):
+                    insert_index = i
+                    break
+            
+            # 다이어그램 삽입
+            if insert_index < len(lines):
+                lines.insert(insert_index, diagram_section)
+            else:
+                lines.append(diagram_section)
+            
+            # 통합된 콘텐츠 저장
+            final_response["formatted_content"] = '\n'.join(lines)
+            final_response["has_diagram"] = True
+            final_response["diagram_type"] = "mermaid"
+            
+            print(f"✅ 다이어그램 통합 완료 ({len(mermaid_diagram)}자)")
+            self.logger.info("Mermaid 다이어그램이 최종 응답에 통합됨")
+            
+            return final_response
+            
+        except Exception as e:
+            self.logger.warning(f"다이어그램 통합 실패: {e}")
+            print(f"⚠️ 다이어그램 통합 실패: {e}")
+            # 실패 시 원본 응답 반환
+            return formatted_response if formatted_response else {}

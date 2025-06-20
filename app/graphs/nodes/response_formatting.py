@@ -55,6 +55,7 @@ class ResponseFormattingNode:
             final_response["format_type"] = final_response.get("format_type", "adaptive")
             
             # bot_message 설정 (기본 출력 형식)
+            state["formatted_response"] = final_response  # 다이어그램 생성에서 사용
             state["final_response"] = final_response
             state["processing_log"].append(f"적응적 응답 포맷팅 완료 (유형: {final_response['format_type']})")
             

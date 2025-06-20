@@ -76,11 +76,14 @@ class ReportGeneratorAgent:
             return None
     
     def _convert_markdown_to_html(self, markdown_text: str) -> str:
-        """마크다운 텍스트를 HTML로 변환"""
+        """마크다운 텍스트를 HTML로 변환 (Mermaid 다이어그램 지원)"""
         try:
+            # Mermaid 다이어그램 코드 블록을 HTML div로 변환
+            mermaid_html = self._process_mermaid_blocks(markdown_text)
+            
             # 기본 마크다운 변환
             html = markdown.markdown(
-                markdown_text,
+                mermaid_html,
                 extensions=['tables', 'fenced_code', 'codehilite'],
                 extension_configs={
                     'codehilite': {
@@ -89,6 +92,9 @@ class ReportGeneratorAgent:
                 }
             )
             
+            # Mermaid가 포함되어 있는지 확인
+            has_mermaid = 'class="mermaid"' in html
+            
             # 완전한 HTML 문서로 감싸기
             full_html = f"""<!DOCTYPE html>
 <html lang="ko">
@@ -96,6 +102,7 @@ class ReportGeneratorAgent:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>G.Navi AI 커리어 컨설팅 보고서</title>
+    {self._get_mermaid_scripts() if has_mermaid else ""}
     <style>
         body {{
             font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -200,6 +207,21 @@ class ReportGeneratorAgent:
             border-left: 4px solid #ffc107;
             margin: 15px 0;
         }}
+        /* Mermaid 다이어그램 스타일 */
+        .mermaid {{
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }}
+        .diagram-title {{
+            text-align: center;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 15px;
+        }}
     </style>
 </head>
 <body>
@@ -209,6 +231,7 @@ class ReportGeneratorAgent:
             보고서 생성일시: {datetime.now().strftime('%Y년 %m월 %d일 %H시 %M분')}
         </div>
     </div>
+    {self._get_mermaid_init_script() if has_mermaid else ""}
 </body>
 </html>"""
             
@@ -227,3 +250,70 @@ class ReportGeneratorAgent:
     <pre>{markdown_text}</pre>
 </body>
 </html>"""
+    
+    def _process_mermaid_blocks(self, markdown_text: str) -> str:
+        """마크다운에서 Mermaid 코드 블록을 HTML div로 변환"""
+        try:
+            import re
+            
+            # ```mermaid 코드 블록을 찾아서 div로 변환
+            pattern = r'```mermaid\s*\n(.*?)\n```'
+            
+            def replace_mermaid(match):
+                mermaid_code = match.group(1).strip()
+                # HTML div로 변환 (Mermaid.js가 렌더링할 수 있도록)
+                return f'<div class="mermaid">\n{mermaid_code}\n</div>'
+            
+            # 정규표현식으로 변환
+            processed_text = re.sub(pattern, replace_mermaid, markdown_text, flags=re.DOTALL)
+            
+            return processed_text
+            
+        except Exception as e:
+            self.logger.warning(f"Mermaid 블록 처리 실패: {e}")
+            return markdown_text
+
+    def _get_mermaid_scripts(self) -> str:
+        """Mermaid.js 스크립트 태그 반환"""
+        return """
+    <!-- Mermaid.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+"""
+
+    def _get_mermaid_init_script(self) -> str:
+        """Mermaid 초기화 스크립트 반환"""
+        return """
+    <script>
+        // Mermaid 초기화
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#3498db',
+                primaryTextColor: '#2c3e50',
+                primaryBorderColor: '#3498db',
+                lineColor: '#34495e',
+                backgroundColor: '#ffffff',
+                secondaryColor: '#ecf0f1',
+                tertiaryColor: '#f8f9fa'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            sequence: {
+                useMaxWidth: true,
+                wrap: true
+            },
+            timeline: {
+                useMaxWidth: true
+            }
+        });
+        
+        // 페이지 로드 완료 후 Mermaid 렌더링
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Mermaid 다이어그램 렌더링 시작...');
+            mermaid.run();
+        });
+    </script>
+"""
