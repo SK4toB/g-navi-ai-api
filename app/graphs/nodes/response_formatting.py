@@ -26,10 +26,21 @@ class ResponseFormattingNode:
         try:
             self.logger.info("=== 4단계: 적응적 응답 포맷팅 ===")
             
-            final_response = self.response_formatting_agent.format_adaptive_response(
-                user_question=state.get("user_question", ""),
-                state=state
-            )
+            # 성장 방향 상담인지 확인하고 다이어그램 포함 응답 생성
+            user_question = state.get("user_question", "")
+            growth_keywords = ["성장", "커리어", "발전", "진로", "전환", "로드맵", "계획", "목표", "미래", "스킬", "역량"]
+            
+            if any(keyword in user_question for keyword in growth_keywords):
+                final_response = self.response_formatting_agent.format_response_with_diagram(
+                    user_question=user_question,
+                    state=state
+                )
+                self.logger.info("성장 방향 다이어그램 포함 응답 생성 완료")
+            else:
+                final_response = self.response_formatting_agent.format_adaptive_response(
+                    user_question=user_question,
+                    state=state
+                )
             
             # 기본 HTML 변환 (화면 표시용)
             final_response["html_content"] = self._convert_markdown_to_html(final_response["formatted_content"])
