@@ -1,5 +1,19 @@
 # app/graphs/nodes/chat_history.py
-# 현재 세션 대화내역 관리 노드
+"""
+📝 1단계: 현재 세션 대화내역 통합 관리 노드
+
+이 노드는 AgentRAG 워크플로우의 첫 번째 단계로, 다음 작업을 수행합니다:
+1. SpringBoot에서 전달받은 이전 대화 내역을 current_session_messages에 통합
+2. LangGraph MemorySaver에서 복원된 기존 대화 내역과 병합
+3. 현재 사용자 질문을 대화 내역에 추가
+4. 모든 대화 내역을 통일된 형식으로 관리
+
+📋 주요 기능:
+- SpringBoot ↔ AgentRAG 간 대화 내역 동기화
+- 중복 방지 로직으로 안전한 메시지 통합
+- MemorySaver 상태 복원 지원
+- 세션 연속성 보장
+"""
 
 import logging
 from datetime import datetime
@@ -8,14 +22,30 @@ from app.graphs.state import ChatState
 
 
 class ChatHistoryNode:
-    """현재 세션 대화내역 관리 노드"""
+    """
+    📝 현재 세션 대화내역 통합 관리 노드
+    
+    AgentRAG 워크플로우의 1단계로, 다양한 소스의 대화 내역을 
+    통일된 current_session_messages 형식으로 관리합니다.
+    """
 
     def __init__(self, graph_builder_instance):
         self.graph_builder = graph_builder_instance
         self.logger = logging.getLogger(__name__)
 
     def retrieve_chat_history_node(self, state: ChatState) -> ChatState:
-        """1단계: 현재 세션 대화내역 관리"""
+        """
+        🔄 1단계: 현재 세션 대화내역 통합 관리
+        
+        SpringBoot 이전 메시지와 MemorySaver 복원 메시지를 통합하여
+        current_session_messages로 일원화하고, 현재 사용자 질문을 추가합니다.
+        
+        Args:
+            state: 현재 워크플로우 상태
+            
+        Returns:
+            ChatState: 통합된 대화 내역이 포함된 상태
+        """
         import time
         start_time = time.perf_counter()
         
@@ -128,7 +158,19 @@ class ChatHistoryNode:
         return state
 
     def _convert_previous_messages_to_session_format(self, previous_messages: List, state: ChatState) -> List[Dict[str, str]]:
-        """SpringBoot에서 전달받은 이전 메시지들을 current_session_messages 형식으로 변환"""
+        """
+        🔄 SpringBoot 메시지 → current_session_messages 형식 변환
+        
+        SpringBoot에서 전달받은 이전 메시지들을 current_session_messages 
+        표준 형식으로 변환하여 일관된 대화 내역 관리를 지원합니다.
+        
+        Args:
+            previous_messages: SpringBoot에서 전달받은 메시지 리스트
+            state: 현재 워크플로우 상태 (사용자 정보 포함)
+            
+        Returns:
+            List[Dict]: current_session_messages 형식으로 변환된 메시지 리스트
+        """
         converted_messages = []
         user_data = state.get("user_data", {})
         user_name = user_data.get("name", "사용자")

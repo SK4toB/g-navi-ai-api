@@ -89,9 +89,10 @@ class ChatSessionService:
             return
         
         try:
-            from app.graphs.nodes.openai_response_node import get_history_manager
+            from app.core.dependencies import get_service_container
             
-            history_manager = get_history_manager()
+            container = get_service_container()
+            history_manager = container.history_manager
             user_name = user_info.get("name", "사용자")
             
             print(f"대화 히스토리 복원 시작: {conversation_id}, {len(previous_messages)}개 메시지")

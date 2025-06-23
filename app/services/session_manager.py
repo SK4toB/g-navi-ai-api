@@ -79,8 +79,9 @@ class SessionManager:
         ###################################
         # 대화 히스토리도 함께 삭제
         try:
-            from app.graphs.nodes.openai_response_node import get_history_manager
-            history_manager = get_history_manager()
+            from app.core.dependencies import get_service_container
+            container = get_service_container()
+            history_manager = container.history_manager
             history_manager.clear_history(conversation_id)
             print(f"대화 히스토리 삭제 완료: {conversation_id}")
         except Exception as e:

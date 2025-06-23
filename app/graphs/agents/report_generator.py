@@ -1,5 +1,25 @@
 # app/graphs/agents/report_generator.py
-# 보고서 생성 에이전트
+"""
+🔒 관리자 전용 HTML 보고서 생성 에이전트
+
+이 에이전트는 상담 내용을 체계적으로 정리한 HTML 보고서를 생성합니다:
+1. 상담 품질 관리를 위한 관리자용 보고서 생성
+2. 사용자 프로필, 질문, 제공 가이던스를 종합 정리
+3. HTML 형태로 서버에 저장 (관리자 검토용)
+4. 보고서 생성 여부를 관리자가 제어 가능
+
+📊 보고서 구성:
+- 사용자 프로필 요약
+- 질문 및 상담 요청 내용
+- 제공된 커리어 가이던스
+- 추천 교육과정 및 학습 경로
+- 전체 세션 요약 및 후속 조치
+
+⚠️ 중요:
+- 순수 관리자 전용 기능 (사용자 응답과 분리)
+- 보고서 생성 실패해도 사용자 경험에 영향 없음
+- 개인정보 보호를 위한 안전한 로컬 저장
+"""
 
 import os
 import logging
@@ -9,13 +29,30 @@ from typing import Dict, Any, Optional
 
 
 class ReportGeneratorAgent:
-    """🔒 관리자 전용 HTML 보고서 생성 에이전트"""
+    """
+    🔒 관리자 전용 HTML 보고서 생성 에이전트
+    
+    상담 품질 관리를 위해 상담 내용을 체계적으로 정리한
+    HTML 보고서를 생성하는 관리자 전용 에이전트입니다.
+    """
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     
     def should_generate_report(self, user_question: str, user_data: Dict[str, Any]) -> bool:
-        """🔒 관리자 설정: 보고서 생성 필요 여부 판단"""
+        """
+        🔒 관리자 설정: 보고서 생성 필요 여부 판단
+        
+        관리자가 설정한 조건에 따라 HTML 보고서 생성 여부를 결정합니다.
+        현재는 모든 상담에 대해 보고서를 생성하도록 설정되어 있습니다.
+        
+        Args:
+            user_question: 사용자 질문
+            user_data: 사용자 프로필 정보
+            
+        Returns:
+            bool: 보고서 생성 필요 여부
+        """
         return True # 🔒 관리자 설정: 현재 모든 상담에 대해 보고서 생성 (관리자용)
 
         # 🔒 관리자 설정 예시 (현재 비활성화됨):

@@ -4,7 +4,7 @@
 from typing import TypedDict, List, Dict, Any, Optional
 
 class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허용
-    """G.Navi AgentRAG의 상태 관리"""
+    """G.Navi AgentRAG의 상태 관리 - 7단계 워크플로우"""
     
     # === 입력 데이터 (필수) ===
     user_question: str                   # 사용자 질문
@@ -14,7 +14,10 @@ class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허�
     # === 대화 내역 관리 (MemorySaver가 관리) ===
     current_session_messages: List[Dict[str, str]]  # 현재 세션의 모든 대화 내역 (이전 메시지 + 현재 세션, role, content, timestamp)
     
-    # === G.Navi 6단계 처리 결과 ===
+    # === G.Navi 7단계 처리 결과 ===
+    # 0단계: 메시지 검증 (workflow_status로 처리)
+    workflow_status: str                            # 워크플로우 상태 (normal, validation_failed)
+    # 1단계: 대화 내역 관리 (current_session_messages)
     intent_analysis: Dict[str, Any]                 # 2단계: 의도 분석 결과
     career_cases: List[Any]                         # 3단계: 커리어 사례 검색
     education_courses: Dict[str, Any]               # 3단계: 교육과정 추천 결과

@@ -1,5 +1,18 @@
 # app/graphs/nodes/diagram_generation.py
-# Mermaid 다이어그램 생성 노드
+"""
+🎨 5단계: Mermaid 다이어그램 생성 및 FE용 응답 통합 노드
+
+이 노드는 AgentRAG 워크플로우의 다섯 번째 단계로, 다음 작업을 수행합니다:
+1. 포맷팅된 응답 내용을 분석하여 다이어그램 생성 필요성 판단
+2. 적합한 경우 Mermaid 다이어그램 생성 (플로우차트, 마인드맵 등)
+3. 다이어그램과 텍스트 응답을 통합한 FE용 최종 응답 생성
+4. bot_message 설정으로 사용자 응답 준비 완료
+
+🎯 다이어그램 생성 조건:
+- 성장 방향, 학습 경로, 단계별 가이드 등 시각화 가능한 내용
+- 복잡한 정보의 구조화가 필요한 경우
+- 프로세스나 관계를 명확히 보여줄 수 있는 경우
+"""
 
 from typing import Dict, Any
 import logging
@@ -8,9 +21,10 @@ from app.graphs.state import ChatState
 
 class DiagramGenerationNode:
     """
-    Mermaid 다이어그램 생성 노드
-    - formatter에서 생성된 응답을 기반으로 다이어그램 생성
-    - 생성된 다이어그램을 state에 저장
+    🎨 Mermaid 다이어그램 생성 및 FE용 응답 통합 노드
+    
+    AgentRAG 워크플로우의 5단계로, 포맷팅된 응답을 분석하여
+    필요시 Mermaid 다이어그램을 생성하고 최종 응답을 통합합니다.
     """
     
     def __init__(self):
@@ -18,13 +32,16 @@ class DiagramGenerationNode:
     
     def generate_diagram_node(self, state: ChatState) -> ChatState:
         """
-        5단계: Mermaid 다이어그램 생성 및 FE용 최종 응답 통합
+        🎨 5단계: Mermaid 다이어그램 생성 및 FE용 최종 응답 통합
+        
+        포맷팅된 응답을 분석하여 시각화가 도움이 되는 경우
+        Mermaid 다이어그램을 생성하고, FE에서 사용할 최종 응답을 완성합니다.
         
         Args:
-            state: ChatState 객체
+            state: ChatState 객체 (포맷팅된 응답 포함)
             
         Returns:
-            ChatState: 다이어그램 정보가 추가된 state
+            ChatState: 다이어그램과 최종 응답이 통합된 상태
         """
         import time
         start_time = time.perf_counter()
@@ -210,14 +227,18 @@ class DiagramGenerationNode:
     
     def _should_generate_diagram(self, content: str, question: str = "") -> bool:
         """
-        다이어그램 생성이 유용한지 판단
+        🔍 다이어그램 생성 필요성 지능형 판단
+        
+        콘텐츠와 질문을 분석하여 시각화가 도움이 될지 판단합니다.
+        단순한 인사나 짧은 답변은 제외하고, 구조화된 정보나
+        프로세스를 포함한 내용만 다이어그램으로 생성합니다.
         
         Args:
-            content: 포맷된 내용
+            content: 포맷팅된 응답 내용
             question: 사용자 질문
             
         Returns:
-            bool: 다이어그램 생성 여부
+            bool: 다이어그램 생성 필요 여부
         """
         
         try:

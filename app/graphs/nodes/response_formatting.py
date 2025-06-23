@@ -1,5 +1,19 @@
 # app/graphs/nodes/response_formatting.py
-# 적응적 응답 포맷팅 노드
+"""
+📝 4단계: 적응적 응답 포맷팅 노드
+
+이 노드는 AgentRAG 워크플로우의 네 번째 단계로, 다음 작업을 수행합니다:
+1. 검색된 데이터와 사용자 맥락을 종합한 개인화 응답 생성
+2. 질문 유형에 따른 적응적 응답 포맷 선택
+3. 사용자 친화적이고 자연스러운 대화체 생성
+4. current_session_messages에 AI 응답 추가 (MemorySaver 연동)
+
+🎨 응답 유형:
+- adaptive: 일반적인 상담 및 조언
+- career_guidance: 체계적인 커리어 가이던스  
+- conversation: 가벼운 대화 및 인사
+- summary: 이전 대화 요약
+"""
 
 import logging
 from datetime import datetime
@@ -8,7 +22,12 @@ from app.graphs.agents.formatter import ResponseFormattingAgent
 
 
 class ResponseFormattingNode:
-    """적응적 응답 포맷팅 노드"""
+    """
+    📝 적응적 응답 포맷팅 노드
+    
+    AgentRAG 워크플로우의 4단계로, 검색된 데이터를 바탕으로
+    사용자에게 최적화된 개인화 응답을 생성합니다.
+    """
 
     def __init__(self, graph_builder_instance):
         self.graph_builder = graph_builder_instance
@@ -16,7 +35,18 @@ class ResponseFormattingNode:
         self.logger = logging.getLogger(__name__)
 
     def format_response_node(self, state: ChatState) -> ChatState:
-        """4단계: 적응적 응답 포맷팅"""
+        """
+        ✨ 4단계: 적응적 응답 포맷팅
+        
+        검색된 커리어 사례와 교육과정 데이터를 활용하여
+        사용자 질문에 대한 개인화된 응답을 생성합니다.
+        
+        Args:
+            state: 현재 워크플로우 상태 (검색 결과 포함)
+            
+        Returns:
+            ChatState: 포맷팅된 응답이 포함된 상태
+        """
         import time
         start_time = time.perf_counter()
         

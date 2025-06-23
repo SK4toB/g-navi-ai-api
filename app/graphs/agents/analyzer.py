@@ -1,14 +1,32 @@
-# analyzer.py
+# app/graphs/agents/analyzer.py
+"""
+🎯 의도 분석 에이전트
+
+이 에이전트는 사용자 질문을 분석하여 다음 정보를 추출합니다:
+1. 질문의 주요 의도 파악
+2. 커리어 사례 검색에 필요한 핵심 키워드 추출 (최대 3개)
+3. 사용자 프로필과 대화 맥락을 종합한 상황 이해
+
+🔍 주요 기능:
+- GPT-4o-mini 기반 고속 의도 분석
+- JSON 형태의 구조화된 결과 출력
+- 커리어 검색 최적화를 위한 키워드 추출
+- 과거 대화 내역을 고려한 맥락적 분석
+"""
 
 from typing import Dict, Any, List
-from langchain.schema import Document
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 import json
 import logging
 
 class IntentAnalysisAgent:
-    """의도 분석 에이전트 - 커리어 검색 키워드 추출에 집중"""
+    """
+    🎯 의도 분석 에이전트 - 커리어 검색 키워드 추출에 집중
+    
+    사용자 질문을 분석하여 의도를 파악하고, 다음 단계의 
+    커리어 사례 검색에 필요한 핵심 키워드를 추출합니다.
+    """
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -17,16 +35,42 @@ class IntentAnalysisAgent:
     def analyze_intent_and_context(self, 
                                  user_question: str, 
                                  user_data: Dict[str, Any], 
-                                 chat_history: List[Document]) -> Dict[str, Any]:
-        """간소화된 의도 분석 - 커리어 검색 키워드 추출"""
+                                 chat_history: List[Dict[str, str]]) -> Dict[str, Any]:
+        """
+        🔍 사용자 의도 종합 분석
         
-        self.logger.info("간소화된 의도 분석 시작")
+        사용자 질문, 프로필 정보, 대화 히스토리를 종합하여
+        의도를 파악하고 커리어 검색에 필요한 키워드를 추출합니다.
+        
+        Args:
+            user_question: 사용자 질문
+            user_data: 사용자 프로필 정보
+            chat_history: 과거 대화 내역
+            
+        Returns:
+            Dict: 의도 분석 결과 (career_history 키워드 포함)
+        """
+        
+        self.logger.info("의도 분석 시작")
         
         # 커리어 검색 키워드 추출
         return self._perform_unified_analysis(user_question, user_data, chat_history)
     
-    def _perform_unified_analysis(self, user_question: str, user_data: Dict[str, Any], chat_history: List[Document]) -> Dict[str, Any]:
-        """키워드 추출을 위한 분석 수행"""
+    def _perform_unified_analysis(self, user_question: str, user_data: Dict[str, Any], chat_history: List[Dict[str, str]]) -> Dict[str, Any]:
+        """
+        🎯 통합 의도 분석 수행
+        
+        GPT-4o-mini를 사용하여 사용자 질문을 분석하고
+        커리어 검색에 최적화된 키워드를 추출합니다.
+        
+        Args:
+            user_question: 사용자 질문
+            user_data: 사용자 프로필 정보  
+            chat_history: 과거 대화 내역
+            
+        Returns:
+            Dict: career_history 키워드 배열을 포함한 분석 결과
+        """
         
         # 과거 대화내역 요약
         chat_summary = self._summarize_chat_history(chat_history)
@@ -109,15 +153,27 @@ class IntentAnalysisAgent:
                 self.logger.error(f"오류 인자: {e.args}")
             raise e
     
-    def _summarize_chat_history(self, chat_history: List[Document]) -> str:
-        """과거 대화내역 간단 요약"""
+    def _summarize_chat_history(self, chat_history: List[Dict[str, str]]) -> str:
+        """
+        📋 과거 대화내역 간단 요약
+        
+        최근 대화 내역을 분석하여 맥락 파악에 필요한
+        핵심 정보만 추출합니다.
+        
+        Args:
+            chat_history: 과거 대화 메시지 리스트
+            
+        Returns:
+            str: 요약된 대화 내역
+        """
         if not chat_history:
             return "과거 대화내역 없음"
         
         chat_items = []
-        for doc in chat_history[:3]:  # 최근 3개만
-            session_summary = doc.get('context', {}).get('session_summary', '')
-            if session_summary:
-                chat_items.append(f"- {session_summary}")
+        # 최근 7개 메시지만 요약 (assistant 메시지 중심)
+        for msg in chat_history[-7:]:
+            if msg.get('role') == 'assistant' and msg.get('content'):
+                content = msg['content'][:100]  # 첫 100자만
+                chat_items.append(f"- {content}...")
         
         return "\n".join(chat_items) if chat_items else "과거 대화내역 없음"

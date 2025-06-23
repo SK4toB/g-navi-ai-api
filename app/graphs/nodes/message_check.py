@@ -1,5 +1,5 @@
 # app/graphs/nodes/message_check.py
-# 메시지 확인 및 상태 초기화 노드
+# 0️⃣ 메시지 검증 및 상태 초기화 노드
 
 import time
 import logging
@@ -7,19 +7,26 @@ from app.graphs.state import ChatState
 
 
 class MessageCheckNode:
-    """메시지 확인 및 상태 초기화 노드"""
+    """
+    0️⃣ 메시지 검증 및 상태 초기화 노드
+    
+    역할:
+    - 사용자 메시지의 유효성 검증 (빈값, 길이, 부적절한 내용)
+    - ChatState의 모든 필드 초기화
+    - 검증 실패 시 workflow_status = "validation_failed" 설정
+    """
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
     def create_node(self):
-        """메시지 확인 및 상태 초기화 노드 생성"""
+        """메시지 검증 및 상태 초기화 노드 생성"""
         async def message_check_node(state: ChatState) -> ChatState:
             start_time = time.perf_counter()
             
             print("\n📝 [0단계] 메시지 검증 및 상태 초기화 시작...")
             
-            # 메시지 검증
+            # 1. 메시지 검증
             user_question = state.get("user_question", "")
             validation_result = self._validate_message(user_question)
             
@@ -65,7 +72,7 @@ class MessageCheckNode:
             print(f"✅ [0단계] 메시지 검증 성공: {len(user_question)}자")
             
             # 상태 초기화
-            state.setdefault("chat_history_results", [])
+            state.setdefault("current_session_messages", [])
             state.setdefault("intent_analysis", {})
             state.setdefault("career_cases", [])
             state.setdefault("education_courses", {})
@@ -136,7 +143,7 @@ class MessageCheckNode:
         inappropriate_words = [
             # 일반 욕설
             "ㅅㅂ", "ㅂㅅ", "ㅁㅊ", "시발", "씨발", "병신", "개새끼", "새끼", 
-            "미친", "미쳤", "또라이", "놈", "년", "창년", "걸레", "쓰레기",
+            "미친", "미쳤", "또라이", "놈", "창년", "걸레", "쓰레기",
             "개자식", "개놈", "개년", "개뚱", "바카", "멍청이", "등신",
             "바보", "똥", "개똥", "fuck", "shit", "damn", "bitch",
             

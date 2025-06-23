@@ -1,5 +1,18 @@
 # app/graphs/nodes/data_retrieval.py
-# 추가 데이터 검색 노드
+"""
+🔍 3단계: 추가 데이터 검색 노드 (커리어 사례 + 교육과정)
+
+이 노드는 AgentRAG 워크플로우의 세 번째 단계로, 다음 작업을 수행합니다:
+1. 의도 분석 결과를 기반으로 한 커리어 사례 검색
+2. 사용자 프로필과 질문에 맞는 교육과정 추천
+3. Vector Store(ChromaDB)를 활용한 유사도 기반 검색
+4. 검색 결과의 품질 평가 및 필터링
+
+📚 검색 대상:
+- 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
+- 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
+- 학습 경로: 단계별 성장 로드맵
+"""
 
 import logging
 from datetime import datetime
@@ -8,14 +21,30 @@ from app.graphs.agents.retriever import CareerEnsembleRetrieverAgent
 
 
 class DataRetrievalNode:
-    """추가 데이터 검색 노드 (커리어 사례 + 교육과정)"""
+    """
+    🔍 추가 데이터 검색 노드 (커리어 사례 + 교육과정)
+    
+    AgentRAG 워크플로우의 3단계로, 의도 분석 결과를 바탕으로
+    관련 커리어 사례와 교육과정을 검색하여 상담 근거를 확보합니다.
+    """
 
     def __init__(self):
         self.career_retriever_agent = CareerEnsembleRetrieverAgent()
         self.logger = logging.getLogger(__name__)
 
     def retrieve_additional_data_node(self, state: ChatState) -> ChatState:
-        """3단계: 추가 데이터 검색 (커리어 사례 + 교육과정)"""
+        """
+        🔎 3단계: 추가 데이터 검색 (커리어 사례 + 교육과정)
+        
+        의도 분석에서 추출된 키워드를 사용하여 관련 커리어 사례와
+        교육과정을 Vector Store에서 검색합니다.
+        
+        Args:
+            state: 현재 워크플로우 상태 (의도 분석 결과 포함)
+            
+        Returns:
+            ChatState: 검색된 커리어 사례와 교육과정이 포함된 상태
+        """
         import time
         start_time = time.perf_counter()
         
@@ -102,7 +131,19 @@ class DataRetrievalNode:
         return state
     
     def _search_education_courses(self, state: ChatState, intent_analysis: dict) -> dict:
-        """교육과정 검색 로직"""
+        """
+        📚 교육과정 검색 및 추천 로직
+        
+        사용자의 질문과 프로필을 분석하여 적합한 교육과정을 검색하고,
+        개인화된 학습 경로를 제안합니다.
+        
+        Args:
+            state: 현재 워크플로우 상태
+            intent_analysis: 의도 분석 결과
+            
+        Returns:
+            dict: 추천 교육과정과 학습 경로 정보
+        """
         
         # 사용자 프로필 정보 추출
         user_data = state.get("user_data", {})

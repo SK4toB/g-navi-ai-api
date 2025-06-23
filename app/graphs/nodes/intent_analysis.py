@@ -1,5 +1,18 @@
 # app/graphs/nodes/intent_analysis.py
-# 의도 분석 노드
+"""
+🎯 2단계: 사용자 의도 분석 및 상황 이해 노드
+
+이 노드는 AgentRAG 워크플로우의 두 번째 단계로, 다음 작업을 수행합니다:
+1. 사용자 질문의 의도와 목적 분석
+2. 과거 대화 내역을 통한 맥락 이해
+3. 커리어 검색에 필요한 핵심 키워드 추출
+4. 후속 단계(데이터 검색)에 필요한 분석 정보 제공
+
+📊 분석 결과:
+- intent: 질문의 주요 의도 분류
+- career_history: 커리어 사례 검색용 키워드 (최대 3개)
+- 사용자 프로필과 대화 맥락을 종합한 상황 이해
+"""
 
 import logging
 from datetime import datetime
@@ -8,7 +21,12 @@ from app.graphs.agents.analyzer import IntentAnalysisAgent
 
 
 class IntentAnalysisNode:
-    """의도 분석 및 상황 이해 노드"""
+    """
+    🎯 사용자 의도 분석 및 상황 이해 노드
+    
+    AgentRAG 워크플로우의 2단계로, 사용자 질문을 분석하여
+    다음 단계에 필요한 검색 키워드와 의도 정보를 추출합니다.
+    """
 
     def __init__(self, graph_builder_instance):
         self.graph_builder = graph_builder_instance
@@ -16,7 +34,18 @@ class IntentAnalysisNode:
         self.logger = logging.getLogger(__name__)
 
     def analyze_intent_node(self, state: ChatState) -> ChatState:
-        """2단계: 의도 분석 및 상황 이해"""
+        """
+        🔍 2단계: 사용자 의도 분석 및 상황 이해
+        
+        사용자 질문과 대화 맥락을 분석하여 의도를 파악하고,
+        다음 단계의 데이터 검색에 필요한 키워드를 추출합니다.
+        
+        Args:
+            state: 현재 워크플로우 상태
+            
+        Returns:
+            ChatState: 의도 분석 결과가 포함된 상태
+        """
         import time
         start_time = time.perf_counter()
         
@@ -35,7 +64,7 @@ class IntentAnalysisNode:
             intent_analysis = self.intent_analysis_agent.analyze_intent_and_context(
                 user_question=state.get("user_question", ""),
                 user_data=user_data,
-                chat_history=state.get("chat_history_results", [])
+                chat_history=state.get("current_session_messages", [])
             )
             
             state["intent_analysis"] = intent_analysis

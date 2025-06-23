@@ -1,4 +1,24 @@
-# retriever.py
+# app/graphs/agents/retriever.py
+"""
+🔍 커리어 앙상블 리트리버 에이전트
+
+이 에이전트는 Vector Store에서 관련 정보를 검색하는 핵심 모듈입니다:
+1. BM25 + OpenAI 임베딩 앙상블 검색으로 정확도 향상
+2. 커리어 사례와 교육과정 데이터 통합 검색
+3. 사용자 프로필 기반 개인화된 검색 결과 제공
+4. ChromaDB를 활용한 고성능 벡터 검색
+
+📚 검색 대상:
+- 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
+- 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
+- 학습 경로: 단계별 성장 로드맵
+
+🔧 주요 기술:
+- Ensemble Retriever (BM25 + Vector Search)
+- OpenAI Embeddings with Cache
+- ChromaDB Persistent Storage
+- Query Optimization & Filtering
+"""
 
 import os
 import json
@@ -19,7 +39,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class CareerEnsembleRetrieverAgent:
-    """career_data Chroma DB에 대해 BM25+LLM 임베딩 앙상블 리트리버 + 교육과정 검색 제공
+    """
+    🔍 커리어 앙상블 리트리버 에이전트
+    
+    BM25 + LLM 임베딩 앙상블을 활용하여 커리어 사례와 교육과정을
+    효과적으로 검색합니다. ChromaDB와 캐시를 활용한 고성능 검색을 제공합니다.
+    
+    📊 검색 결과:
     - 커리어 사례: 최대 3개까지 검색
     - 교육과정: 최대 3개까지 검색
     """
