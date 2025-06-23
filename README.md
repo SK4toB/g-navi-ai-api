@@ -143,7 +143,7 @@ flowchart TD
 | **3단계** | DataRetrievalNode | 커리어 사례 + 교육과정 + 회사 비전 검색 | `career_cases`, `education_courses` |
 | **4단계** | ResponseFormattingNode | 질문 유형별 적응적 응답 생성 | `formatted_response` |
 | **5단계** | DiagramGenerationNode | Mermaid 다이어그램 생성 | `mermaid_diagram`, `diagram_generated` |
-| **6단계** | ReportGenerationNode | 다이어그램 통합 HTML 보고서 생성 (조건부) | `final_response`, `report_path` |
+| **6단계** | ReportGenerationNode | 다이어그램 통합 + HTML 보고서 생성 (관리자 기능) | `final_response`, `report_path` |
 
 ## 핵심 컴포넌트
 
@@ -265,11 +265,12 @@ sequenceDiagram
     Note over Nodes: 다이어그램 생성 성공 여부 확인
     
     Graph->>Nodes: 6️⃣ generate_report
-    Note over Nodes: 보고서 생성 필요 여부 판단
-    alt 보고서 생성 필요
+    Note over Nodes: 1. 다이어그램을 최종 응답에 통합 (항상 실행)
+    Note over Nodes: 2. 보고서 생성 필요 여부 판단 (관리자 설정)
+    alt 보고서 생성 활성화 & 필요시
         Nodes->>System: 다이어그램 통합 HTML 보고서 파일 생성
         Note over Nodes: 보고서 경로를 최종 응답에 추가
-    else 보고서 생성 불필요
+    else 보고서 생성 비활성화 또는 불필요시
         Note over Nodes: 다이어그램만 최종 응답에 통합
     end
     
@@ -324,21 +325,32 @@ G.Navi는 유지보수성과 확장성을 위해 각 처리 단계를 독립적�
 - **`DataRetrievalNode`**: 커리어 사례, 외부 트렌드, 교육과정 검색
 - **`ResponseFormattingNode`**: 적응적 응답 포맷팅 및 HTML 변환 (이전 대화 참조)
 - **`DiagramGenerationNode`**: Mermaid.js 기반 시각적 다이어그램 생성 ⭐
-- **`ReportGenerationNode`**: 다이어그램 통합 HTML 보고서 생성 (조건부 실행)
+- **`ReportGenerationNode`**: 다이어그램 통합 + HTML 보고서 생성 (관리자 기능) ⭐
 - **`WaitNode`**: 메시지 대기 상태 처리
 
-### 📊 스마트 보고서 생성 시스템
-6단계 `ReportGenerationNode`는 다음과 같은 조건에서 HTML 보고서를 자동 생성합니다:
+### 📊 HTML 보고서 생성 시스템 (관리자 기능)
+6단계 `ReportGenerationNode`는 두 가지 기능을 수행합니다:
 
-**자동 생성 조건:**
-- 보고서 관련 키워드 감지: "보고서", "리포트", "문서", "저장", "다운로드", "html" 등
-- 상세한 질문 (100자 이상)으로 깊이 있는 분석 요청 시
+**1. 다이어그램 통합 (항상 실행 - 사용자 기능)**
+- 생성된 Mermaid 다이어그램을 최종 마크다운 응답에 자동 통합
+- 관리자 설정과 무관하게 항상 동작
+
+**2. HTML 보고서 생성 (관리자 기능 - 설정 제어 가능)**
+- **관리자 on/off 제어**: 시스템 관리자가 보고서 생성 기능을 활성화/비활성화 가능
+- **자동 생성 조건**: 관리자가 활성화한 경우에만 다음 조건 확인
+  - 보고서 관련 키워드 감지: "보고서", "리포트", "문서", "저장", "다운로드", "html" 등
+  - 상세한 질문 (100자 이상)으로 깊이 있는 분석 요청 시
 
 **생성 결과:**
 - Mermaid 다이어그램이 통합된 스타일드 HTML 파일 (`output/사용자명_타임스탬프.html`)
 - 다이어그램 렌더링을 위한 Mermaid.js CDN 자동 포함
 - 최종 응답에 보고서 파일 경로 자동 추가
 - 실패 시 에러 로깅 및 graceful 처리
+
+**관리자 제어:**
+- 환경 설정 또는 설정 파일을 통해 보고서 생성 기능 전체 비활성화 가능
+- 사용자에게는 다이어그램이 포함된 일반 응답만 제공
+- 필요시 관리자가 수동으로 특정 대화에 대해서만 보고서 생성 가능
 
 ### 🧠 MemorySaver 기반 대화 지속성
 - **자동 상태 복원**: thread_id 기반으로 이전 대화 자동 복원
@@ -671,8 +683,8 @@ flowchart LR
 - 복잡한 정보의 구조적 시각화
 
 ### 6단계: 보고서 생성
-- HTML 기반 최종 보고서 생성
-- 다이어그램 렌더링 통합
+- 다이어그램을 최종 마크다운 응답에 자동 통합 (항상 실행)
+- HTML 기반 최종 보고서 생성 (관리자 기능 - 설정 제어)
 - 대화 히스토리 및 메타데이터 포함
 
 ## 🚀 설치 및 실행

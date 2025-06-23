@@ -17,9 +17,11 @@ class IntentAnalysisNode:
 
     def analyze_intent_node(self, state: ChatState) -> ChatState:
         """2단계: 의도 분석 및 상황 이해"""
-        start_time = datetime.now()
+        import time
+        start_time = time.perf_counter()
         
         try:
+            print(f"\n🎯 [2단계] 의도 분석 및 상황 이해 시작...")
             self.logger.info("=== 2단계: 의도 분석 및 상황 이해 ===")
             
             # 세션 정보에서 사용자 데이터 가져오기
@@ -34,9 +36,48 @@ class IntentAnalysisNode:
             state["intent_analysis"] = intent_analysis
             state["processing_log"].append("의도 분석 및 상황 이해 완료")
             
+            # 처리 시간 계산 및 로그
+            end_time = time.perf_counter()
+            step_time = end_time - start_time
+            
+            if step_time < 0.001:
+                time_display = f"{step_time * 1000000:.0f}μs"
+            elif step_time < 0.01:
+                time_display = f"{step_time * 1000:.1f}ms"
+            else:
+                time_display = f"{step_time:.3f}초"
+            
+            processing_log = state.get("processing_log", [])
+            processing_log.append(f"2단계 처리 시간: {time_display}")
+            state["processing_log"] = processing_log
+            
+            # 분석 결과 요약
+            intent_type = intent_analysis.get("intent", "일반 상담")
+            career_keywords = intent_analysis.get("career_history", [])
+            
+            print(f"✅ [2단계] 의도 분석 및 상황 이해 완료")
+            print(f"📊 분석된 의도: {intent_type}")
+            print(f"🔍 키워드 추출: {len(career_keywords)}개")
+            print(f"⏱️  [2단계] 처리 시간: {time_display}")
+            
             self.logger.info("의도 분석 및 상황 이해 완료")
             
         except Exception as e:
+            # 오류 발생 시에도 처리 시간 기록
+            end_time = time.perf_counter()
+            step_time = end_time - start_time
+            
+            if step_time < 0.001:
+                time_display = f"{step_time * 1000000:.0f}μs"
+            elif step_time < 0.01:
+                time_display = f"{step_time * 1000:.1f}ms"
+            else:
+                time_display = f"{step_time:.3f}초"
+                
+            processing_log = state.get("processing_log", [])
+            processing_log.append(f"2단계 처리 시간 (오류): {time_display}")
+            state["processing_log"] = processing_log
+            
             error_msg = f"의도 분석 실패: {e}"
             self.logger.error(error_msg)
             state["error_messages"].append(error_msg)
@@ -44,8 +85,7 @@ class IntentAnalysisNode:
                 "error": str(e),
                 "career_history": []
             }
-        
-        processing_time = (datetime.now() - start_time).total_seconds()
-        state["processing_log"].append(f"2단계 처리 시간: {processing_time:.2f}초")
+            
+            print(f"❌ [2단계] 의도 분석 오류: {time_display} (오류: {e})")
         
         return state

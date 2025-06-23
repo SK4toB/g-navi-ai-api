@@ -16,8 +16,11 @@ class DataRetrievalNode:
 
     def retrieve_additional_data_node(self, state: ChatState) -> ChatState:
         """3단계: 추가 데이터 검색 (커리어 사례 + 외부 트렌드 + 교육과정)"""
-        start_time = datetime.now()
+        import time
+        start_time = time.perf_counter()
+        
         try:
+            print(f"\n🔍 [3단계] 추가 데이터 검색 시작...")
             self.logger.info("=== 3단계: 추가 데이터 검색 (교육과정 포함) ===")
             
             intent_analysis = state.get("intent_analysis", {})
@@ -42,21 +45,57 @@ class DataRetrievalNode:
                 f"추가 데이터 검색 완료: 커리어 사례 {len(career_cases)}개, "
                 f"교육과정 {len(education_results.get('recommended_courses', []))}개"
             )
+            
+            # 처리 시간 계산 및 로그
+            end_time = time.perf_counter()
+            step_time = end_time - start_time
+            
+            if step_time < 0.001:
+                time_display = f"{step_time * 1000000:.0f}μs"
+            elif step_time < 0.01:
+                time_display = f"{step_time * 1000:.1f}ms"
+            else:
+                time_display = f"{step_time:.3f}초"
+            
+            processing_log = state.get("processing_log", [])
+            processing_log.append(f"3단계 처리 시간: {time_display}")
+            state["processing_log"] = processing_log
+            
+            print(f"✅ [3단계] 추가 데이터 검색 완료")
+            print(f"📊 커리어 사례: {len(career_cases)}개, 교육과정: {len(education_results.get('recommended_courses', []))}개")
+            print(f"🔍 검색 쿼리: {career_query[:50]}...")
+            print(f"⏱️  [3단계] 처리 시간: {time_display}")
+            
             self.logger.info(
                 f"커리어 사례 {len(career_cases)}개, "
                 f"교육과정 {len(education_results.get('recommended_courses', []))}개 검색 완료"
             )
             
         except Exception as e:
+            # 오류 발생 시에도 처리 시간 기록
+            end_time = time.perf_counter()
+            step_time = end_time - start_time
+            
+            if step_time < 0.001:
+                time_display = f"{step_time * 1000000:.0f}μs"
+            elif step_time < 0.01:
+                time_display = f"{step_time * 1000:.1f}ms"
+            else:
+                time_display = f"{step_time:.3f}초"
+                
+            processing_log = state.get("processing_log", [])
+            processing_log.append(f"3단계 처리 시간 (오류): {time_display}")
+            state["processing_log"] = processing_log
+            
             error_msg = f"추가 데이터 검색 실패: {e}"
             self.logger.error(error_msg)
             state["error_messages"].append(error_msg)
             state["career_cases"] = []
             state["external_trends"] = []
             state["education_courses"] = {"recommended_courses": [], "course_analysis": {}, "learning_path": []}
+            
+            print(f"❌ [3단계] 추가 데이터 검색 오류: {time_display} (오류: {e})")
         
-        processing_time = (datetime.now() - start_time).total_seconds()
-        state["processing_log"].append(f"3단계 처리 시간: {processing_time:.2f}초")
         return state
     
     def _search_education_courses(self, state: ChatState, intent_analysis: dict) -> dict:
