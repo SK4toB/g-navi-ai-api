@@ -80,9 +80,9 @@ graph TB
 
 ## AgentRAG 워크플로우
 
-G.Navi의 핵심인 **5단계 AgentRAG 워크플로우**는 다음과 같습니다:
+G.Navi의 핵심인 **6단계 AgentRAG 워크플로우**는 다음과 같습니다:
 
-### 🔄 5단계 처리 과정
+### 🔄 6단계 처리 과정
 
 ```mermaid
 flowchart TD
@@ -93,8 +93,9 @@ flowchart TD
     Step1 --> Step2[2️⃣ 의도 분석 및 상황 이해]
     Step2 --> Step3[3️⃣ 추가 데이터 검색]
     Step3 --> Step4[4️⃣ 적응적 응답 포맷팅]
-    Step4 --> Step5[5️⃣ 스마트 보고서 생성]
-    Step5 --> End([최종 응답 반환])
+    Step4 --> Step5[5️⃣ 다이어그램 생성]
+    Step5 --> Step6[6️⃣ 스마트 보고서 생성]
+    Step6 --> End([최종 응답 반환])
     Wait --> End
     
     subgraph "Step1 Details"
@@ -108,9 +109,15 @@ flowchart TD
     end
     
     subgraph "Step5 Details"
-        Step5A{보고서 생성<br/>필요 여부 판단}
-        Step5B[HTML 보고서<br/>파일 생성]
-        Step5C[최종 응답에<br/>보고서 경로 추가]
+        Step5A[응답 내용 분석]
+        Step5B[다이어그램 유형 선택<br/>Flowchart/Timeline/Mindmap 등]
+        Step5C[Mermaid 코드 생성]
+    end
+    
+    subgraph "Step6 Details"
+        Step6A{보고서 생성<br/>필요 여부 판단}
+        Step6B[다이어그램 통합<br/>HTML 보고서 생성]
+        Step6C[최종 응답에<br/>보고서 경로 추가]
     end
     
     Step1 --> Step1A
@@ -118,9 +125,12 @@ flowchart TD
     Step3 --> Step3A
     Step3 --> Step3C
     Step5 --> Step5A
-    Step5A -->|필요시| Step5B
+    Step5A --> Step5B
     Step5B --> Step5C
-    Step5A -->|불필요시| End
+    Step6 --> Step6A
+    Step6A -->|필요시| Step6B
+    Step6B --> Step6C
+    Step6A -->|불필요시| End
 ```
 
 ### 📊 각 단계별 상세 설명
@@ -131,8 +141,9 @@ flowchart TD
 | **1단계** | ChatHistoryNode | MemorySaver 기반 현재 세션 대화 관리 | `current_session_messages` |
 | **2단계** | IntentAnalysisNode | 질문 의도 분석 및 상황 파악 | `intent_analysis` |
 | **3단계** | DataRetrievalNode | 커리어 사례 + 교육과정 + 회사 비전 검색 | `career_cases`, `education_courses` |
-| **4단계** | ResponseFormattingNode | 질문 유형별 적응적 응답 생성 | `final_response` |
-| **5단계** | ReportGenerationNode | 스마트 HTML 보고서 생성 (조건부) | `report_path`, `report_generated` |
+| **4단계** | ResponseFormattingNode | 질문 유형별 적응적 응답 생성 | `formatted_response` |
+| **5단계** | DiagramGenerationNode | Mermaid 다이어그램 생성 | `mermaid_diagram`, `diagram_generated` |
+| **6단계** | ReportGenerationNode | 다이어그램 통합 HTML 보고서 생성 (조건부) | `final_response`, `report_path` |
 
 ## 핵심 컴포넌트
 
@@ -142,12 +153,13 @@ class ChatGraphBuilder:
     """G.Navi AgentRAG 시스템의 LangGraph 빌더"""
     
     async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any]):
-        # 5단계 노드 구성 + MemorySaver 통합
+        # 6단계 노드 구성 + MemorySaver 통합
         workflow.add_node("message_check", self.message_check_node.create_node())
         workflow.add_node("manage_session_history", self.chat_history_node.retrieve_chat_history_node)
         workflow.add_node("analyze_intent", self.intent_analysis_node.analyze_intent_node)
         workflow.add_node("retrieve_additional_data", self.data_retrieval_node.retrieve_additional_data_node)
         workflow.add_node("format_response", self.response_formatting_node.format_response_node)
+        workflow.add_node("generate_diagram", self.diagram_generation_node.generate_diagram_node)
         workflow.add_node("generate_report", self.report_generation_node.generate_report_node)
         workflow.add_node("wait_state", self.wait_node.create_node())
         
@@ -194,13 +206,16 @@ class ChatState(TypedDict, total=False):  # 선택적 필드 허용
     # 대화 내역 관리 (MemorySaver가 자동 관리)
     current_session_messages: List[Dict[str, str]]  # role, content, timestamp
     
-    # 5단계 처리 결과
+    # 6단계 처리 결과
     intent_analysis: Dict[str, Any]       # 2단계: 의도 분석
     career_cases: List[Any]              # 3단계: 커리어 사례 (회사 비전 포함)
     education_courses: Dict[str, Any]    # 3단계: 교육과정 추천
-    final_response: Dict[str, Any]        # 4단계: 최종 응답
-    report_generated: bool               # 5단계: 보고서 생성 여부
-    report_path: str                     # 5단계: 생성된 보고서 파일 경로
+    formatted_response: Dict[str, Any]    # 4단계: 포맷된 응답
+    mermaid_diagram: str                 # 5단계: 생성된 Mermaid 다이어그램 코드
+    diagram_generated: bool              # 5단계: 다이어그램 생성 성공 여부
+    final_response: Dict[str, Any]        # 6단계: 최종 응답 (다이어그램 통합)
+    report_generated: bool               # 6단계: 보고서 생성 여부
+    report_path: str                     # 6단계: 생성된 보고서 파일 경로
     
     # 메타데이터
     processing_log: List[str]
@@ -241,16 +256,21 @@ sequenceDiagram
     
     Graph->>Nodes: 4️⃣ format_response
     Nodes->>LLM: 적응적 포맷팅 (이전 대화 참조 + 사례 포함)
-    LLM-->>Nodes: 최종 마크다운 응답
+    LLM-->>Nodes: 포맷된 마크다운 응답
     Note over Nodes: AI 응답을 current_session_messages에 추가
     
-    Graph->>Nodes: 5️⃣ generate_report
+    Graph->>Nodes: 5️⃣ generate_diagram
+    Nodes->>LLM: 다이어그램 생성 요청 (포맷된 응답 기반)
+    LLM-->>Nodes: Mermaid 다이어그램 코드
+    Note over Nodes: 다이어그램 생성 성공 여부 확인
+    
+    Graph->>Nodes: 6️⃣ generate_report
     Note over Nodes: 보고서 생성 필요 여부 판단
     alt 보고서 생성 필요
-        Nodes->>System: HTML 보고서 파일 생성
+        Nodes->>System: 다이어그램 통합 HTML 보고서 파일 생성
         Note over Nodes: 보고서 경로를 최종 응답에 추가
     else 보고서 생성 불필요
-        Note over Nodes: 보고서 생성 건너뛰기
+        Note over Nodes: 다이어그램만 최종 응답에 통합
     end
     
     Graph->>MemorySaver: 업데이트된 상태 저장 (대화 내역 포함)
@@ -303,18 +323,20 @@ G.Navi는 유지보수성과 확장성을 위해 각 처리 단계를 독립적�
 - **`IntentAnalysisNode`**: LLM 기반 의도 분석 및 상황 파악
 - **`DataRetrievalNode`**: 커리어 사례, 외부 트렌드, 교육과정 검색
 - **`ResponseFormattingNode`**: 적응적 응답 포맷팅 및 HTML 변환 (이전 대화 참조)
-- **`ReportGenerationNode`**: 스마트 HTML 보고서 생성 (조건부 실행)
+- **`DiagramGenerationNode`**: Mermaid.js 기반 시각적 다이어그램 생성 ⭐
+- **`ReportGenerationNode`**: 다이어그램 통합 HTML 보고서 생성 (조건부 실행)
 - **`WaitNode`**: 메시지 대기 상태 처리
 
 ### 📊 스마트 보고서 생성 시스템
-5단계 `ReportGenerationNode`는 다음과 같은 조건에서 HTML 보고서를 자동 생성합니다:
+6단계 `ReportGenerationNode`는 다음과 같은 조건에서 HTML 보고서를 자동 생성합니다:
 
 **자동 생성 조건:**
 - 보고서 관련 키워드 감지: "보고서", "리포트", "문서", "저장", "다운로드", "html" 등
 - 상세한 질문 (100자 이상)으로 깊이 있는 분석 요청 시
 
 **생성 결과:**
-- 스타일드 HTML 파일 (`output/사용자명_타임스탬프.html`)
+- Mermaid 다이어그램이 통합된 스타일드 HTML 파일 (`output/사용자명_타임스탬프.html`)
+- 다이어그램 렌더링을 위한 Mermaid.js CDN 자동 포함
 - 최종 응답에 보고서 파일 경로 자동 추가
 - 실패 시 에러 로깅 및 graceful 처리
 
