@@ -8,8 +8,6 @@ import os
 import json
 import markdown
 import re
-# SVG 다이어그램 생성을 위한 import 추가
-
 
 class ResponseFormattingAgent:
     """LLM 기반 적응적 응답 포맷팅 에이전트 - AI가 질문 유형과 컨텍스트를 분석하여 최적화된 응답 생성"""
@@ -17,7 +15,7 @@ class ResponseFormattingAgent:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.client = None  # OpenAI 클라이언트를 지연 초기화
-
+        
         self.system_prompt = """
 G.Navi AI 커리어 컨설팅 시스템의 친근한 커리어 코치로 활동하세요.
 
@@ -654,6 +652,13 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
 - **실제 URL이 없는 경우 [학습하기] 링크 자체를 생략**
 - **N/A, 정보 없음 등의 값은 표시하지 말 것**
 
+**교육과정 제목 작성 규칙:**
+1. source가 "mysuni"인 경우: ### [mySUNI]과정명(VOD)
+2. source가 "college"인 경우: ### [사내과정]과정명(오프라인집합)
+3. 과정명에서 대괄호는 제거: "[코드잇] 머신러닝 입문" → "코드잇 머신러닝 입문"
+4. 제목에는 링크를 달지 않고 순수 텍스트로만 작성
+5. **중요**: 평점, 이수자수, 카테고리 등의 정보가 "N/A", "정보 없음" 등인 경우 해당 항목 자체를 표시하지 말 것
+
 ❌ **딱딱하고 기계적인 방식 (피하세요!):**
 "다음은 추천 교육과정입니다:
 
@@ -1000,4 +1005,3 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
         except Exception as e:
             self.logger.error(f"회사 비전 컨텍스트 생성 실패: {e}")
             return ""
-    
