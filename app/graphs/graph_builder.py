@@ -20,7 +20,6 @@ from app.graphs.nodes.data_retrieval import DataRetrievalNode
 from app.graphs.nodes.response_formatting import ResponseFormattingNode
 from app.graphs.nodes.diagram_generation import DiagramGenerationNode
 from app.graphs.nodes.report_generation import ReportGenerationNode
-from app.graphs.nodes.wait_node import WaitNode
 
 
 class ChatGraphBuilder:
@@ -50,30 +49,29 @@ class ChatGraphBuilder:
         self.response_formatting_node = ResponseFormattingNode(self)
         self.diagram_generation_node = DiagramGenerationNode()
         self.report_generation_node = ReportGenerationNode()
-        self.wait_node = WaitNode()
     
     def _should_process_message(self, state: ChatState) -> str:
         """메시지 처리 여부 결정"""
-        # 1. 메시지 검증 실패 상태 확인 (우선순위)
+        # 메시지 검증 실패 상태 확인
         workflow_status = state.get("workflow_status", "")
         if workflow_status == "validation_failed":
             print("메시지 검증 실패 → 워크플로우 종료")
-            return "wait"
+            return "end"
         
-        # 2. final_response에 validation_failed가 있는 경우도 확인
+        # final_response에 validation_failed가 있는 경우도 확인
         final_response = state.get("final_response", {})
         if final_response.get("validation_failed", False):
             print("메시지 검증 실패 (final_response) → 워크플로우 종료")
-            return "wait"
+            return "end"
         
-        # 3. 메시지 존재 여부 확인
+        # 메시지 존재 여부 확인
         user_question = state.get("user_question", "")
         if user_question and user_question.strip():
             print(f"메시지 있음 → 처리 시작: {user_question[:30]}...")
             return "process"
         else:
-            print("메시지 없음 → 대기")
-            return "wait"
+            print("메시지 없음 → 워크플로우 종료")
+            return "end"
     
     def get_session_info(self, conversation_id: str) -> Dict[str, Any]:
         """세션 정보 조회"""
@@ -128,7 +126,7 @@ class ChatGraphBuilder:
         workflow.add_node("format_response", self.response_formatting_node.format_response_node)
         workflow.add_node("generate_diagram", self.diagram_generation_node.generate_diagram_node)
         workflow.add_node("generate_report", self.report_generation_node.generate_report_node)
-        workflow.add_node("wait_state", self.wait_node.create_node())
+
         
         # 시작점
         workflow.set_entry_point("message_check")
@@ -139,7 +137,7 @@ class ChatGraphBuilder:
             self._should_process_message,
             {
                 "process": "manage_session_history",  # 노드명 변경
-                "wait": END  # 검증 실패 시 바로 종료
+                "end": END  # 검증 실패 시 바로 종료
             }
         )
         
@@ -152,7 +150,6 @@ class ChatGraphBuilder:
         
         # 처리 완료 후 종료
         workflow.add_edge("generate_report", END)
-        workflow.add_edge("wait_state", END)
         
         # 컴파일
         compiled_graph = workflow.compile(
