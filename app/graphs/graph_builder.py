@@ -108,10 +108,10 @@ class ChatGraphBuilder:
         """G.Navi AgentRAG LangGraph 빌드"""
         print(f"🔧 G.Navi AgentRAG LangGraph 빌드 시작: {conversation_id}")
         
-        # 세션 정보 저장 (previous_messages는 chat_history 노드에서 current_session_messages에 통합됨)
+        # 세션 정보 저장 (previous_messages도 포함)
         self.session_store[conversation_id] = {
             "user_info": user_info,
-            "previous_messages": previous_messages or [],  # chat_history 노드에서 사용
+            "previous_messages": previous_messages or [],
             "created_at": datetime.now(),
             "conversation_id": conversation_id
         }

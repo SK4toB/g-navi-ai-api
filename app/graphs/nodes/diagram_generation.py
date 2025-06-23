@@ -144,6 +144,16 @@ class DiagramGenerationNode:
             processing_log.append(f"5단계 처리 시간: {time_display}")
             state["processing_log"] = processing_log
             
+            # 💫 MessageProcessor를 위한 bot_message 설정 (5단계에서 최종 설정)
+            final_response = state.get("final_response", {})
+            if isinstance(final_response, dict) and final_response.get("formatted_content"):
+                state["bot_message"] = final_response["formatted_content"]
+                print("📨 [5단계] bot_message 설정 완료 (사용자 응답 준비)")
+            else:
+                # 폴백: 기본 메시지
+                state["bot_message"] = "응답 처리가 완료되었습니다."
+                print("⚠️  [5단계] bot_message 폴백 설정")
+            
             if state["diagram_generated"]:
                 print(f"✅ [5단계] 다이어그램 생성 및 통합 완료")
                 print(f"📊 다이어그램 길이: {len(mermaid_code)}자")
@@ -184,6 +194,16 @@ class DiagramGenerationNode:
             # 다이어그램 없이 원본 응답을 최종 응답으로 설정
             formatted_response = state.get("formatted_response", {})
             state["final_response"] = formatted_response
+            
+            # 💫 오류 시에도 bot_message 설정 (5단계에서 최종 설정)
+            if isinstance(formatted_response, dict) and formatted_response.get("formatted_content"):
+                state["bot_message"] = formatted_response["formatted_content"]
+                print("📨 [5단계] 오류 시 bot_message 설정 완료")
+            else:
+                # 완전 폴백: 오류 메시지
+                state["bot_message"] = f"죄송합니다. 다이어그램 생성 중 오류가 발생했지만 응답은 준비되었습니다."
+                print("⚠️  [5단계] 오류 시 bot_message 완전 폴백 설정")
+            
             print("⚠️ [다이어그램 생성] 오류로 인해 다이어그램 없는 응답 사용")
             
             return state

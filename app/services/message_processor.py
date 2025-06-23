@@ -85,14 +85,32 @@ class MessageProcessor:
     
     def _extract_bot_message(self, result: Dict[str, Any]) -> str:
         """LangGraph 결과에서 봇 메시지 추출"""
+        # 1. final_response에서 formatted_content 추출 (최우선)
+        final_response = result.get("final_response", {})
+        if isinstance(final_response, dict) and final_response.get("formatted_content"):
+            return final_response["formatted_content"]
+        
+        # 2. bot_message 필드 확인 (기존 호환성)
         bot_message = result.get("bot_message")
+        if bot_message:
+            return bot_message
         
-        if bot_message is None:
-            print("MessageProcessor bot_message가 None입니다")
-            print(f"MessageProcessor result 전체 내용: {result}")
-            return "죄송합니다. 응답을 생성할 수 없습니다."
+        # 3. formatted_response에서 추출 (폴백)
+        formatted_response = result.get("formatted_response", {})
+        if isinstance(formatted_response, dict) and formatted_response.get("formatted_content"):
+            return formatted_response["formatted_content"]
         
-        return bot_message
+        # 4. 모든 방법 실패 시 디버그 정보 출력
+        print("MessageProcessor 응답 추출 실패 - 사용 가능한 필드들:")
+        available_fields = list(result.keys()) if isinstance(result, dict) else []
+        print(f"  사용 가능한 필드: {available_fields}")
+        
+        if "final_response" in result:
+            print(f"  final_response 타입: {type(result['final_response'])}")
+            if isinstance(result["final_response"], dict):
+                print(f"  final_response 키들: {list(result['final_response'].keys())}")
+        
+        return "죄송합니다. 응답을 생성할 수 없습니다."
     
     def _generate_error_message(self, error_str: str) -> str:
         """에러 시 사용자에게 보여줄 메시지 생성"""

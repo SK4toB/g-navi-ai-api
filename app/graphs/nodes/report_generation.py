@@ -12,15 +12,17 @@ from app.graphs.agents.report_generator import ReportGeneratorAgent
 
 class ReportGenerationNode:
     """
-    보고서 생성 노드 클래스 (관리자 전용 기능)
+    🔒 관리자 전용 HTML 보고서 생성 노드
     
     **관리자 전용 기능:**
     - HTML 보고서 파일 생성 및 저장
     - 보고서 생성 여부를 관리자가 설정 가능
+    - 사용자 응답과 완전히 분리된 별도 기능
     
-    **주의:** 
-    - 이 노드는 순수하게 HTML 보고서 생성만 담당
-    - FE용 최종 답변은 이미 이전 단계(다이어그램 생성)에서 완성됨
+    **중요:** 
+    - 이 노드는 순수하게 관리자용 HTML 보고서 생성만 담당
+    - 사용자 응답(bot_message)은 이전 단계에서 이미 완성됨
+    - 보고서 생성 실패해도 사용자 응답에 영향 없음
     """
     
     def __init__(self):
@@ -29,14 +31,16 @@ class ReportGenerationNode:
     
     def generate_report_node(self, state: ChatState) -> ChatState:
         """
-        6단계: HTML 보고서 생성 노드 (관리자 전용 기능)
+        🔒 6단계: 관리자 전용 HTML 보고서 생성 노드
         
         **기능:**
         - HTML 보고서 파일 생성 및 저장 (관리자 설정에 따라 실행)
+        - 사용자 응답과 완전히 분리된 백그라운드 작업
         
         **중요:**
-        - FE용 최종 답변(final_response)은 이미 이전 단계에서 완성됨
+        - 사용자 응답(bot_message)은 5단계에서 이미 완성됨
         - 이 노드는 순수하게 관리자용 HTML 보고서 생성만 담당
+        - 보고서 생성 실패해도 사용자 경험에 영향 없음
         
         **관리자 설정:**
         - 보고서 생성 on/off 제어 가능
@@ -116,8 +120,9 @@ class ReportGenerationNode:
             processing_log.append(f"6단계 처리 시간: {time_display}")
             state["processing_log"] = processing_log
             
-            print(f"⏱️  [6단계] HTML 보고서 생성 처리 완료: {time_display}")
-            self.logger.info(f"6단계 HTML 보고서 생성 완료: {time_display}")
+            print(f"⏱️  [6단계] 관리자용 HTML 보고서 처리 완료: {time_display}")
+            self.logger.info(f"6단계 관리자용 HTML 보고서 완료: {time_display}")
+            print("🔒 [관리자 모드] 보고서 생성은 관리자 전용 기능입니다")
             
             return state
             
@@ -140,7 +145,8 @@ class ReportGenerationNode:
             processing_log.append(f"6단계 처리 시간 (오류): {time_display}")
             state["processing_log"] = processing_log
             
-            print(f"❌ [6단계] HTML 보고서 생성 오류 완료: {time_display} (오류: {e})")
+            print(f"❌ [6단계] 관리자용 HTML 보고서 오류: {time_display} (오류: {e})")
+            print("🔒 [관리자 모드] 보고서 오류는 사용자 응답에 영향 없음")
             
             state["report_generated"] = False
             state["report_error"] = str(e)

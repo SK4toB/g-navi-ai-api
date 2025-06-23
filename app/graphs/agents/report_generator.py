@@ -9,15 +9,16 @@ from typing import Dict, Any, Optional
 
 
 class ReportGeneratorAgent:
-    """사용자 요청에 따라 HTML 보고서를 생성하는 에이전트"""
+    """🔒 관리자 전용 HTML 보고서 생성 에이전트"""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     
     def should_generate_report(self, user_question: str, user_data: Dict[str, Any]) -> bool:
-        """사용자 요청을 분석하여 보고서 생성이 필요한지 판단"""
-        return True # 기본적으로 보고서 생성 필요(강제적 설정)
+        """🔒 관리자 설정: 보고서 생성 필요 여부 판단"""
+        return True # 🔒 관리자 설정: 현재 모든 상담에 대해 보고서 생성 (관리자용)
 
+        # 🔒 관리자 설정 예시 (현재 비활성화됨):
         # 보고서 생성 키워드들
         report_keywords = [
             "보고서", "report", "리포트", "문서", "저장", "다운로드", 
@@ -43,7 +44,7 @@ class ReportGeneratorAgent:
                            final_response: Dict[str, Any], 
                            user_data: Dict[str, Any],
                            state: Dict[str, Any]) -> Optional[str]:
-        """HTML 보고서 파일 생성"""
+        """🔒 관리자 전용: HTML 보고서 파일 생성"""
         try:
             self.logger.info("HTML 보고서 생성 시작")
             

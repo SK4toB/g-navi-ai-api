@@ -20,8 +20,8 @@ class BotMessageService:
             if api_key:
                 self.openai_client = AsyncOpenAI(api_key=api_key)
                 self.model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
-                self.max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "1000"))
-                self.temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))
+                self.max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "500"))
+                self.temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.5"))
                 print("BotMessageService OpenAI 연결 완료")
             else:
                 print("OpenAI API 키가 없습니다. 기본 메시지를 사용합니다.")
