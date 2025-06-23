@@ -8,18 +8,23 @@ from app.graphs.agents.retriever import CareerEnsembleRetrieverAgent
 
 
 class DataRetrievalNode:
-    """추가 데이터 검색 노드 (커리어 사례 + 외부 트렌드 + 교육과정)"""
+    """추가 데이터 검색 노드 (커리어 사례 + 교육과정)"""
 
     def __init__(self):
         self.career_retriever_agent = CareerEnsembleRetrieverAgent()
         self.logger = logging.getLogger(__name__)
 
     def retrieve_additional_data_node(self, state: ChatState) -> ChatState:
-        """3단계: 추가 데이터 검색 (커리어 사례 + 외부 트렌드 + 교육과정)"""
+        """3단계: 추가 데이터 검색 (커리어 사례 + 교육과정)"""
         import time
         start_time = time.perf_counter()
         
         try:
+            # 메시지 검증 실패 시 처리 건너뛰기
+            if state.get("workflow_status") == "validation_failed":
+                print(f"⚠️  [3단계] 메시지 검증 실패로 처리 건너뛰기")
+                return state
+                
             print(f"\n🔍 [3단계] 추가 데이터 검색 시작...")
             self.logger.info("=== 3단계: 추가 데이터 검색 (교육과정 포함) ===")
             
@@ -38,8 +43,7 @@ class DataRetrievalNode:
             
             # 상태 업데이트
             state["career_cases"] = career_cases
-            state["external_trends"] = []  # 외부 트렌드 검색 비활성화
-            state["education_courses"] = education_results  # 새로 추가
+            state["education_courses"] = education_results
             
             state["processing_log"].append(
                 f"추가 데이터 검색 완료: 커리어 사례 {len(career_cases)}개, "
@@ -91,7 +95,6 @@ class DataRetrievalNode:
             self.logger.error(error_msg)
             state["error_messages"].append(error_msg)
             state["career_cases"] = []
-            state["external_trends"] = []
             state["education_courses"] = {"recommended_courses": [], "course_analysis": {}, "learning_path": []}
             
             print(f"❌ [3단계] 추가 데이터 검색 오류: {time_display} (오류: {e})")

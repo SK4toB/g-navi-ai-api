@@ -21,6 +21,11 @@ class ResponseFormattingNode:
         start_time = time.perf_counter()
         
         try:
+            # 메시지 검증 실패 시 처리 건너뛰기
+            if state.get("workflow_status") == "validation_failed":
+                print(f"⚠️  [4단계] 메시지 검증 실패로 처리 건너뛰기")
+                return state
+                
             print(f"\n📝 [4단계] 적응적 응답 포맷팅 시작...")
             self.logger.info("=== 4단계: 적응적 응답 포맷팅 ===")
             

@@ -45,6 +45,11 @@ class ReportGenerationNode:
         start_time = time.perf_counter()  # 더 정밀한 시간 측정
         
         try:
+            # 메시지 검증 실패 시 처리 건너뛰기
+            if state.get("workflow_status") == "validation_failed":
+                print(f"⚠️  [6단계] 메시지 검증 실패로 처리 건너뛰기")
+                return state
+                
             print(f"\n🔧 [6단계] HTML 보고서 생성 시작... (시작시간: {start_time})")
             
             # 기본 정보 추출

@@ -19,6 +19,11 @@ class ChatHistoryNode:
         start_time = time.perf_counter()
         
         try:
+            # 메시지 검증 실패 시 처리 건너뛰기
+            if state.get("workflow_status") == "validation_failed":
+                print(f"⚠️  [1단계] 메시지 검증 실패로 처리 건너뛰기")
+                return state
+                
             print(f"\n💬 [1단계] 현재 세션 대화내역 관리 시작...")
             self.logger.info("=== 1단계: 현재 세션 대화내역 관리 ===")
             

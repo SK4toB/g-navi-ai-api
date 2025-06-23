@@ -30,6 +30,11 @@ class DiagramGenerationNode:
         start_time = time.perf_counter()
         
         try:
+            # 메시지 검증 실패 시 처리 건너뛰기
+            if state.get("workflow_status") == "validation_failed":
+                print(f"⚠️  [5단계] 메시지 검증 실패로 처리 건너뛰기")
+                return state
+                
             print(f"\n🎨 [5단계] 다이어그램 생성 및 통합 시작...")
             
             # 필요한 데이터 추출

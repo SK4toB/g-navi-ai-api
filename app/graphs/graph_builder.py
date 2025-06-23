@@ -54,8 +54,20 @@ class ChatGraphBuilder:
     
     def _should_process_message(self, state: ChatState) -> str:
         """메시지 처리 여부 결정"""
-        user_question = state.get("user_question", "")
+        # 1. 메시지 검증 실패 상태 확인 (우선순위)
+        workflow_status = state.get("workflow_status", "")
+        if workflow_status == "validation_failed":
+            print("메시지 검증 실패 → 워크플로우 종료")
+            return "wait"
         
+        # 2. final_response에 validation_failed가 있는 경우도 확인
+        final_response = state.get("final_response", {})
+        if final_response.get("validation_failed", False):
+            print("메시지 검증 실패 (final_response) → 워크플로우 종료")
+            return "wait"
+        
+        # 3. 메시지 존재 여부 확인
+        user_question = state.get("user_question", "")
         if user_question and user_question.strip():
             print(f"메시지 있음 → 처리 시작: {user_question[:30]}...")
             return "process"
@@ -127,7 +139,7 @@ class ChatGraphBuilder:
             self._should_process_message,
             {
                 "process": "manage_session_history",  # 노드명 변경
-                "wait": "wait_state"
+                "wait": END  # 검증 실패 시 바로 종료
             }
         )
         

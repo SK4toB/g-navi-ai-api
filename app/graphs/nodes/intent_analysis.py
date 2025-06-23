@@ -21,6 +21,11 @@ class IntentAnalysisNode:
         start_time = time.perf_counter()
         
         try:
+            # 메시지 검증 실패 시 처리 건너뛰기
+            if state.get("workflow_status") == "validation_failed":
+                print(f"⚠️  [2단계] 메시지 검증 실패로 처리 건너뛰기")
+                return state
+                
             print(f"\n🎯 [2단계] 의도 분석 및 상황 이해 시작...")
             self.logger.info("=== 2단계: 의도 분석 및 상황 이해 ===")
             
