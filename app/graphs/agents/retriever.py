@@ -1,4 +1,4 @@
-# app/graphs/agents/retriever.py
+# retriever.py
 
 import os
 import json
@@ -15,8 +15,6 @@ from langchain.storage import LocalFileStore
 from langchain.schema import Document
 from datetime import datetime, timedelta
 
-from app.config.settings import settings
-import base64
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -25,309 +23,107 @@ class CareerEnsembleRetrieverAgent:
     - 커리어 사례: 최대 3개까지 검색
     - 교육과정: 최대 3개까지 검색
     """
-    def __init__(self, persist_directory: str = None, cache_directory: str = None):
-        
-        # K8s 환경 감지 및 경로 설정
-        self.is_k8s_env = self._detect_k8s_environment()
-        
-        if self.is_k8s_env:
-            # K8s 환경: PVC 마운트 경로 + Pod ChromaDB 사용
-            self.base_storage_path = "/mnt/gnavi"
-            self.json_docs_path = "/mnt/gnavi/docs"
-            self.use_pod_chromadb = True
-            print("K8s 환경 감지됨 - PVC 경로 + Pod ChromaDB 사용")
-        else:
-            # 로컬 환경: 기존 상대 경로 + 로컬 ChromaDB 사용
-            self.base_storage_path = os.path.join(os.path.dirname(__file__), "../../storage")
-            self.json_docs_path = os.path.join(self.base_storage_path, "docs")
-            self.use_pod_chromadb = False
-            print("로컬 환경 감지됨 - 상대 경로 + 로컬 ChromaDB 사용")
-        
-        # Pod ChromaDB 설정 (K8s 환경용)
-        if self.use_pod_chromadb:
-            self.pod_base_url = settings.chroma_external_url + "/api/v1" if settings.chroma_use_external else f"http://{settings.chroma_host}:{settings.chroma_port}/api/v1"
-            self.pod_auth_credentials = settings.chroma_auth_credentials
-            self.career_collection_name = "gnavi4_career_history_prod"
-            self.education_collection_name = "gnavi4_education_prod"
-            self.headers = self._get_auth_headers() if self.pod_auth_credentials else {}
-        
-        # 로컬 VectorDB 설정 (로컬 환경용)
-        if not self.use_pod_chromadb:
-            if persist_directory is None:
-                persist_directory = os.path.join(self.base_storage_path, "vector_stores/career_data")
-            if cache_directory is None:
-                cache_directory = os.path.join(self.base_storage_path, "cache/embedding_cache")
-                
-            self.persist_directory = os.path.abspath(persist_directory)
-            self.cache_directory = os.path.abspath(cache_directory)
-            
-            # 디렉토리 생성 (로컬 환경에서만)
-            self._safe_makedirs(self.persist_directory)
-            self._safe_makedirs(self.cache_directory)
-            
-            # 교육과정 관련 경로 설정
-            self.education_persist_dir = os.path.join(self.base_storage_path, "vector_stores/education_courses")
+    def __init__(self, persist_directory: str = os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/vector_stores/career_data"
+        ), cache_directory: str = os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/cache/embedding_cache"
+        )):
 
+        self.persist_directory = os.path.abspath(persist_directory)
+        self.cache_directory = os.path.abspath(cache_directory)
+        self.base_dir = os.path.dirname(os.path.dirname(__file__))  # app 디렉토리
         self.logger = logging.getLogger(__name__)
-        
-        # 임베딩 설정 (공통)
+        os.makedirs(self.persist_directory, exist_ok=True)
+        os.makedirs(self.cache_directory, exist_ok=True)
+
         self.base_embeddings = OpenAIEmbeddings(
             model="text-embedding-3-small",
             dimensions=1536
         )
-        
-        # 캐시 설정 (로컬 환경에서만)
-        if not self.use_pod_chromadb:
-            self.cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
-                self.base_embeddings,
-                LocalFileStore(cache_directory),
-                namespace="career_embeddings"
-            )
-        else:
-            self.cached_embeddings = self.base_embeddings
-        
-        # VectorStore 관련 속성
+        self.cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
+            self.base_embeddings,
+            LocalFileStore(cache_directory),
+            namespace="career_embeddings"
+        )
         self.vectorstore = None
         self.ensemble_retriever = None
-        self.education_vectorstore = None
         
-        # JSON 파일 경로 설정
-        self.education_docs_path = os.path.join(self.json_docs_path, "education_courses.json")
-        self.skill_mapping_path = os.path.join(self.json_docs_path, "skill_education_mapping.json")
-        self.deduplication_index_path = os.path.join(self.json_docs_path, "course_deduplication_index.json")
-        self.company_vision_path = os.path.join(self.json_docs_path, "company_vision.json")
-        self.mysuni_original_path = os.path.join(self.json_docs_path, "mysuni_courses_detailed.json")
-        self.college_original_path = os.path.join(self.json_docs_path, "college_courses_detailed.json")
+        # 교육과정 관련 추가 속성
+        self.education_persist_dir = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/vector_stores/education_courses"
+        ))
+        self.education_docs_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/docs/education_courses.json"
+        ))
+        self.skill_mapping_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/docs/skill_education_mapping.json"
+        ))
+        self.deduplication_index_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/docs/course_deduplication_index.json"
+        ))
+        
+        # 회사 비전 관련 추가 속성
+        self.company_vision_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__), 
+            "../../storage/docs/company_vision.json"
+        ))
         
         # 지연 로딩 속성
+        self.education_vectorstore = None
         self.skill_education_mapping = None
         self.course_deduplication_index = None
         self.company_vision_data = None
         
         self._load_vectorstore_and_retriever()
 
-
-    def _get_auth_headers(self) -> Dict[str, str]:
-        """Pod ChromaDB 인증 헤더 생성"""
-        if not self.pod_auth_credentials:
-            return {}
-        
-        encoded_credentials = base64.b64encode(
-            self.pod_auth_credentials.encode()
-        ).decode()
-        
-        return {
-            "Authorization": f"Basic {encoded_credentials}",
-            "Content-Type": "application/json"
-        }
-
-    def _detect_k8s_environment(self) -> bool:
-        """K8s 환경 감지"""
-        k8s_indicators = [
-            os.path.exists("/var/run/secrets/kubernetes.io"),  # K8s 서비스 어카운트
-            os.environ.get("KUBERNETES_SERVICE_HOST"),         # K8s 환경변수
-            os.path.exists("/mnt/gnavi"),                      # PVC 마운트 포인트
-            os.environ.get("APP_STORAGE_PVC_PATH") == "/mnt/gnavi"  # 설정된 환경변수
-        ]
-        return any(k8s_indicators)
-    
-    def _safe_makedirs(self, path: str):
-        """안전한 디렉토리 생성 (K8s 권한 문제 대응)"""
-        try:
-            os.makedirs(path, exist_ok=True)
-        except PermissionError:
-            self.logger.warning(f"디렉토리 생성 권한 없음: {path}")
-        except Exception as e:
-            self.logger.warning(f"디렉토리 생성 실패: {path}, 오류: {e}")
-
-
     def _load_vectorstore_and_retriever(self):
-        """벡터스토어와 리트리버 로드 (K8s Pod ChromaDB 또는 로컬 ChromaDB)"""
-        
-        if self.use_pod_chromadb:
-            # K8s 환경: Pod ChromaDB 사용 (실제 벡터 검색은 API 호출로 처리)
-            self.logger.info("Pod ChromaDB 환경 - API 기반 검색 사용")
-            # 벡터스토어 객체 생성하지 않고 API 호출로 대체
-            embedding_retriever = None
-        else:
-            # 로컬 환경: 기존 방식
-            try:
-                if os.path.exists(self.persist_directory):
-                    self.vectorstore = Chroma(
-                        persist_directory=self.persist_directory,
-                        embedding_function=self.cached_embeddings,
-                        collection_name="career_history"
-                    )
-                    # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
-                    embedding_retriever = self.vectorstore.as_retriever(
-                        search_type="similarity",
-                        search_kwargs={"k": 3}
-                    )
-                    self.logger.info("로컬 Career 벡터스토어 로드 성공")
-                else:
-                    self.logger.warning(f"로컬 Career 벡터스토어 디렉토리 없음: {self.persist_directory}")
-                    embedding_retriever = None
-            except Exception as e:
-                self.logger.error(f"로컬 Career 벡터스토어 로드 실패: {e}")
-                embedding_retriever = None
-        
-        # BM25용 docs 로드 (공통) - 경로만 수정
-        career_docs_path = os.path.join(self.json_docs_path, "career_history.json")
+        # Chroma 벡터스토어 로드
+        self.vectorstore = Chroma(
+            persist_directory=self.persist_directory,
+            embedding_function=self.cached_embeddings,
+            collection_name="career_history"
+        )
+        # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
+        embedding_retriever = self.vectorstore.as_retriever(
+            search_type="similarity",
+            search_kwargs={"k": 3}
+        )
+        # BM25용 docs 로드 (storage/docs/career_docs.json)
+        docs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../storage/docs/career_history.json'))
         all_docs = []
         try:
-            if os.path.exists(career_docs_path):
-                with open(career_docs_path, 'r', encoding='utf-8') as f:
-                    json_docs = json.load(f)
-                    all_docs = [Document(page_content=doc['page_content'], metadata=doc['metadata']) for doc in json_docs]
-                self.logger.info(f"BM25용 career_history.json 로드 완료 (문서 수: {len(all_docs)})")
-            else:
-                self.logger.warning(f"Career 문서 파일 없음: {career_docs_path}")
+            with open(docs_path, 'r', encoding='utf-8') as f:
+                json_docs = json.load(f)
+                all_docs = [Document(page_content=doc['page_content'], metadata=doc['metadata']) for doc in json_docs]
+            self.logger.info(f"BM25용 career_docs.json 로드 완료 (문서 수: {len(all_docs)})")
         except Exception as e:
-            self.logger.warning(f"BM25용 career_history.json 로드 실패: {e}")
-        
-        # 앙상블 리트리버 구성
-        retrievers = []
-        weights = []
-        
-        # Pod ChromaDB 환경에서는 API 기반 검색 사용
-        if self.use_pod_chromadb and all_docs:
-            # BM25만 사용 (벡터 검색은 별도 API 호출)
-            try:
-                bm25_retriever = BM25Retriever.from_documents(all_docs)
-                bm25_retriever.k = 3
-                retrievers.append(bm25_retriever)
-                weights.append(1.0)
-                self.logger.info("Pod ChromaDB 환경 - BM25 리트리버만 사용")
-            except Exception as e:
-                self.logger.warning(f"BM25 리트리버 생성 실패: {e}")
-        
-        # 로컬 환경에서는 기존 방식
-        elif not self.use_pod_chromadb:
-            if embedding_retriever:
-                retrievers.append(embedding_retriever)
-                weights.append(0.3 if all_docs else 1.0)
-            
-            if all_docs:
-                try:
-                    bm25_retriever = BM25Retriever.from_documents(all_docs)
-                    bm25_retriever.k = 3
-                    retrievers.append(bm25_retriever)
-                    weights.append(0.7)
-                except Exception as e:
-                    self.logger.warning(f"BM25 리트리버 생성 실패: {e}")
-        
-        # 앙상블 리트리버 생성
-        if retrievers:
-            if len(retrievers) == 1:
-                weights = [1.0]
-            self.ensemble_retriever = EnsembleRetriever(
-                retrievers=retrievers,
-                weights=weights
-            )
-            self.logger.info(f"앙상블 리트리버 준비 완료 (문서 수: {len(all_docs)})")
-        else:
-            self.logger.error("사용 가능한 리트리버가 없습니다")
-            self.ensemble_retriever = None
-    
-    def _search_pod_chromadb(self, query: str, collection_name: str, k: int = 3) -> List[Document]:
-        """Pod ChromaDB API를 통한 벡터 검색"""
-        if not self.use_pod_chromadb or not self.headers:
-            return []
-        
-        try:
-            # OpenAI 임베딩 생성
-            query_embedding = self.base_embeddings.embed_query(query)
-            
-            # Pod ChromaDB API 호출
-            search_data = {
-                "query_embeddings": [query_embedding],
-                "n_results": k,
-                "include": ["documents", "metadatas"]
-            }
-            
-            response = requests.post(
-                f"{self.pod_base_url}/collections/{collection_name}/query",
-                headers=self.headers,
-                json=search_data,
-                timeout=30
-            )
-            
-            if response.status_code == 200:
-                search_results = response.json()
-                documents = search_results.get('documents', [[]])
-                metadatas = search_results.get('metadatas', [[]])
-                
-                # Document 객체로 변환
-                docs = []
-                if documents and len(documents) > 0:
-                    for i, doc_content in enumerate(documents[0]):
-                        metadata = metadatas[0][i] if metadatas and len(metadatas[0]) > i else {}
-                        docs.append(Document(
-                            page_content=doc_content,
-                            metadata=metadata
-                        ))
-                
-                self.logger.info(f"Pod ChromaDB 검색 완료: {len(docs)}개 결과")
-                return docs
-            else:
-                self.logger.error(f"Pod ChromaDB 검색 실패: {response.status_code} - {response.text}")
-                return []
-                
-        except Exception as e:
-            self.logger.error(f"Pod ChromaDB 검색 중 오류: {e}")
-            return []
-
+            self.logger.warning(f"BM25용 career_docs.json 로드 실패: {e}")
+        retrievers = [embedding_retriever]
+        weights = [1.0]
+        if all_docs:
+            bm25_retriever = BM25Retriever.from_documents(all_docs)
+            bm25_retriever.k = 3  # BM25도 3개로 제한
+            retrievers.append(bm25_retriever)
+            weights = [0.3, 0.7]
+        self.ensemble_retriever = EnsembleRetriever(
+            retrievers=retrievers,
+            weights=weights
+        )
+        self.logger.info(f"Career 앙상블 리트리버 준비 완료 (문서 수: {len(all_docs)})")
 
     def retrieve(self, query: str, k: int = 3):
         """앙상블 리트리버로 검색 (기본 3개 결과) + 시간 기반 필터링"""
-        # if not self.ensemble_retriever:
-        #     return []
-        
-        # # 기본 검색 수행
-        # all_docs = self.ensemble_retriever.invoke(query)
-    
-        all_docs = []
-        
-        if self.use_pod_chromadb:
-            # K8s 환경: Pod ChromaDB API 검색 + BM25 조합
-            try:
-                # 1. Pod ChromaDB에서 벡터 검색
-                vector_docs = self._search_pod_chromadb(query, self.career_collection_name, k=k)
-                
-                # 2. BM25 검색 (로컬 JSON 기반)
-                bm25_docs = []
-                if self.ensemble_retriever:
-                    try:
-                        bm25_docs = self.ensemble_retriever.invoke(query)
-                    except Exception as e:
-                        self.logger.warning(f"BM25 검색 실패: {e}")
-                
-                # 3. 결과 조합 (벡터 검색 결과 우선)
-                all_docs = vector_docs[:k//2] + bm25_docs[:k//2]
-                all_docs = all_docs[:k]  # 최대 k개로 제한
-                
-                self.logger.info(f"Pod ChromaDB 하이브리드 검색: 벡터 {len(vector_docs)}개 + BM25 {len(bm25_docs)}개 = 총 {len(all_docs)}개")
-                
-            except Exception as e:
-                self.logger.error(f"Pod ChromaDB 검색 실패, BM25만 사용: {e}")
-                # 폴백: BM25만 사용
-                if self.ensemble_retriever:
-                    all_docs = self.ensemble_retriever.invoke(query)
-        else:
-            # 로컬 환경: 기존 앙상블 리트리버 사용
-            if not self.ensemble_retriever:
-                self.logger.warning("앙상블 리트리버가 초기화되지 않았습니다")
-                return []
-            
-            try:
-                all_docs = self.ensemble_retriever.invoke(query)
-            except Exception as e:
-                self.logger.error(f"로컬 앙상블 검색 실패: {e}")
-                return []
-        
-        if not all_docs:
-            self.logger.warning("검색 결과가 없습니다")
+        if not self.ensemble_retriever:
             return []
+        
+        # 기본 검색 수행
+        all_docs = self.ensemble_retriever.invoke(query)
         
         # 최근 키워드 감지 및 연도 추출
         recent_keywords = ['최근', '최신', 'recent', '요즘', '지금', '현재', '새로운', '신규', '트렌드']
@@ -809,63 +605,36 @@ class CareerEnsembleRetrieverAgent:
     
     def _semantic_course_search(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
         """VectorDB를 활용한 의미적 검색 (VectorDB가 없으면 JSON에서 검색) - 3개까지만 검색"""
-
-        if self.use_pod_chromadb:
-        # K8s 환경: Pod ChromaDB API 사용
-            try:
-                pod_docs = self._search_pod_chromadb(query, self.education_collection_name, k=3)
-                courses = [self._doc_to_course_dict(doc) for doc in pod_docs]
-                
-                # 필터링된 과정 정보와 병합
-                if filtered_courses:
-                    for course in courses:
-                        for filtered_course in filtered_courses:
-                            if course.get("course_id") == filtered_course.get("course_id"):
-                                course.update(filtered_course)
-                                break
-                
-                # 원본 데이터로 상세 정보 보강
-                courses = [self._enrich_course_with_original_data(course) for course in courses]
-                
-                self.logger.info(f"Pod ChromaDB 교육과정 검색 결과: {len(courses)}개 과정")
-                return courses[:3]
-                
-            except Exception as e:
-                self.logger.error(f"Pod ChromaDB 교육과정 검색 실패, JSON 폴백: {e}")
-                # 폴백: JSON 파일에서 검색
-                return self._search_from_json_documents(query, filtered_courses)
-        
-        else:
-            if not self.education_vectorstore:
-                # VectorDB가 없으면 JSON 파일에서 직접 검색
-                self.logger.info("VectorDB 없음 - JSON 파일에서 검색")
-                return self._search_from_json_documents(query, filtered_courses)
-                
-            if not filtered_courses:
-                # 필터링된 과정이 없으면 전체 VectorDB에서 검색 (3개로 제한)
-                docs = self.education_vectorstore.similarity_search(query, k=3)
-                courses = [self._doc_to_course_dict(doc) for doc in docs]
-                # 원본 데이터로 상세 정보 보강
-                courses = [self._enrich_course_with_original_data(course) for course in courses]
-            else:
-                # 필터링된 과정들의 course_id로 VectorDB에서 상세 검색
-                course_ids = [course.get("course_id") for course in filtered_courses if course.get("course_id")]
-                courses = self._search_by_course_ids(course_ids, query)
-                
-                # 필터링 정보를 VectorDB 결과에 병합
-                for course in courses:
-                    for filtered_course in filtered_courses:
-                        if course.get("course_id") == filtered_course.get("course_id"):
-                            course.update(filtered_course)
-                            break
-                
-                # 원본 데이터로 상세 정보 보강
-                courses = [self._enrich_course_with_original_data(course) for course in courses]
+        if not self.education_vectorstore:
+            # VectorDB가 없으면 JSON 파일에서 직접 검색
+            self.logger.info("VectorDB 없음 - JSON 파일에서 검색")
+            return self._search_from_json_documents(query, filtered_courses)
             
-            # 결과를 3개로 제한
-            courses = courses[:3]
-            self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정 (3개로 제한)")
-            return courses
+        if not filtered_courses:
+            # 필터링된 과정이 없으면 전체 VectorDB에서 검색 (3개로 제한)
+            docs = self.education_vectorstore.similarity_search(query, k=3)
+            courses = [self._doc_to_course_dict(doc) for doc in docs]
+            # 원본 데이터로 상세 정보 보강
+            courses = [self._enrich_course_with_original_data(course) for course in courses]
+        else:
+            # 필터링된 과정들의 course_id로 VectorDB에서 상세 검색
+            course_ids = [course.get("course_id") for course in filtered_courses if course.get("course_id")]
+            courses = self._search_by_course_ids(course_ids, query)
+            
+            # 필터링 정보를 VectorDB 결과에 병합
+            for course in courses:
+                for filtered_course in filtered_courses:
+                    if course.get("course_id") == filtered_course.get("course_id"):
+                        course.update(filtered_course)
+                        break
+            
+            # 원본 데이터로 상세 정보 보강
+            courses = [self._enrich_course_with_original_data(course) for course in courses]
+        
+        # 결과를 3개로 제한
+        courses = courses[:3]
+        self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정 (3개로 제한)")
+        return courses
     
     def _search_from_json_documents(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
         """JSON 문서에서 직접 검색 (VectorDB 대안) - 3개까지만 검색"""
