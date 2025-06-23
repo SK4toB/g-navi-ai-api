@@ -475,3 +475,246 @@ processing_log = [
 ---
 
 > **G.Navi AI Agent**는 실제 사내 커리어 데이터와 AI의 추론 능력을 결합하여, 개인화되고 실행 가능한 커리어 조언을 제공하는 차세대 AI 컨설팅 시스템입니다. MemorySaver 기반의 대화 지속성과 스마트 보고서 생성 기능으로 사용자와의 자연스러운 멀티턴 대화 및 체계적인 커리어 분석을 지원합니다.
+
+# G.Navi AI API
+
+G.Navi는 LangGraph 기반의 AgentRAG 시스템으로 개인화된 커리어 상담 서비스를 제공합니다.
+
+## 🚀 주요 특징
+
+### 🤖 AgentRAG 시스템
+- **LangGraph 기반**: 상태 관리와 워크플로우 최적화
+- **다중 에이전트**: 역할별 전문화된 AI 에이전트들
+- **RAG 통합**: 실시간 데이터 검색과 생성형 AI 결합
+- **메모리 관리**: 대화 히스토리 유지 및 컨텍스트 보존
+
+### 🎯 6단계 워크플로우
+```mermaid
+flowchart TD
+    A["💬 히스토리 관리"] --> B["🧠 의도 분석"]
+    B --> C["🔍 데이터 검색"]
+    C --> D["📝 응답 포맷팅"]
+    D --> E["🎨 다이어그램 생성"]
+    E --> F["📊 보고서 생성"]
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#fce4ec
+    style F fill:#e0f2f1
+```
+
+1. **히스토리 관리**: 사용자별 대화 컨텍스트 관리
+2. **의도 분석**: 질문 유형과 카테고리 분석
+3. **데이터 검색**: 관련 커리어 정보 RAG 검색
+4. **응답 포맷팅**: 구조화된 마크다운 응답 생성
+5. **다이어그램 생성**: Mermaid.js 기반 시각적 다이어그램 생성
+6. **보고서 생성**: HTML 보고서 및 최종 응답 통합
+
+## 🔧 핵심 에이전트
+
+### 1. 🎯 IntentAnalysisAgent
+**역할**: 사용자 질문의 의도와 카테고리 분석
+- 질문 유형 분류 (커리어, 학습, 기술 등)
+- 우선순위 기반 카테고리 매핑
+- 컨텍스트 기반 의도 추론
+
+### 2. 🔍 CareerEnsembleRetrieverAgent  
+**역할**: 다중 소스 커리어 데이터 검색
+- Vector Store 기반 유사도 검색
+- 키워드 기반 정확도 검색
+- 하이브리드 앙상블 결과 통합
+
+### 3. 📝 ResponseFormattingAgent
+**역할**: 구조화된 응답 생성 및 포맷팅
+- 마크다운 기반 응답 구조화
+- 사용자 맞춤형 컨텍스트 반영
+- 일관된 G.Navi 브랜딩 적용
+
+### 4. 🎨 MermaidDiagramAgent *(NEW)*
+**역할**: AI 기반 시각적 다이어그램 생성
+- 응답 내용 분석하여 최적 다이어그램 유형 선택
+- Flowchart, Timeline, Mindmap, Sequence 등 지원
+- 한국어 텍스트 최적화 및 Mermaid.js 호환성 보장
+
+### 5. 📊 ReportGenerationAgent
+**역할**: 통합 보고서 생성 및 최종 출력
+- HTML 기반 시각적 보고서 생성
+- Mermaid 다이어그램 렌더링 지원
+- 대화 히스토리 및 메타데이터 통합
+
+## 🏗️ 시스템 아키텍처
+
+### 디렉토리 구조
+```
+app/
+├── graphs/
+│   ├── agents/           # 전문화된 AI 에이전트들
+│   │   ├── analyzer.py       # 의도 분석
+│   │   ├── retriever.py      # 데이터 검색
+│   │   ├── formatter.py      # 응답 포맷팅
+│   │   ├── mermaid_agent.py  # 다이어그램 생성 ⭐
+│   │   └── report_generator.py # 보고서 생성
+│   ├── nodes/            # LangGraph 워크플로우 노드들
+│   │   ├── message_check.py
+│   │   ├── chat_history.py
+│   │   ├── intent_analysis.py
+│   │   ├── data_retrieval.py
+│   │   ├── response_formatting.py
+│   │   ├── diagram_generation.py ⭐
+│   │   ├── report_generation.py
+│   │   └── wait_node.py
+│   ├── state.py          # 상태 관리
+│   └── graph_builder.py  # 그래프 빌더
+├── core/                 # 핵심 유틸리티
+└── api/                  # FastAPI 엔드포인트
+```
+
+### 📊 상태 관리 (ChatState)
+```python
+class ChatState(TypedDict):
+    # 기본 정보
+    user_question: str
+    session_id: str
+    user_data: Dict[str, Any]
+    
+    # 분석 결과
+    intent_analysis: Dict[str, Any]
+    retrieved_data: List[Dict[str, Any]]
+    
+    # 응답 생성
+    formatted_response: str      # 중간 응답 (다이어그램 생성용)
+    mermaid_diagram: str         # 생성된 Mermaid 코드 ⭐
+    diagram_generated: bool      # 다이어그램 생성 성공 여부 ⭐
+    
+    # 최종 출력
+    chat_response: str
+    html_report: str
+```
+
+## 🎨 Mermaid 다이어그램 기능
+
+### 지원하는 다이어그램 유형
+1. **Flowchart**: 커리어 경로, 학습 로드맵, 의사결정 과정
+2. **Timeline**: 시간 순서 기반 발전 계획
+3. **Mindmap**: 기술 스택, 역량 체계 분류
+4. **Sequence**: 협업 과정, 업무 절차
+5. **Class**: 조직 구조, 역할 관계
+
+### 동적 다이어그램 생성 프로세스
+```mermaid
+flowchart LR
+    A["응답 내용 분석"] --> B["다이어그램 유형 선택"]
+    B --> C["Mermaid 코드 생성"]
+    C --> D["코드 검증 & 정리"]
+    D --> E["HTML 렌더링"]
+    
+    style A fill:#e3f2fd
+    style C fill:#f1f8e9
+    style E fill:#fce4ec
+```
+
+### 특징
+- **AI 기반 유형 선택**: 컨텍스트에 맞는 최적 다이어그램 자동 선택
+- **한국어 최적화**: 따옴표 처리로 한글 텍스트 안정성 보장
+- **안정적 렌더링**: 실패 시에도 워크플로우 중단 없이 진행
+- **HTML 통합**: Mermaid.js CDN을 통한 브라우저 렌더링
+
+## 🔄 워크플로우 상세
+
+### 1단계: 히스토리 관리
+- 세션별 대화 컨텍스트 로드
+- 사용자 정보 및 이전 대화 연결
+- 개인화된 상담 기반 마련
+
+### 2단계: 의도 분석  
+- GPT-4o-mini 기반 질문 의도 파악
+- 카테고리별 우선순위 매핑
+- 후속 검색 전략 수립
+
+### 3단계: 데이터 검색
+- Vector Store 유사도 검색
+- 키워드 기반 정확도 검색  
+- 앙상블 기법으로 결과 통합
+
+### 4단계: 응답 포맷팅
+- 구조화된 마크다운 응답 생성
+- 사용자 맞춤형 조언 제공
+- G.Navi 브랜딩 일관성 유지
+
+### 5단계: 다이어그램 생성 ⭐
+- 응답 내용 기반 시각적 표현 최적화
+- Mermaid.js 다이어그램 동적 생성
+- 복잡한 정보의 구조적 시각화
+
+### 6단계: 보고서 생성
+- HTML 기반 최종 보고서 생성
+- 다이어그램 렌더링 통합
+- 대화 히스토리 및 메타데이터 포함
+
+## 🚀 설치 및 실행
+
+### 환경 설정
+```bash
+# 의존성 설치
+pip install -r requirements.txt
+
+# 환경 변수 설정
+export OPENAI_API_KEY="your-openai-api-key"
+export PINECONE_API_KEY="your-pinecone-api-key"
+```
+
+### 실행
+```bash
+# FastAPI 서버 시작
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### API 엔드포인트
+- `POST /chat`: 채팅 대화 (다이어그램 포함)
+- `GET /health`: 서버 상태 확인
+- `GET /sessions`: 활성 세션 조회
+
+## 🎯 사용 예시
+
+### 질문 예시
+```
+"백엔드 개발자에서 PM으로 전환하고 싶은데, 어떤 로드맵을 추천하시나요?"
+```
+
+### 응답 구조
+```markdown
+## 🎯 백엔드 개발자 → PM 전환 로드맵
+
+### 📋 현재 상황 분석
+...
+
+### 🚀 추천 전환 전략
+...
+
+[Mermaid 다이어그램 자동 생성]
+
+### 💡 G.Navi의 조언
+...
+```
+
+## 🔧 기술 스택
+
+- **Framework**: FastAPI, LangGraph
+- **AI/ML**: OpenAI GPT-4o-mini, LangChain
+- **Vector DB**: Pinecone
+- **Visualization**: Mermaid.js
+- **Language**: Python 3.9+
+
+## 📈 향후 계획
+
+- [ ] 더 다양한 다이어그램 유형 지원
+- [ ] 실시간 협업 다이어그램 편집
+- [ ] 다이어그램 스타일 커스터마이징
+- [ ] 모바일 최적화 렌더링
+- [ ] 다이어그램 기반 인터랙티브 상담
+
+---
+
+**G.Navi AI** - 당신의 커리어 여정을 시각적으로 안내합니다 🧭✨
