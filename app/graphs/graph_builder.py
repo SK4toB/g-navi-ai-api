@@ -83,6 +83,17 @@ class ChatGraphBuilder:
         # 3. 기본값 반환
         return {}
     
+    def get_previous_messages_from_session(self, state: ChatState) -> list:
+        """세션에서 이전 메시지 추출"""
+        # session_id로 session_store에서 조회
+        session_id = state.get("session_id", "")
+        if session_id:
+            session_info = self.get_session_info(session_id)
+            return session_info.get("previous_messages", [])
+        
+        # 기본값 반환
+        return []
+    
     def close_session(self, conversation_id: str):
         """세션 정보 정리"""
         if conversation_id in self.session_store:
@@ -93,17 +104,20 @@ class ChatGraphBuilder:
         """모든 세션 정보 조회 (디버깅용)"""
         return self.session_store.copy()
     
-    async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any]):
+    async def build_persistent_chat_graph(self, conversation_id: str, user_info: Dict[str, Any], previous_messages: list = None):
         """G.Navi AgentRAG LangGraph 빌드"""
         print(f"🔧 G.Navi AgentRAG LangGraph 빌드 시작: {conversation_id}")
         
-        # 세션 정보 저장
+        # 세션 정보 저장 (previous_messages는 chat_history 노드에서 current_session_messages에 통합됨)
         self.session_store[conversation_id] = {
             "user_info": user_info,
+            "previous_messages": previous_messages or [],  # chat_history 노드에서 사용
             "created_at": datetime.now(),
             "conversation_id": conversation_id
         }
-        print(f"📝 세션 정보 저장 완료: {user_info.get('name', 'Unknown')} (대화방: {conversation_id})")
+        
+        message_count = len(previous_messages) if previous_messages else 0
+        print(f"📝 세션 정보 저장 완료: {user_info.get('name', 'Unknown')} (대화방: {conversation_id}, 이전 메시지: {message_count}개)")
         
         # StateGraph 생성
         workflow = StateGraph(ChatState)

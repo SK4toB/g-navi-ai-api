@@ -21,20 +21,20 @@ class MessageProcessor:
         config: Dict, 
         conversation_id: str, 
         member_id: str, 
-        message_text: str, 
+        user_question: str, 
         user_info: Dict[str, Any]
     ) -> str:
         """
         LangGraph를 통한 메시지 처리
         """
         try:
-            print(f"MessageProcessor 메시지 처리 시작: {conversation_id} - {message_text[:50]}...")
+            print(f"MessageProcessor 메시지 처리 시작: {conversation_id} - {user_question[:50]}...")
             
             # 입력 상태 구성
             input_state = self._build_input_state(
                 conversation_id=conversation_id,
                 member_id=member_id,
-                message_text=message_text,
+                message_text=user_question,
                 user_info=user_info
             )
             
@@ -65,18 +65,22 @@ class MessageProcessor:
     ) -> Dict[str, Any]:
         """입력 상태 구성"""
         return {
-            "message_text": message_text,
-            "member_id": member_id,
-            "conversation_id": conversation_id,
-            "user_info": user_info,
-            # 노드별 처리 결과 초기화
-            "intent": None,
-            "embedding_vector": None,
-            "memory_results": None,
-            "similarity_score": None,
-            "profiling_data": None,
-            "connection_suggestions": None,
-            "bot_message": None
+            # state.py의 ChatState 구조에 맞춤
+            "user_question": message_text,
+            "user_data": user_info,
+            "session_id": conversation_id,
+            # 추가 필드들 초기화
+            "current_session_messages": [],
+            "intent_analysis": {},
+            "career_cases": [],
+            "education_courses": {},
+            "formatted_response": {},
+            "mermaid_diagram": "",
+            "diagram_generated": False,
+            "final_response": {},
+            "processing_log": [],
+            "error_messages": [],
+            "total_processing_time": 0.0
         }
     
     def _extract_bot_message(self, result: Dict[str, Any]) -> str:

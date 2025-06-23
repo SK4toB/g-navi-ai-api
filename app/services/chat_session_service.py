@@ -34,7 +34,7 @@ class ChatSessionService:
         config = {"configurable": {"thread_id": thread_id}}
         
         # 3. 환영 메시지 생성
-        initial_message = await self.bot_message_service._generate_welcome_message(user_info)
+        initial_message = await self.bot_message_service.generate_welcome_message(user_info)
         
         print(f"ChatSessionService 새 세션 생성 완료: {conversation_id}")
         
@@ -57,17 +57,20 @@ class ChatSessionService:
             print(f"ChatSessionService 대화 히스토리 복원: {len(previous_messages)}개 메시지")
             await self._restore_conversation_history(conversation_id, previous_messages, user_info)
 
-        # 2. LangGraph 빌드 (새 세션과 동일)
-        compiled_graph = await self.graph_builder.build_persistent_chat_graph(conversation_id, user_info)
+        # 2. LangGraph 빌드 (previous_messages도 전달)
+        compiled_graph = await self.graph_builder.build_persistent_chat_graph(conversation_id, user_info, previous_messages)
         
         # 3. 세션 설정 구성
         thread_id = f"thread_{conversation_id}"
         config = {"configurable": {"thread_id": thread_id}}
         
-        # 4. 로드 결과 구성
+        # 4. 환영 메시지 생성 (세션 로드 시에도)
+        welcome_message = await self.bot_message_service.generate_welcome_message(user_info)
+        
+        # 5. 로드 결과 구성
         load_result = {
-            "status": "session_created",
-            "message": f"새 세션을 생성했습니다 ({len(previous_messages) if previous_messages else 0}개 이전 메시지)",
+            "status": "session_loaded",
+            "message": welcome_message,
             "conversation_id": conversation_id,
             "previous_messages_count": len(previous_messages) if previous_messages else 0,
             "requires_initial_message": False  # 로드 시에는 초기 메시지 불필요

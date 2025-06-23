@@ -12,7 +12,7 @@ class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허�
     session_id: str                     # 세션 식별자
     
     # === 대화 내역 관리 (MemorySaver가 관리) ===
-    current_session_messages: List[Dict[str, str]]  # MemorySaver가 관리하는 현재 세션 대화 내역 (role, content, timestamp)
+    current_session_messages: List[Dict[str, str]]  # 현재 세션의 모든 대화 내역 (이전 메시지 + 현재 세션, role, content, timestamp)
     
     # === G.Navi 6단계 처리 결과 ===
     intent_analysis: Dict[str, Any]                 # 2단계: 의도 분석 결과
