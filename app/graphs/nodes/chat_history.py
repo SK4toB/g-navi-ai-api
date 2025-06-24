@@ -109,6 +109,29 @@ class ChatHistoryNode:
             self.logger.info(f"현재 사용자 메시지 추가: {state['user_question'][:100]}...")
             self.logger.info(f"총 current_session_messages 개수: {len(state['current_session_messages'])}개")
             
+            # 🔄 ConversationHistoryManager에도 사용자 질문 추가 (세션 종료 시 VectorDB 구축을 위해)
+            try:
+                from app.core.dependencies import get_service_container
+                container = get_service_container()
+                history_manager = container.history_manager
+                
+                session_id = state.get("session_id", "")
+                if session_id:
+                    history_manager.add_message(
+                        conversation_id=session_id,
+                        role="user",
+                        content=state["user_question"],
+                        metadata={
+                            "timestamp": datetime.now().isoformat(),
+                            "source": "chat_history_node"
+                        }
+                    )
+                    print(f"🔄 ConversationHistoryManager에 사용자 질문 추가: {session_id}")
+                else:
+                    print(f"⚠️ session_id가 없어 ConversationHistoryManager에 추가하지 못함")
+            except Exception as e:
+                print(f"❌ ConversationHistoryManager에 사용자 질문 추가 실패: {e}")
+            
             state["processing_log"].append(f"현재 세션 대화 내역 관리 완료: {len(state['current_session_messages'])}개")
             
             # 처리 시간 계산 및 로그

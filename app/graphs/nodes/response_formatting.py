@@ -88,6 +88,30 @@ class ResponseFormattingNode:
             state["current_session_messages"].append(assistant_message)
             self.logger.info(f"AI 응답을 current_session_messages에 추가 (총 {len(state['current_session_messages'])}개 메시지)")
             
+            # 🔄 ConversationHistoryManager에도 AI 응답 추가 (세션 종료 시 VectorDB 구축을 위해)
+            try:
+                from app.core.dependencies import get_service_container
+                container = get_service_container()
+                history_manager = container.history_manager
+                
+                session_id = state.get("session_id", "")
+                if session_id:
+                    history_manager.add_message(
+                        conversation_id=session_id,
+                        role="assistant",
+                        content=final_response.get("formatted_content", ""),
+                        metadata={
+                            "format_type": final_response.get("format_type", "adaptive"),
+                            "timestamp": datetime.now().isoformat(),
+                            "source": "response_formatting_node"
+                        }
+                    )
+                    print(f"🔄 ConversationHistoryManager에 AI 응답 추가: {session_id}")
+                else:
+                    print(f"⚠️ session_id가 없어 ConversationHistoryManager에 추가하지 못함")
+            except Exception as e:
+                print(f"❌ ConversationHistoryManager에 AI 응답 추가 실패: {e}")
+            
             # 4단계 완료 상세 로그 출력
             content_length = len(final_response.get("formatted_content", ""))
             format_type = final_response.get("format_type", "adaptive")

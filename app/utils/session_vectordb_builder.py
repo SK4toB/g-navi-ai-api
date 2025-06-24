@@ -152,9 +152,38 @@ class SessionVectorDBBuilder:
             4. 세션 길이에 따른 적응형 요약 생성
         """
         try:
-            # 실제 메시지 개수 계산 (정확성 보장)
-            user_count = len([msg for msg in messages if msg.get('role') == 'user'])
-            assistant_count = len([msg for msg in messages if msg.get('role') == 'assistant'])
+            # 🔍 디버깅: 메시지 분석 상세 로그
+            print(f"   📊 메시지 분석 시작:")
+            print(f"     전체 메시지 수: {len(messages)}개")
+            
+            # 메시지 유형별 카운팅 및 상세 분석
+            user_messages = []
+            assistant_messages = []
+            system_messages = []
+            other_messages = []
+            
+            for i, msg in enumerate(messages):
+                role = msg.get('role', 'unknown')
+                content = msg.get('content', '')
+                print(f"     #{i+1} {role}: {content[:50]}{'...' if len(content) > 50 else ''}")
+                
+                if role == 'user':
+                    user_messages.append(msg)
+                elif role == 'assistant':
+                    assistant_messages.append(msg)
+                elif role == 'system':
+                    system_messages.append(msg)
+                else:
+                    other_messages.append(msg)
+            
+            user_count = len(user_messages)
+            assistant_count = len(assistant_messages)
+            
+            print(f"     📈 카운팅 결과:")
+            print(f"       사용자 메시지: {user_count}개")
+            print(f"       AI 응답: {assistant_count}개")
+            print(f"       시스템 메시지: {len(system_messages)}개")
+            print(f"       기타 메시지: {len(other_messages)}개")
             
             # 대화 주제 및 세션 유형 분석
             topic_analysis = self._analyze_conversation_topics(conversation_text, messages)
@@ -178,6 +207,7 @@ class SessionVectorDBBuilder:
                 if topic_analysis['main_topics']:
                     summary += f" | 주제: {', '.join(topic_analysis['main_topics'][:2])}"
             
+            print(f"   ✅ 생성된 요약: {summary}")
             return summary
             
         except Exception as e:
@@ -517,6 +547,17 @@ class SessionVectorDBBuilder:
         💾 저장 위치: storage/vector_stores/user_{member_id}_sessions/
         """
         try:
+            print(f"🗃️ build_vector_db 시작: {conversation_id}")
+            print(f"📊 전달받은 messages 개수: {len(messages) if messages else 0}개")
+            print(f"👤 사용자: {user_name} (member_id: {member_id})")
+            
+            if messages:
+                print(f"📋 전달받은 messages 상세:")
+                for i, msg in enumerate(messages):
+                    role = msg.get('role', 'unknown')
+                    content = msg.get('content', '')[:50]
+                    print(f"     #{i+1} {role}: {content}{'...' if len(msg.get('content', '')) > 50 else ''}")
+            
             # ✅ 1단계: 빈 세션 검증
             if not messages:
                 print(f"빈 메시지 세션 - VectorDB 구축 생략: {conversation_id}")

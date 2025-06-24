@@ -163,23 +163,51 @@ class ChatSessionService:
             List[Dict[str, Any]]: 현재 세션의 메시지 목록
         """
         try:
+            print(f"🔍 세션 메시지 조회 시작: {conversation_id}")
+            
             # ConversationHistoryManager에서 현재 세션의 메시지 히스토리 가져오기
             from app.core.dependencies import get_service_container
             
             container = get_service_container()
             history_manager = container.history_manager
             
+            # 전체 히스토리 정보 조회 (디버깅용)
+            all_sessions = history_manager.session_histories
+            print(f"📊 전체 활성 세션 수: {len(all_sessions)}")
+            print(f"📋 활성 세션 목록: {list(all_sessions.keys())}")
+            
             # 현재 세션의 히스토리 조회
             history = history_manager.get_history(conversation_id)
+            full_history = history_manager.get_history_with_metadata(conversation_id)
+            
+            print(f"📝 세션 {conversation_id} 상세 정보:")
+            print(f"   OpenAI 형식 메시지: {len(history)}개")
+            print(f"   메타데이터 포함: {len(full_history)}개")
+            
+            if full_history:
+                print(f"   📋 메시지 상세 (ConversationHistoryManager):")
+                for i, msg in enumerate(full_history):
+                    role = msg.get('role', 'unknown')
+                    content = msg.get('content', '')[:50]
+                    timestamp = msg.get('timestamp', 'no-time')
+                    source = msg.get('metadata', {}).get('source', 'unknown')
+                    print(f"     #{i+1} [{timestamp}] {role}: {content}{'...' if len(msg.get('content', '')) > 50 else ''} (출처: {source})")
+            
+            # 🔍 추가: 최근 추가된 메시지가 있는지 확인
+            recent_count = len([msg for msg in full_history if msg.get('metadata', {}).get('source') in ['chat_history_node', 'response_formatting_node']]) if full_history else 0
+            print(f"   🆕 워크플로우에서 추가된 메시지: {recent_count}개")
             
             if history and len(history) > 0:
-                print(f"현재 세션 메시지 조회 성공: {conversation_id} - {len(history)}개 메시지")
+                print(f"✅ 현재 세션 메시지 조회 성공: {conversation_id} - {len(history)}개 메시지")
+                print(f"   - 마지막 메시지: {history[-1].get('role', 'unknown')} - {history[-1].get('content', '')[:50]}...")
                 return history
             else:
-                print(f"현재 세션 메시지 없음: {conversation_id} - 히스토리 없음")
+                print(f"⚠️ 현재 세션 메시지 없음: {conversation_id} - 히스토리 없음")
                 return []
             
         except Exception as e:
-            print(f"세션 메시지 조회 실패: {conversation_id} - {e}")
+            print(f"❌ 세션 메시지 조회 실패: {conversation_id} - {e}")
+            import traceback
+            traceback.print_exc()
             # 실패 시 빈 리스트 반환 (VectorDB 구축 건너뛰기)
             return []

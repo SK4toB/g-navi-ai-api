@@ -128,6 +128,18 @@ class SessionManager:
         
         ⚠️ 중요: VectorDB 구축 실패 시에도 세션은 정상 삭제됨 (리소스 누수 방지)
         """
+        print(f"🔚 close_session 시작: {conversation_id}")
+        print(f"📊 전달받은 current_session_messages: {len(current_session_messages) if current_session_messages else 0}개")
+        
+        if current_session_messages:
+            print(f"📋 current_session_messages 내용 확인:")
+            for i, msg in enumerate(current_session_messages):
+                role = msg.get('role', 'unknown')
+                content = msg.get('content', '')[:50]
+                print(f"     #{i+1} {role}: {content}{'...' if len(msg.get('content', '')) > 50 else ''}")
+        else:
+            print(f"⚠️ current_session_messages가 비어있거나 None입니다")
+        
         if conversation_id not in self.active_sessions:
             return {
                 "status": "not_found",
@@ -160,6 +172,10 @@ class SessionManager:
         vectordb_success = False
         if current_session_messages:
             try:
+                print(f"🗃️ VectorDB 구축 시작...")
+                print(f"   📊 메시지 수: {len(current_session_messages)}개")
+                print(f"   👤 사용자: {user_name} (member_id: {member_id})")
+                
                 # VectorDB 구축에 필요한 세션 메타데이터 준비
                 session_metadata = {
                     "created_at": created_at,
@@ -177,13 +193,17 @@ class SessionManager:
                 )
                 
                 if vectordb_success:
-                    print(f"📚 VectorDB 구축 완료: {conversation_id}")
+                    print(f"✅ VectorDB 구축 성공: {conversation_id}")
                 else:
-                    print(f"⚠️ VectorDB 구축 실패: {conversation_id}")
+                    print(f"❌ VectorDB 구축 실패: {conversation_id}")
                     
             except Exception as e:
-                print(f"❌ VectorDB 구축 중 오류: {conversation_id} - {e}")
-                vectordb_success = False
+                print(f"❌ VectorDB 구축 중 예외 발생: {conversation_id} - {e}")
+                import traceback
+                traceback.print_exc()
+                vectordb_success = False                
+        else:
+            print(f"⚠️ current_session_messages가 없어서 VectorDB 구축 생략: {conversation_id}")
         
         # ###################################
         # # 대화 히스토리도 함께 삭제

@@ -148,8 +148,18 @@ class ChatService:
     
     async def close_chat_session(self, conversation_id: str) -> Dict[str, Any]:
         """채팅 세션 종료 (VectorDB 구축 포함)"""
+        print(f"🔚 세션 종료 시작: {conversation_id}")
+        
         # 세션 종료 전에 current_session_messages 가져오기
         current_messages = self.get_session_messages(conversation_id)
+        
+        print(f"📊 세션 종료 시 current_session_messages 개수: {len(current_messages) if current_messages else 0}개")
+        if current_messages:
+            print(f"📋 current_session_messages 상세:")
+            for i, msg in enumerate(current_messages):
+                role = msg.get('role', 'unknown')
+                content = msg.get('content', '')[:50]
+                print(f"     #{i+1} {role}: {content}{'...' if len(msg.get('content', '')) > 50 else ''}")
         
         # 세션 종료 (VectorDB 구축 포함)
         return await self.session_manager.close_session(conversation_id, current_messages)
@@ -199,13 +209,24 @@ class ChatService:
     def get_session_messages(self, conversation_id: str):
         """세션의 current_session_messages 반환 (VectorDB 구축용)"""
         try:
+            print(f"📥 get_session_messages 시작: {conversation_id}")
+            
             session = self.session_manager.get_session(conversation_id)
             if not session:
+                print(f"❌ 세션이 존재하지 않음: {conversation_id}")
                 return []
             
+            print(f"✅ 세션 정보 확인됨: {conversation_id}")
+            
             # ChatSessionService에서 현재 메시지 가져오기
-            return self.chat_session_service.get_current_session_messages(conversation_id)
+            messages = self.chat_session_service.get_current_session_messages(conversation_id)
+            
+            print(f"📊 get_session_messages 결과: {len(messages) if messages else 0}개 메시지")
+            
+            return messages
             
         except Exception as e:
-            print(f"세션 메시지 조회 실패: {conversation_id} - {e}")
+            print(f"❌ 세션 메시지 조회 실패: {conversation_id} - {e}")
+            import traceback
+            traceback.print_exc()
             return []
