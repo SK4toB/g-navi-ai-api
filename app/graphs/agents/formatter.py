@@ -305,55 +305,45 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
         
         context_sections = []
         
-        # current_session_messages에서 SpringBoot에서 복원된 메시지와 현재 세션 메시지 구분
-        restored_messages = [msg for msg in current_session_messages if msg.get("metadata", {}).get("restored_from") == "springboot"]
-        session_messages = [msg for msg in current_session_messages if msg.get("metadata", {}).get("restored_from") != "springboot"]
+        # � 통합된 대화 히스토리 처리 (현재 사용자 메시지 제외)
+        previous_messages = current_session_messages[:-1] if len(current_session_messages) > 1 else []
         
         # 첫 상호작용 여부 판단
-        has_restored_messages = len(restored_messages) > 0
-        has_current_history = len(session_messages) > 1  # 현재 사용자 메시지 제외
-        is_first_interaction = not has_restored_messages and not has_current_history
+        is_first_interaction = len(previous_messages) == 0
         
-        # SpringBoot에서 복원된 이전 대화 기록
-        if has_restored_messages:
-            context_sections.append("📚 **이전 대화 기록** (SpringBoot에서 복원):")
+        # 이전 대화 히스토리 표시
+        if previous_messages:
+            context_sections.append("📚 **이전 대화 기록**:")
             context_sections.append("🔴 **중요: 이미 이전 대화가 있으므로 이를 참고하여 연속성 있는 답변을 하세요!**")
             context_sections.append("🔍 **특별 지시**: 사용자가 '이전에', '앞서', '과거에', '전에' 등의 표현으로 이전 대화를 언급하면 아래 대화 내역을 구체적으로 요약해서 답변하세요.")
             
-            # 최근 15개 대화만 포함
-            recent_restored = restored_messages[-15:] if len(restored_messages) > 15 else restored_messages
-            for i, msg in enumerate(recent_restored, 1):
+            # 최근 20개 대화만 포함 (통합된 만큼 조금 더 많이)
+            recent_messages = previous_messages[-20:] if len(previous_messages) > 20 else previous_messages
+            
+            for i, msg in enumerate(recent_messages, 1):
                 try:
                     role = msg.get("role", "unknown")
                     content = msg.get("content", "")
                     timestamp = msg.get("timestamp", "")
                     role_display = "사용자" if role == "user" else "AI"
                     
-                    # 메시지 길이 제한 완화 (이전 대화 요약 요청에 대비)
-                    if len(content) > 300:
-                        content = content[:300] + "..."
+                    # 메시지 길이 제한 (통합된 처리)
+                    if len(content) > 250:
+                        content = content[:250] + "..."
                     
-                    # 타임스탬프 정보도 포함
+                    # 타임스탬프 정보 포함
                     timestamp_str = f" ({timestamp})" if timestamp else ""
-                    context_sections.append(f"{i}. [{role_display}]{timestamp_str} {content}")
+                    
+                    # 복원 소스 정보 추가 (선택적)
+                    source_info = ""
+                    restored_from = msg.get("metadata", {}).get("restored_from")
+                    if restored_from == "springboot":
+                        source_info = " [복원]"
+                    
+                    context_sections.append(f"{i}. [{role_display}]{timestamp_str}{source_info} {content}")
                 except Exception as e:
-                    self.logger.warning(f"복원된 메시지 파싱 오류: {e}")
+                    self.logger.warning(f"메시지 파싱 오류: {e}")
                     continue
-            context_sections.append("")  # 빈 줄 추가
-        # 현재 세션 대화 내역 (MemorySaver에서 관리)
-        if has_current_history:  # 현재 메시지 외에 이전 대화가 있는 경우
-            context_sections.append("💬 **현재 세션 대화 내역** (MemorySaver에서 관리):")
-            if not has_restored_messages:  # SpringBoot 복원 기록이 없는 경우만 인사말 관련 메시지 추가
-                context_sections.append("🔴 **중요: 이미 대화가 진행된 상태이므로 인사말 없이 자연스럽게 답변하세요!**")
-            # 최근 10개 대화만 포함 (현재 사용자 메시지 제외)
-            recent_session = session_messages[-11:-1] if len(session_messages) > 10 else session_messages[:-1]
-            for i, msg in enumerate(recent_session, 1):
-                role = "사용자" if msg.get("role") == "user" else "AI"
-                content = msg.get("content", "")
-                if len(content) > 200:
-                    content = content[:200] + "..."
-                timestamp = msg.get("timestamp", "")
-                context_sections.append(f"{i}. [{role}] {content}")
             context_sections.append("")  # 빈 줄 추가
         
         # 첫 상호작용인 경우에만 인사말 안내
@@ -364,12 +354,13 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
         # 사용자 질문
         context_sections.append(f'**현재 사용자 질문**: "{user_question}"')
         
-        # 이전 대화 요약 요청인지 감지
-        history_keywords = ['이전', '전에', '앞서', '과거', '예전', '질문했던', '말했던', '얘기했던', '상담했던', '대화', '히스토리', '내역', '기록', '무엇을', '뭘', '어떤', '언제']
+        # 이전 대화 요약 요청인지 감지 (개선된 키워드)
+        history_keywords = ['이전', '전에', '앞서', '과거', '예전', '질문했던', '말했던', '얘기했던', '상담했던', '대화', '히스토리', '내역', '기록', '무엇을', '뭘', '어떤', '언제', '처음에', '지난번', '그때']
         is_asking_for_history = any(keyword in user_question.lower() for keyword in history_keywords)
         
-        if is_asking_for_history and has_restored_messages:
+        if is_asking_for_history and previous_messages:
             context_sections.append("🎯 **질문 유형 감지**: 사용자가 이전 대화 내용에 대해 질문하고 있습니다. 위의 이전 대화 기록을 참고하여 구체적으로 요약해서 답변해주세요.")
+        
         
         context_sections.append("")  # 빈 줄 추가
         

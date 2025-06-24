@@ -63,14 +63,14 @@ class MessageProcessor:
         message_text: str, 
         user_info: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """입력 상태 구성"""
+        """입력 상태 구성 (MemorySaver 복원 데이터 보존)"""
         return {
             # state.py의 ChatState 구조에 맞춤
             "user_question": message_text,
             "user_data": user_info,
             "session_id": conversation_id,
-            # 추가 필드들 초기화
-            "current_session_messages": [],
+            # 추가 필드들 초기화 (current_session_messages 제외 - MemorySaver가 관리)
+            # Note: current_session_messages는 MemorySaver에서 복원되므로 초기화하지 않음
             "intent_analysis": {},
             "career_cases": [],
             "education_courses": {},

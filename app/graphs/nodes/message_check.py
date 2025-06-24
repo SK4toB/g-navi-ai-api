@@ -71,8 +71,8 @@ class MessageCheckNode:
             
             print(f"✅ [0단계] 메시지 검증 성공: {len(user_question)}자")
             
-            # 상태 초기화
-            state.setdefault("current_session_messages", [])
+            # 상태 초기화 (MemorySaver 복원 데이터 보존 - current_session_messages 제외)
+            # Note: current_session_messages는 MemorySaver에서 복원되므로 초기화하지 않음
             state.setdefault("intent_analysis", {})
             state.setdefault("career_cases", [])
             state.setdefault("education_courses", {})
@@ -84,7 +84,7 @@ class MessageCheckNode:
             state.setdefault("processing_log", [])
             state.setdefault("error_messages", [])
             state.setdefault("total_processing_time", 0.0)
-            state.setdefault("current_session_messages", [])
+            # 중복 제거: current_session_messages는 이미 위에서 초기화됨
             
             # 처리 시간 계산
             end_time = time.perf_counter()

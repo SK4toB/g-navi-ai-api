@@ -63,9 +63,12 @@ class ChatHistoryNode:
             
             # MemorySaver에서 복원된 기존 current_session_messages 확인
             # LangGraph는 이전 실행의 상태를 자동으로 복원함
-            if "current_session_messages" not in state or state["current_session_messages"] is None:
+            if "current_session_messages" not in state:
                 state["current_session_messages"] = []
                 self.logger.info("새로운 대화 세션 시작 - 빈 current_session_messages 초기화")
+            elif state["current_session_messages"] is None:
+                state["current_session_messages"] = []
+                self.logger.info("None 상태의 current_session_messages 초기화")
             else:
                 restored_count = len(state["current_session_messages"])
                 self.logger.info(f"MemorySaver에서 복원된 대화 내역: {restored_count}개")
