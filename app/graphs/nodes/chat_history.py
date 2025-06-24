@@ -105,9 +105,35 @@ class ChatHistoryNode:
             state["current_session_messages"].append(current_user_message)
             self.logger.info(f"현재 사용자 메시지 추가: {state['user_question'][:100]}...")
             self.logger.info(f"총 current_session_messages 개수: {len(state['current_session_messages'])}개")
-            
+
             state["processing_log"].append(f"현재 세션 대화 내역 관리 완료: {len(state['current_session_messages'])}개")
             
+            # ConversationHistoryManager에도 저장
+            try:
+                from app.core.dependencies import get_service_container
+                container = get_service_container()
+                history_manager = container.history_manager
+
+                conversation_id = state.get("session_id", "")
+                if conversation_id:
+                    # 사용자 정보 추출
+                    user_data = state.get("user_data", {})
+                    user_name = user_data.get("name", "사용자")
+                    
+                    history_manager.add_message(
+                        conversation_id=conversation_id,
+                        role="user",
+                        content=state["user_question"],
+                        metadata={
+                            "user_name": user_name,
+                            "source": "current_session",
+                            "session_id": conversation_id
+                        }
+                    )
+                    print(f"사용자 메시지를 ConversationHistoryManager에 저장: {conversation_id}")
+            except Exception as e:
+                print(f"사용자 메시지 ConversationHistoryManager 저장 실패: {e}")
+                
             # 처리 시간 계산 및 로그
             end_time = time.perf_counter()
             step_time = end_time - start_time

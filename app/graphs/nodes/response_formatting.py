@@ -88,6 +88,28 @@ class ResponseFormattingNode:
             state["current_session_messages"].append(assistant_message)
             self.logger.info(f"AI 응답을 current_session_messages에 추가 (총 {len(state['current_session_messages'])}개 메시지)")
             
+            # 🔧 ConversationHistoryManager에도 저장
+            try:
+                from app.core.dependencies import get_service_container
+                container = get_service_container()
+                history_manager = container.history_manager
+                
+                conversation_id = state.get("session_id", "")
+                if conversation_id:
+                    history_manager.add_message(
+                        conversation_id=conversation_id,
+                        role="assistant",
+                        content=final_response.get("formatted_content", ""),
+                        metadata={
+                            "format_type": final_response.get("format_type", "adaptive"),
+                            "source": "current_session",
+                            "session_id": conversation_id
+                        }
+                    )
+                    print(f"AI 응답을 ConversationHistoryManager에 저장: {conversation_id}")
+            except Exception as e:
+                print(f"AI 응답 ConversationHistoryManager 저장 실패: {e}")
+
             # 4단계 완료 상세 로그 출력
             content_length = len(final_response.get("formatted_content", ""))
             format_type = final_response.get("format_type", "adaptive")
