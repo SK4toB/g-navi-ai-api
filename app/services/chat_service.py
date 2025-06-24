@@ -126,7 +126,7 @@ class ChatService:
             config=session["config"],
             conversation_id=conversation_id,
             member_id=member_id,
-            message_text=message_text,
+            user_question=message_text,  # user_question으로 수정
             user_info=session.get("user_info", {})
         )
         
@@ -178,3 +178,7 @@ class ChatService:
     def session_timeout(self):
         """기존 코드 호환성을 위한 session_timeout 접근자"""
         return self.session_manager.session_timeout
+
+    async def process_message(self, conversation_id: str, member_id: str, user_question: str) -> str:
+        """메시지 처리 (호환성 있는 시그니처)"""
+        return await self.send_message(conversation_id, member_id, user_question)

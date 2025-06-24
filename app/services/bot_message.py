@@ -20,8 +20,8 @@ class BotMessageService:
             if api_key:
                 self.openai_client = AsyncOpenAI(api_key=api_key)
                 self.model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
-                self.max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "1000"))
-                self.temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))
+                self.max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "500"))
+                self.temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.5"))
                 print("BotMessageService OpenAI 연결 완료")
             else:
                 print("OpenAI API 키가 없습니다. 기본 메시지를 사용합니다.")
@@ -142,3 +142,16 @@ class BotMessageService:
                 return f"안녕하세요 {name}님! {primary_domain} 분야에서 {primary_role}로 활동하고 계시는군요. SK AX 커리어패스 전문 상담사 G.Navi입니다. 어떤 도움이 필요하신가요?"
             else:
                 return f"안녕하세요 {name}님! SK AX 커리어패스 전문 상담사 G.Navi입니다. 커리어에 대해 궁금한 점이 있으시면 언제든 말씀해주세요!"
+
+    async def generate_welcome_message(self, user_info: Dict[str, Any]) -> str:
+        """
+        사용자를 위한 환영 메시지 생성 (Public API)
+        """
+        try:
+            welcome_message = await self._generate_welcome_message(user_info)
+            print(f"BotMessageService 환영 메시지 생성 완료: {welcome_message[:100]}...")
+            return welcome_message
+        except Exception as e:
+            print(f"BotMessageService 환영 메시지 생성 실패: {e}")
+            name = user_info.get('name', '사용자')
+            return f"안녕하세요 {name}님! SK AX 커리어패스 전문 상담사 G.Navi입니다. 어떤 도움이 필요하신가요?"

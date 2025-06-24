@@ -8,9 +8,10 @@ router = APIRouter()
 async def get_all_conversation_histories():
     """전체 대화 히스토리 요약 조회"""
     try:
-        from app.graphs.nodes.openai_response_node import get_history_manager
+        from app.core.dependencies import get_service_container
         
-        history_manager = get_history_manager()
+        container = get_service_container()
+        history_manager = container.history_manager
         active_conversations = history_manager.get_all_active_conversations()
         
         histories = []
@@ -35,9 +36,10 @@ async def get_all_conversation_histories():
 async def get_conversation_history(conversation_id: str):
     """특정 대화방의 히스토리 조회"""
     try:
-        from app.graphs.nodes.openai_response_node import get_history_manager
+        from app.core.dependencies import get_service_container
         
-        history_manager = get_history_manager()
+        container = get_service_container()
+        history_manager = container.history_manager
         history = history_manager.get_history_with_metadata(conversation_id)
         summary = history_manager.get_history_summary(conversation_id)
         
@@ -60,9 +62,10 @@ async def get_conversation_history(conversation_id: str):
 async def clear_conversation_history(conversation_id: str):
     """특정 대화방의 히스토리 삭제"""
     try:
-        from app.graphs.nodes.openai_response_node import get_history_manager
+        from app.core.dependencies import get_service_container
         
-        history_manager = get_history_manager()
+        container = get_service_container()
+        history_manager = container.history_manager
         history_manager.clear_history(conversation_id)
         
         return {
