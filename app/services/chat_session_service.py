@@ -46,66 +46,117 @@ class ChatSessionService:
         user_info: Dict[str, Any], 
         previous_messages: list = None
     ) -> tuple[Any, str, Dict, Dict[str, Any]]:
-        """
-        기존 세션 복원 (세션이 만료된 경우)
-        Returns: (compiled_graph, thread_id, config, load_result)
-        """
+        """기존 세션 복원 (세션이 만료된 경우)"""
         print(f"ChatSessionService 세션 복원 시작: {conversation_id}")
         
-        # 1. 대화 히스토리 복원 (LangGraph 빌드 전에 먼저 수행)
-        if previous_messages and len(previous_messages) > 0:
-            print(f"ChatSessionService 대화 히스토리 복원: {len(previous_messages)}개 메시지")
-            await self._restore_conversation_history(conversation_id, previous_messages, user_info)
-
-        # 2. LangGraph 빌드 (previous_messages도 전달)
-        compiled_graph = await self.graph_builder.build_persistent_chat_graph(conversation_id, user_info, previous_messages)
+        # 1. LangGraph 빌드 (previous_messages 전달)
+        compiled_graph = await self.graph_builder.build_persistent_chat_graph(
+            conversation_id, user_info, previous_messages
+        )
         
-        # 3. 세션 설정 구성
+        # 2. 세션 설정 구성
         thread_id = f"thread_{conversation_id}"
         config = {"configurable": {"thread_id": thread_id}}
         
-        # 4. 환영 메시지 생성 (세션 로드 시에도)
-        welcome_message = await self.bot_message_service.generate_welcome_message(user_info)
+        # 3. MemorySaver 초기화 (previous_messages가 있는 경우)
+        if previous_messages and len(previous_messages) > 0:
+            print(f"ChatSessionService MemorySaver 초기화: {len(previous_messages)}개 메시지")
+            await self._initialize_memory_with_previous_messages(
+                compiled_graph, conversation_id, previous_messages, user_info, config
+            )
         
-        # 5. 로드 결과 구성
+        # 4. 로드 결과 구성 (새 환영 메시지 생성하지 않음)
         load_result = {
             "status": "session_loaded",
-            "message": welcome_message,
+            "message": "채팅방을 로드했습니다.",
             "conversation_id": conversation_id,
             "previous_messages_count": len(previous_messages) if previous_messages else 0,
-            "requires_initial_message": False  # 로드 시에는 초기 메시지 불필요
+            "requires_initial_message": False
         }
         
         print(f"ChatSessionService 세션 복원 완료: {conversation_id}")
         
         return compiled_graph, thread_id, config, load_result
-    
+        
     ####################################
     # MemorySaver 초기화 방식으로 변경
-    async def _initialize_memory_with_previous_messages(self, conversation_id: str, previous_messages: List, user_info: Dict[str, Any]):
+    async def _initialize_memory_with_previous_messages(
+        self, 
+        compiled_graph, 
+        conversation_id: str, 
+        previous_messages: list, 
+        user_info: Dict[str, Any],
+        config: Dict
+    ):
         """SpringBoot 메시지를 MemorySaver 초기 상태로 설정"""
         try:
             if not previous_messages:
                 return
             
+            print(f"MemorySaver 초기화 시작: {len(previous_messages)}개 메시지")
+            
+            # SpringBoot 메시지를 current_session_messages 형식으로 변환
+            converted_messages = []
+            user_name = user_info.get("name", "사용자")
+            
+            for i, message in enumerate(previous_messages, 1):
+                try:
+                    # message 객체의 속성 확인
+                    sender_type = getattr(message, 'sender_type', None)
+                    message_text = getattr(message, 'message_text', None)
+                    timestamp = getattr(message, 'timestamp', None)
+                    
+                    if not sender_type or not message_text:
+                        continue
+                    
+                    # sender_type을 role로 변환
+                    if sender_type == "USER":
+                        role = "user"
+                    elif sender_type == "BOT":
+                        role = "assistant"
+                    else:
+                        print(f"알 수 없는 sender_type: {sender_type}")
+                        continue
+                    
+                    # current_session_messages 형식으로 변환
+                    session_message = {
+                        "role": role,
+                        "content": message_text,
+                        "timestamp": str(timestamp) if timestamp else datetime.now().isoformat(),
+                        "metadata": {
+                            "restored_from": "springboot",
+                            "original_index": i,
+                            "user_name": user_name if role == "user" else None
+                        }
+                    }
+                    
+                    converted_messages.append(session_message)
+                    print(f"변환 완료 ({i}): {role} - {message_text[:50]}...")
+                    
+                except Exception as msg_error:
+                    print(f"개별 메시지 변환 실패: {str(msg_error)}")
+                    continue
+            
             # MemorySaver에 초기 상태 설정
-            thread_id = f"thread_{conversation_id}"
-            config = {"configurable": {"thread_id": thread_id}}
-            
-            # 초기 상태로 previous_messages 설정
-            initial_state = {
-                "current_session_messages": self._convert_previous_messages_to_session_format(previous_messages, user_info),
-                "session_id": conversation_id,
-                "user_data": user_info
-            }
-            
-            # 그래프에 초기 상태 주입 (빈 실행으로 상태만 저장)
-            await self.compiled_graph.ainvoke({"_init_only": True, **initial_state}, config)
-            
-            print(f"MemorySaver 초기 상태 설정 완료: {len(previous_messages)}개 메시지")
+            if converted_messages:
+                initial_state = {
+                    "current_session_messages": converted_messages,
+                    "session_id": conversation_id,
+                    "user_data": user_info,
+                    "_init_only": True  # 초기화 전용 플래그
+                }
+                
+                # 그래프에 초기 상태 주입 (빈 실행으로 상태만 저장)
+                try:
+                    await compiled_graph.ainvoke(initial_state, config)
+                    print(f"MemorySaver 초기 상태 설정 완료: {len(converted_messages)}개 메시지")
+                except Exception as graph_error:
+                    print(f"그래프 초기화 실패: {graph_error}")
+                    # 실패해도 계속 진행 (세션 생성은 성공시킴)
             
         except Exception as e:
             print(f"MemorySaver 초기화 실패: {e}")
+            # 실패해도 세션 생성은 계속 진행
     ####################################
 
     # async def _restore_conversation_history(self, conversation_id: str, previous_messages: List, user_info: Dict[str, Any]):
