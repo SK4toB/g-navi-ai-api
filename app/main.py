@@ -1,8 +1,41 @@
 # app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from app.api.v1.api import api_router
 from app.config.settings import settings
+from app.core.dependencies import get_service_container
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """앱 라이프사이클 관리"""
+    # 시작 시
+    print("🚀 Career Path Chat API 시작...")
+    
+    # 세션 자동 정리 시작
+    try:
+        container = get_service_container()
+        chat_service = container.chat_service
+        await chat_service.start_auto_cleanup()
+        print("✅ 세션 자동 정리 활성화됨")
+    except Exception as e:
+        print(f"⚠️ 세션 자동 정리 시작 실패: {e}")
+    
+    yield
+    
+    # 종료 시
+    print("🛑 Career Path Chat API 종료...")
+    
+    # 세션 자동 정리 중지
+    try:
+        container = get_service_container()
+        chat_service = container.chat_service
+        await chat_service.stop_auto_cleanup()
+        print("✅ 세션 자동 정리 중지됨")
+    except Exception as e:
+        print(f"⚠️ 세션 자동 정리 중지 실패: {e}")
+
 
 app = FastAPI(
     title="Career Path Chat API",
@@ -10,7 +43,8 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/ai/docs",           
     redoc_url="/ai/redoc",         
-    openapi_url="/ai/openapi.json"
+    openapi_url="/ai/openapi.json",
+    lifespan=lifespan
 )
 
 # CORS 설정

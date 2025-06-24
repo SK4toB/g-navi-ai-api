@@ -84,3 +84,77 @@ async def close_user_sessions(
             "user_name": user_name,
             "timestamp": datetime.utcnow().isoformat()
         }
+
+@router.post("/cleanup")
+async def manual_cleanup_sessions(
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """만료된 세션 수동 정리"""
+    try:
+        result = await chat_service.session_manager.manual_cleanup()
+        return result
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"수동 세션 정리 실패: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.get("/cleanup/status")
+async def get_cleanup_status(
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """자동 정리 상태 조회"""
+    try:
+        status = chat_service.session_manager.get_cleanup_status()
+        return {
+            "status": "success",
+            "cleanup_status": status,
+            "message": "자동 정리 상태 조회 완료"
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"자동 정리 상태 조회 실패: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.post("/cleanup/start")
+async def start_auto_cleanup(
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """자동 세션 정리 시작"""
+    try:
+        await chat_service.start_auto_cleanup()
+        status = chat_service.session_manager.get_cleanup_status()
+        return {
+            "status": "success",
+            "message": "자동 세션 정리 시작됨",
+            "cleanup_status": status
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"자동 정리 시작 실패: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+@router.post("/cleanup/stop")
+async def stop_auto_cleanup(
+    chat_service: ChatService = Depends(get_chat_service)
+):
+    """자동 세션 정리 중지"""
+    try:
+        await chat_service.stop_auto_cleanup()
+        status = chat_service.session_manager.get_cleanup_status()
+        return {
+            "status": "success",
+            "message": "자동 세션 정리 중지됨",
+            "cleanup_status": status
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"자동 정리 중지 실패: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat()
+        }

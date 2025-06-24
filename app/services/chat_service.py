@@ -18,11 +18,20 @@ class ChatService:
     
     def __init__(self, session_timeout_hours: int = 1):
         # 각 책임별 서비스 초기화
+        # SessionManager에서 이미 테스트용 1분 타임아웃으로 설정됨
         self.session_manager = SessionManager(session_timeout_hours)
         self.message_processor = MessageProcessor()
         self.chat_session_service = ChatSessionService()
         
-        print("ChatService 초기화 완료")
+        print("ChatService 초기화 완료 (서비스모드: 세션 타임아웃 30분, 자동정리 5분)")
+    
+    async def start_auto_cleanup(self):
+        """자동 세션 정리 시작"""
+        await self.session_manager.start_auto_cleanup()
+    
+    async def stop_auto_cleanup(self):
+        """자동 세션 정리 중지"""
+        await self.session_manager.stop_auto_cleanup()
     
     # ============================================================================
     # 메인 채팅 기능

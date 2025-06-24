@@ -1,6 +1,8 @@
 # app/services/session_manager.py
 
-from typing import Dict, Any, List
+import asyncio
+import logging
+from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 
 
@@ -14,8 +16,17 @@ class SessionManager:
     
     def __init__(self, session_timeout_hours: int = 1):
         self.active_sessions: Dict[str, Dict[str, Any]] = {}
-        self.session_timeout = timedelta(hours=session_timeout_hours)
-        print(f"SessionManager 초기화 (타임아웃: {session_timeout_hours}시간)")
+        # 실제 서비스용: 세션 타임아웃 30분으로 설정
+        self.session_timeout = timedelta(minutes=30)  # 30분으로 설정
+        
+        # 자동 정리 관련
+        self.auto_cleanup_enabled = True
+        self.cleanup_interval_minutes = 5  # 5분마다 정리 (서비스용)
+        self.cleanup_task: Optional[asyncio.Task] = None
+        self.cleanup_count = 0
+        self.logger = logging.getLogger(__name__)
+        
+        print(f"SessionManager 초기화 (타임아웃: 30분, 자동정리: {self.cleanup_interval_minutes}분 주기) - 서비스모드")
     
     def create_session(self, conversation_id: str, graph, thread_id: str, config: Dict, user_info: Dict[str, Any]) -> Dict[str, Any]:
         """새 세션 생성"""
@@ -330,3 +341,125 @@ class SessionManager:
             "message": f"{len(expired_sessions)}개의 만료된 세션을 정리했습니다",
             "timestamp": now.isoformat()
         }
+    
+    # ============================================================================
+    # 자동 세션 정리 기능
+    # ============================================================================
+    
+    async def start_auto_cleanup(self):
+        """자동 세션 정리 시작"""
+        if self.cleanup_task and not self.cleanup_task.done():
+            print("⚠️ 자동 세션 정리가 이미 실행 중입니다")
+            return
+        
+        if not self.auto_cleanup_enabled:
+            print("⚠️ 자동 세션 정리가 비활성화되어 있습니다")
+            return
+        
+        print(f"🚀 자동 세션 정리 시작 (주기: {self.cleanup_interval_minutes}분)")
+        self.cleanup_task = asyncio.create_task(self._auto_cleanup_loop())
+    
+    async def stop_auto_cleanup(self):
+        """자동 세션 정리 중지"""
+        if self.cleanup_task:
+            self.cleanup_task.cancel()
+            try:
+                await self.cleanup_task
+            except asyncio.CancelledError:
+                pass
+            finally:
+                self.cleanup_task = None
+        
+        print(f"🛑 자동 세션 정리 중지 (총 {self.cleanup_count}회 정리 수행)")
+    
+    async def _auto_cleanup_loop(self):
+        """자동 정리 루프 (백그라운드 실행)"""
+        try:
+            while self.auto_cleanup_enabled:
+                try:
+                    # 만료된 세션 정리
+                    cleanup_result = self.cleanup_expired_sessions()
+                    self.cleanup_count += 1
+                    
+                    cleaned_count = cleanup_result.get("cleaned_count", 0)
+                    remaining_count = cleanup_result.get("remaining_sessions", 0)
+                    current_time = datetime.now().strftime("%H:%M:%S")
+                    
+                    if cleaned_count > 0:
+                        print(f"🧹 [{current_time}] 자동 세션 정리: {cleaned_count}개 정리, {remaining_count}개 유지")
+                        self.logger.info(f"자동 세션 정리: {cleaned_count}개 정리됨")
+                        
+                        # 정리된 세션 상세 로그
+                        for session in cleanup_result.get("expired_sessions", []):
+                            conv_id = session.get("conversation_id", "")
+                            user_name = session.get("user_name", "Unknown")
+                            inactive_minutes = session.get("inactive_minutes", 0)
+                            print(f"   └─ {conv_id} (사용자: {user_name}, 비활성: {inactive_minutes}분)")
+                    else:
+                        # 조용한 로그 (정리할 세션이 없을 때는 간단히)
+                        if self.cleanup_count % 12 == 1:  # 1시간마다 한 번씩만 로그 출력 (5분 주기)
+                            print(f"✅ [{current_time}] 세션 정리 체크: 만료된 세션 없음 ({remaining_count}개 활성)")
+                    
+                    # 다음 정리까지 대기
+                    await asyncio.sleep(self.cleanup_interval_minutes * 60)
+                    
+                except Exception as e:
+                    self.logger.error(f"자동 세션 정리 중 오류: {e}")
+                    print(f"❌ 자동 세션 정리 오류: {e}")
+                    # 오류 발생 시 1분 후 재시도
+                    await asyncio.sleep(60)
+                    
+        except asyncio.CancelledError:
+            print("🔄 자동 세션 정리 태스크가 취소되었습니다")
+            raise
+    
+    async def manual_cleanup(self) -> Dict[str, Any]:
+        """수동 세션 정리 (즉시 실행)"""
+        try:
+            print("🔧 수동 세션 정리 실행...")
+            result = self.cleanup_expired_sessions()
+            
+            return {
+                "status": "success",
+                "message": "수동 세션 정리 완료",
+                "result": result
+            }
+            
+        except Exception as e:
+            error_msg = f"수동 세션 정리 실패: {e}"
+            self.logger.error(error_msg)
+            return {
+                "status": "error",
+                "message": error_msg,
+                "error": str(e)
+            }
+    
+    def get_cleanup_status(self) -> Dict[str, Any]:
+        """자동 정리 상태 조회"""
+        is_running = self.cleanup_task and not self.cleanup_task.done()
+        
+        return {
+            "auto_cleanup_enabled": self.auto_cleanup_enabled,
+            "is_running": is_running,
+            "cleanup_interval_minutes": self.cleanup_interval_minutes,
+            "cleanup_count": self.cleanup_count,
+            "session_timeout_hours": self.session_timeout.total_seconds() / 3600,
+            "active_sessions_count": len(self.active_sessions),
+            "status": "running" if is_running else "stopped"
+        }
+    
+    def set_auto_cleanup_enabled(self, enabled: bool):
+        """자동 정리 활성화/비활성화"""
+        self.auto_cleanup_enabled = enabled
+        status = "활성화" if enabled else "비활성화"
+        print(f"🔧 자동 세션 정리 {status}")
+    
+    def set_cleanup_interval(self, minutes: int):
+        """정리 주기 변경 (분 단위)"""
+        if minutes < 5:
+            minutes = 5  # 최소 5분
+        elif minutes > 180:
+            minutes = 180  # 최대 3시간
+        
+        self.cleanup_interval_minutes = minutes
+        print(f"🔧 자동 정리 주기 변경: {minutes}분")
