@@ -139,7 +139,19 @@ class SessionManager:
         # 📊 세션 기본 정보 수집
         session = self.active_sessions[conversation_id]
         user_name = session.get("user_info", {}).get("name", "Unknown")
-        member_id = session.get("user_info", {}).get("id", session.get("user_info", {}).get("member_id", "unknown"))
+        
+        # 🔍 member_id 추출 (여러 필드에서 시도)
+        user_info = session.get("user_info", {})
+        member_id = (
+            user_info.get("member_id") or           # API에서 추가한 member_id
+            user_info.get("id") or                  # 기존 id 필드
+            user_info.get("memberId") or            # camelCase 필드
+            user_info.get("user_id") or             # 다른 가능한 필드
+            "unknown"                               # 최후 폴백
+        )
+        
+        print(f"🔍 VectorDB용 member_id 추출: {member_id} (user_info: {user_info})")
+        
         created_at = session.get("created_at")
         now = datetime.utcnow()
         session_age_minutes = int((now - created_at).total_seconds() / 60)
@@ -408,7 +420,19 @@ class SessionManager:
             
             if inactive_duration > self.session_timeout:
                 user_name = session.get("user_info", {}).get("name", "Unknown")
-                member_id = session.get("user_info", {}).get("id", session.get("user_info", {}).get("member_id", "unknown"))
+                
+                # 🔍 member_id 추출 (여러 필드에서 시도) - close_session과 동일한 로직
+                user_info = session.get("user_info", {})
+                member_id = (
+                    user_info.get("member_id") or           # API에서 추가한 member_id
+                    user_info.get("id") or                  # 기존 id 필드
+                    user_info.get("memberId") or            # camelCase 필드
+                    user_info.get("user_id") or             # 다른 가능한 필드
+                    "unknown"                               # 최후 폴백
+                )
+                
+                print(f"🔍 자동정리 VectorDB용 member_id 추출: {member_id} (user_info: {user_info})")
+                
                 inactive_minutes = int(inactive_duration.total_seconds() / 60)
                 session_age_minutes = int((now - session.get("created_at")).total_seconds() / 60)
                 

@@ -33,15 +33,21 @@ async def create_or_load_room(
             print("채팅방 로드")
 
         if is_new_room:
+            # user_info에 member_id 추가 (VectorDB 구축을 위해 필요)
+            enhanced_user_info = {**request.user_info, "member_id": request.member_id}
+            
             bot_message = await chat_service.create_chat_session(
                 conversation_id=request.conversation_id,
-                user_info=request.user_info
+                user_info=enhanced_user_info
             )
         
         else:
+            # user_info에 member_id 추가 (VectorDB 구축을 위해 필요)
+            enhanced_user_info = {**request.user_info, "member_id": request.member_id}
+            
             load_result = await chat_service.load_chat_session(
                 conversation_id=request.conversation_id,
-                user_info=request.user_info,
+                user_info=enhanced_user_info,
                 previous_messages=request.messages
             )
             # 로드 시에는 봇 메시지를 반환하지 않음
