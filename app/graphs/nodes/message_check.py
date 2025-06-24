@@ -84,7 +84,6 @@ class MessageCheckNode:
             state.setdefault("processing_log", [])
             state.setdefault("error_messages", [])
             state.setdefault("total_processing_time", 0.0)
-            # 중복 제거: current_session_messages는 이미 위에서 초기화됨
             
             # 처리 시간 계산
             end_time = time.perf_counter()

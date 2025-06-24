@@ -188,7 +188,7 @@ class ChatGraphBuilder:
         
         # G.Navi 7단계 노드들 추가 (메시지 검증부터 보고서 생성까지)
         workflow.add_node("message_check", self.message_check_node.create_node())
-        workflow.add_node("manage_session_history", self.chat_history_node.retrieve_chat_history_node)  # 이름 변경
+        workflow.add_node("manage_session_history", self.chat_history_node.retrieve_chat_history_node)
         workflow.add_node("analyze_intent", self.intent_analysis_node.analyze_intent_node)
         workflow.add_node("retrieve_additional_data", self.data_retrieval_node.retrieve_additional_data_node)
         workflow.add_node("format_response", self.response_formatting_node.format_response_node)

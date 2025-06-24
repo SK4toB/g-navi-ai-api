@@ -26,8 +26,8 @@ class ChatService:
         print("ChatService 초기화 완료 (서비스모드: 세션 타임아웃 30분, 자동정리 5분)")
     
     async def start_auto_cleanup(self):
-        """자동 세션 정리 시작"""
-        await self.session_manager.start_auto_cleanup()
+        """자동 세션 정리 시작 (VectorDB 구축 포함)"""
+        await self.session_manager.start_auto_cleanup(self.get_session_messages)
     
     async def stop_auto_cleanup(self):
         """자동 세션 정리 중지"""
@@ -147,8 +147,12 @@ class ChatService:
     # ============================================================================
     
     async def close_chat_session(self, conversation_id: str) -> Dict[str, Any]:
-        """채팅 세션 종료"""
-        return self.session_manager.close_session(conversation_id)
+        """채팅 세션 종료 (VectorDB 구축 포함)"""
+        # 세션 종료 전에 current_session_messages 가져오기
+        current_messages = self.get_session_messages(conversation_id)
+        
+        # 세션 종료 (VectorDB 구축 포함)
+        return await self.session_manager.close_session(conversation_id, current_messages)
     
     def close_all_sessions(self) -> Dict[str, Any]:
         """모든 세션 종료"""
@@ -170,9 +174,9 @@ class ChatService:
         """전체 활성 세션 조회"""
         return self.session_manager.get_all_active_sessions()
     
-    def cleanup_expired_sessions(self) -> Dict[str, Any]:
-        """만료된 세션 정리"""
-        return self.session_manager.cleanup_expired_sessions()
+    async def cleanup_expired_sessions(self) -> Dict[str, Any]:
+        """만료된 세션 정리 (VectorDB 구축 포함)"""
+        return await self.session_manager.cleanup_expired_sessions(self.get_session_messages)
     
     # ============================================================================
     # 호환성을 위한 속성 접근자들 (기존 코드와의 호환성 유지)
@@ -191,3 +195,17 @@ class ChatService:
     async def process_message(self, conversation_id: str, member_id: str, user_question: str) -> str:
         """메시지 처리 (호환성 있는 시그니처)"""
         return await self.send_message(conversation_id, member_id, user_question)
+    
+    def get_session_messages(self, conversation_id: str):
+        """세션의 current_session_messages 반환 (VectorDB 구축용)"""
+        try:
+            session = self.session_manager.get_session(conversation_id)
+            if not session:
+                return []
+            
+            # ChatSessionService에서 현재 메시지 가져오기
+            return self.chat_session_service.get_current_session_messages(conversation_id)
+            
+        except Exception as e:
+            print(f"세션 메시지 조회 실패: {conversation_id} - {e}")
+            return []

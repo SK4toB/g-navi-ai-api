@@ -151,3 +151,35 @@ class ChatSessionService:
             import traceback
             print(f"상세 에러: {traceback.format_exc()}")
             # 복원 실패해도 세션 생성은 계속 진행
+    
+    def get_current_session_messages(self, conversation_id: str) -> List[Dict[str, Any]]:
+        """
+        현재 세션의 메시지 목록 반환 (VectorDB 구축용)
+        
+        Args:
+            conversation_id: 대화 ID
+            
+        Returns:
+            List[Dict[str, Any]]: 현재 세션의 메시지 목록
+        """
+        try:
+            # ConversationHistoryManager에서 현재 세션의 메시지 히스토리 가져오기
+            from app.core.dependencies import get_service_container
+            
+            container = get_service_container()
+            history_manager = container.history_manager
+            
+            # 현재 세션의 히스토리 조회
+            history = history_manager.get_history(conversation_id)
+            
+            if history and len(history) > 0:
+                print(f"현재 세션 메시지 조회 성공: {conversation_id} - {len(history)}개 메시지")
+                return history
+            else:
+                print(f"현재 세션 메시지 없음: {conversation_id} - 히스토리 없음")
+                return []
+            
+        except Exception as e:
+            print(f"세션 메시지 조회 실패: {conversation_id} - {e}")
+            # 실패 시 빈 리스트 반환 (VectorDB 구축 건너뛰기)
+            return []

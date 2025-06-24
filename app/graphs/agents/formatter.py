@@ -90,7 +90,7 @@ G.Navi AI 커리어 컨설팅 시스템의 친근한 커리어 코치로 활동�
    - "음, [사용자명]님 상황을 보니 이런 방향으로 접근해보시면 좋을 것 같아요"
    - 단계별로 나누되 자연스러운 문장으로 연결
 
-5. **이전 대화 요약 요청**:
+5. **이전 대화 요약 요청인 경우**:
    - "아, 이전에 상담했던 내용들을 정리해드릴게요!"
    - 시간순으로 주요 내용을 자연스럽게 회상하듯 설명
    - "그때 이런저런 얘기를 나누었었죠"와 같은 친근한 톤
@@ -236,6 +236,7 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
             career_cases = state.get("career_cases", [])
             current_session_messages = state.get("current_session_messages", [])
             education_courses = state.get("education_courses", {})
+            past_conversations = state.get("past_conversations", [])  # 과거 대화 내역 추가
             
             # 사용자 정보 추출
             user_name = user_data.get('name', '님')
@@ -245,7 +246,7 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
             context_data = self._prepare_context_for_llm(
                 user_question, intent_analysis, 
                 user_data, career_cases, 
-                current_session_messages, education_courses
+                current_session_messages, education_courses, past_conversations
             )
             
             # LLM 호출하여 직접 마크다운 응답 생성
@@ -300,12 +301,13 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
                                 user_data: Dict[str, Any],
                                 career_cases: List[Any],
                                 current_session_messages: List[Dict],
-                                education_courses: Dict[str, Any] = None) -> str:
+                                education_courses: Dict[str, Any] = None,
+                                past_conversations: List[Dict] = None) -> str:
         """LLM을 위한 컨텍스트 데이터 준비 (통합된 current_session_messages 사용)"""
         
         context_sections = []
         
-        # � 통합된 대화 히스토리 처리 (현재 사용자 메시지 제외)
+        # 📚 통합된 대화 히스토리 처리 (현재 사용자 메시지 제외)
         previous_messages = current_session_messages[:-1] if len(current_session_messages) > 1 else []
         
         # 첫 상호작용 여부 판단
@@ -550,6 +552,46 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
                 # 폴백으로 간단한 형태라도 제공
                 context_sections.append(f"**교육과정 정보**: {str(education_courses)[:200]}...")
         
+        # 🗃️ 새로운 과거 모든 채팅 세션의 대화내역 추가 (VectorDB에서 검색된 내용)
+        if past_conversations and len(past_conversations) > 0:
+            past_conversations_section = "🗂️ **과거 모든 채팅 세션의 관련 대화내역**:\n"
+            past_conversations_section += "이전 세션들에서 관련성이 높은 대화 내용들입니다. 사용자의 과거 질문과 상담 이력을 참고하여 연속성 있는 상담을 제공하세요.\n\n"
+            
+            for i, past_conv in enumerate(past_conversations[:3], 1):  # 최대 3개 과거 대화 세션
+                try:
+                    conversation_id = past_conv.get("conversation_id", f"세션_{i}")
+                    summary = past_conv.get("summary", "")
+                    content_snippet = past_conv.get("content_snippet", "")
+                    created_at = past_conv.get("created_at", "")
+                    relevance_score = past_conv.get("relevance_score", 0)
+                    message_count = past_conv.get("message_count", 0)
+                    
+                    past_conversations_section += f"### 📋 **과거 세션 {i}** (관련도: {relevance_score:.2f})\n"
+                    if created_at:
+                        past_conversations_section += f"**세션 날짜**: {created_at[:10]}\n"
+                    past_conversations_section += f"**메시지 수**: {message_count}개\n"
+                    
+                    if summary and summary.strip():
+                        past_conversations_section += f"**대화 요약**: {summary}\n"
+                    
+                    if content_snippet and content_snippet.strip():
+                        past_conversations_section += f"**주요 내용**: {content_snippet}\n"
+                    
+                    past_conversations_section += "\n"
+                    
+                except Exception as e:
+                    self.logger.warning(f"과거 대화 내역 파싱 오류: {e}")
+                    continue
+            
+            past_conversations_section += "\n**📚 과거 대화 활용 가이드:**\n"
+            past_conversations_section += "- 사용자가 '이전에', '전에', '과거에' 등의 표현을 사용하면 위 과거 대화 내용을 구체적으로 언급\n"
+            past_conversations_section += "- '이전에 비슷한 질문을 해주셨었는데요...' 식으로 자연스럽게 연결\n"
+            past_conversations_section += "- 과거 상담 내용과 현재 질문을 연결하여 발전적인 조언 제공\n"
+            past_conversations_section += "- 사용자의 성장 과정이나 관심사의 변화를 파악하여 개인화된 상담 진행\n"
+            past_conversations_section += "- 과거 대화 요약과 주요 내용을 바탕으로 구체적이고 맥락 있는 답변 제공\n"
+            
+            context_sections.append(past_conversations_section)
+        
         # 질문 유형 분석 (성능 최적화)
         career_keywords = ['커리어', '진로', '목표', '방향', '계획', '비전', '미래', '회사', '조직']
         growth_keywords = ['성장', '발전', '패스', '로드맵', '어떻게', '방법', '단계', '과정']
@@ -759,7 +801,9 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
 ⚠️ 반드시 제공된 원본 데이터의 URL 필드만 사용하세요!
 """
         return context
-    
+
+
+
     def _call_llm_for_adaptive_formatting(self, context_data: str) -> str:
         """LLM 호출하여 적응적 응답 생성 - 직접 마크다운 반환"""
         try:
