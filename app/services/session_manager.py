@@ -76,17 +76,29 @@ class SessionManager:
         now = datetime.utcnow()
         session_age_minutes = int((now - created_at).total_seconds() / 60)
         
-        ###################################
-        # 대화 히스토리도 함께 삭제
+        # ###################################
+        # # 대화 히스토리도 함께 삭제
+        # try:
+        #     from app.core.dependencies import get_service_container
+        #     container = get_service_container()
+        #     history_manager = container.history_manager
+        #     history_manager.clear_history(conversation_id)
+        #     print(f"대화 히스토리 삭제 완료: {conversation_id}")
+        # except Exception as e:
+        #     print(f"대화 히스토리 삭제 실패: {e}")
+        # ####################################
+
+        # ####################################
+        # MemorySaver 스레드 정리
         try:
-            from app.core.dependencies import get_service_container
-            container = get_service_container()
-            history_manager = container.history_manager
-            history_manager.clear_history(conversation_id)
-            print(f"대화 히스토리 삭제 완료: {conversation_id}")
+            # LangGraph의 MemorySaver는 자동으로 관리되므로 특별한 정리 불필요
+            # 세션 메타데이터만 제거
+            if conversation_id in self.active_sessions:
+                del self.active_sessions[conversation_id]
+                print(f"세션 메타데이터 삭제: {conversation_id}")
         except Exception as e:
-            print(f"대화 히스토리 삭제 실패: {e}")
-        ####################################
+            print(f"세션 정리 실패: {e}")
+        # ###################################
         
         # 세션 제거
         del self.active_sessions[conversation_id]
