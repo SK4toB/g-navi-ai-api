@@ -56,6 +56,38 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv()
 
+# ==================== 📂 경로 설정 (수정 필요시 여기만 변경) ====================
+class PathConfig:
+    """
+    모든 경로 설정을 한 곳에서 관리하는 클래스
+    경로 변경이 필요할 때는 이 부분만 수정하면 됩니다.
+    """
+    BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # app 디렉토리
+    
+    # 📊 벡터 스토어 경로 (Chroma DB 저장소)
+    CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"           # 커리어 사례 벡터 데이터베이스
+    EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"  # 교육과정 벡터 데이터베이스
+    
+    # 🗄️ 캐시 경로 (임베딩 캐시)
+    EMBEDDING_CACHE = "../../storage/cache/embedding_cache"                   # OpenAI 임베딩 캐시 저장소
+    
+    # 📄 문서 경로 (JSON 데이터 파일들)
+    CAREER_DOCS = "../../storage/docs/career_history.json"                    # 커리어 히스토리 원본 데이터
+    EDUCATION_DOCS = "../../storage/docs/education_courses.json"              # 교육과정 문서 데이터
+    SKILL_MAPPING = "../../storage/docs/skill_education_mapping.json"         # 스킬-교육과정 매핑 테이블
+    COURSE_DEDUPLICATION = "../../storage/docs/course_deduplication_index.json"  # 과정 중복 제거 인덱스
+    COMPANY_VISION = "../../storage/docs/company_vision.json"                 # 회사 비전 및 가치 데이터
+    MYSUNI_DETAILED = "../../storage/docs/mysuni_courses_detailed.json"       # mySUNI 과정 상세 정보
+    COLLEGE_DETAILED = "../../storage/docs/college_courses_detailed.json"     # College 과정 상세 정보
+    CHAT_HISTORY = "app/data/json/chat_history.json"                          # 사용자 채팅 히스토리
+    
+    @classmethod
+    def get_abs_path(cls, relative_path: str) -> str:
+        """상대 경로를 절대 경로로 변환"""
+        return os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path))
+
+# ==================== 📂 경로 설정 끝 ====================
+
 class CareerEnsembleRetrieverAgent:
     """
     🔍 커리어 앙상블 리트리버 에이전트
@@ -67,56 +99,49 @@ class CareerEnsembleRetrieverAgent:
     - 커리어 사례: 최대 3개까지 검색
     - 교육과정: 최대 3개까지 검색
     """
-    def __init__(self, persist_directory: str = os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/vector_stores/career_data"
-        ), cache_directory: str = os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/cache/embedding_cache"
-        )):
-
-        self.persist_directory = os.path.abspath(persist_directory)
-        self.cache_directory = os.path.abspath(cache_directory)
-        self.base_dir = os.path.dirname(os.path.dirname(__file__))  # app 디렉토리
+    def __init__(self, persist_directory: str = None, cache_directory: str = None):
+        """
+        CareerEnsembleRetrieverAgent 초기화
+        
+        Args:
+            persist_directory: 커리어 벡터 스토어 경로 (기본값: PathConfig.CAREER_VECTOR_STORE)
+            cache_directory: 임베딩 캐시 경로 (기본값: PathConfig.EMBEDDING_CACHE)
+        """
+        # 경로 설정 (PathConfig 사용)
+        self.persist_directory = PathConfig.get_abs_path(
+            persist_directory or PathConfig.CAREER_VECTOR_STORE
+        )
+        self.cache_directory = PathConfig.get_abs_path(
+            cache_directory or PathConfig.EMBEDDING_CACHE
+        )
+        self.base_dir = PathConfig.BASE_DIR
         self.logger = logging.getLogger(__name__)
+        
+        # 디렉토리 생성
         os.makedirs(self.persist_directory, exist_ok=True)
         os.makedirs(self.cache_directory, exist_ok=True)
 
+        # 임베딩 설정
         self.base_embeddings = OpenAIEmbeddings(
             model="text-embedding-3-small",
             dimensions=1536
         )
         self.cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
             self.base_embeddings,
-            LocalFileStore(cache_directory),
+            LocalFileStore(self.cache_directory),
             namespace="career_embeddings"
         )
         self.vectorstore = None
         self.ensemble_retriever = None
         
-        # 교육과정 관련 추가 속성
-        self.education_persist_dir = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/vector_stores/education_courses"
-        ))
-        self.education_docs_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/docs/education_courses.json"
-        ))
-        self.skill_mapping_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/docs/skill_education_mapping.json"
-        ))
-        self.deduplication_index_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/docs/course_deduplication_index.json"
-        ))
+        # 교육과정 관련 경로 설정 (PathConfig 사용)
+        self.education_persist_dir = PathConfig.get_abs_path(PathConfig.EDUCATION_VECTOR_STORE)
+        self.education_docs_path = PathConfig.get_abs_path(PathConfig.EDUCATION_DOCS)
+        self.skill_mapping_path = PathConfig.get_abs_path(PathConfig.SKILL_MAPPING)
+        self.deduplication_index_path = PathConfig.get_abs_path(PathConfig.COURSE_DEDUPLICATION)
         
-        # 회사 비전 관련 추가 속성
-        self.company_vision_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/docs/company_vision.json"
-        ))
+        # 회사 비전 관련 경로 설정 (PathConfig 사용)
+        self.company_vision_path = PathConfig.get_abs_path(PathConfig.COMPANY_VISION)
         
         # 지연 로딩 속성
         self.education_vectorstore = None
@@ -138,8 +163,8 @@ class CareerEnsembleRetrieverAgent:
             search_type="similarity",
             search_kwargs={"k": 3}
         )
-        # BM25용 docs 로드 (storage/docs/career_docs.json)
-        docs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../storage/docs/career_history.json'))
+        # BM25용 docs 로드 (PathConfig 사용)
+        docs_path = PathConfig.get_abs_path(PathConfig.CAREER_DOCS)
         all_docs = []
         try:
             with open(docs_path, 'r', encoding='utf-8') as f:
@@ -160,10 +185,14 @@ class CareerEnsembleRetrieverAgent:
             weights=weights
         )
         self.logger.info(f"Career 앙상블 리트리버 준비 완료 (문서 수: {len(all_docs)})")
+        print(f"✅ [커리어 사례 VectorDB] 초기화 완료")
 
     def retrieve(self, query: str, k: int = 3):
         """앙상블 리트리버로 검색 (기본 3개 결과) + 시간 기반 필터링"""
+        print(f"🔍 [커리어 사례 검색] 시작 - '{query}'")
+        
         if not self.ensemble_retriever:
+            print(f"❌ [커리어 사례 검색] 앙상블 리트리버가 없음")
             return []
         
         # 기본 검색 수행
@@ -259,6 +288,7 @@ class CareerEnsembleRetrieverAgent:
                 final_docs.append(vision_doc)
                 self.logger.info("회사 비전 정보가 검색 결과에 추가되었습니다.")
         
+        print(f"✅ [커리어 사례 검색] 완료: {len(final_docs)}개 결과 반환")
         return final_docs
     
     def _extract_years_from_query(self, query: str) -> dict:
@@ -398,9 +428,13 @@ class CareerEnsembleRetrieverAgent:
         # 가장 최근 연도 반환
         return max(years) if years else None
 
-    def load_chat_history(self, user_id: str = None, chat_history_path: str = "app/data/json/chat_history.json"):
+    def load_chat_history(self, user_id: str = None, chat_history_path: str = None):
         """chat_history.json 파일을 불러와 사용자 ID별로 필터링하여 반환"""
         try:
+            # PathConfig 사용 (기본값)
+            if chat_history_path is None:
+                chat_history_path = PathConfig.get_abs_path(PathConfig.CHAT_HISTORY)
+            
             with open(chat_history_path, "r", encoding="utf-8") as f:
                 all_chat_history = json.load(f)
             
@@ -440,10 +474,13 @@ class CareerEnsembleRetrieverAgent:
                     collection_name="education_courses"
                 )
                 self.logger.info("교육과정 VectorDB 로드 완료")
+                print(f"✅ [교육과정 VectorDB] 초기화 완료")
             else:
                 self.logger.warning("교육과정 VectorDB가 존재하지 않습니다. utils/education_data_processor.py를 실행해주세요.")
+                print(f"⚠️  [교육과정 VectorDB] 없음 - JSON 파일로 폴백 검색 진행")
         except Exception as e:
             self.logger.error(f"교육과정 VectorDB 로드 실패: {e}")
+            print(f"❌ [교육과정 VectorDB] 로드 실패: {e} - JSON 파일로 폴백 검색 진행")
             self.education_vectorstore = None
     
     def _load_skill_education_mapping(self):
@@ -550,6 +587,7 @@ class CareerEnsembleRetrieverAgent:
 
     def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
         """교육과정 검색 메인 함수 - 최대 3개까지만 검색"""
+        print(f"🔍 [교육과정 검색] 시작 - '{query}'")
         self._load_education_resources()
         
         try:
@@ -577,6 +615,7 @@ class CareerEnsembleRetrieverAgent:
             learning_path = self._generate_learning_path(deduplicated_courses)
             
             self.logger.info(f"교육과정 검색 완료: 최종 {len(deduplicated_courses)}개 과정 반환")
+            print(f"✅ [교육과정 검색] 완료: {len(deduplicated_courses)}개 과정 반환")
             
             return {
                 "recommended_courses": deduplicated_courses,
@@ -585,6 +624,7 @@ class CareerEnsembleRetrieverAgent:
             }
         except Exception as e:
             self.logger.error(f"교육과정 검색 중 오류: {e}")
+            print(f"❌ [교육과정 검색] 오류 발생: {e}")
             return {
                 "recommended_courses": [],
                 "course_analysis": {"message": f"교육과정 검색 중 오류가 발생했습니다: {e}"},
@@ -1030,10 +1070,7 @@ class CareerEnsembleRetrieverAgent:
         """원본 교육과정 상세 데이터 로드"""
         if not hasattr(self, 'original_mysuni_data'):
             try:
-                mysuni_path = os.path.abspath(os.path.join(
-                    os.path.dirname(__file__), 
-                    "../../storage/docs/mysuni_courses_detailed.json"
-                ))
+                mysuni_path = PathConfig.get_abs_path(PathConfig.MYSUNI_DETAILED)
                 with open(mysuni_path, "r", encoding="utf-8") as f:
                     self.original_mysuni_data = json.load(f)
                 self.logger.info(f"mySUNI 원본 데이터 로드 완료: {len(self.original_mysuni_data)}개")
@@ -1043,10 +1080,7 @@ class CareerEnsembleRetrieverAgent:
                 
         if not hasattr(self, 'original_college_data'):
             try:
-                college_path = os.path.abspath(os.path.join(
-                    os.path.dirname(__file__), 
-                    "../../storage/docs/college_courses_detailed.json"
-                ))
+                college_path = PathConfig.get_abs_path(PathConfig.COLLEGE_DETAILED)
                 with open(college_path, "r", encoding="utf-8") as f:
                     self.original_college_data = json.load(f)
                 self.logger.info(f"College 원본 데이터 로드 완료: {len(self.original_college_data)}개")

@@ -32,6 +32,10 @@ from chromadb.config import Settings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+from dotenv import load_dotenv
+
+# 환경변수 로드
+load_dotenv()
 
 class SessionVectorDBBuilder:
     """
@@ -699,7 +703,8 @@ class SessionVectorDBBuilder:
             user_db_path = self.storage_path / f"user_{member_id}_sessions"
             
             if not user_db_path.exists():
-                print(f"❌ 사용자 VectorDB가 존재하지 않음: {member_id}")
+                print(f"ℹ️  [과거 대화 VectorDB] 사용자 {member_id}의 과거 대화 히스토리가 없습니다")
+                print(f"   📝 이는 첫 대화 시 정상적인 상황입니다")
                 return None
             
             vectorstore = Chroma(
@@ -708,11 +713,11 @@ class SessionVectorDBBuilder:
                 persist_directory=str(user_db_path)
             )
             
-            print(f"✅ 사용자 VectorDB 로드 성공: {member_id}")
+            print(f"✅ [과거 대화 VectorDB] 사용자 {member_id}의 과거 대화 히스토리 로드 성공")
             return vectorstore
             
         except Exception as e:
-            print(f"❌ 사용자 VectorDB 로드 실패: {member_id} - {e}")
+            print(f"❌ [과거 대화 VectorDB] 사용자 {member_id} 로드 실패: {e}")
             return None
     
     def search_user_sessions(self, member_id: str, query: str, k: int = 5) -> List[Dict[str, Any]]:
@@ -733,9 +738,12 @@ class SessionVectorDBBuilder:
             - 관련도 점수 기반 품질 필터링
         """
         try:
+            print(f"🔍 [과거 대화 검색] 사용자 {member_id}의 과거 대화 히스토리 검색 시작...")
             vectorstore = self.get_user_vectorstore(member_id)
             
             if not vectorstore:
+                print(f"ℹ️  [과거 대화 검색] 사용자 {member_id}의 과거 대화가 없어 검색 결과 없음 (첫 대화 시 정상)")
+                print(f"✅ [과거 대화 검색] 완료")
                 return []
             
             # 🔍 의미 기반 유사도 검색 수행
@@ -755,11 +763,11 @@ class SessionVectorDBBuilder:
                     "session_summary": doc.metadata.get("summary", "요약 없음")
                 })
             
-            print(f"   🔍 사용자 {member_id} 세션 검색 완료: {len(search_results)}개 결과")
+            print(f"✅ [과거 대화 검색] 사용자 {member_id} 검색 완료: {len(search_results)}개 결과")
             return search_results
             
         except Exception as e:
-            print(f"❌ 사용자 세션 검색 실패: {member_id} - {e}")
+            print(f"❌ [과거 대화 검색] 사용자 {member_id} 검색 실패: {e}")
             return []
     
     def get_user_session_stats(self, member_id: str) -> Dict[str, Any]:
