@@ -1,23 +1,41 @@
 # app/graphs/agents/retriever.py
 """
-🔍 커리어 앙상블 리트리버 에이전트
-
-이 에이전트는 Vector Store에서 관련 정보를 검색하는 핵심 모듈입니다:
-1. BM25 + OpenAI 임베딩 앙상블 검색으로 정확도 향상
-2. 커리어 사례와 교육과정 데이터 통합 검색
-3. 사용자 프로필 기반 개인화된 검색 결과 제공
-4. ChromaDB를 활용한 고성능 벡터 검색
-
-📚 검색 대상:
-- 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
-- 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
-- 학습 경로: 단계별 성장 로드맵
-
-🔧 주요 기술:
-- Ensemble Retriever (BM25 + Vector Search)
-- OpenAI Embeddings with Cache
-- ChromaDB Persistent Storage
-- Query Optimization & Filtering
+* @className : CareerEnsembleRetrieverAgent
+* @description : 커리어 앙상블 리트리버 에이전트 모듈
+*                Vector Store에서 관련 정보를 검색하는 핵심 모듈입니다.
+*                BM25 + OpenAI 임베딩 앙상블 검색으로 정확도를 향상시키고,
+*                사용자 프로필 기반 개인화된 검색 결과를 제공합니다.
+*
+*                🔄 주요 기능:
+*                1. BM25 + OpenAI 임베딩 앙상블 검색으로 정확도 향상
+*                2. 커리어 사례와 교육과정 데이터 통합 검색
+*                3. 사용자 프로필 기반 개인화된 검색 결과 제공
+*                4. ChromaDB를 활용한 고성능 벡터 검색
+*
+*                📚 검색 대상:
+*                - 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
+*                - 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
+*                - 학습 경로: 단계별 성장 로드맵
+*
+*                🔧 주요 기술:
+*                - Ensemble Retriever (BM25 + Vector Search)
+*                - OpenAI Embeddings with Cache
+*                - ChromaDB Persistent Storage
+*                - Query Optimization & Filtering
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ChromaDB, OpenAI, BM25
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os
@@ -38,6 +56,38 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv()
 
+# ==================== 📂 경로 설정 (수정 필요시 여기만 변경) ====================
+class PathConfig:
+    """
+    모든 경로 설정을 한 곳에서 관리하는 클래스
+    경로 변경이 필요할 때는 이 부분만 수정하면 됩니다.
+    """
+    BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # app 디렉토리
+    
+    # 📊 벡터 스토어 경로 (Chroma DB 저장소)
+    CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"           # 커리어 사례 벡터 데이터베이스
+    EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"  # 교육과정 벡터 데이터베이스
+    
+    # 🗄️ 캐시 경로 (임베딩 캐시)
+    CAREER_EMBEDDING_CACHE = "../../storage/cache/embedding_cache"            # 커리어 사례 임베딩 캐시 저장소
+    EDUCATION_EMBEDDING_CACHE = "../../storage/cache/education_embedding_cache" # 교육과정 임베딩 캐시 저장소
+    
+    # 📄 문서 경로 (JSON 데이터 파일들)
+    CAREER_DOCS = "../../storage/docs/career_history.json"                    # 커리어 히스토리 원본 데이터
+    EDUCATION_DOCS = "../../storage/docs/education_courses.json"              # 교육과정 문서 데이터
+    SKILL_MAPPING = "../../storage/docs/skill_education_mapping.json"         # 스킬-교육과정 매핑 테이블
+    COURSE_DEDUPLICATION = "../../storage/docs/course_deduplication_index.json"  # 과정 중복 제거 인덱스
+    COMPANY_VISION = "../../storage/docs/company_vision.json"                 # 회사 비전 및 가치 데이터
+    MYSUNI_DETAILED = "../../storage/docs/mysuni_courses_detailed.json"       # mySUNI 과정 상세 정보
+    COLLEGE_DETAILED = "../../storage/docs/college_courses_detailed.json"     # College 과정 상세 정보
+    
+    @classmethod
+    def get_abs_path(cls, relative_path: str) -> str:
+        """상대 경로를 절대 경로로 변환"""
+        return os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path))
+
+# ==================== 📂 경로 설정 끝 ====================
+
 class CareerEnsembleRetrieverAgent:
     """
     🔍 커리어 앙상블 리트리버 에이전트
@@ -49,56 +99,58 @@ class CareerEnsembleRetrieverAgent:
     - 커리어 사례: 최대 3개까지 검색
     - 교육과정: 최대 3개까지 검색
     """
-    def __init__(self, persist_directory: str = os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/vector_stores/career_data"
-        ), cache_directory: str = os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/cache/embedding_cache"
-        )):
+    def __init__(self, persist_directory: str = None, cache_directory: str = None):
+        """
+        CareerEnsembleRetrieverAgent 초기화
+        
+        Args:
+            persist_directory: 커리어 벡터 스토어 경로 (기본값: PathConfig.CAREER_VECTOR_STORE)
+            cache_directory: 커리어 임베딩 캐시 경로 (기본값: PathConfig.CAREER_EMBEDDING_CACHE)
+        """
+        # 경로 설정 (PathConfig 사용)
+        self.persist_directory = PathConfig.get_abs_path(
+            persist_directory or PathConfig.CAREER_VECTOR_STORE
+        )                                                                            # 커리어 벡터 스토어 절대 경로
+        self.career_cache_directory = PathConfig.get_abs_path(
+            cache_directory or PathConfig.CAREER_EMBEDDING_CACHE
+        )                                                                            # 커리어 임베딩 캐시 절대 경로
+        self.base_dir = PathConfig.BASE_DIR                                          # 기본 디렉토리 경로
+        self.logger = logging.getLogger(__name__)                                    # 로거 인스턴스
+        
+        # 디렉토리 생성
+        os.makedirs(self.persist_directory, exist_ok=True)                           # 벡터 스토어 디렉토리 생성
+        os.makedirs(self.career_cache_directory, exist_ok=True)                      # 커리어 캐시 디렉토리 생성
 
-        self.persist_directory = os.path.abspath(persist_directory)
-        self.cache_directory = os.path.abspath(cache_directory)
-        self.base_dir = os.path.dirname(os.path.dirname(__file__))  # app 디렉토리
-        self.logger = logging.getLogger(__name__)
-        os.makedirs(self.persist_directory, exist_ok=True)
-        os.makedirs(self.cache_directory, exist_ok=True)
-
-        self.base_embeddings = OpenAIEmbeddings(
+        # 커리어 전용 임베딩 설정
+        self.base_embeddings = OpenAIEmbeddings(                                     # OpenAI 기본 임베딩 모델
             model="text-embedding-3-small",
             dimensions=1536
         )
-        self.cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
+        self.career_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(      # 커리어 전용 캐시 기반 임베딩 래퍼
             self.base_embeddings,
-            LocalFileStore(cache_directory),
+            LocalFileStore(self.career_cache_directory),
             namespace="career_embeddings"
         )
-        self.vectorstore = None
-        self.ensemble_retriever = None
         
-        # 교육과정 관련 추가 속성
-        self.education_persist_dir = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/vector_stores/education_courses"
-        ))
-        self.education_docs_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/docs/education_courses.json"
-        ))
-        self.skill_mapping_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/docs/skill_education_mapping.json"
-        ))
-        self.deduplication_index_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/docs/course_deduplication_index.json"
-        ))
+        # 교육과정 전용 임베딩 설정
+        self.education_cache_directory = PathConfig.get_abs_path(PathConfig.EDUCATION_EMBEDDING_CACHE)
+        os.makedirs(self.education_cache_directory, exist_ok=True)
+        self.education_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(   # 교육과정 전용 캐시 기반 임베딩 래퍼
+            self.base_embeddings,
+            LocalFileStore(self.education_cache_directory),
+            namespace="education_embeddings"
+        )
+        self.vectorstore = None                                                      # Chroma 벡터 스토어 인스턴스 
+        self.ensemble_retriever = None                                               # 앙상블 리트리버 인스턴스
         
-        # 회사 비전 관련 추가 속성
-        self.company_vision_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), 
-            "../../storage/docs/company_vision.json"
-        ))
+        # 교육과정 관련 경로 설정 (PathConfig 사용)
+        self.education_persist_dir = PathConfig.get_abs_path(PathConfig.EDUCATION_VECTOR_STORE)    # 교육과정 벡터 스토어 경로
+        self.education_docs_path = PathConfig.get_abs_path(PathConfig.EDUCATION_DOCS)              # 교육과정 문서 파일 경로
+        self.skill_mapping_path = PathConfig.get_abs_path(PathConfig.SKILL_MAPPING)                # 스킬-교육과정 매핑 파일 경로
+        self.deduplication_index_path = PathConfig.get_abs_path(PathConfig.COURSE_DEDUPLICATION)   # 과정 중복제거 인덱스 파일 경로
+        
+        # 회사 비전 관련 경로 설정 (PathConfig 사용)
+        self.company_vision_path = PathConfig.get_abs_path(PathConfig.COMPANY_VISION)              # 회사 비전 데이터 파일 경로
         
         # 지연 로딩 속성
         self.education_vectorstore = None
@@ -112,7 +164,7 @@ class CareerEnsembleRetrieverAgent:
         # Chroma 벡터스토어 로드
         self.vectorstore = Chroma(
             persist_directory=self.persist_directory,
-            embedding_function=self.cached_embeddings,
+            embedding_function=self.career_cached_embeddings,
             collection_name="career_history"
         )
         # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
@@ -120,8 +172,8 @@ class CareerEnsembleRetrieverAgent:
             search_type="similarity",
             search_kwargs={"k": 3}
         )
-        # BM25용 docs 로드 (storage/docs/career_docs.json)
-        docs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../storage/docs/career_history.json'))
+        # BM25용 docs 로드 (PathConfig 사용)
+        docs_path = PathConfig.get_abs_path(PathConfig.CAREER_DOCS)
         all_docs = []
         try:
             with open(docs_path, 'r', encoding='utf-8') as f:
@@ -142,10 +194,14 @@ class CareerEnsembleRetrieverAgent:
             weights=weights
         )
         self.logger.info(f"Career 앙상블 리트리버 준비 완료 (문서 수: {len(all_docs)})")
+        print(f"✅ [커리어 사례 VectorDB] 초기화 완료")
 
     def retrieve(self, query: str, k: int = 3):
         """앙상블 리트리버로 검색 (기본 3개 결과) + 시간 기반 필터링"""
+        print(f"🔍 [커리어 사례 검색] 시작 - '{query}'")
+        
         if not self.ensemble_retriever:
+            print(f"❌ [커리어 사례 검색] 앙상블 리트리버가 없음")
             return []
         
         # 기본 검색 수행
@@ -241,6 +297,7 @@ class CareerEnsembleRetrieverAgent:
                 final_docs.append(vision_doc)
                 self.logger.info("회사 비전 정보가 검색 결과에 추가되었습니다.")
         
+        print(f"✅ [커리어 사례 검색] 완료: {len(final_docs)}개 결과 반환")
         return final_docs
     
     def _extract_years_from_query(self, query: str) -> dict:
@@ -380,29 +437,6 @@ class CareerEnsembleRetrieverAgent:
         # 가장 최근 연도 반환
         return max(years) if years else None
 
-    def load_chat_history(self, user_id: str = None, chat_history_path: str = "app/data/json/chat_history.json"):
-        """chat_history.json 파일을 불러와 사용자 ID별로 필터링하여 반환"""
-        try:
-            with open(chat_history_path, "r", encoding="utf-8") as f:
-                all_chat_history = json.load(f)
-            
-            # 사용자 ID가 제공된 경우 해당 사용자의 대화내역만 필터링
-            if user_id:
-                user_chat_history = [
-                    session for session in all_chat_history 
-                    if session.get("user_id") == user_id
-                ]
-                self.logger.info(f"사용자 {user_id}의 chat_history 로드 완료 (세션 수: {len(user_chat_history)})")
-                return user_chat_history
-            else:
-                # 사용자 ID가 없으면 전체 반환 (하위 호환성)
-                self.logger.info(f"전체 chat_history 로드 완료 (세션 수: {len(all_chat_history)})")
-                return all_chat_history
-                
-        except Exception as e:
-            self.logger.error(f"chat_history.json 로드 실패: {e}")
-            return []
-
     def _load_education_resources(self):
         """교육과정 리소스 지연 로딩"""
         if self.education_vectorstore is None:
@@ -413,19 +447,22 @@ class CareerEnsembleRetrieverAgent:
             self._load_deduplication_index()
     
     def _initialize_education_vectorstore(self):
-        """교육과정 VectorDB 초기화"""
+        """교육과정 VectorDB 초기화 (교육과정 전용 캐시 사용)"""
         try:
             if os.path.exists(self.education_persist_dir):
                 self.education_vectorstore = Chroma(
                     persist_directory=self.education_persist_dir,
-                    embedding_function=self.cached_embeddings,
+                    embedding_function=self.education_cached_embeddings,  # 교육과정 전용 캐시 사용
                     collection_name="education_courses"
                 )
-                self.logger.info("교육과정 VectorDB 로드 완료")
+                self.logger.info("교육과정 VectorDB 로드 완료 (교육과정 전용 캐시 적용)")
+                print(f"✅ [교육과정 VectorDB] 초기화 완료 (전용 캐시 적용)")
             else:
                 self.logger.warning("교육과정 VectorDB가 존재하지 않습니다. utils/education_data_processor.py를 실행해주세요.")
+                print(f"⚠️  [교육과정 VectorDB] 없음 - JSON 파일로 폴백 검색 진행")
         except Exception as e:
             self.logger.error(f"교육과정 VectorDB 로드 실패: {e}")
+            print(f"❌ [교육과정 VectorDB] 로드 실패: {e} - JSON 파일로 폴백 검색 진행")
             self.education_vectorstore = None
     
     def _load_skill_education_mapping(self):
@@ -532,6 +569,7 @@ class CareerEnsembleRetrieverAgent:
 
     def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
         """교육과정 검색 메인 함수 - 최대 3개까지만 검색"""
+        print(f"🔍 [교육과정 검색] 시작 - '{query}'")
         self._load_education_resources()
         
         try:
@@ -559,6 +597,7 @@ class CareerEnsembleRetrieverAgent:
             learning_path = self._generate_learning_path(deduplicated_courses)
             
             self.logger.info(f"교육과정 검색 완료: 최종 {len(deduplicated_courses)}개 과정 반환")
+            print(f"✅ [교육과정 검색] 완료: {len(deduplicated_courses)}개 과정 반환")
             
             return {
                 "recommended_courses": deduplicated_courses,
@@ -567,6 +606,7 @@ class CareerEnsembleRetrieverAgent:
             }
         except Exception as e:
             self.logger.error(f"교육과정 검색 중 오류: {e}")
+            print(f"❌ [교육과정 검색] 오류 발생: {e}")
             return {
                 "recommended_courses": [],
                 "course_analysis": {"message": f"교육과정 검색 중 오류가 발생했습니다: {e}"},
@@ -1012,10 +1052,7 @@ class CareerEnsembleRetrieverAgent:
         """원본 교육과정 상세 데이터 로드"""
         if not hasattr(self, 'original_mysuni_data'):
             try:
-                mysuni_path = os.path.abspath(os.path.join(
-                    os.path.dirname(__file__), 
-                    "../../storage/docs/mysuni_courses_detailed.json"
-                ))
+                mysuni_path = PathConfig.get_abs_path(PathConfig.MYSUNI_DETAILED)
                 with open(mysuni_path, "r", encoding="utf-8") as f:
                     self.original_mysuni_data = json.load(f)
                 self.logger.info(f"mySUNI 원본 데이터 로드 완료: {len(self.original_mysuni_data)}개")
@@ -1025,10 +1062,7 @@ class CareerEnsembleRetrieverAgent:
                 
         if not hasattr(self, 'original_college_data'):
             try:
-                college_path = os.path.abspath(os.path.join(
-                    os.path.dirname(__file__), 
-                    "../../storage/docs/college_courses_detailed.json"
-                ))
+                college_path = PathConfig.get_abs_path(PathConfig.COLLEGE_DETAILED)
                 with open(college_path, "r", encoding="utf-8") as f:
                     self.original_college_data = json.load(f)
                 self.logger.info(f"College 원본 데이터 로드 완료: {len(self.original_college_data)}개")
