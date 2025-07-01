@@ -1,3 +1,30 @@
+"""
+* @className : Conversation API Endpoints
+* @description : 채팅방 관리 API 엔드포인트 모듈
+*                G-Navi AI 시스템의 채팅방 생성, 로드, 관리 기능을 제공하는 REST API입니다.
+*                SpringBoot 백엔드와 연동하여 채팅방 생명주기를 관리합니다.
+*
+*                🔄 주요 기능:
+*                - 채팅방 생성 또는 기존 채팅방 로드
+*                - SpringBoot와의 데이터 연동
+*                - 채팅방 상태 관리 및 응답
+*                - 에러 처리 및 예외 관리
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see FastAPI, HTTPException, ChatService
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
+
 from fastapi import APIRouter, HTTPException, Depends
 from datetime import datetime
 
@@ -9,7 +36,7 @@ from app.api.deps import get_chat_service
 from app.services.chat_service import ChatService
 
 
-router = APIRouter()
+router = APIRouter()  # FastAPI 라우터 생성
 
 @router.post("", response_model=ChatRoomResponse)
 async def create_or_load_room(
@@ -17,17 +44,22 @@ async def create_or_load_room(
     chat_service: ChatService = Depends(get_chat_service)
 ):
     """
-    채팅방 생성 또는 로드
-    SpringBoot에서 member_id, conversation_id, user_info, messages와 함께 호출
-    messages가 빈 리스트면 새 방, 아니면 기존 방 로드
+    채팅방을 생성하거나 로드한다.
+    SpringBoot에서 member_id, conversation_id, user_info, messages와 함께 호출됩니다.
+    messages가 빈 리스트면 새 방을 생성하고, 아니면 기존 방을 로드합니다.
+    
+    @param request: ChatRoomCreate - 채팅방 생성 요청 정보
+    @param chat_service: ChatService - 주입된 채팅 서비스
+    @return ChatRoomResponse - 채팅방 생성/로드 결과 응답
+    @throws HTTPException - 채팅방 생성/로드 실패 시
     """
-    try:
-        print(f"채팅방 요청: member_id={request.member_id}, conversation_id={request.conversation_id}, user_info: {request.user_info}, 기존 메시지 개수: {len(request.messages)}")
+    try:  # 예외 처리 시작
+        print(f"채팅방 요청: member_id={request.member_id}, conversation_id={request.conversation_id}, user_info: {request.user_info}, 기존 메시지 개수: {len(request.messages)}")  # 요청 정보 로그
         
         # messages 리스트로 새 방인지 판단
-        if len(request.messages) == 0:
-            is_new_room = True
-            print("채팅방 생성")
+        if len(request.messages) == 0:  # 메시지가 없으면 새 채팅방
+            is_new_room = True  # 새 방 플래그 설정
+            print("채팅방 생성")  # 새 방 생성 로그
         else: 
             is_new_room = False
             print("채팅방 로드")

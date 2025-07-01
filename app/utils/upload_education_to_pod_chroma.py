@@ -1,7 +1,23 @@
-# app/utils/upload_education_vectorstore_to_pod.py
+# app/utils/upload_education_to_pod_chroma.py
 """
-로컬 교육과정 ChromaDB 컬렉션을 Pod ChromaDB로 업로드하는 스크립트
-기존 경력 데이터 업로더와 동일한 방식
+* @className : EducationDataUploader
+* @description : 교육과정 데이터 업로드 유틸리티 모듈
+*                교육과정 정보를 ChromaDB에 업로드하는 유틸리티입니다.
+*                교육 프로그램 데이터를 벡터화하여 검색 가능한 형태로 저장합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ChromaDB, pandas, OpenAI
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os

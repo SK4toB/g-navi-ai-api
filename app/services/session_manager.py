@@ -1,25 +1,42 @@
 # app/services/session_manager.py
 """
-🗂️ 채팅 세션 생명주기 관리 및 VectorDB 자동 구축 시스템
-
-📋 핵심 기능:
-1. 채팅 세션 생성/조회/삭제 관리
-2. 세션 만료 시간 추적 및 자동 정리
-3. 세션 종료 시 VectorDB 자동 구축 트리거
-4. 백그라운드 정리 작업으로 리소스 최적화
-
-🔄 VectorDB 통합 플로우:
-세션 활성화 → 대화 진행 → 세션 종료/만료 → current_session_messages 수집 → VectorDB 구축 → 세션 삭제
-
-⚡ 핵심 시점:
-- 세션 생성: 사용자 첫 메시지 시
-- VectorDB 구축: 세션 종료/만료 직전 (데이터 손실 방지)
-- 세션 삭제: VectorDB 구축 완료 후
-
-🛡️ 안전 장치:
-- VectorDB 구축 실패 시에도 세션 정리 진행
-- 이중 삭제 방지 (세션이 이미 삭제된 경우 처리)
-- 백그라운드 정리 작업 예외 처리
+* @className : SessionManager
+* @description : 채팅 세션 생명주기 관리 및 VectorDB 자동 구축 시스템
+*                G-Navi AI 시스템의 채팅 세션 관리를 담당하는 핵심 서비스입니다.
+*                세션 생성/조회/삭제, 자동 정리, VectorDB 구축 등을 관리합니다.
+*
+*                📋 핵심 기능:
+*                1. 채팅 세션 생성/조회/삭제 관리
+*                2. 세션 만료 시간 추적 및 자동 정리
+*                3. 세션 종료 시 VectorDB 자동 구축 트리거
+*                4. 백그라운드 정리 작업으로 리소스 최적화
+*
+*                🔄 VectorDB 통합 플로우:
+*                세션 활성화 → 대화 진행 → 세션 종료/만료 → current_session_messages 수집 → VectorDB 구축 → 세션 삭제
+*
+*                ⚡ 핵심 시점:
+*                - 세션 생성: 사용자 첫 메시지 시
+*                - VectorDB 구축: 세션 종료/만료 직전 (데이터 손실 방지)
+*                - 세션 삭제: VectorDB 구축 완료 후
+*
+*                🛡️ 안전 장치:
+*                - VectorDB 구축 실패 시에도 세션 정리 진행
+*                - 이중 삭제 방지 (세션이 이미 삭제된 경우 처리)
+*                - 백그라운드 정리 작업 예외 처리
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see VectorDB, ChromaService, asyncio
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import asyncio

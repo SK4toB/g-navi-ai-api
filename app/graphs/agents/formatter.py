@@ -1,24 +1,23 @@
 # app/graphs/agents/formatter.py
 """
-📝 적응적 응답 포맷팅 에이전트
-
-이 에이전트는 검색된 데이터를 활용하여 사용자 맞춤형 응답을 생성합니다:
-1. 질문 유형에 따른 적응적 응답 스타일 선택
-2. 커리어 사례와 교육과정 데이터의 자연스러운 통합
-3. 사용자 친화적이고 대화형 톤 앤 매너 적용
-4. 개인화된 조언과 구체적인 액션 아이템 제공
-
-🎨 응답 스타일:
-- adaptive: 일반적인 상담 및 조언 (기본)
-- career_guidance: 체계적인 커리어 가이던스
-- conversation: 가벼운 대화 및 인사
-- summary: 이전 대화 요약
-
-💡 핵심 특징:
-- OpenAI GPT 기반 고품질 응답 생성
-- 사용자 프로필과 검색 결과를 종합한 개인화
-- 자연스러운 대화체와 친근한 커리어 코치 톤
-- 마크다운 형태의 구조화된 출력
+* @className : ResponseFormattingAgent
+* @description : 응답 포맷팅 에이전트 모듈
+*                검색된 정보를 사용자 친화적인 형태로 포맷팅하는 에이전트입니다.
+*                마크다운 형식으로 구조화된 응답을 생성합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see Markdown, GPT
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any, Optional, List, Union

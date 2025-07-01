@@ -1,6 +1,23 @@
-# upload_to_pod_chroma.py
+# app/utils/upload_career_to_pod_chroma.py
 """
-로컬 ChromaDB 컬렉션을 Pod ChromaDB로 업로드하는 스크립트
+* @className : CareerDataUploader
+* @description : 커리어 데이터 업로드 유틸리티 모듈
+*                커리어 사례 데이터를 ChromaDB에 업로드하는 유틸리티입니다.
+*                CSV/JSON 형태의 커리어 데이터를 벡터화하여 저장합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ChromaDB, pandas, OpenAI
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os

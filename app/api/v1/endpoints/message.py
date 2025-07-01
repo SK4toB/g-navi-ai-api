@@ -1,4 +1,24 @@
 # app/api/v1/endpoints/message.py
+"""
+* @className : Message API Endpoints
+* @description : 메시지 처리 API 엔드포인트 모듈
+*                사용자 메시지를 처리하는 REST API를 제공합니다.
+*                메시지 전송과 AI 응답 생성을 담당합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see FastAPI, MessageProcessor
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 
 from fastapi import APIRouter, HTTPException, Depends, Path
 from datetime import datetime

@@ -1,17 +1,23 @@
 # app/api/v1/endpoints/session_management.py
 """
-🔌 채팅 세션 관리 및 VectorDB 접근 API 엔드포인트
-
-📋 제공하는 API:
-1. 세션 관리: 조회, 종료, 정리
-2. VectorDB 관리: 사용자별 통계, 검색
-3. 헬스체크: 시스템 상태 모니터링
-
-🔄 VectorDB 관련 API:
-- GET /vectordb/{member_id}/stats: 사용자별 저장된 세션 통계
-- POST /vectordb/{member_id}/search: 사용자별 과거 대화 검색
-
-⚠️ 중요: 모든 VectorDB API는 member_id 기준으로 완전히 분리됨 (개인정보 보호)
+* @className : Session Management API Endpoints
+* @description : 세션 관리 API 엔드포인트 모듈
+*                채팅 세션 관리 기능을 제공하는 REST API입니다.
+*                세션 생성, 조회, 삭제 등의 기능을 담당합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see FastAPI, SessionManager
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from fastapi import APIRouter, Depends

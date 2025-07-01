@@ -1,17 +1,23 @@
 # app/graphs/nodes/diagram_generation.py
 """
-🎨 5단계: Mermaid 다이어그램 생성 및 FE용 응답 통합 노드
-
-이 노드는 AgentRAG 워크플로우의 다섯 번째 단계로, 다음 작업을 수행합니다:
-1. 포맷팅된 응답 내용을 분석하여 다이어그램 생성 필요성 판단
-2. 적합한 경우 Mermaid 다이어그램 생성 (플로우차트, 마인드맵 등)
-3. 다이어그램과 텍스트 응답을 통합한 FE용 최종 응답 생성
-4. bot_message 설정으로 사용자 응답 준비 완료
-
-🎯 다이어그램 생성 조건:
-- 성장 방향, 학습 경로, 단계별 가이드 등 시각화 가능한 내용
-- 복잡한 정보의 구조화가 필요한 경우
-- 프로세스나 관계를 명확히 보여줄 수 있는 경우
+* @className : DiagramGenerationNode
+* @description : 다이어그램 생성 노드 모듈
+*                Mermaid 다이어그램을 생성하는 워크플로우 노드입니다.
+*                시각적 다이어그램으로 정보를 표현합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see MermaidDiagramAgent, ChatState
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any

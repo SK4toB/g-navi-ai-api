@@ -1,18 +1,23 @@
 # app/graphs/nodes/response_formatting.py
 """
-📝 4단계: 적응적 응답 포맷팅 노드
-
-이 노드는 AgentRAG 워크플로우의 네 번째 단계로, 다음 작업을 수행합니다:
-1. 검색된 데이터와 사용자 맥락을 종합한 개인화 응답 생성
-2. 질문 유형에 따른 적응적 응답 포맷 선택
-3. 사용자 친화적이고 자연스러운 대화체 생성
-4. current_session_messages에 AI 응답 추가 (MemorySaver 연동)
-
-🎨 응답 유형:
-- adaptive: 일반적인 상담 및 조언
-- career_guidance: 체계적인 커리어 가이던스  
-- conversation: 가벼운 대화 및 인사
-- summary: 이전 대화 요약
+* @className : ResponseFormattingNode
+* @description : 응답 포맷팅 노드 모듈
+*                검색 결과를 포맷팅하는 워크플로우 노드입니다.
+*                사용자 친화적인 응답 형태로 변환합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ResponseFormattingAgent, ChatState
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging

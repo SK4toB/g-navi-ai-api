@@ -12,6 +12,7 @@ venv.bak/
 venv310/
 output/
 app/data/
+annotation/
 
 # Environment variables
 .env

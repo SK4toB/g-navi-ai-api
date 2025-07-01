@@ -1,17 +1,23 @@
 # app/graphs/nodes/data_retrieval.py
 """
-🔍 3단계: 추가 데이터 검색 노드 (커리어 사례 + 교육과정)
-
-이 노드는 AgentRAG 워크플로우의 세 번째 단계로, 다음 작업을 수행합니다:
-1. 의도 분석 결과를 기반으로 한 커리어 사례 검색
-2. 사용자 프로필과 질문에 맞는 교육과정 추천
-3. Vector Store(ChromaDB)를 활용한 유사도 기반 검색
-4. 검색 결과의 품질 평가 및 필터링
-
-📚 검색 대상:
-- 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
-- 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
-- 학습 경로: 단계별 성장 로드맵
+* @className : DataRetrievalNode
+* @description : 데이터 검색 노드 모듈
+*                관련 데이터를 검색하는 워크플로우 노드입니다.
+*                커리어 사례와 교육과정 정보를 검색합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see CareerEnsembleRetrieverAgent, ChatState
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging

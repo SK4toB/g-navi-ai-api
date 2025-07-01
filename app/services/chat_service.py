@@ -1,4 +1,32 @@
 # app/services/chat_service.py (리팩토링된 버전)
+"""
+* @className : ChatService
+* @description : 채팅 서비스 메인 클래스
+*                G-Navi AI 시스템의 채팅 기능을 총괄하는 서비스입니다.
+*                채팅 세션 생성/로드, 메시지 처리, 세션 관리를 담당하며,
+*                각 책임별로 분리된 서비스들을 조율합니다.
+*
+*                🔄 주요 기능:
+*                - 채팅 세션 생성 및 로드
+*                - 메시지 처리 및 응답 생성
+*                - 세션 자동 정리 및 관리
+*                - 각 서비스 간의 데이터 흐름 조율
+*                - VectorDB를 활용한 세션 정보 구축
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see SessionManager, MessageProcessor, ChatSessionService
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 
 from typing import Dict, Any
 from datetime import datetime
@@ -9,29 +37,52 @@ from app.services.chat_session_service import ChatSessionService
 
 class ChatService:
     """
-    채팅 서비스 클래스
-    - 채팅 세션 생성/로드
-    - 메시지 처리
-    - 세션 관리 위임
-    - 각 책임별 서비스 분리
+    * @className : ChatService
+    * @description : 채팅 서비스 메인 클래스
+    *                채팅 세션 생성/로드, 메시지 처리, 세션 관리를 담당하는 핵심 서비스입니다.
+    *                각 책임별로 분리된 서비스들(SessionManager, MessageProcessor, ChatSessionService)을
+    *                조율하여 통합된 채팅 기능을 제공합니다.
+    *
+    * @modification : 2025.07.01(이재원) 최초생성
+    *
+    * @author 이재원
+    * @Date 2025.07.01
+    * @version 1.0
+    * @see SessionManager, MessageProcessor, ChatSessionService
+    *  == 개정이력(Modification Information) ==
+    *  
+    *   수정일        수정자        수정내용
+    *   ----------   --------     ---------------------------
+    *   2025.07.01   이재원       최초 생성
+    *  
+    * Copyright (C) by G-Navi AI System All right reserved.
     """
     
     def __init__(self, session_timeout_hours: int = 1):
+        """
+        ChatService 생성자 - 각 서비스를 초기화한다.
+        
+        @param session_timeout_hours: int - 세션 타임아웃 시간 (시간 단위)
+        """
         # 각 책임별 서비스 초기화
         # SessionManager에서 이미 테스트용 1분 타임아웃으로 설정됨
-        self.session_manager = SessionManager(session_timeout_hours)
-        self.message_processor = MessageProcessor()
-        self.chat_session_service = ChatSessionService()
+        self.session_manager = SessionManager(session_timeout_hours)  # 세션 관리자 생성
+        self.message_processor = MessageProcessor()  # 메시지 처리기 생성
+        self.chat_session_service = ChatSessionService()  # 채팅 세션 서비스 생성
         
-        print("ChatService 초기화 완료 (서비스모드: 세션 타임아웃 30분, 자동정리 5분)")
+        print("ChatService 초기화 완료 (서비스모드: 세션 타임아웃 30분, 자동정리 5분)")  # 초기화 완료 로그
     
     async def start_auto_cleanup(self):
-        """자동 세션 정리 시작 (VectorDB 구축 포함)"""
-        await self.session_manager.start_auto_cleanup(self.get_session_messages)
+        """
+        자동 세션 정리를 시작한다 (VectorDB 구축 포함).
+        """
+        await self.session_manager.start_auto_cleanup(self.get_session_messages)  # 세션 매니저의 자동 정리 시작
     
     async def stop_auto_cleanup(self):
-        """자동 세션 정리 중지"""
-        await self.session_manager.stop_auto_cleanup()
+        """
+        자동 세션 정리를 중지한다.
+        """
+        await self.session_manager.stop_auto_cleanup()  # 세션 매니저의 자동 정리 중지
     
     # ============================================================================
     # 메인 채팅 기능

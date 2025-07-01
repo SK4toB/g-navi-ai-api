@@ -1,18 +1,23 @@
 # app/graphs/nodes/chat_history.py
 """
-📝 1단계: 현재 세션 대화내역 통합 관리 노드
-
-이 노드는 AgentRAG 워크플로우의 첫 번째 단계로, 다음 작업을 수행합니다:
-1. SpringBoot에서 전달받은 이전 대화 내역을 current_session_messages에 통합
-2. LangGraph MemorySaver에서 복원된 기존 대화 내역과 병합
-3. 현재 사용자 질문을 대화 내역에 추가
-4. 모든 대화 내역을 통일된 형식으로 관리
-
-📋 주요 기능:
-- SpringBoot ↔ AgentRAG 간 대화 내역 동기화
-- 중복 방지 로직으로 안전한 메시지 통합
-- MemorySaver 상태 복원 지원
-- 세션 연속성 보장
+* @className : ChatHistoryNode
+* @description : 채팅 히스토리 노드 모듈
+*                대화 내역을 관리하는 워크플로우 노드입니다.
+*                이전 대화와 현재 세션의 메시지를 통합 관리합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ChatState, SessionManager
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging

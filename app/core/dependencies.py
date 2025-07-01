@@ -1,4 +1,24 @@
 # app/core/dependencies.py
+"""
+* @className : Core Dependencies
+* @description : 핵심 의존성 모듈
+*                애플리케이션의 핵심 의존성을 관리하는 모듈입니다.
+*                서비스 컨테이너와 주요 컴포넌트 인스턴스를 제공합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see Dependency Injection, Service Container
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 from functools import lru_cache
 from typing import Annotated
 from fastapi import Depends

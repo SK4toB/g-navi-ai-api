@@ -1,26 +1,23 @@
 # app/utils/session_vectordb_builder.py
 """
-🗃️ 사용자별 채팅 세션 대화내역 VectorDB 구축 시스템
-
-📋 핵심 기능:
-1. 세션 종료 시 사용자의 current_session_messages를 VectorDB로 자동 구축
-2. 사용자별(member_id) 분리된 VectorDB 저장 → 개인정보 보호 및 개인화 검색
-3. OpenAI Embeddings + ChromaDB를 활용한 의미 기반 검색
-4. 과거 대화 요약 및 키워드 추출로 검색 품질 향상
-
-🔄 동작 플로우:
-세션 종료 → current_session_messages 수집 → 스마트 규칙기반 요약 → VectorDB 구축 → 향후 검색 활용
-
-📁 저장 구조:
-storage/vector_stores/user_{member_id}_sessions/
-├── chroma.sqlite3              # ChromaDB 벡터 저장소
-├── session_index.json          # 세션 메타데이터 인덱스
-└── 기타 ChromaDB 파일들
-
-⚠️ 중요 사항:
-- 각 사용자별로 완전히 분리된 VectorDB 생성 (타 사용자 데이터 접근 불가)
-- 세션 종료 시에만 VectorDB 구축 (실시간 업데이트 아님)
-- 검색 시 관련도 점수 기반 필터링으로 품질 보장
+* @className : SessionVectorDBBuilder
+* @description : 세션 벡터DB 빌더 모듈
+*                채팅 세션 종료 시 대화 내역을 벡터화하여 ChromaDB에 저장하는 유틸리티입니다.
+*                대화 내용을 임베딩하고 검색 가능한 형태로 구축합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ChromaDB, OpenAI Embeddings
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os

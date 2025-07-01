@@ -1,23 +1,41 @@
 # app/graphs/agents/retriever.py
 """
-🔍 커리어 앙상블 리트리버 에이전트
-
-이 에이전트는 Vector Store에서 관련 정보를 검색하는 핵심 모듈입니다:
-1. BM25 + OpenAI 임베딩 앙상블 검색으로 정확도 향상
-2. 커리어 사례와 교육과정 데이터 통합 검색
-3. 사용자 프로필 기반 개인화된 검색 결과 제공
-4. ChromaDB를 활용한 고성능 벡터 검색
-
-📚 검색 대상:
-- 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
-- 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
-- 학습 경로: 단계별 성장 로드맵
-
-🔧 주요 기술:
-- Ensemble Retriever (BM25 + Vector Search)
-- OpenAI Embeddings with Cache
-- ChromaDB Persistent Storage
-- Query Optimization & Filtering
+* @className : CareerEnsembleRetrieverAgent
+* @description : 커리어 앙상블 리트리버 에이전트 모듈
+*                Vector Store에서 관련 정보를 검색하는 핵심 모듈입니다.
+*                BM25 + OpenAI 임베딩 앙상블 검색으로 정확도를 향상시키고,
+*                사용자 프로필 기반 개인화된 검색 결과를 제공합니다.
+*
+*                🔄 주요 기능:
+*                1. BM25 + OpenAI 임베딩 앙상블 검색으로 정확도 향상
+*                2. 커리어 사례와 교육과정 데이터 통합 검색
+*                3. 사용자 프로필 기반 개인화된 검색 결과 제공
+*                4. ChromaDB를 활용한 고성능 벡터 검색
+*
+*                📚 검색 대상:
+*                - 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
+*                - 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
+*                - 학습 경로: 단계별 성장 로드맵
+*
+*                🔧 주요 기술:
+*                - Ensemble Retriever (BM25 + Vector Search)
+*                - OpenAI Embeddings with Cache
+*                - ChromaDB Persistent Storage
+*                - Query Optimization & Filtering
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ChromaDB, OpenAI, BM25
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os

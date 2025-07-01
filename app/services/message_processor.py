@@ -1,4 +1,24 @@
 # app/services/message_processor.py
+"""
+* @className : MessageProcessor
+* @description : 메시지 처리 서비스 모듈
+*                사용자 메시지를 처리하고 LangGraph 워크플로우를 실행하는 서비스입니다.
+*                메시지 전처리, 워크플로우 실행, 응답 후처리를 담당합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see LangGraph, ChatState
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 
 from typing import Dict, Any
 import traceback

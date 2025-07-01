@@ -1,17 +1,23 @@
 # app/graphs/nodes/intent_analysis.py
 """
-🎯 2단계: 사용자 의도 분석 및 상황 이해 노드
-
-이 노드는 AgentRAG 워크플로우의 두 번째 단계로, 다음 작업을 수행합니다:
-1. 사용자 질문의 의도와 목적 분석
-2. 과거 대화 내역을 통한 맥락 이해
-3. 커리어 검색에 필요한 핵심 키워드 추출
-4. 후속 단계(데이터 검색)에 필요한 분석 정보 제공
-
-📊 분석 결과:
-- intent: 질문의 주요 의도 분류
-- career_history: 커리어 사례 검색용 키워드 (최대 3개)
-- 사용자 프로필과 대화 맥락을 종합한 상황 이해
+* @className : IntentAnalysisNode
+* @description : 의도 분석 노드 모듈
+*                사용자 질문의 의도를 분석하는 워크플로우 노드입니다.
+*                질문 유형과 카테고리를 분류합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see IntentAnalysisAgent, ChatState
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging
