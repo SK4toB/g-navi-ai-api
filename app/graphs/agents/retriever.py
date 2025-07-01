@@ -34,6 +34,9 @@ from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
 from langchain.schema import Document
 from datetime import datetime, timedelta
+import chromadb
+from chromadb.config import Settings
+import base64
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -55,7 +58,7 @@ class CareerEnsembleRetrieverAgent:
         ), cache_directory: str = os.path.join(
             os.path.dirname(__file__), 
             "../../storage/cache/embedding_cache"
-        )):
+        ), use_remote_chroma: bool = True):
 
         self.persist_directory = os.path.abspath(persist_directory)
         self.cache_directory = os.path.abspath(cache_directory)
@@ -75,6 +78,15 @@ class CareerEnsembleRetrieverAgent:
         )
         self.vectorstore = None
         self.ensemble_retriever = None
+
+        #####################################################
+        # 원격 ChromaDB 설정
+        self.use_remote_chroma = use_remote_chroma if use_remote_chroma is not None else os.getenv("USE_REMOTE_CHROMA", "false").lower() == "true"
+        self.chroma_external_url = "https://chromadb-1.skala25a.project.skala-ai.com"
+        self.chroma_internal_host = "chromadb-1.chromadb"
+        self.chroma_internal_port = 8000
+        self.chroma_auth_credentials = os.getenv("CHROMA_AUTH_CREDENTIALS")
+        #####################################################
         
         # 교육과정 관련 추가 속성
         self.education_persist_dir = os.path.abspath(os.path.join(
@@ -108,18 +120,116 @@ class CareerEnsembleRetrieverAgent:
         
         self._load_vectorstore_and_retriever()
 
+    def _create_chroma_client(self):
+        """ChromaDB 클라이언트 생성 (로컬/원격 자동 선택)"""
+        if self.use_remote_chroma:
+            return self._create_remote_chroma_client()
+        else:
+            return None  # 로컬 모드에서는 클라이언트 불필요
+
+    def _create_remote_chroma_client(self):
+        """원격 ChromaDB 클라이언트 생성"""
+        # 쿠버네티스 클러스터 내부에서 실행 중인지 확인
+        is_in_cluster = os.path.exists("/var/run/secrets/kubernetes.io/serviceaccount")
+        
+        if is_in_cluster:
+            # 클러스터 내부: 내부 서비스 주소 사용 (인증 불필요)
+            self.logger.info("클러스터 내부 환경 감지 - 내부 서비스로 연결")
+            try:
+                chroma_client = chromadb.HttpClient(
+                    host=self.chroma_internal_host,
+                    port=self.chroma_internal_port,
+                    ssl=False
+                )
+                # 연결 테스트
+                chroma_client.heartbeat()
+                self.logger.info(f"ChromaDB 내부 연결 성공: {self.chroma_internal_host}:{self.chroma_internal_port}")
+                return chroma_client
+            except Exception as e:
+                self.logger.warning(f"내부 연결 실패, 외부 연결 시도: {e}")
+        
+        # 외부 환경 또는 내부 연결 실패: 외부 URL + 인증 사용
+        self.logger.info("외부 ChromaDB 서버 연결 시도")
+        
+        # 방법 1: Settings를 통한 Basic Authentication (권장)
+        try:
+            chroma_client = chromadb.HttpClient(
+                host="chromadb-1.skala25a.project.skala-ai.com",
+                port=443,
+                ssl=True,
+                settings=Settings(
+                    chroma_client_auth_provider="chromadb.auth.basic.BasicAuthClientProvider",
+                    chroma_client_auth_credentials=self.chroma_auth_credentials
+                )
+            )
+            # 연결 테스트
+            chroma_client.heartbeat()
+            self.logger.info("ChromaDB 외부 연결 성공 (Basic Auth via Settings)")
+            return chroma_client
+            
+        except Exception as e:
+            self.logger.warning(f"Settings 방식 연결 실패: {e}")
+            
+            # 방법 2: Headers를 통한 Basic Authentication (대안)
+            try:
+                credentials = base64.b64encode(self.chroma_auth_credentials.encode()).decode()
+                auth_header = f"Basic {credentials}"
+                chroma_client = chromadb.HttpClient(
+                    host="chromadb-1.skala25a.project.skala-ai.com",
+                    port=443,
+                    ssl=True,
+                    headers={"Authorization": auth_header}
+                )
+                # 연결 테스트
+                chroma_client.heartbeat()
+                self.logger.info("ChromaDB 외부 연결 성공 (Basic Auth via Headers)")
+                return chroma_client
+                
+            except Exception as e2:
+                self.logger.error(f"ChromaDB 연결 완전 실패: {e2}")
+                raise ConnectionError(f"ChromaDB 서버에 연결할 수 없습니다: {e2}")
+            
     def _load_vectorstore_and_retriever(self):
-        # Chroma 벡터스토어 로드
-        self.vectorstore = Chroma(
-            persist_directory=self.persist_directory,
-            embedding_function=self.cached_embeddings,
-            collection_name="career_history"
-        )
+        """벡터스토어 및 리트리버 로드"""
+        try:
+            if self.use_remote_chroma:
+                # 원격 ChromaDB 사용
+                chroma_client = self._create_remote_chroma_client()
+                self.vectorstore = Chroma(
+                    embedding_function=self.cached_embeddings,
+                    collection_name="gnavi4_career_history_prod",  # 실제 컬렉션명 사용
+                    client=chroma_client
+                )
+                self.logger.info("원격 ChromaDB 벡터스토어 로드 완료")
+            else:
+                # 로컬 ChromaDB 사용
+                self.vectorstore = Chroma(
+                    persist_directory=self.persist_directory,
+                    embedding_function=self.cached_embeddings,
+                    collection_name="career_history"
+                )
+                self.logger.info("로컬 ChromaDB 벡터스토어 로드 완료")
+                
+        except Exception as e:
+            self.logger.error(f"벡터스토어 로드 실패: {e}")
+            # 원격 실패 시 로컬로 폴백
+            if self.use_remote_chroma:
+                self.logger.info("원격 연결 실패 - 로컬 모드로 폴백")
+                self.use_remote_chroma = False
+                self.vectorstore = Chroma(
+                    persist_directory=self.persist_directory,
+                    embedding_function=self.cached_embeddings,
+                    collection_name="career_history"
+                )
+            else:
+                raise
+        
         # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
         embedding_retriever = self.vectorstore.as_retriever(
             search_type="similarity",
             search_kwargs={"k": 3}
         )
+        
         # BM25용 docs 로드 (storage/docs/career_docs.json)
         docs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../storage/docs/career_history.json'))
         all_docs = []
@@ -130,6 +240,7 @@ class CareerEnsembleRetrieverAgent:
             self.logger.info(f"BM25용 career_docs.json 로드 완료 (문서 수: {len(all_docs)})")
         except Exception as e:
             self.logger.warning(f"BM25용 career_docs.json 로드 실패: {e}")
+            
         retrievers = [embedding_retriever]
         weights = [1.0]
         if all_docs:
@@ -137,11 +248,14 @@ class CareerEnsembleRetrieverAgent:
             bm25_retriever.k = 3  # BM25도 3개로 제한
             retrievers.append(bm25_retriever)
             weights = [0.3, 0.7]
+            
         self.ensemble_retriever = EnsembleRetriever(
             retrievers=retrievers,
             weights=weights
         )
-        self.logger.info(f"Career 앙상블 리트리버 준비 완료 (문서 수: {len(all_docs)})")
+        
+        connection_mode = "원격" if self.use_remote_chroma else "로컬"
+        self.logger.info(f"Career 앙상블 리트리버 준비 완료 ({connection_mode} ChromaDB, 문서 수: {len(all_docs)})")
 
     def retrieve(self, query: str, k: int = 3):
         """앙상블 리트리버로 검색 (기본 3개 결과) + 시간 기반 필터링"""
@@ -412,18 +526,46 @@ class CareerEnsembleRetrieverAgent:
         if self.course_deduplication_index is None:
             self._load_deduplication_index()
     
+    # def _initialize_education_vectorstore(self):
+    #     """교육과정 VectorDB 초기화"""
+    #     try:
+    #         if os.path.exists(self.education_persist_dir):
+    #             self.education_vectorstore = Chroma(
+    #                 persist_directory=self.education_persist_dir,
+    #                 embedding_function=self.cached_embeddings,
+    #                 collection_name="education_courses"
+    #             )
+    #             self.logger.info("교육과정 VectorDB 로드 완료")
+    #         else:
+    #             self.logger.warning("교육과정 VectorDB가 존재하지 않습니다. utils/education_data_processor.py를 실행해주세요.")
+    #     except Exception as e:
+    #         self.logger.error(f"교육과정 VectorDB 로드 실패: {e}")
+    #         self.education_vectorstore = None
+    # 교육과정 관련 메서드들도 동일하게 원격 ChromaDB 지원 추가
     def _initialize_education_vectorstore(self):
-        """교육과정 VectorDB 초기화"""
+        """교육과정 VectorDB 초기화 (원격/로컬 지원)"""
         try:
-            if os.path.exists(self.education_persist_dir):
+            if self.use_remote_chroma:
+                # 원격 ChromaDB에서 교육과정 컬렉션 사용
+                chroma_client = self._create_remote_chroma_client()
                 self.education_vectorstore = Chroma(
-                    persist_directory=self.education_persist_dir,
                     embedding_function=self.cached_embeddings,
-                    collection_name="education_courses"
+                    collection_name="education_courses",  # 원격 서버의 교육과정 컬렉션
+                    client=chroma_client
                 )
-                self.logger.info("교육과정 VectorDB 로드 완료")
+                self.logger.info("원격 교육과정 VectorDB 로드 완료")
             else:
-                self.logger.warning("교육과정 VectorDB가 존재하지 않습니다. utils/education_data_processor.py를 실행해주세요.")
+                # 로컬 교육과정 VectorDB
+                if os.path.exists(self.education_persist_dir):
+                    self.education_vectorstore = Chroma(
+                        persist_directory=self.education_persist_dir,
+                        embedding_function=self.cached_embeddings,
+                        collection_name="education_courses"
+                    )
+                    self.logger.info("로컬 교육과정 VectorDB 로드 완료")
+                else:
+                    self.logger.warning("교육과정 VectorDB가 존재하지 않습니다.")
+                    self.education_vectorstore = None
         except Exception as e:
             self.logger.error(f"교육과정 VectorDB 로드 실패: {e}")
             self.education_vectorstore = None
