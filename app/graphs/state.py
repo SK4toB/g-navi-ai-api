@@ -66,6 +66,7 @@ class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허�
     intent_analysis: Dict[str, Any]                 # 2단계: 의도 분석 결과
     career_cases: List[Any]                         # 3단계: 커리어 사례 검색
     education_courses: Dict[str, Any]               # 3단계: 교육과정 추천 결과
+    news_data: List[Dict[str, Any]]                 # 3단계: 뉴스 데이터 검색 결과
     formatted_response: Dict[str, Any]              # 4단계: 포맷된 응답
     mermaid_diagram: str                            # 5단계: 생성된 Mermaid 다이어그램 코드
     diagram_generated: bool                         # 5단계: 다이어그램 생성 성공 여부

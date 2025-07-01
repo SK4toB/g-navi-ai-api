@@ -43,6 +43,7 @@ import json
 import re
 import requests
 import logging
+import chromadb
 from typing import Dict, List, Any
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
@@ -67,6 +68,7 @@ class PathConfig:
     # 📊 벡터 스토어 경로 (Chroma DB 저장소)
     CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"           # 커리어 사례 벡터 데이터베이스
     EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"  # 교육과정 벡터 데이터베이스
+    NEWS_VECTOR_STORE = "../../storage/vector_stores/news_data"               # 뉴스 데이터 벡터 데이터베이스
     
     # 🗄️ 캐시 경로 (임베딩 캐시)
     CAREER_EMBEDDING_CACHE = "../../storage/cache/embedding_cache"            # 커리어 사례 임베딩 캐시 저장소
@@ -74,10 +76,9 @@ class PathConfig:
     
     # 📄 문서 경로 (JSON 데이터 파일들)
     CAREER_DOCS = "../../storage/docs/career_history.json"                    # 커리어 히스토리 원본 데이터
-    EDUCATION_DOCS = "../../storage/docs/education_courses.json"              # 교육과정 문서 데이터
+    EDUCATION_DOCS = "../../storage/docs/education_courses.json"              # 교육과정 문서 데이터2
     SKILL_MAPPING = "../../storage/docs/skill_education_mapping.json"         # 스킬-교육과정 매핑 테이블
     COURSE_DEDUPLICATION = "../../storage/docs/course_deduplication_index.json"  # 과정 중복 제거 인덱스
-    COMPANY_VISION = "../../storage/docs/company_vision.json"                 # 회사 비전 및 가치 데이터
     MYSUNI_DETAILED = "../../storage/docs/mysuni_courses_detailed.json"       # mySUNI 과정 상세 정보
     COLLEGE_DETAILED = "../../storage/docs/college_courses_detailed.json"     # College 과정 상세 정보
     
@@ -149,14 +150,10 @@ class CareerEnsembleRetrieverAgent:
         self.skill_mapping_path = PathConfig.get_abs_path(PathConfig.SKILL_MAPPING)                # 스킬-교육과정 매핑 파일 경로
         self.deduplication_index_path = PathConfig.get_abs_path(PathConfig.COURSE_DEDUPLICATION)   # 과정 중복제거 인덱스 파일 경로
         
-        # 회사 비전 관련 경로 설정 (PathConfig 사용)
-        self.company_vision_path = PathConfig.get_abs_path(PathConfig.COMPANY_VISION)              # 회사 비전 데이터 파일 경로
-        
         # 지연 로딩 속성
         self.education_vectorstore = None
         self.skill_education_mapping = None
         self.course_deduplication_index = None
-        self.company_vision_data = None
         
         self._load_vectorstore_and_retriever()
 
@@ -283,19 +280,8 @@ class CareerEnsembleRetrieverAgent:
         else:
             final_docs = all_docs[:k]
         
-        # 회사 비전 정보를 결과에 추가 (커리어 관련 질문인 경우)
-        career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직']
-        if any(keyword in query.lower() for keyword in career_keywords):
-            company_vision = self._load_company_vision()
-            if company_vision:
-                # 회사 비전을 Document 형태로 추가
-                vision_content = self._format_company_vision_for_context(company_vision)
-                vision_doc = Document(
-                    page_content=vision_content,
-                    metadata={"type": "company_vision", "source": "company_vision.json"}
-                )
-                final_docs.append(vision_doc)
-                self.logger.info("회사 비전 정보가 검색 결과에 추가되었습니다.")
+        # 회사 비전 정보는 Formatter.py에서 처리하므로 여기서는 제외
+        # (중복 방지를 위해 Formatter.py에서만 회사 비전 정보를 컨텍스트에 추가)
         
         print(f"✅ [커리어 사례 검색] 완료: {len(final_docs)}개 결과 반환")
         return final_docs
@@ -493,80 +479,6 @@ class CareerEnsembleRetrieverAgent:
             self.logger.error(f"중복 제거 인덱스 로드 실패: {e}")
             self.course_deduplication_index = {}
     
-    def _load_company_vision(self):
-        """회사 비전 데이터 로드"""
-        if self.company_vision_data is not None:
-            return self.company_vision_data
-            
-        try:
-            if os.path.exists(self.company_vision_path):
-                with open(self.company_vision_path, "r", encoding="utf-8") as f:
-                    self.company_vision_data = json.load(f)
-                self.logger.info("회사 비전 데이터 로드 완료")
-            else:
-                self.company_vision_data = {}
-                self.logger.warning("회사 비전 파일이 없습니다.")
-        except Exception as e:
-            self.logger.error(f"회사 비전 데이터 로드 실패: {e}")
-            self.company_vision_data = {}
-        
-        return self.company_vision_data
-    
-    def _format_company_vision_for_context(self, vision_data: Dict) -> str:
-        """회사 비전 데이터를 컨텍스트용 텍스트로 포맷팅"""
-        if not vision_data:
-            return ""
-        
-        sections = []
-        
-        # 회사 기본 정보
-        if vision_data.get('company_name'):
-            sections.append(f"회사명: {vision_data['company_name']}")
-        
-        # 비전
-        if vision_data.get('vision'):
-            vision = vision_data['vision']
-            sections.append(f"비전: {vision.get('title', '')}")
-            if vision.get('description'):
-                sections.append(f"비전 설명: {vision['description']}")
-        
-        # 핵심 가치
-        if vision_data.get('core_values'):
-            values_text = []
-            for value in vision_data['core_values']:
-                values_text.append(f"- {value.get('name', '')}: {value.get('description', '')}")
-            if values_text:
-                sections.append("핵심 가치:\n" + "\n".join(values_text))
-        
-        # 전략 방향
-        if vision_data.get('strategic_directions'):
-            strategy_text = []
-            for direction in vision_data['strategic_directions']:
-                strategy_text.append(f"- {direction.get('category', '')}: {direction.get('description', '')}")
-            if strategy_text:
-                sections.append("전략 방향:\n" + "\n".join(strategy_text))
-        
-        # 인재 개발
-        if vision_data.get('talent_development'):
-            talent = vision_data['talent_development']
-            sections.append(f"인재 개발 철학: {talent.get('philosophy', '')}")
-            if talent.get('focus_areas'):
-                focus_text = []
-                for area in talent['focus_areas']:
-                    focus_text.append(f"- {area.get('area', '')}: {area.get('description', '')}")
-                if focus_text:
-                    sections.append("역량 개발 중점 영역:\n" + "\n".join(focus_text))
-        
-        # 커리어 가이드 원칙
-        if vision_data.get('career_guidance_principles'):
-            principles_text = []
-            for principle in vision_data['career_guidance_principles']:
-                principles_text.append(f"- {principle.get('principle', '')}: {principle.get('description', '')}")
-            if principles_text:
-                sections.append("커리어 가이드 원칙:\n" + "\n".join(principles_text))
-        
-        return "\n\n".join(sections)
-
     def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
         """교육과정 검색 메인 함수 - 최대 3개까지만 검색"""
         print(f"🔍 [교육과정 검색] 시작 - '{query}'")
@@ -1160,3 +1072,346 @@ class CareerEnsembleRetrieverAgent:
         
         self.logger.info(f"{preferred_source} 우선 필터링: {len(preferred_courses)}개 + 기타 {len(result)-len(preferred_courses)}개")
         return result
+
+
+class NewsRetrieverAgent:
+    """
+    📰 뉴스 검색 에이전트
+    
+    AI, 금융, 반도체, 제조 도메인별 최신 뉴스 정보를 검색하여
+    업계 트렌드와 채용 정보를 제공하는 전문 에이전트입니다.
+    
+    🔄 주요 기능:
+    - 도메인별 뉴스 분류 및 검색
+    - 의도 분석 기반 맞춤형 뉴스 추천
+    - 유사도 기반 관련 뉴스 필터링
+    - 최신 업계 트렌드 및 채용 정보 제공
+    - 런타임에서 직접 ChromaDB 접근 (NewsDataProcessor 비의존)
+    
+    📊 검색 대상:
+    - AI 도메인: AI 개발자 채용, 생성형 AI, 의료 AI 등
+    - 금융 도메인: 핀테크, 블록체인, 디지털 금융 등
+    - 반도체 도메인: 반도체 설계, 차세대 메모리 등
+    - 제조 도메인: 스마트팩토리, IoT, 배터리 관리 등
+    """
+    
+    def __init__(self):
+        """
+        NewsRetrieverAgent 초기화
+        - 런타임에서 직접 ChromaDB에 접근
+        - NewsDataProcessor에 의존하지 않음
+        """
+        self.logger = logging.getLogger(__name__)
+        
+        # 뉴스 벡터 스토어 경로 설정
+        self.news_vector_store_path = PathConfig.get_abs_path(PathConfig.NEWS_VECTOR_STORE)
+        
+        # ChromaDB 클라이언트 직접 초기화 (지연 로딩)
+        self.chroma_client = None
+        self.news_collection = None
+        
+        # 뉴스 검색 관련 키워드 매핑
+        self.domain_keywords = {
+            "AI": ["AI", "인공지능", "머신러닝", "딥러닝", "생성형", "ChatGPT", "LLM", "자연어처리", "NLP", "데이터사이언티스트"],
+            "금융": ["핀테크", "블록체인", "디지털금융", "DeFi", "스마트컨트랙트", "암호화폐", "토스", "카카오페이"],
+            "반도체": ["반도체", "메모리", "DRAM", "NAND", "삼성전자", "SK하이닉스", "설계", "엔지니어", "칩"],
+            "제조": ["제조", "스마트팩토리", "IoT", "자동차", "배터리", "전기차", "BMS", "현대자동차", "LG"]
+        }
+    
+    def _initialize_vectorstore(self) -> bool:
+        """
+        뉴스 벡터 스토어를 초기화합니다.
+        NewsDataProcessor와 동일한 방식으로 ChromaDB 클라이언트에 직접 접근합니다.
+        
+        Returns:
+            bool: 초기화 성공 여부
+        """
+        if self.chroma_client is None or self.news_collection is None:
+            try:
+                import chromadb
+                from chromadb.config import Settings
+                
+                # ChromaDB 클라이언트 직접 초기화 (NewsDataProcessor와 동일한 방식)
+                self.chroma_client = chromadb.PersistentClient(
+                    path=self.news_vector_store_path,
+                    settings=Settings(
+                        allow_reset=True,
+                        anonymized_telemetry=False
+                    )
+                )
+                
+                # 뉴스 컬렉션 가져오기
+                self.news_collection = self.chroma_client.get_collection("news_articles")
+                
+                self.logger.info(f"뉴스 컬렉션 초기화 완료: {self.news_vector_store_path}")
+                return True
+                
+            except Exception as e:
+                self.logger.error(f"뉴스 벡터 스토어 초기화 실패: {e}")
+                return False
+        return True
+    
+    def search_relevant_news(self, query: str, intent_analysis: dict = None, n_results: int = 3) -> list:
+        """
+        의도 분석 결과를 바탕으로 관련 뉴스를 검색합니다.
+        ChromaDB 클라이언트에 직접 접근하여 검색을 수행합니다.
+        
+        Args:
+            query: 검색 질의
+            intent_analysis: 의도 분석 결과 딕셔너리
+            n_results: 반환할 결과 수 (기본값: 3)
+            
+        Returns:
+            list: 검색된 뉴스 데이터 리스트
+                [
+                    {
+                        "title": "뉴스 제목",
+                        "domain": "도메인 (AI/금융/반도체/제조)",
+                        "category": "카테고리",
+                        "content": "뉴스 내용 (300자 제한)",
+                        "published_date": "발행일",
+                        "source": "출처",
+                        "similarity_score": "유사도 점수"
+                    }
+                ]
+        """
+        try:
+            # 뉴스 벡터 스토어 초기화
+            if not self._initialize_vectorstore():
+                return []
+            
+            # 검색 쿼리 최적화
+            search_query = self._optimize_search_query(query, intent_analysis)
+            
+            # 🔍 ChromaDB 컬렉션에서 직접 검색 수행
+            results = self.news_collection.query(
+                query_texts=[search_query],
+                n_results=n_results,
+                include=['documents', 'metadatas', 'distances']
+            )
+            
+            # 검색 결과 가공
+            processed_news = self._process_chromadb_results(results)
+            
+            self.logger.info(f"뉴스 검색 완료: {len(processed_news)}개 (쿼리: {search_query[:50]}...)")
+            return processed_news
+            
+        except Exception as e:
+            self.logger.error(f"뉴스 검색 중 오류: {e}")
+            return []
+    
+    def _optimize_search_query(self, query: str, intent_analysis: dict = None) -> str:
+        """
+        의도 분석 결과를 활용하여 검색 쿼리를 최적화합니다.
+        
+        Args:
+            query: 원본 질의
+            intent_analysis: 의도 분석 결과
+            
+        Returns:
+            str: 최적화된 검색 쿼리
+        """
+        search_query = query
+        
+        if intent_analysis:
+            # 키워드 추출 및 추가
+            keywords = []
+            
+            # 커리어 관련 키워드 추가
+            if intent_analysis.get("career_history"):
+                keywords.extend(intent_analysis["career_history"][:2])
+            
+            # 관심사 키워드 추가
+            if intent_analysis.get("interests"):
+                keywords.extend(intent_analysis["interests"][:2])
+            
+            # 도메인 관련 키워드 강화
+            detected_domain = self._detect_domain_from_query(query)
+            if detected_domain and detected_domain in self.domain_keywords:
+                domain_keywords = self.domain_keywords[detected_domain][:2]
+                keywords.extend(domain_keywords)
+            
+            # 최종 쿼리 구성
+            if keywords:
+                search_query = f"{query} {' '.join(keywords)}"
+        
+        return search_query
+    
+    def _detect_domain_from_query(self, query: str) -> str:
+        """
+        쿼리에서 도메인을 감지합니다.
+        
+        Args:
+            query: 검색 질의
+            
+        Returns:
+            str: 감지된 도메인 (AI/금융/반도체/제조) 또는 빈 문자열
+        """
+        query_lower = query.lower()
+        
+        for domain, keywords in self.domain_keywords.items():
+            for keyword in keywords:
+                if keyword.lower() in query_lower:
+                    return domain
+        
+        return ""
+    
+    def _process_chromadb_results(self, results: dict) -> list:
+        """
+        ChromaDB 검색 결과를 가공하고 필터링합니다.
+        
+        Args:
+            results: ChromaDB query 결과
+            
+        Returns:
+            list: 가공된 뉴스 데이터 리스트
+        """
+        processed_news = []
+        
+        if results['documents'] and results['documents'][0]:
+            for i in range(len(results['documents'][0])):
+                try:
+                    metadata = results['metadatas'][0][i]
+                    distance = results['distances'][0][i]
+                    
+                    # 유사도 계산 (거리를 유사도로 변환)
+                    similarity_score = max(0, 1 - distance) if distance <= 1 else 0
+                    
+                    # 뉴스 정보 재구성
+                    news_info = {
+                        "title": metadata.get('title', ''),
+                        "domain": metadata.get('domain', ''),
+                        "category": metadata.get('category', ''),
+                        "content": self._extract_content_from_document(results['documents'][0][i]),
+                        "published_date": metadata.get('published_date', ''),
+                        "source": metadata.get('source', ''),
+                        "similarity_score": round(similarity_score, 3)
+                    }
+                    
+                    # 기본 품질 필터링 (제목이 있는 뉴스만)
+                    if news_info["title"]:
+                        processed_news.append(news_info)
+                        
+                except Exception as e:
+                    self.logger.warning(f"뉴스 결과 처리 중 오류: {e}")
+                    continue
+        
+        return processed_news
+    
+    def _extract_content_from_document(self, document: str) -> str:
+        """
+        임베딩된 문서에서 실제 뉴스 내용을 추출합니다.
+        
+        Args:
+            document: 임베딩된 전체 문서 텍스트
+            
+        Returns:
+            str: 추출된 뉴스 내용 (300자 제한)
+        """
+        # "내용:" 이후의 텍스트 추출
+        if "내용:" in document:
+            content = document.split("내용:")[-1].strip()
+        else:
+            content = document
+        
+        # 길이 제한 (300자)
+        if len(content) > 300:
+            content = content[:300] + "..."
+        
+        return content
+    
+    def get_news_by_domain(self, domain: str, n_results: int = 5) -> list:
+        """
+        특정 도메인의 뉴스를 검색합니다.
+        ChromaDB 클라이언트에 직접 접근하여 도메인 필터링된 검색을 수행합니다.
+        
+        Args:
+            domain: 도메인 (AI/금융/반도체/제조)
+            n_results: 반환할 결과 수
+            
+        Returns:
+            list: 해당 도메인의 뉴스 리스트
+        """
+        if domain not in self.domain_keywords:
+            self.logger.warning(f"지원하지 않는 도메인: {domain}")
+            return []
+        
+        try:
+            # 뉴스 벡터 스토어 초기화
+            if not self._initialize_vectorstore():
+                return []
+            
+            # 도메인별 키워드로 검색 쿼리 구성
+            domain_query = " ".join(self.domain_keywords[domain][:3])
+            
+            # ChromaDB에서 도메인 필터링 검색
+            results = self.news_collection.query(
+                query_texts=[domain_query],
+                n_results=n_results * 2,  # 필터링을 위해 더 많이 가져옴
+                where={"domain": domain},  # 도메인 메타데이터 필터링
+                include=['documents', 'metadatas', 'distances']
+            )
+            
+            # 검색 결과 가공
+            processed_news = self._process_chromadb_results(results)
+            
+            # 결과 수 제한
+            return processed_news[:n_results]
+            
+        except Exception as e:
+            self.logger.error(f"도메인별 뉴스 검색 중 오류: {e}")
+            # 필터링 실패 시 일반 검색으로 폴백
+            domain_query = " ".join(self.domain_keywords[domain][:3])
+            return self.search_relevant_news(domain_query, n_results=n_results)
+    
+    def get_latest_industry_trends(self, user_profile: dict = None) -> dict:
+        """
+        사용자 프로필을 기반으로 최신 업계 트렌드를 제공합니다.
+        
+        Args:
+            user_profile: 사용자 프로필 정보
+            
+        Returns:
+            dict: 도메인별 최신 트렌드 뉴스
+        """
+        trends = {}
+        
+        # 사용자 관심 도메인 파악
+        interested_domains = self._extract_interested_domains(user_profile)
+        
+        # 각 도메인별 최신 뉴스 수집
+        for domain in interested_domains:
+            domain_news = self.get_news_by_domain(domain, n_results=2)
+            if domain_news:
+                trends[domain] = domain_news
+        
+        return trends
+    
+    def _extract_interested_domains(self, user_profile: dict = None) -> list:
+        """
+        사용자 프로필에서 관심 도메인을 추출합니다.
+        
+        Args:
+            user_profile: 사용자 프로필 정보
+            
+        Returns:
+            list: 관심 도메인 리스트
+        """
+        if not user_profile:
+            return ["AI", "금융", "반도체", "제조"]  # 기본 모든 도메인
+        
+        interested_domains = []
+        
+        # 사용자 관심사나 경력에서 도메인 추출
+        interests = user_profile.get("interests", [])
+        career = user_profile.get("career", "")
+        
+        combined_text = " ".join(interests) + " " + career
+        
+        for domain in self.domain_keywords.keys():
+            domain_keywords = self.domain_keywords[domain]
+            if any(keyword.lower() in combined_text.lower() for keyword in domain_keywords):
+                interested_domains.append(domain)
+        
+        # 관심 도메인이 없으면 모든 도메인 반환
+        return interested_domains if interested_domains else ["AI", "금융", "반도체", "제조"]

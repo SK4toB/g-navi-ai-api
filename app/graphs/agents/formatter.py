@@ -108,6 +108,27 @@ G.Navi AI 커리어 컨설팅 시스템의 친근한 커리어 코치로 활동�
 - 불필요한 정보는 억지로 넣지 않기
 - **이전 대화 내역이 제공되면 반드시 참고하여 연속성 있는 상담 진행**
 
+**🔥 뉴스 데이터 활용 가이드라인:**
+- 업계 트렌드나 채용 시장에 대한 질문이 있을 때 관련 뉴스 정보를 자연스럽게 활용
+- "최근 뉴스를 보니까...", "업계 소식에 따르면..." 같은 자연스러운 표현으로 뉴스 내용 인용
+- AI, 금융, 반도체, 제조 도메인별 최신 트렌드와 채용 정보를 활용하여 현실적인 조언 제공
+- 뉴스 출처(source)와 게시일(published_date)을 간단히 언급하여 신뢰성 확보
+- 단순히 뉴스를 나열하지 말고, 사용자 상황에 맞는 실용적인 조언과 연결
+
+**⭐ 최신 뉴스/트렌드 질문 시 우선 대응 규칙:**
+사용자가 다음과 같은 표현을 사용하면 뉴스 데이터를 최우선으로 활용하세요:
+- "최신 뉴스", "최근 뉴스", "업계 소식", "시장 동향", "트렌드", "현재 상황"
+- "요즘", "지금", "현재", "최근", "올해", "2024년", "2025년"
+- "채용 시장", "취업 트렌드", "업계 변화", "산업 동향"
+- "어떤 일이 일어나고 있는지", "무슨 변화가", "어떤 흐름"
+
+**최신 뉴스 질문 감지 시 대응 방식:**
+1. **우선순위**: 뉴스 데이터 > 커리어 사례 > 교육과정
+2. **시작 표현**: "최근 업계 소식을 보면...", "요즘 뉴스를 살펴보니...", "최신 트렌드를 보면..."
+3. **구체적 인용**: 제공된 뉴스의 제목, 내용, 출처를 구체적으로 언급
+4. **실용적 연결**: 뉴스 내용을 사용자 상황에 맞는 조언으로 자연스럽게 연결
+5. **신뢰성 확보**: "○○에서 보도된 바에 따르면...", "△월 발표된 자료에 의하면..." 식으로 출처 명시
+
 **응답 예시 (자연스러운 대화체):**
 
 [첫 상호작용인 경우]
@@ -236,6 +257,7 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
             current_session_messages = state.get("current_session_messages", [])
             education_courses = state.get("education_courses", {})
             past_conversations = state.get("past_conversations", [])  # 과거 대화 내역 추가
+            news_data = state.get("news_data", [])  # 뉴스 데이터 추가
             
             # 사용자 정보 추출
             user_name = user_data.get('name', '님')
@@ -245,7 +267,7 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
             context_data = self._prepare_context_for_llm(
                 user_question, intent_analysis, 
                 user_data, career_cases, 
-                current_session_messages, education_courses, past_conversations
+                current_session_messages, education_courses, past_conversations, news_data
             )
             
             # LLM 호출하여 직접 마크다운 응답 생성
@@ -301,7 +323,8 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
                                 career_cases: List[Any],
                                 current_session_messages: List[Dict],
                                 education_courses: Dict[str, Any] = None,
-                                past_conversations: List[Dict] = None) -> str:
+                                past_conversations: List[Dict] = None,
+                                news_data: List[Dict] = None) -> str:
         """LLM을 위한 컨텍스트 데이터 준비 (통합된 current_session_messages 사용)"""
         
         context_sections = []
@@ -591,12 +614,77 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
             
             context_sections.append(past_conversations_section)
         
+        # 📰 뉴스 데이터 정보 추가
+        if news_data and len(news_data) > 0:
+            news_section = "📰 **최신 업계 뉴스 및 트렌드 정보**:\n"
+            news_section += "업계 최신 소식과 채용 트렌드 정보입니다. 사용자 질문과 관련된 경우 자연스럽게 활용해주세요.\n\n"
+            
+            for i, news in enumerate(news_data[:3], 1):  # 최대 3개 뉴스
+                try:
+                    title = news.get("title", "제목 없음")
+                    domain = news.get("domain", "")
+                    category = news.get("category", "")
+                    content = news.get("content", "")
+                    published_date = news.get("published_date", "")
+                    source = news.get("source", "")
+                    similarity_score = news.get("similarity_score", 0)
+                    
+                    news_section += f"### 📋 **뉴스 {i}** (관련도: {similarity_score:.2f})\n"
+                    news_section += f"**제목**: {title}\n"
+                    if domain:
+                        news_section += f"**도메인**: {domain}\n"
+                    if category:
+                        news_section += f"**카테고리**: {category}\n"
+                    if published_date:
+                        news_section += f"**발행일**: {published_date}\n"
+                    if source:
+                        news_section += f"**출처**: {source}\n"
+                    if content:
+                        news_section += f"**내용**: {content}\n"
+                    
+                    news_section += "\n"
+                    
+                except Exception as e:
+                    self.logger.warning(f"뉴스 데이터 파싱 오류: {e}")
+                    continue
+            
+            news_section += "\n**📈 뉴스 활용 가이드:**\n"
+            news_section += "- 업계 트렌드나 채용 시장 질문 시 '최근 뉴스를 보니까...' 식으로 자연스럽게 인용\n"
+            news_section += "- 출처와 발행일을 간단히 언급하여 신뢰성 확보 ('3월 테크뉴스에 따르면...')\n"
+            news_section += "- 뉴스 내용을 단순 나열하지 말고 사용자 상황에 맞는 실용적 조언과 연결\n"
+            news_section += "- AI, 금융, 반도체, 제조 등 도메인별 전문 정보 제공\n"
+            news_section += "- 채용 트렌드, 연봉 정보, 필요 기술 등을 구체적으로 활용\n"
+            news_section += "- **최신/트렌드 질문 시**: 뉴스 데이터를 가장 우선적으로 활용하여 현재 상황 설명\n"
+            news_section += "- **구체적 인용**: '○○ 뉴스에서 보도된 바에 따르면...' 식으로 정확한 출처 명시\n"
+            
+            context_sections.append(news_section)
+        
         # 질문 유형 분석 (성능 최적화)
         career_keywords = ['커리어', '진로', '목표', '방향', '계획', '비전', '미래', '회사', '조직']
         growth_keywords = ['성장', '발전', '패스', '로드맵', '어떻게', '방법', '단계', '과정']
         
+        # 최신 뉴스/트렌드 질문 감지 키워드 추가
+        news_keywords = ['최신', '최근', '뉴스', '업계', '소식', '시장', '동향', '트렌드', '요즘', '지금', '현재', 
+                        '올해', '2024', '2025', '채용 시장', '취업 트렌드', '업계 변화', '산업 동향',
+                        '어떤 일이', '무슨 변화', '어떤 흐름', '현재 상황']
+        
         is_career_question = any(keyword in user_question.lower() for keyword in career_keywords)
         is_growth_guide_question = any(keyword in user_question.lower() for keyword in growth_keywords)
+        is_news_trend_question = any(keyword in user_question.lower() for keyword in news_keywords)
+        
+        # 최신 뉴스/트렌드 질문인 경우 특별한 지침 추가
+        if is_news_trend_question and news_data:
+            news_priority_instruction = """
+
+🎯 **최신 뉴스/트렌드 질문 감지됨 - 뉴스 데이터 우선 활용 지침:**
+- 사용자가 최신 정보를 원하므로 뉴스 데이터를 가장 우선적으로 활용하세요
+- "최근 업계 소식을 보면...", "요즘 뉴스를 살펴보니...", "최신 트렌드를 보면..." 식으로 시작
+- 제공된 뉴스의 제목, 내용, 출처를 구체적으로 언급하여 신뢰성 확보
+- 뉴스 내용을 바탕으로 현실적이고 시의적절한 조언 제공
+- 여러 뉴스가 있다면 도메인별로 정리하여 포괄적인 업계 현황 제시
+- 커리어 사례나 교육과정은 뉴스 기반 조언을 보완하는 용도로만 활용
+"""
+            context_sections.append(news_priority_instruction)
         
         # 커리어 관련 질문인 경우 회사 비전 정보 추가
         if is_career_question:
