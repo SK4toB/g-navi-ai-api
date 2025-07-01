@@ -61,7 +61,6 @@ class PathConfig:
     COMPANY_VISION = "../../storage/docs/company_vision.json"                 # 회사 비전 및 가치 데이터
     MYSUNI_DETAILED = "../../storage/docs/mysuni_courses_detailed.json"       # mySUNI 과정 상세 정보
     COLLEGE_DETAILED = "../../storage/docs/college_courses_detailed.json"     # College 과정 상세 정보
-    CHAT_HISTORY = "../../data/json/chat_history.json"                        # 사용자 채팅 히스토리
     
     @classmethod
     def get_abs_path(cls, relative_path: str) -> str:
@@ -398,33 +397,6 @@ class CareerEnsembleRetrieverAgent:
         
         # 가장 최근 연도 반환
         return max(years) if years else None
-
-    def load_chat_history(self, user_id: str = None, chat_history_path: str = None):
-        """chat_history.json 파일을 불러와 사용자 ID별로 필터링하여 반환"""
-        # 경로가 제공되지 않으면 PathConfig에서 가져오기
-        if chat_history_path is None:
-            chat_history_path = PathConfig.get_abs_path(PathConfig.CHAT_HISTORY)
-            
-        try:
-            with open(chat_history_path, "r", encoding="utf-8") as f:
-                all_chat_history = json.load(f)
-            
-            # 사용자 ID가 제공된 경우 해당 사용자의 대화내역만 필터링
-            if user_id:
-                user_chat_history = [
-                    session for session in all_chat_history 
-                    if session.get("user_id") == user_id
-                ]
-                self.logger.info(f"사용자 {user_id}의 chat_history 로드 완료 (세션 수: {len(user_chat_history)})")
-                return user_chat_history
-            else:
-                # 사용자 ID가 없으면 전체 반환 (하위 호환성)
-                self.logger.info(f"전체 chat_history 로드 완료 (세션 수: {len(all_chat_history)})")
-                return all_chat_history
-                
-        except Exception as e:
-            self.logger.error(f"chat_history.json 로드 실패: {e}")
-            return []
 
     def _load_education_resources(self):
         """교육과정 리소스 지연 로딩"""
