@@ -97,8 +97,8 @@ class CareerEnsembleRetrieverAgent:
     효과적으로 검색합니다. ChromaDB와 캐시를 활용한 고성능 검색을 제공합니다.
     
     📊 검색 결과:
-    - 커리어 사례: 최대 3개까지 검색
-    - 교육과정: 최대 3개까지 검색
+    - 커리어 사례: 최대 2개까지 검색
+    - 교육과정: 최대 2개까지 검색
     """
     def __init__(self, persist_directory: str = None, cache_directory: str = None):
         """
@@ -164,10 +164,10 @@ class CareerEnsembleRetrieverAgent:
             embedding_function=self.career_cached_embeddings,
             collection_name="career_history"
         )
-        # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
+        # LLM 임베딩 리트리버 (검색 결과를 2개로 제한)
         embedding_retriever = self.vectorstore.as_retriever(
             search_type="similarity",
-            search_kwargs={"k": 3}
+            search_kwargs={"k": 2}
         )
         # BM25용 docs 로드 (PathConfig 사용)
         docs_path = PathConfig.get_abs_path(PathConfig.CAREER_DOCS)
@@ -183,7 +183,7 @@ class CareerEnsembleRetrieverAgent:
         weights = [1.0]
         if all_docs:
             bm25_retriever = BM25Retriever.from_documents(all_docs)
-            bm25_retriever.k = 3  # BM25도 3개로 제한
+            bm25_retriever.k = 2  # BM25도 2개로 제한
             retrievers.append(bm25_retriever)
             weights = [0.3, 0.7]
         self.ensemble_retriever = EnsembleRetriever(
@@ -193,8 +193,8 @@ class CareerEnsembleRetrieverAgent:
         self.logger.info(f"Career 앙상블 리트리버 준비 완료 (문서 수: {len(all_docs)})")
         print(f"✅ [커리어 사례 VectorDB] 초기화 완료")
 
-    def retrieve(self, query: str, k: int = 3):
-        """앙상블 리트리버로 검색 (기본 3개 결과) + 시간 기반 필터링"""
+    def retrieve(self, query: str, k: int = 2):
+        """앙상블 리트리버로 검색 (기본 2개 결과) + 시간 기반 필터링"""
         print(f"🔍 [커리어 사례 검색] 시작 - '{query}'")
         
         if not self.ensemble_retriever:
@@ -480,7 +480,7 @@ class CareerEnsembleRetrieverAgent:
             self.course_deduplication_index = {}
     
     def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
-        """교육과정 검색 메인 함수 - 최대 3개까지만 검색"""
+        """교육과정 검색 메인 함수 - 최대 2개까지만 검색"""
         print(f"🔍 [교육과정 검색] 시작 - '{query}'")
         self._load_education_resources()
         
@@ -501,8 +501,8 @@ class CareerEnsembleRetrieverAgent:
             # 4단계: 중복 제거 및 정렬
             deduplicated_courses = self._deduplicate_courses(semantic_matches)
             
-            # 최종적으로 3개까지만 제한
-            deduplicated_courses = deduplicated_courses[:3]
+            # 최종적으로 2개까지만 제한
+            deduplicated_courses = deduplicated_courses[:2]
             
             # 5단계: 결과 분석 및 학습 경로 생성
             course_analysis = self._analyze_course_recommendations(deduplicated_courses)
@@ -582,15 +582,15 @@ class CareerEnsembleRetrieverAgent:
         return list(set(skills))
     
     def _semantic_course_search(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
-        """VectorDB를 활용한 의미적 검색 (VectorDB가 없으면 JSON에서 검색) - 3개까지만 검색"""
+        """VectorDB를 활용한 의미적 검색 (VectorDB가 없으면 JSON에서 검색) - 2개까지만 검색"""
         if not self.education_vectorstore:
             # VectorDB가 없으면 JSON 파일에서 직접 검색
             self.logger.info("VectorDB 없음 - JSON 파일에서 검색")
             return self._search_from_json_documents(query, filtered_courses)
             
         if not filtered_courses:
-            # 필터링된 과정이 없으면 전체 VectorDB에서 검색 (3개로 제한)
-            docs = self.education_vectorstore.similarity_search(query, k=3)
+            # 필터링된 과정이 없으면 전체 VectorDB에서 검색 (2개로 제한)
+            docs = self.education_vectorstore.similarity_search(query, k=2)
             courses = [self._doc_to_course_dict(doc) for doc in docs]
             # 원본 데이터로 상세 정보 보강
             courses = [self._enrich_course_with_original_data(course) for course in courses]
@@ -609,20 +609,20 @@ class CareerEnsembleRetrieverAgent:
             # 원본 데이터로 상세 정보 보강
             courses = [self._enrich_course_with_original_data(course) for course in courses]
         
-        # 결과를 3개로 제한
-        courses = courses[:3]
-        self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정 (3개로 제한)")
+        # 결과를 2개로 제한
+        courses = courses[:2]
+        self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정 (2개로 제한)")
         return courses
     
     def _search_from_json_documents(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
-        """JSON 문서에서 직접 검색 (VectorDB 대안) - 3개까지만 검색"""
+        """JSON 문서에서 직접 검색 (VectorDB 대안) - 2개까지만 검색"""
         try:
             with open(self.education_docs_path, "r", encoding="utf-8") as f:
                 all_docs = json.load(f)
         except FileNotFoundError:
             self.logger.warning("교육과정 문서 파일이 없습니다.")
-            # 필터링된 과정이라도 반환하자 (3개로 제한)
-            return filtered_courses[:3] if filtered_courses else []
+            # 필터링된 과정이라도 반환하자 (2개로 제한)
+            return filtered_courses[:2] if filtered_courses else []
         
         # 필터링된 과정이 있으면 우선적으로 활용
         if filtered_courses:
@@ -644,9 +644,9 @@ class CareerEnsembleRetrieverAgent:
                     matching_docs.append(course_dict)
             
             if matching_docs:
-                # 3개로 제한
-                matching_docs = matching_docs[:3]
-                self.logger.info(f"필터링된 과정 기반 검색 결과: {len(matching_docs)}개 (3개로 제한)")
+                # 2개로 제한
+                matching_docs = matching_docs[:2]
+                self.logger.info(f"필터링된 과정 기반 검색 결과: {len(matching_docs)}개 (2개로 제한)")
                 return matching_docs
         
         # 키워드 기반 검색
@@ -671,9 +671,9 @@ class CareerEnsembleRetrieverAgent:
         # 점수순으로 정렬
         matching_docs.sort(key=lambda x: x.get("match_score", 0), reverse=True)
         
-        # 3개로 제한
-        matching_docs = matching_docs[:3]
-        self.logger.info(f"키워드 기반 검색 결과: {len(matching_docs)}개 (3개로 제한)")
+        # 2개로 제한
+        matching_docs = matching_docs[:2]
+        self.logger.info(f"키워드 기반 검색 결과: {len(matching_docs)}개 (2개로 제한)")
         return matching_docs
     
     def _doc_to_course_dict_from_json(self, doc_data: Dict) -> Dict:
@@ -699,7 +699,7 @@ class CareerEnsembleRetrieverAgent:
         }
     
     def _search_by_course_ids(self, course_ids: List[str], query: str) -> List[Dict]:
-        """특정 과정 ID들에 대한 VectorDB 검색 - 3개까지만 검색"""
+        """특정 과정 ID들에 대한 VectorDB 검색 - 2개까지만 검색"""
         if not course_ids:
             return []
         
@@ -714,18 +714,18 @@ class CareerEnsembleRetrieverAgent:
                     filter={"course_id": course_id}
                 )
                 all_docs.extend(docs)
-                # 이미 3개가 되면 중단
-                if len(all_docs) >= 3:
+                # 이미 2개가 되면 중단
+                if len(all_docs) >= 2:
                     break
             except Exception as e:
                 self.logger.warning(f"Course ID {course_id} 검색 실패: {e}")
         
-        # 일반 검색도 수행 (백업) - 3개로 제한
+        # 일반 검색도 수행 (백업) - 2개로 제한
         if not all_docs:
-            all_docs = self.education_vectorstore.similarity_search(query, k=3)
+            all_docs = self.education_vectorstore.similarity_search(query, k=2)
         
-        # 결과를 3개로 제한
-        all_docs = all_docs[:3]
+        # 결과를 2개로 제한
+        all_docs = all_docs[:2]
         return [self._doc_to_course_dict(doc) for doc in all_docs]
     
     def _doc_to_course_dict(self, doc: Document) -> Dict:
@@ -1061,17 +1061,17 @@ class CareerEnsembleRetrieverAgent:
         # 선호 소스의 과정들 먼저 추출
         preferred_courses = [course for course in courses if course.get('source') == preferred_source]
         
-        # 선호 소스의 과정이 충분히 있으면 그것만 반환 (최소 3개)
-        if len(preferred_courses) >= 3:
+        # 선호 소스의 과정이 충분히 있으면 그것만 반환 (최소 2개)
+        if len(preferred_courses) >= 2:
             self.logger.info(f"{preferred_source} 과정 {len(preferred_courses)}개로 필터링")
-            return preferred_courses
+            return preferred_courses[:2]  # 2개로 제한
         
         # 선호 소스의 과정이 부족하면 다른 소스도 포함하되 선호 소스 우선 정렬
         other_courses = [course for course in courses if course.get('source') != preferred_source]
-        result = preferred_courses + other_courses[:7-len(preferred_courses)]  # 최대 7개까지
+        result = preferred_courses + other_courses[:2-len(preferred_courses)]  # 최대 2개까지
         
         self.logger.info(f"{preferred_source} 우선 필터링: {len(preferred_courses)}개 + 기타 {len(result)-len(preferred_courses)}개")
-        return result
+        return result[:2]  # 최종적으로 2개 제한
 
 
 class NewsRetrieverAgent:
@@ -1151,7 +1151,7 @@ class NewsRetrieverAgent:
                 return False
         return True
     
-    def search_relevant_news(self, query: str, intent_analysis: dict = None, n_results: int = 3) -> list:
+    def search_relevant_news(self, query: str, intent_analysis: dict = None, n_results: int = 2) -> list:
         """
         의도 분석 결과를 바탕으로 관련 뉴스를 검색합니다.
         ChromaDB 클라이언트에 직접 접근하여 검색을 수행합니다.
@@ -1159,7 +1159,7 @@ class NewsRetrieverAgent:
         Args:
             query: 검색 질의
             intent_analysis: 의도 분석 결과 딕셔너리
-            n_results: 반환할 결과 수 (기본값: 3)
+            n_results: 반환할 결과 수 (기본값: 2)
             
         Returns:
             list: 검색된 뉴스 데이터 리스트
@@ -1320,7 +1320,7 @@ class NewsRetrieverAgent:
         
         return content
     
-    def get_news_by_domain(self, domain: str, n_results: int = 5) -> list:
+    def get_news_by_domain(self, domain: str, n_results: int = 2) -> list:
         """
         특정 도메인의 뉴스를 검색합니다.
         ChromaDB 클라이언트에 직접 접근하여 도메인 필터링된 검색을 수행합니다.

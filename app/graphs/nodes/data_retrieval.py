@@ -88,7 +88,7 @@ class DataRetrievalNode:
             if not career_keywords:
                 career_keywords = [user_question]
             career_query = " ".join(career_keywords[:2])
-            career_cases = self.career_retriever_agent.retrieve(career_query, k=3)
+            career_cases = self.career_retriever_agent.retrieve(career_query, k=2)
             
             # 3. 교육과정 검색 (학습 경로)
             education_results = self._search_education_courses(state, intent_analysis)
@@ -352,7 +352,7 @@ class DataRetrievalNode:
             news_results = self.news_retriever_agent.search_relevant_news(
                 query=user_question,
                 intent_analysis=intent_analysis,
-                n_results=3  # 상위 3개 뉴스만 선택 (컨텍스트 크기 최적화)
+                n_results=2  # 상위 2개 뉴스만 선택 (컨텍스트 크기 최적화)
             )
             
             self.logger.info(f"뉴스 검색 완료: {len(news_results)}개")
