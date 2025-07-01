@@ -1,55 +1,12 @@
 # app/graphs/agents/retriever.py
-"""
-* @className : CareerEnsembleRetrieverAgent
-* @description : 커리어 앙상블 리트리버 에이전트 모듈
-*                Vector Store에서 관련 정보를 검색하는 핵심 모듈입니다.
-*                BM25 + OpenAI 임베딩 앙상블 검색으로 정확도를 향상시키고,
-*                사용자 프로필 기반 개인화된 검색 결과를 제공합니다.
-*
-*                🔄 주요 기능:
-*                1. BM25 + OpenAI 임베딩 앙상블 검색으로 정확도 향상
-*                2. 커리어 사례와 교육과정 데이터 통합 검색
-*                3. 사용자 프로필 기반 개인화된 검색 결과 제공
-*                4. ChromaDB를 활용한 고성능 벡터 검색
-*
-*                📚 검색 대상:
-*                - 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
-*                - 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
-*                - 학습 경로: 단계별 성장 로드맵
-*
-*                🔧 주요 기술:
-*                - Ensemble Retriever (BM25 + Vector Search)
-*                - OpenAI Embeddings with Cache
-*                - ChromaDB Persistent Storage
-*                - Query Optimization & Filtering
-*
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see ChromaDB, OpenAI, BM25
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
-"""
 
 import os
 import json
 import re
 import requests
 import logging
-from typing import Dict, List, Any
-from langchain_community.vectorstores import Chroma
+from typing import Dict, List, Any, Optional
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.retrievers import BM25Retriever
-from langchain.retrievers import EnsembleRetriever
-from langchain.embeddings import CacheBackedEmbeddings
-from langchain.storage import LocalFileStore
 from langchain.schema import Document
 from datetime import datetime, timedelta
 
@@ -64,15 +21,7 @@ class PathConfig:
     """
     BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # app 디렉토리
     
-    # 📊 벡터 스토어 경로 (Chroma DB 저장소)
-    CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"           # 커리어 사례 벡터 데이터베이스
-    EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"  # 교육과정 벡터 데이터베이스
-    
-    # 🗄️ 캐시 경로 (임베딩 캐시)
-    CAREER_EMBEDDING_CACHE = "../../storage/cache/embedding_cache"            # 커리어 사례 임베딩 캐시 저장소
-    EDUCATION_EMBEDDING_CACHE = "../../storage/cache/education_embedding_cache" # 교육과정 임베딩 캐시 저장소
-    
-    # 📄 문서 경로 (JSON 데이터 파일들)
+    # 📄 문서 경로 (JSON 데이터 파일들) - 폴백용
     CAREER_DOCS = "../../storage/docs/career_history.json"                    # 커리어 히스토리 원본 데이터
     EDUCATION_DOCS = "../../storage/docs/education_courses.json"              # 교육과정 문서 데이터
     SKILL_MAPPING = "../../storage/docs/skill_education_mapping.json"         # 스킬-교육과정 매핑 테이블
@@ -88,124 +37,249 @@ class PathConfig:
 
 # ==================== 📂 경로 설정 끝 ====================
 
+class ChromaK8sClient:
+    """K8s 내부 ChromaDB 클라이언트"""
+    
+    def __init__(self, use_external: bool = False):
+        """
+        ChromaDB 클라이언트 초기화
+        
+        Args:
+            use_external: True면 외부 접속, False면 k8s 내부 접속
+        """
+        self.use_external = use_external
+        
+        if use_external:
+            # 외부 접속 (개발환경)
+            self.base_url = "https://sk-gnavi4.skala25a.project.skala-ai.com/vector/api/v2"
+        else:
+            # k8s 내부 접속 (운영환경)
+            self.base_url = "http://chromadb-1.sk-team-04.svc.cluster.local:8000/api/v2"
+        
+        self.tenant = "default_tenant"
+        self.database = "default_database"
+        self.collections_url = f"{self.base_url}/tenants/{self.tenant}/databases/{self.database}/collections"
+        
+        # 컬렉션 정보
+        self.career_collection_name = "gnavi4_career_history_prod"
+        self.education_collection_name = "gnavi4_education_prod"
+        self.career_collection_id = None
+        self.education_collection_id = None
+        
+        # 임베딩 설정
+        self.embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-small",
+            dimensions=1536
+        )
+        
+        # 헤더 설정
+        self.headers = {"Content-Type": "application/json"}
+        self.logger = logging.getLogger(__name__)
+        
+        # 초기화
+        self._init_collections()
+    
+    def _init_collections(self):
+        """컬렉션 ID 초기화"""
+        try:
+            collections = self._get_collections_list()
+            if collections:
+                for collection in collections:
+                    name = collection.get('name')
+                    collection_id = collection.get('id')
+                    
+                    if name == self.career_collection_name:
+                        self.career_collection_id = collection_id
+                        self.logger.info(f"경력 컬렉션 ID 로드: {collection_id}")
+                    elif name == self.education_collection_name:
+                        self.education_collection_id = collection_id
+                        self.logger.info(f"교육과정 컬렉션 ID 로드: {collection_id}")
+            
+            connection_mode = "외부" if self.use_external else "k8s 내부"
+            print(f"✅ [ChromaDB {connection_mode} 접속] 초기화 완료")
+            
+        except Exception as e:
+            self.logger.error(f"ChromaDB 컬렉션 초기화 실패: {e}")
+            print(f"❌ [ChromaDB 초기화 실패] {e}")
+    
+    def _get_collections_list(self) -> Optional[List[Dict]]:
+        """컬렉션 목록 조회"""
+        try:
+            response = requests.get(
+                self.collections_url,
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                self.logger.error(f"컬렉션 목록 조회 실패: {response.status_code}")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"컬렉션 목록 조회 오류: {e}")
+            return None
+    
+    def search_career_documents(self, query: str, k: int = 3) -> List[Document]:
+        """경력 문서 검색"""
+        if not self.career_collection_id:
+            self.logger.warning("경력 컬렉션을 찾을 수 없습니다")
+            return []
+        
+        try:
+            # 임베딩 생성
+            query_embedding = self.embeddings.embed_query(query)
+            
+            # 검색 요청
+            search_data = {
+                "query_embeddings": [query_embedding],
+                "n_results": k,
+                "include": ["documents", "metadatas"]
+            }
+            
+            search_url = f"{self.collections_url}/{self.career_collection_id}/query"
+            response = requests.post(search_url, headers=self.headers, json=search_data, timeout=30)
+            
+            if response.status_code == 200:
+                results = response.json()
+                documents = results.get('documents', [[]])
+                metadatas = results.get('metadatas', [[]])
+                
+                # Document 객체로 변환
+                docs = []
+                for i, doc_content in enumerate(documents[0] if documents else []):
+                    metadata = metadatas[0][i] if metadatas and metadatas[0] and i < len(metadatas[0]) else {}
+                    docs.append(Document(page_content=doc_content, metadata=metadata))
+                
+                return docs
+            else:
+                self.logger.error(f"경력 검색 실패: {response.status_code} - {response.text}")
+                return []
+                
+        except Exception as e:
+            self.logger.error(f"경력 검색 중 오류: {e}")
+            return []
+    
+    def search_education_documents(self, query: str, k: int = 3) -> List[Document]:
+        """교육과정 문서 검색"""
+        if not self.education_collection_id:
+            self.logger.warning("교육과정 컬렉션을 찾을 수 없습니다")
+            return []
+        
+        try:
+            # 임베딩 생성
+            query_embedding = self.embeddings.embed_query(query)
+            
+            # 검색 요청
+            search_data = {
+                "query_embeddings": [query_embedding],
+                "n_results": k,
+                "include": ["documents", "metadatas"]
+            }
+            
+            search_url = f"{self.collections_url}/{self.education_collection_id}/query"
+            response = requests.post(search_url, headers=self.headers, json=search_data, timeout=30)
+            
+            if response.status_code == 200:
+                results = response.json()
+                documents = results.get('documents', [[]])
+                metadatas = results.get('metadatas', [[]])
+                
+                # Document 객체로 변환
+                docs = []
+                for i, doc_content in enumerate(documents[0] if documents else []):
+                    metadata = metadatas[0][i] if metadatas and metadatas[0] and i < len(metadatas[0]) else {}
+                    docs.append(Document(page_content=doc_content, metadata=metadata))
+                
+                return docs
+            else:
+                self.logger.error(f"교육과정 검색 실패: {response.status_code} - {response.text}")
+                return []
+                
+        except Exception as e:
+            self.logger.error(f"교육과정 검색 중 오류: {e}")
+            return []
+    
+    def get_collection_count(self, collection_type: str = "career") -> Optional[int]:
+        """컬렉션 문서 개수 조회"""
+        if collection_type == "career":
+            collection_id = self.career_collection_id
+        elif collection_type == "education":
+            collection_id = self.education_collection_id
+        else:
+            return None
+        
+        if not collection_id:
+            return None
+        
+        try:
+            count_url = f"{self.collections_url}/{collection_id}/count"
+            response = requests.get(count_url, headers=self.headers, timeout=10)
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                self.logger.error(f"{collection_type} 컬렉션 카운트 조회 실패: {response.status_code}")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"{collection_type} 컬렉션 카운트 조회 중 오류: {e}")
+            return None
+
 class CareerEnsembleRetrieverAgent:
     """
-    🔍 커리어 앙상블 리트리버 에이전트
+    🔍 커리어 앙상블 리트리버 에이전트 (K8s ChromaDB 연동)
     
-    BM25 + LLM 임베딩 앙상블을 활용하여 커리어 사례와 교육과정을
-    효과적으로 검색합니다. ChromaDB와 캐시를 활용한 고성능 검색을 제공합니다.
+    K8s 내부 또는 외부 ChromaDB에 연결하여 커리어 사례와 교육과정을
+    효과적으로 검색합니다.
     
     📊 검색 결과:
     - 커리어 사례: 최대 3개까지 검색
     - 교육과정: 최대 3개까지 검색
     """
-    def __init__(self, persist_directory: str = None, cache_directory: str = None):
+    def __init__(self, use_external_chroma: bool = None):
         """
         CareerEnsembleRetrieverAgent 초기화
         
         Args:
-            persist_directory: 커리어 벡터 스토어 경로 (기본값: PathConfig.CAREER_VECTOR_STORE)
-            cache_directory: 커리어 임베딩 캐시 경로 (기본값: PathConfig.CAREER_EMBEDDING_CACHE)
+            use_external_chroma: True면 외부 접속, False면 k8s 내부 접속, None이면 환경변수 확인
         """
-        # 경로 설정 (PathConfig 사용)
-        self.persist_directory = PathConfig.get_abs_path(
-            persist_directory or PathConfig.CAREER_VECTOR_STORE
-        )                                                                            # 커리어 벡터 스토어 절대 경로
-        self.career_cache_directory = PathConfig.get_abs_path(
-            cache_directory or PathConfig.CAREER_EMBEDDING_CACHE
-        )                                                                            # 커리어 임베딩 캐시 절대 경로
-        self.base_dir = PathConfig.BASE_DIR                                          # 기본 디렉토리 경로
-        self.logger = logging.getLogger(__name__)                                    # 로거 인스턴스
+        # 환경변수로 접속 방식 결정
+        if use_external_chroma is None:
+            use_external_chroma = os.getenv("CHROMA_USE_EXTERNAL", "false").lower() == "true"
         
-        # 디렉토리 생성
-        os.makedirs(self.persist_directory, exist_ok=True)                           # 벡터 스토어 디렉토리 생성
-        os.makedirs(self.career_cache_directory, exist_ok=True)                      # 커리어 캐시 디렉토리 생성
-
-        # 커리어 전용 임베딩 설정
-        self.base_embeddings = OpenAIEmbeddings(                                     # OpenAI 기본 임베딩 모델
-            model="text-embedding-3-small",
-            dimensions=1536
-        )
-        self.career_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(      # 커리어 전용 캐시 기반 임베딩 래퍼
-            self.base_embeddings,
-            LocalFileStore(self.career_cache_directory),
-            namespace="career_embeddings"
-        )
+        self.logger = logging.getLogger(__name__)
         
-        # 교육과정 전용 임베딩 설정
-        self.education_cache_directory = PathConfig.get_abs_path(PathConfig.EDUCATION_EMBEDDING_CACHE)
-        os.makedirs(self.education_cache_directory, exist_ok=True)
-        self.education_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(   # 교육과정 전용 캐시 기반 임베딩 래퍼
-            self.base_embeddings,
-            LocalFileStore(self.education_cache_directory),
-            namespace="education_embeddings"
-        )
-        self.vectorstore = None                                                      # Chroma 벡터 스토어 인스턴스 
-        self.ensemble_retriever = None                                               # 앙상블 리트리버 인스턴스
+        # ChromaDB 클라이언트 초기화
+        self.chroma_client = ChromaK8sClient(use_external=use_external_chroma)
         
-        # 교육과정 관련 경로 설정 (PathConfig 사용)
-        self.education_persist_dir = PathConfig.get_abs_path(PathConfig.EDUCATION_VECTOR_STORE)    # 교육과정 벡터 스토어 경로
-        self.education_docs_path = PathConfig.get_abs_path(PathConfig.EDUCATION_DOCS)              # 교육과정 문서 파일 경로
-        self.skill_mapping_path = PathConfig.get_abs_path(PathConfig.SKILL_MAPPING)                # 스킬-교육과정 매핑 파일 경로
-        self.deduplication_index_path = PathConfig.get_abs_path(PathConfig.COURSE_DEDUPLICATION)   # 과정 중복제거 인덱스 파일 경로
-        
-        # 회사 비전 관련 경로 설정 (PathConfig 사용)
-        self.company_vision_path = PathConfig.get_abs_path(PathConfig.COMPANY_VISION)              # 회사 비전 데이터 파일 경로
+        # 문서 경로 설정 (폴백용)
+        self.education_docs_path = PathConfig.get_abs_path(PathConfig.EDUCATION_DOCS)
+        self.skill_mapping_path = PathConfig.get_abs_path(PathConfig.SKILL_MAPPING)
+        self.deduplication_index_path = PathConfig.get_abs_path(PathConfig.COURSE_DEDUPLICATION)
+        self.company_vision_path = PathConfig.get_abs_path(PathConfig.COMPANY_VISION)
         
         # 지연 로딩 속성
-        self.education_vectorstore = None
         self.skill_education_mapping = None
         self.course_deduplication_index = None
         self.company_vision_data = None
+        self.original_mysuni_data = None
+        self.original_college_data = None
         
-        self._load_vectorstore_and_retriever()
-
-    def _load_vectorstore_and_retriever(self):
-        # Chroma 벡터스토어 로드
-        self.vectorstore = Chroma(
-            persist_directory=self.persist_directory,
-            embedding_function=self.career_cached_embeddings,
-            collection_name="career_history"
-        )
-        # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
-        embedding_retriever = self.vectorstore.as_retriever(
-            search_type="similarity",
-            search_kwargs={"k": 3}
-        )
-        # BM25용 docs 로드 (PathConfig 사용)
-        docs_path = PathConfig.get_abs_path(PathConfig.CAREER_DOCS)
-        all_docs = []
-        try:
-            with open(docs_path, 'r', encoding='utf-8') as f:
-                json_docs = json.load(f)
-                all_docs = [Document(page_content=doc['page_content'], metadata=doc['metadata']) for doc in json_docs]
-            self.logger.info(f"BM25용 career_docs.json 로드 완료 (문서 수: {len(all_docs)})")
-        except Exception as e:
-            self.logger.warning(f"BM25용 career_docs.json 로드 실패: {e}")
-        retrievers = [embedding_retriever]
-        weights = [1.0]
-        if all_docs:
-            bm25_retriever = BM25Retriever.from_documents(all_docs)
-            bm25_retriever.k = 3  # BM25도 3개로 제한
-            retrievers.append(bm25_retriever)
-            weights = [0.3, 0.7]
-        self.ensemble_retriever = EnsembleRetriever(
-            retrievers=retrievers,
-            weights=weights
-        )
-        self.logger.info(f"Career 앙상블 리트리버 준비 완료 (문서 수: {len(all_docs)})")
-        print(f"✅ [커리어 사례 VectorDB] 초기화 완료")
+        connection_mode = "외부" if use_external_chroma else "k8s 내부"
+        print(f"✅ [Retriever Agent {connection_mode} 모드] 초기화 완료")
 
     def retrieve(self, query: str, k: int = 3):
-        """앙상블 리트리버로 검색 (기본 3개 결과) + 시간 기반 필터링"""
+        """ChromaDB에서 경력 사례 검색 + 시간 기반 필터링"""
         print(f"🔍 [커리어 사례 검색] 시작 - '{query}'")
         
-        if not self.ensemble_retriever:
-            print(f"❌ [커리어 사례 검색] 앙상블 리트리버가 없음")
-            return []
+        # ChromaDB에서 검색
+        docs = self.chroma_client.search_career_documents(query, k=k*2)  # 필터링을 위해 더 많이 가져옴
         
-        # 기본 검색 수행
-        all_docs = self.ensemble_retriever.invoke(query)
+        if not docs:
+            print(f"❌ [커리어 사례 검색] 결과 없음")
+            return self._fallback_career_search(query, k)
         
         # 최근 키워드 감지 및 연도 추출
         recent_keywords = ['최근', '최신', 'recent', '요즘', '지금', '현재', '새로운', '신규', '트렌드']
@@ -232,63 +306,17 @@ class CareerEnsembleRetrieverAgent:
                 min_year = current_year - 3  # 기본값: 최근 3년
                 self.logger.info(f"기본 설정: 최근 3년 ({min_year}년 이후)")
             
-            if focus_on_start_year:
-                # 신입/입사 관련 쿼리인 경우: 시작 연도 기준
-                self.logger.info(f"신입/입사 관련 쿼리 감지됨. {min_year}년 이후 **시작된** 활동 데이터 필터링 시작...")
-                filtered_docs = []
-                for doc in all_docs:
-                    try:
-                        metadata = doc.metadata or {}
-                        start_year = metadata.get('activity_start_year')
-                        
-                        if start_year and isinstance(start_year, int) and start_year >= min_year:
-                            filtered_docs.append(doc)
-                            self.logger.debug(f"포함: {start_year}년 시작 활동 (Employee: {doc.metadata.get('employee_id', 'Unknown')})")
-                        else:
-                            self.logger.debug(f"제외: {start_year}년 시작 활동 (최소 기준: {min_year}년 이후 시작) (Employee: {doc.metadata.get('employee_id', 'Unknown')})")
-                    except Exception as e:
-                        self.logger.warning(f"문서 연도 추출 실패: {e}")
-                        continue
-            else:
-                # 일반 최근 쿼리인 경우: 최근 활동이 있었던 직원들 중에서
-                self.logger.info(f"시간 기반 필터링 시작: {min_year}년 이후 **활동이 있었던** 데이터 검색...")
-                filtered_docs = []
-                for doc in all_docs:
-                    try:
-                        metadata = doc.metadata or {}
-                        
-                        # 활동 연도 리스트에서 지정된 기간 내 활동이 있는지 확인
-                        activity_years = metadata.get('activity_years_list', [])
-                        if activity_years and isinstance(activity_years, list):
-                            recent_activity_years = [year for year in activity_years 
-                                                   if isinstance(year, int) and year >= min_year]
-                            if recent_activity_years:
-                                filtered_docs.append(doc)
-                                self.logger.debug(f"포함: 최근 활동 연도 {recent_activity_years} (Employee: {doc.metadata.get('employee_id', 'Unknown')})")
-                                continue
-                        
-                        # 폴백: 종료 연도가 최근인지 확인
-                        end_year = metadata.get('activity_end_year')
-                        if end_year and isinstance(end_year, int) and end_year >= min_year:
-                            filtered_docs.append(doc)
-                            self.logger.debug(f"포함: {end_year}년 종료 활동 (Employee: {doc.metadata.get('employee_id', 'Unknown')})")
-                        else:
-                            self.logger.debug(f"제외: 최근 활동 없음 (Employee: {doc.metadata.get('employee_id', 'Unknown')})")
-                    except Exception as e:
-                        self.logger.warning(f"문서 연도 추출 실패: {e}")
-                        continue
-            
-            self.logger.info(f"시간 필터링 완료: 전체 {len(all_docs)}개 → 필터링된 {len(filtered_docs)}개 문서")
+            # 시간 기반 필터링
+            filtered_docs = self._filter_docs_by_time(docs, min_year, focus_on_start_year)
             final_docs = filtered_docs[:k]
         else:
-            final_docs = all_docs[:k]
+            final_docs = docs[:k]
         
         # 회사 비전 정보를 결과에 추가 (커리어 관련 질문인 경우)
         career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직']
         if any(keyword in query.lower() for keyword in career_keywords):
             company_vision = self._load_company_vision()
             if company_vision:
-                # 회사 비전을 Document 형태로 추가
                 vision_content = self._format_company_vision_for_context(company_vision)
                 vision_doc = Document(
                     page_content=vision_content,
@@ -299,6 +327,76 @@ class CareerEnsembleRetrieverAgent:
         
         print(f"✅ [커리어 사례 검색] 완료: {len(final_docs)}개 결과 반환")
         return final_docs
+    
+    def _filter_docs_by_time(self, docs: List[Document], min_year: int, focus_on_start_year: bool) -> List[Document]:
+        """시간 기반 문서 필터링"""
+        filtered_docs = []
+        
+        for doc in docs:
+            try:
+                metadata = doc.metadata or {}
+                
+                if focus_on_start_year:
+                    # 신입/입사 관련 쿼리인 경우: 시작 연도 기준
+                    start_year = metadata.get('activity_start_year')
+                    if start_year and isinstance(start_year, int) and start_year >= min_year:
+                        filtered_docs.append(doc)
+                        self.logger.debug(f"포함: {start_year}년 시작 활동")
+                else:
+                    # 일반 최근 쿼리인 경우: 최근 활동이 있었던 직원들 중에서
+                    activity_years = metadata.get('activity_years_list', [])
+                    if activity_years and isinstance(activity_years, list):
+                        recent_activity_years = [year for year in activity_years 
+                                               if isinstance(year, int) and year >= min_year]
+                        if recent_activity_years:
+                            filtered_docs.append(doc)
+                            self.logger.debug(f"포함: 최근 활동 연도 {recent_activity_years}")
+                            continue
+                    
+                    # 폴백: 종료 연도가 최근인지 확인
+                    end_year = metadata.get('activity_end_year')
+                    if end_year and isinstance(end_year, int) and end_year >= min_year:
+                        filtered_docs.append(doc)
+                        self.logger.debug(f"포함: {end_year}년 종료 활동")
+                        
+            except Exception as e:
+                self.logger.warning(f"문서 연도 추출 실패: {e}")
+                continue
+        
+        self.logger.info(f"시간 필터링 완료: 전체 {len(docs)}개 → 필터링된 {len(filtered_docs)}개 문서")
+        return filtered_docs
+    
+    def _fallback_career_search(self, query: str, k: int = 3) -> List[Document]:
+        """ChromaDB 검색 실패 시 폴백 검색"""
+        self.logger.warning("ChromaDB 검색 실패, JSON 파일 폴백 검색 시도")
+        
+        try:
+            career_docs_path = PathConfig.get_abs_path(PathConfig.CAREER_DOCS)
+            with open(career_docs_path, 'r', encoding='utf-8') as f:
+                json_docs = json.load(f)
+            
+            # 간단한 키워드 매칭
+            query_keywords = query.lower().split()
+            matching_docs = []
+            
+            for doc_data in json_docs:
+                content = doc_data.get('page_content', '').lower()
+                score = sum(1 for keyword in query_keywords if keyword in content)
+                
+                if score > 0:
+                    doc = Document(
+                        page_content=doc_data['page_content'],
+                        metadata=doc_data.get('metadata', {})
+                    )
+                    matching_docs.append((doc, score))
+            
+            # 점수순 정렬 후 k개 반환
+            matching_docs.sort(key=lambda x: x[1], reverse=True)
+            return [doc for doc, _ in matching_docs[:k]]
+            
+        except Exception as e:
+            self.logger.error(f"폴백 검색도 실패: {e}")
+            return []
     
     def _extract_years_from_query(self, query: str) -> dict:
         """쿼리에서 연도 관련 정보 추출"""
@@ -326,7 +424,7 @@ class CareerEnsembleRetrieverAgent:
                 except ValueError:
                     continue
         
-        # 특정 연도 패턴 매칭 (예: "2020년 이후", "2023년부터")
+        # 특정 연도 패턴 매칭
         specific_year_patterns = [
             r'(\d{4})\s*년\s*이후',  # 2020년 이후
             r'(\d{4})\s*년\s*부터',  # 2020년부터
@@ -347,123 +445,114 @@ class CareerEnsembleRetrieverAgent:
                     continue
         
         return years_info
-    
-    def _get_latest_year_from_doc(self, doc: Document) -> int:
-        """문서에서 가장 최신 연도 정보 추출 (개선된 버전)"""
-        metadata = doc.metadata or {}
-        
-        # 1. 활동 종료 연도 우선 확인 (가장 신뢰할 만한 정보)
-        end_year = metadata.get('activity_end_year')
-        if end_year and isinstance(end_year, int) and 2000 <= end_year <= 2030:
-            return end_year
-        
-        # 2. 활동 연도 리스트에서 최신 연도 확인
-        activity_years = metadata.get('activity_years_list', [])
-        if activity_years and isinstance(activity_years, list):
-            try:
-                valid_years = [year for year in activity_years if isinstance(year, int) and 2000 <= year <= 2030]
-                if valid_years:
-                    return max(valid_years)
-            except:
-                pass
-        
-        # 3. 활동 시작 연도 확인 (종료 연도가 없는 경우)
-        start_year = metadata.get('activity_start_year')
-        if start_year and isinstance(start_year, int) and 2000 <= start_year <= 2030:
-            return start_year
-        
-        # 4. 기존 방식으로 폴백
-        return self._extract_year_from_doc(doc)
-    
-    def _extract_year_from_doc(self, doc: Document) -> int:
-        """문서에서 연도 정보 추출"""
-        # 메타데이터에서 연도 정보 찾기
-        metadata = doc.metadata or {}
-        
-        # 직접적인 연도 필드들 확인
-        year_fields = ['year', 'start_year', 'end_year', 'graduation_year', 'project_year']
-        for field in year_fields:
-            if field in metadata and metadata[field]:
-                try:
-                    year = int(metadata[field])
-                    if 1980 <= year <= 2030:  # 유효한 연도 범위
-                        return year
-                except:
-                    continue
-        
-        # 날짜 형식에서 연도 추출
-        date_fields = ['date', 'start_date', 'end_date', 'created_at', 'updated_at']
-        for field in date_fields:
-            if field in metadata and metadata[field]:
-                try:
-                    date_str = str(metadata[field])
-                    # YYYY-MM-DD, YYYY/MM/DD, YYYY.MM.DD 형식 처리
-                    year_match = re.search(r'(\d{4})', date_str)
-                    if year_match:
-                        year = int(year_match.group(1))
-                        if 1980 <= year <= 2030:
-                            return year
-                except:
-                    continue
-        
-        # 문서 내용에서 연도 추출 (마지막 수단)
-        content = doc.page_content or ""
-        # "2023년", "2024년" 등의 패턴 찾기
-        year_patterns = [
-            r'(\d{4})년',  # 2023년
-            r'(\d{4})\s*-\s*(\d{4})',  # 2022-2024
-            r'(\d{4})/(\d{1,2})',  # 2023/12
-            r'(\d{4})\.(\d{1,2})'   # 2023.12
-        ]
-        
-        years = []
-        for pattern in year_patterns:
-            matches = re.findall(pattern, content)
-            for match in matches:
-                try:
-                    if isinstance(match, tuple):
-                        # 여러 그룹이 있는 경우 모든 연도 수집
-                        for group in match:
-                            year = int(group)
-                            if 1980 <= year <= 2030:
-                                years.append(year)
-                    else:
-                        year = int(match)
-                        if 1980 <= year <= 2030:
-                            years.append(year)
-                except:
-                    continue
-        
-        # 가장 최근 연도 반환
-        return max(years) if years else None
 
+    def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
+        """교육과정 검색 메인 함수 - ChromaDB 우선, 폴백으로 JSON 검색"""
+        print(f"🔍 [교육과정 검색] 시작 - '{query}'")
+        
+        try:
+            # ChromaDB에서 검색 시도
+            docs = self.chroma_client.search_education_documents(query, k=6)  # 더 많이 가져와서 필터링
+            
+            if docs:
+                # ChromaDB 결과를 Dict 형태로 변환
+                courses = [self._doc_to_course_dict(doc) for doc in docs]
+                
+                # 원본 데이터로 상세 정보 보강
+                courses = [self._enrich_course_with_original_data(course) for course in courses]
+                
+                # 사용자 선호도 적용
+                preferred_source = self._get_preferred_education_source(query, user_profile, intent_analysis)
+                if preferred_source:
+                    courses = self._filter_by_preferred_source(courses, preferred_source)
+                
+                # 중복 제거
+                courses = self._deduplicate_courses(courses)
+                
+                # 최종 3개로 제한
+                courses = courses[:3]
+                
+                print(f"✅ [교육과정 검색] ChromaDB 검색 완료: {len(courses)}개 과정 반환")
+                
+            else:
+                # ChromaDB 검색 실패 시 폴백
+                print(f"⚠️ [교육과정 검색] ChromaDB 검색 실패, JSON 폴백 검색")
+                courses = self._fallback_education_search(query, user_profile, intent_analysis)
+            
+            # 결과 분석 및 학습 경로 생성
+            course_analysis = self._analyze_course_recommendations(courses)
+            learning_path = self._generate_learning_path(courses)
+            
+            return {
+                "recommended_courses": courses,
+                "course_analysis": course_analysis,
+                "learning_path": learning_path
+            }
+            
+        except Exception as e:
+            self.logger.error(f"교육과정 검색 중 오류: {e}")
+            print(f"❌ [교육과정 검색] 오류 발생: {e}")
+            return {
+                "recommended_courses": [],
+                "course_analysis": {"message": f"교육과정 검색 중 오류가 발생했습니다: {e}"},
+                "learning_path": []
+            }
+    
+    def _fallback_education_search(self, query: str, user_profile: Dict, intent_analysis: Dict) -> List[Dict]:
+        """ChromaDB 검색 실패 시 JSON 폴백 검색"""
+        try:
+            # 기존 로직과 동일하게 리소스 로드
+            self._load_education_resources()
+            
+            # 스킬 기반 필터링
+            skill_based_courses = self._skill_based_course_filter(user_profile, intent_analysis)
+            
+            # JSON에서 의미적 검색
+            semantic_matches = self._search_from_json_documents(query, skill_based_courses)
+            
+            # 선호도 필터링
+            preferred_source = self._get_preferred_education_source(query, user_profile, intent_analysis)
+            if preferred_source:
+                semantic_matches = self._filter_by_preferred_source(semantic_matches, preferred_source)
+            
+            # 중복 제거 및 3개로 제한
+            deduplicated_courses = self._deduplicate_courses(semantic_matches)[:3]
+            
+            return deduplicated_courses
+            
+        except Exception as e:
+            self.logger.error(f"폴백 교육과정 검색 실패: {e}")
+            return []
+    
+    def _doc_to_course_dict(self, doc: Document) -> Dict:
+        """ChromaDB Document를 과정 딕셔너리로 변환"""
+        metadata = doc.metadata or {}
+        return {
+            "course_id": metadata.get("course_id"),
+            "course_name": metadata.get("course_name", metadata.get("card_name")),
+            "source": metadata.get("source"),
+            "content": doc.page_content,
+            "target_skills": metadata.get("target_skills", []),
+            "skill_relevance": metadata.get("skill_relevance"),
+            "duration_hours": metadata.get("duration_hours", metadata.get("인정학습시간")),
+            "difficulty_level": metadata.get("difficulty_level", metadata.get("난이도")),
+            "department": metadata.get("department", metadata.get("학부")),
+            "course_type": metadata.get("course_type", metadata.get("교육유형")),
+            "평점": metadata.get("평점"),
+            "이수자수": metadata.get("이수자수"),
+            "카테고리명": metadata.get("카테고리명"),
+            "채널명": metadata.get("채널명"),
+            "표준과정": metadata.get("표준과정"),
+            "url": metadata.get("url")
+        }
+    
+    # 기존 메소드들 유지 (스킬 기반 필터링, 중복 제거 등)
     def _load_education_resources(self):
         """교육과정 리소스 지연 로딩"""
-        if self.education_vectorstore is None:
-            self._initialize_education_vectorstore()
         if self.skill_education_mapping is None:
             self._load_skill_education_mapping()
         if self.course_deduplication_index is None:
             self._load_deduplication_index()
-    
-    def _initialize_education_vectorstore(self):
-        """교육과정 VectorDB 초기화 (교육과정 전용 캐시 사용)"""
-        try:
-            if os.path.exists(self.education_persist_dir):
-                self.education_vectorstore = Chroma(
-                    persist_directory=self.education_persist_dir,
-                    embedding_function=self.education_cached_embeddings,  # 교육과정 전용 캐시 사용
-                    collection_name="education_courses"
-                )
-                self.logger.info("교육과정 VectorDB 로드 완료 (교육과정 전용 캐시 적용)")
-                print(f"✅ [교육과정 VectorDB] 초기화 완료 (전용 캐시 적용)")
-            else:
-                self.logger.warning("교육과정 VectorDB가 존재하지 않습니다. utils/education_data_processor.py를 실행해주세요.")
-                print(f"⚠️  [교육과정 VectorDB] 없음 - JSON 파일로 폴백 검색 진행")
-        except Exception as e:
-            self.logger.error(f"교육과정 VectorDB 로드 실패: {e}")
-            print(f"❌ [교육과정 VectorDB] 로드 실패: {e} - JSON 파일로 폴백 검색 진행")
-            self.education_vectorstore = None
     
     def _load_skill_education_mapping(self):
         """스킬-교육과정 매핑 로드"""
@@ -566,55 +655,9 @@ class CareerEnsembleRetrieverAgent:
                 sections.append("커리어 가이드 원칙:\n" + "\n".join(principles_text))
         
         return "\n\n".join(sections)
-
-    def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
-        """교육과정 검색 메인 함수 - 최대 3개까지만 검색"""
-        print(f"🔍 [교육과정 검색] 시작 - '{query}'")
-        self._load_education_resources()
-        
-        try:
-            # 사용자의 교육과정 소스 선호도 확인
-            preferred_source = self._get_preferred_education_source(query, user_profile, intent_analysis)
-            
-            # 1단계: 스킬 기반 빠른 필터링
-            skill_based_courses = self._skill_based_course_filter(user_profile, intent_analysis)
-            
-            # 2단계: VectorDB 의미적 검색 (VectorDB가 없으면 JSON 폴백)
-            semantic_matches = self._semantic_course_search(query, skill_based_courses)
-            
-            # 3단계: 선호도에 따른 소스 필터링
-            if preferred_source:
-                semantic_matches = self._filter_by_preferred_source(semantic_matches, preferred_source)
-            
-            # 4단계: 중복 제거 및 정렬
-            deduplicated_courses = self._deduplicate_courses(semantic_matches)
-            
-            # 최종적으로 3개까지만 제한
-            deduplicated_courses = deduplicated_courses[:3]
-            
-            # 5단계: 결과 분석 및 학습 경로 생성
-            course_analysis = self._analyze_course_recommendations(deduplicated_courses)
-            learning_path = self._generate_learning_path(deduplicated_courses)
-            
-            self.logger.info(f"교육과정 검색 완료: 최종 {len(deduplicated_courses)}개 과정 반환")
-            print(f"✅ [교육과정 검색] 완료: {len(deduplicated_courses)}개 과정 반환")
-            
-            return {
-                "recommended_courses": deduplicated_courses,
-                "course_analysis": course_analysis,
-                "learning_path": learning_path
-            }
-        except Exception as e:
-            self.logger.error(f"교육과정 검색 중 오류: {e}")
-            print(f"❌ [교육과정 검색] 오류 발생: {e}")
-            return {
-                "recommended_courses": [],
-                "course_analysis": {"message": f"교육과정 검색 중 오류가 발생했습니다: {e}"},
-                "learning_path": []
-            }
     
     def _skill_based_course_filter(self, user_profile: Dict, intent_analysis: Dict) -> List[Dict]:
-        """스킬 기반 1차 필터링 - JSON 인덱스 활용"""
+        """스킬 기반 1차 필터링"""
         filtered_courses = []
         
         # 사용자 현재 스킬 추출
@@ -630,7 +673,7 @@ class CareerEnsembleRetrieverAgent:
             if skill_code in self.skill_education_mapping:
                 skill_courses = self.skill_education_mapping[skill_code]
                 
-                # College 과정 - 세분화 레벨별 추가
+                # College 과정 추가
                 for course_type in ["specialized", "recommended", "common_required"]:
                     if course_type in skill_courses.get("college", {}):
                         courses = skill_courses["college"][course_type]
@@ -657,11 +700,9 @@ class CareerEnsembleRetrieverAgent:
         """사용자 프로필에서 스킬 추출"""
         skills = []
         
-        # 직접적인 스킬 정보가 있는 경우
         if "skills" in user_profile:
             skills.extend(user_profile["skills"])
         
-        # 경력 정보에서 스킬 추출
         if "career_history" in user_profile:
             for career in user_profile["career_history"]:
                 if "skills" in career:
@@ -669,52 +710,17 @@ class CareerEnsembleRetrieverAgent:
         
         return list(set(skills))
     
-    def _semantic_course_search(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
-        """VectorDB를 활용한 의미적 검색 (VectorDB가 없으면 JSON에서 검색) - 3개까지만 검색"""
-        if not self.education_vectorstore:
-            # VectorDB가 없으면 JSON 파일에서 직접 검색
-            self.logger.info("VectorDB 없음 - JSON 파일에서 검색")
-            return self._search_from_json_documents(query, filtered_courses)
-            
-        if not filtered_courses:
-            # 필터링된 과정이 없으면 전체 VectorDB에서 검색 (3개로 제한)
-            docs = self.education_vectorstore.similarity_search(query, k=3)
-            courses = [self._doc_to_course_dict(doc) for doc in docs]
-            # 원본 데이터로 상세 정보 보강
-            courses = [self._enrich_course_with_original_data(course) for course in courses]
-        else:
-            # 필터링된 과정들의 course_id로 VectorDB에서 상세 검색
-            course_ids = [course.get("course_id") for course in filtered_courses if course.get("course_id")]
-            courses = self._search_by_course_ids(course_ids, query)
-            
-            # 필터링 정보를 VectorDB 결과에 병합
-            for course in courses:
-                for filtered_course in filtered_courses:
-                    if course.get("course_id") == filtered_course.get("course_id"):
-                        course.update(filtered_course)
-                        break
-            
-            # 원본 데이터로 상세 정보 보강
-            courses = [self._enrich_course_with_original_data(course) for course in courses]
-        
-        # 결과를 3개로 제한
-        courses = courses[:3]
-        self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정 (3개로 제한)")
-        return courses
-    
     def _search_from_json_documents(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
-        """JSON 문서에서 직접 검색 (VectorDB 대안) - 3개까지만 검색"""
+        """JSON 문서에서 직접 검색"""
         try:
             with open(self.education_docs_path, "r", encoding="utf-8") as f:
                 all_docs = json.load(f)
         except FileNotFoundError:
             self.logger.warning("교육과정 문서 파일이 없습니다.")
-            # 필터링된 과정이라도 반환하자 (3개로 제한)
             return filtered_courses[:3] if filtered_courses else []
         
-        # 필터링된 과정이 있으면 우선적으로 활용
+        # 필터링된 과정이 있으면 우선 활용
         if filtered_courses:
-            # filtered_courses의 course_id들과 매칭되는 문서들 찾기
             filtered_course_ids = {course.get("course_id") for course in filtered_courses}
             matching_docs = []
             
@@ -732,10 +738,7 @@ class CareerEnsembleRetrieverAgent:
                     matching_docs.append(course_dict)
             
             if matching_docs:
-                # 3개로 제한
-                matching_docs = matching_docs[:3]
-                self.logger.info(f"필터링된 과정 기반 검색 결과: {len(matching_docs)}개 (3개로 제한)")
-                return matching_docs
+                return matching_docs[:3]
         
         # 키워드 기반 검색
         query_keywords = query.lower().split()
@@ -743,26 +746,15 @@ class CareerEnsembleRetrieverAgent:
         
         for doc in all_docs:
             content = doc.get("page_content", "").lower()
-            metadata = doc.get("metadata", {})
-            
-            # 키워드 매칭 점수 계산
-            score = 0
-            for keyword in query_keywords:
-                if keyword in content:
-                    score += 1
+            score = sum(1 for keyword in query_keywords if keyword in content)
             
             if score > 0:
                 course_dict = self._doc_to_course_dict_from_json(doc)
                 course_dict["match_score"] = score
                 matching_docs.append(course_dict)
         
-        # 점수순으로 정렬
         matching_docs.sort(key=lambda x: x.get("match_score", 0), reverse=True)
-        
-        # 3개로 제한
-        matching_docs = matching_docs[:3]
-        self.logger.info(f"키워드 기반 검색 결과: {len(matching_docs)}개 (3개로 제한)")
-        return matching_docs
+        return matching_docs[:3]
     
     def _doc_to_course_dict_from_json(self, doc_data: Dict) -> Dict:
         """JSON 문서 데이터를 과정 딕셔너리로 변환"""
@@ -783,70 +775,52 @@ class CareerEnsembleRetrieverAgent:
             "카테고리명": metadata.get("카테고리명"),
             "채널명": metadata.get("채널명"),
             "표준과정": metadata.get("표준과정"),
-            "url": metadata.get("url")  # URL 필드 추가
+            "url": metadata.get("url")
         }
     
-    def _search_by_course_ids(self, course_ids: List[str], query: str) -> List[Dict]:
-        """특정 과정 ID들에 대한 VectorDB 검색 - 3개까지만 검색"""
-        if not course_ids:
-            return []
+    def _get_preferred_education_source(self, query: str, user_profile: Dict, intent_analysis: Dict) -> str:
+        """사용자의 교육과정 소스 선호도 감지"""
+        query_lower = query.lower()
+        if 'mysuni' in query_lower or 'my suni' in query_lower:
+            return 'mysuni'
+        elif 'college' in query_lower or '컬리지' in query_lower:
+            return 'college'
         
-        # 각 course_id에 대해 검색하고 결과 통합
-        all_docs = []
-        for course_id in course_ids[:10]:  # 검색할 course_id는 최대 10개로 제한
-            try:
-                # 메타데이터 필터를 사용한 검색
-                docs = self.education_vectorstore.similarity_search(
-                    query, 
-                    k=1,  # 각 과정당 1개씩만 가져와서 전체적으로 3개 제한 유지
-                    filter={"course_id": course_id}
-                )
-                all_docs.extend(docs)
-                # 이미 3개가 되면 중단
-                if len(all_docs) >= 3:
-                    break
-            except Exception as e:
-                self.logger.warning(f"Course ID {course_id} 검색 실패: {e}")
+        preferred_source = user_profile.get('preferred_education_source', '')
+        if preferred_source in ['mysuni', 'college']:
+            return preferred_source
         
-        # 일반 검색도 수행 (백업) - 3개로 제한
-        if not all_docs:
-            all_docs = self.education_vectorstore.similarity_search(query, k=3)
+        intent_preferred = intent_analysis.get('preferred_source', '')
+        if intent_preferred in ['mysuni', 'college']:
+            return intent_preferred
         
-        # 결과를 3개로 제한
-        all_docs = all_docs[:3]
-        return [self._doc_to_course_dict(doc) for doc in all_docs]
+        return ''
     
-    def _doc_to_course_dict(self, doc: Document) -> Dict:
-        """VectorDB Document를 과정 딕셔너리로 변환"""
-        metadata = doc.metadata or {}
-        return {
-            "course_id": metadata.get("course_id"),
-            "course_name": metadata.get("course_name", metadata.get("card_name")),
-            "source": metadata.get("source"),
-            "content": doc.page_content,
-            "target_skills": metadata.get("target_skills", []),
-            "skill_relevance": metadata.get("skill_relevance"),
-            "duration_hours": metadata.get("duration_hours", metadata.get("인정학습시간")),
-            "difficulty_level": metadata.get("difficulty_level", metadata.get("난이도")),
-            "department": metadata.get("department", metadata.get("학부")),
-            "course_type": metadata.get("course_type", metadata.get("교육유형")),
-            "평점": metadata.get("평점"),
-            "이수자수": metadata.get("이수자수"),
-            "카테고리명": metadata.get("카테고리명"),
-            "채널명": metadata.get("채널명"),
-            "표준과정": metadata.get("표준과정"),
-            "url": metadata.get("url")  # URL 필드 추가
-        }
+    def _filter_by_preferred_source(self, courses: List[Dict], preferred_source: str) -> List[Dict]:
+        """선호하는 교육과정 소스로 필터링"""
+        if not preferred_source or not courses:
+            return courses
+        
+        preferred_courses = [course for course in courses if course.get('source') == preferred_source]
+        
+        if len(preferred_courses) >= 3:
+            self.logger.info(f"{preferred_source} 과정 {len(preferred_courses)}개로 필터링")
+            return preferred_courses
+        
+        other_courses = [course for course in courses if course.get('source') != preferred_source]
+        result = preferred_courses + other_courses[:7-len(preferred_courses)]
+        
+        self.logger.info(f"{preferred_source} 우선 필터링: {len(preferred_courses)}개 + 기타 {len(result)-len(preferred_courses)}개")
+        return result
     
     def _deduplicate_courses(self, courses: List[Dict]) -> List[Dict]:
-        """College와 mySUNI 간 중복 과정 제거 (mySUNI 메타데이터 보존)"""
+        """중복 과정 제거"""
         if not courses:
             return []
         
         deduplicated = []
         seen_courses = set()
         
-        # 우선순위: College > mySUNI (College가 더 상세한 정보 제공)
         def sort_priority(course):
             source_priority = 0 if course.get("source") == "college" else 1
             
@@ -856,16 +830,15 @@ class CareerEnsembleRetrieverAgent:
                     relevance_priority = 0
                 elif relevance == "recommended":
                     relevance_priority = 1
-                else:  # common_required
+                else:
                     relevance_priority = 2
             else:
-                # mySUNI는 평점 기준 정렬
                 rating = course.get("평점", 0)
                 try:
                     rating = float(rating) if rating else 0
                 except:
                     rating = 0
-                relevance_priority = 5 - rating  # 평점이 높을수록 우선순위 높음
+                relevance_priority = 5 - rating
             
             return (source_priority, relevance_priority)
         
@@ -875,11 +848,9 @@ class CareerEnsembleRetrieverAgent:
             course_signature = self._generate_course_signature(course)
             
             if course_signature not in seen_courses:
-                # 중복 과정이 있는 경우 mySUNI 데이터를 College 과정에 통합
                 if course_signature in self.course_deduplication_index:
                     duplicate_info = self.course_deduplication_index[course_signature]
                     
-                    # College 과정이 우선이므로 mySUNI 데이터를 추가 정보로 병합
                     if course.get("source") == "college":
                         mysuni_data = self._find_mysuni_duplicate(duplicate_info, courses)
                         if mysuni_data:
@@ -896,12 +867,10 @@ class CareerEnsembleRetrieverAgent:
                         else:
                             course["mysuni_alternative"] = {"available": False}
                     else:
-                        # mySUNI 과정인 경우 원본 데이터 유지
                         course["mysuni_alternative"] = {"available": False}
                     
                     course["alternative_platforms"] = duplicate_info.get("platforms", [])
                 else:
-                    # 중복이 없는 과정인 경우
                     if course.get("source") == "mysuni":
                         course["mysuni_alternative"] = {"available": False}
                 
@@ -916,7 +885,6 @@ class CareerEnsembleRetrieverAgent:
         name = course.get("course_name", course.get("card_name", "")).lower().strip()
         skills = sorted(course.get("target_skills", []))
         
-        # 유사한 과정명 정규화
         normalized_name = re.sub(r'[^\w\s]', '', name)
         normalized_name = re.sub(r'\s+', ' ', normalized_name)
         
@@ -928,7 +896,6 @@ class CareerEnsembleRetrieverAgent:
         for course_info in duplicate_info.get("courses", []):
             if course_info.get("platform") == "mySUNI":
                 course_id = course_info.get("course_id")
-                # 전체 과정 리스트에서 해당 mySUNI 과정 찾기
                 for course in all_courses:
                     if (course.get("source") == "mysuni" and 
                         course.get("course_id") == course_id):
@@ -939,23 +906,20 @@ class CareerEnsembleRetrieverAgent:
         return mysuni_course_info
     
     def _analyze_course_recommendations(self, courses: List[Dict]) -> Dict:
-        """추천 과정 분석 결과 생성 (mySUNI 데이터 포함)"""
+        """추천 과정 분석 결과 생성"""
         if not courses:
             return {"message": "추천할 교육과정이 없습니다."}
         
         college_courses = [c for c in courses if c.get("source") == "college"]
         mysuni_courses = [c for c in courses if c.get("source") == "mysuni"]
         
-        # College 과정 세분화 분석
         specialized_count = len([c for c in college_courses if c.get("skill_relevance") == "specialized"])
         recommended_count = len([c for c in college_courses if c.get("skill_relevance") == "recommended"])
         required_count = len([c for c in college_courses if c.get("skill_relevance") == "common_required"])
         
-        # mySUNI 대안 정보 분석
         college_with_mysuni_alt = len([c for c in college_courses 
                                       if c.get("mysuni_alternative", {}).get("available")])
         
-        # mySUNI 과정 평점 분석
         mysuni_ratings = []
         for c in mysuni_courses:
             rating = c.get("평점", 0)
@@ -968,7 +932,6 @@ class CareerEnsembleRetrieverAgent:
         
         avg_mysuni_rating = sum(mysuni_ratings) / len(mysuni_ratings) if mysuni_ratings else 0
         
-        # 이수자 수 합계
         total_enrollments = 0
         for course in mysuni_courses:
             enrollments_str = str(course.get("이수자수", "0"))
@@ -1006,48 +969,44 @@ class CareerEnsembleRetrieverAgent:
         
         path = []
         
-        # 1단계: 공통 필수 과정
         required_courses = [c for c in courses if c.get("skill_relevance") == "common_required"]
         if required_courses:
             path.append({
                 "step": 1,
                 "level": "기초/필수",
-                "courses": required_courses[:2],  # 최대 2개
+                "courses": required_courses[:2],
                 "description": "기본 지식 습득을 위한 필수 과정"
             })
         
-        # 2단계: 추천 과정
         recommended_courses = [c for c in courses if c.get("skill_relevance") == "recommended"]
         if recommended_courses:
             path.append({
                 "step": 2,
                 "level": "확장/응용",
-                "courses": recommended_courses[:3],  # 최대 3개
+                "courses": recommended_courses[:3],
                 "description": "관련 기술 확장을 위한 추천 과정"
             })
         
-        # 3단계: 전문화 과정
         specialized_courses = [c for c in courses if c.get("skill_relevance") == "specialized"]
         if specialized_courses:
             path.append({
                 "step": 3,
                 "level": "전문/심화",
-                "courses": specialized_courses[:2],  # 최대 2개
+                "courses": specialized_courses[:2],
                 "description": "전문성 강화를 위한 특화 과정"
             })
         
-        # mySUNI 과정은 보완/대안으로 제시
         mysuni_courses = [c for c in courses if c.get("source") == "mysuni"]
         if mysuni_courses:
             path.append({
                 "step": "보완",
                 "level": "온라인/자율",
-                "courses": mysuni_courses[:3],  # 최대 3개
+                "courses": mysuni_courses[:3],
                 "description": "온라인으로 학습 가능한 보완 과정"
             })
         
         return path
-
+    
     def _load_original_course_data(self):
         """원본 교육과정 상세 데이터 로드"""
         if not hasattr(self, 'original_mysuni_data'):
@@ -1071,7 +1030,7 @@ class CareerEnsembleRetrieverAgent:
                 self.original_college_data = []
 
     def _enrich_course_with_original_data(self, course: Dict) -> Dict:
-        """VectorDB 검색 결과를 원본 데이터의 상세 정보로 보강"""
+        """원본 데이터로 과정 정보 보강"""
         self._load_original_course_data()
         
         course_id = course.get("course_id")
@@ -1080,11 +1039,9 @@ class CareerEnsembleRetrieverAgent:
         if not course_id:
             return course
             
-        # mySUNI 과정인 경우
         if source == "mysuni":
             for original in self.original_mysuni_data:
                 if original.get("course_id") == course_id:
-                    # 원본 데이터의 상세 정보로 업데이트
                     course.update({
                         "카테고리명": original.get("카테고리명"),
                         "채널명": original.get("채널명"),
@@ -1098,11 +1055,9 @@ class CareerEnsembleRetrieverAgent:
                     })
                     break
                     
-        # College 과정인 경우
         elif source == "college":
             for original in self.original_college_data:
                 if original.get("course_id") == course_id:
-                    # 원본 데이터의 상세 정보로 업데이트
                     course.update({
                         "학부": original.get("학부"),
                         "표준과정": original.get("표준과정"),
@@ -1118,45 +1073,3 @@ class CareerEnsembleRetrieverAgent:
                     break
         
         return course
-    
-    def _get_preferred_education_source(self, query: str, user_profile: Dict, intent_analysis: Dict) -> str:
-        """사용자의 교육과정 소스 선호도 감지"""
-        # 1. 사용자 질문에서 명시적 언급 확인
-        query_lower = query.lower()
-        if 'mysuni' in query_lower or 'my suni' in query_lower:
-            return 'mysuni'
-        elif 'college' in query_lower or '컬리지' in query_lower:
-            return 'college'
-        
-        # 2. 사용자 프로필에서 선호도 확인
-        preferred_source = user_profile.get('preferred_education_source', '')
-        if preferred_source in ['mysuni', 'college']:
-            return preferred_source
-        
-        # 3. 의도 분석에서 선호도 확인
-        intent_preferred = intent_analysis.get('preferred_source', '')
-        if intent_preferred in ['mysuni', 'college']:
-            return intent_preferred
-        
-        # 기본값: 선호도 없음
-        return ''
-    
-    def _filter_by_preferred_source(self, courses: List[Dict], preferred_source: str) -> List[Dict]:
-        """선호하는 교육과정 소스로 필터링"""
-        if not preferred_source or not courses:
-            return courses
-        
-        # 선호 소스의 과정들 먼저 추출
-        preferred_courses = [course for course in courses if course.get('source') == preferred_source]
-        
-        # 선호 소스의 과정이 충분히 있으면 그것만 반환 (최소 3개)
-        if len(preferred_courses) >= 3:
-            self.logger.info(f"{preferred_source} 과정 {len(preferred_courses)}개로 필터링")
-            return preferred_courses
-        
-        # 선호 소스의 과정이 부족하면 다른 소스도 포함하되 선호 소스 우선 정렬
-        other_courses = [course for course in courses if course.get('source') != preferred_source]
-        result = preferred_courses + other_courses[:7-len(preferred_courses)]  # 최대 7개까지
-        
-        self.logger.info(f"{preferred_source} 우선 필터링: {len(preferred_courses)}개 + 기타 {len(result)-len(preferred_courses)}개")
-        return result
