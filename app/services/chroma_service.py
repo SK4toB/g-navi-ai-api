@@ -15,7 +15,8 @@ class ChromaService:
     
     def __init__(self):
         self.base_url = None
-        self.headers = None
+        # self.headers = None
+        self.headers = {"Content-Type": "application/json"}  # 인증 없음
         self.available = False
         self._init_client()
         print("ChromaService 초기화 완료")
@@ -23,25 +24,27 @@ class ChromaService:
     def _init_client(self):
         """ChromaDB 연결 설정 초기화"""
         try:
-            # 인증 정보 검증
-            if not settings.chroma_auth_credentials:
-                print("❌ ChromaDB 인증 정보가 설정되지 않았습니다.")
-                print("   개발환경: .env 파일에 CHROMA_AUTH_CREDENTIALS 추가")
-                print("   운영환경: K8s Secret에 CHROMA_AUTH_CREDENTIALS 추가")
-                return
+            # # 인증 정보 검증
+            # if not settings.chroma_auth_credentials:
+            #     print("❌ ChromaDB 인증 정보가 설정되지 않았습니다.")
+            #     print("   개발환경: .env 파일에 CHROMA_AUTH_CREDENTIALS 추가")
+            #     print("   운영환경: K8s Secret에 CHROMA_AUTH_CREDENTIALS 추가")
+            #     return
             
             # 접속 방식 선택
             if settings.chroma_use_external:
                 # 외부 URL 사용 (개발/테스트용)
-                self.base_url = f"{settings.chroma_external_url}/api/v1"
+                # self.base_url = f"{settings.chroma_external_url}/api/v1"
+                self.base_url = f"{settings.chroma_external_url}/chromadb/api/v2"
                 print(f"ChromaDB 외부 접속 시도: {self.base_url}")
             else:
                 # k8s 내부 접근 (운영환경)
-                self.base_url = f"http://{settings.chroma_host}:{settings.chroma_port}/api/v1"
+                # self.base_url = f"http://{settings.chroma_host}:{settings.chroma_port}/api/v1"
+                self.base_url = f"http://{settings.chroma_host}/api/v2"
                 print(f"ChromaDB 내부 접속 시도: {self.base_url}")
             
             # 인증 헤더 설정
-            self.headers = self._get_auth_headers()
+            # self.headers = self._get_auth_headers()
             
             # 연결 테스트
             heartbeat_result = self._test_heartbeat()
@@ -56,14 +59,14 @@ class ChromaService:
             print(f"ChromaDB 연결 실패: {e}")
             self.available = False
     
-    def _get_auth_headers(self) -> Dict[str, str]:
-        """인증 헤더 생성"""
-        credentials = settings.chroma_auth_credentials
-        encoded_credentials = base64.b64encode(credentials.encode()).decode()
-        return {
-            "Authorization": f"Basic {encoded_credentials}",
-            "Content-Type": "application/json"
-        }
+    # def _get_auth_headers(self) -> Dict[str, str]:
+    #     """인증 헤더 생성"""
+    #     credentials = settings.chroma_auth_credentials
+    #     encoded_credentials = base64.b64encode(credentials.encode()).decode()
+    #     return {
+    #         "Authorization": f"Basic {encoded_credentials}",
+    #         "Content-Type": "application/json"
+    #     }
     
     def _test_heartbeat(self) -> bool:
         """Heartbeat 테스트"""
@@ -131,7 +134,8 @@ class ChromaService:
             "collection_name": settings.chroma_collection_name,
             "connection_mode": "external" if settings.chroma_use_external else "internal",
             "base_url": self.base_url,
-            "auth_configured": bool(settings.chroma_auth_credentials)
+            # "auth_configured": bool(settings.chroma_auth_credentials)
+            "auth_configured": False
         }
     
     def list_collections(self) -> Dict[str, Any]:
