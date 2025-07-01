@@ -69,7 +69,8 @@ class PathConfig:
     EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"  # 교육과정 벡터 데이터베이스
     
     # 🗄️ 캐시 경로 (임베딩 캐시)
-    EMBEDDING_CACHE = "../../storage/cache/embedding_cache"                   # OpenAI 임베딩 캐시 저장소
+    CAREER_EMBEDDING_CACHE = "../../storage/cache/embedding_cache"            # 커리어 사례 임베딩 캐시 저장소
+    EDUCATION_EMBEDDING_CACHE = "../../storage/cache/education_embedding_cache" # 교육과정 임베딩 캐시 저장소
     
     # 📄 문서 경로 (JSON 데이터 파일들)
     CAREER_DOCS = "../../storage/docs/career_history.json"                    # 커리어 히스토리 원본 데이터
@@ -79,7 +80,6 @@ class PathConfig:
     COMPANY_VISION = "../../storage/docs/company_vision.json"                 # 회사 비전 및 가치 데이터
     MYSUNI_DETAILED = "../../storage/docs/mysuni_courses_detailed.json"       # mySUNI 과정 상세 정보
     COLLEGE_DETAILED = "../../storage/docs/college_courses_detailed.json"     # College 과정 상세 정보
-    CHAT_HISTORY = "app/data/json/chat_history.json"                          # 사용자 채팅 히스토리
     
     @classmethod
     def get_abs_path(cls, relative_path: str) -> str:
@@ -105,43 +105,52 @@ class CareerEnsembleRetrieverAgent:
         
         Args:
             persist_directory: 커리어 벡터 스토어 경로 (기본값: PathConfig.CAREER_VECTOR_STORE)
-            cache_directory: 임베딩 캐시 경로 (기본값: PathConfig.EMBEDDING_CACHE)
+            cache_directory: 커리어 임베딩 캐시 경로 (기본값: PathConfig.CAREER_EMBEDDING_CACHE)
         """
         # 경로 설정 (PathConfig 사용)
         self.persist_directory = PathConfig.get_abs_path(
             persist_directory or PathConfig.CAREER_VECTOR_STORE
-        )
-        self.cache_directory = PathConfig.get_abs_path(
-            cache_directory or PathConfig.EMBEDDING_CACHE
-        )
-        self.base_dir = PathConfig.BASE_DIR
-        self.logger = logging.getLogger(__name__)
+        )                                                                            # 커리어 벡터 스토어 절대 경로
+        self.career_cache_directory = PathConfig.get_abs_path(
+            cache_directory or PathConfig.CAREER_EMBEDDING_CACHE
+        )                                                                            # 커리어 임베딩 캐시 절대 경로
+        self.base_dir = PathConfig.BASE_DIR                                          # 기본 디렉토리 경로
+        self.logger = logging.getLogger(__name__)                                    # 로거 인스턴스
         
         # 디렉토리 생성
-        os.makedirs(self.persist_directory, exist_ok=True)
-        os.makedirs(self.cache_directory, exist_ok=True)
+        os.makedirs(self.persist_directory, exist_ok=True)                           # 벡터 스토어 디렉토리 생성
+        os.makedirs(self.career_cache_directory, exist_ok=True)                      # 커리어 캐시 디렉토리 생성
 
-        # 임베딩 설정
-        self.base_embeddings = OpenAIEmbeddings(
+        # 커리어 전용 임베딩 설정
+        self.base_embeddings = OpenAIEmbeddings(                                     # OpenAI 기본 임베딩 모델
             model="text-embedding-3-small",
             dimensions=1536
         )
-        self.cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
+        self.career_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(      # 커리어 전용 캐시 기반 임베딩 래퍼
             self.base_embeddings,
-            LocalFileStore(self.cache_directory),
+            LocalFileStore(self.career_cache_directory),
             namespace="career_embeddings"
         )
-        self.vectorstore = None
-        self.ensemble_retriever = None
+        
+        # 교육과정 전용 임베딩 설정
+        self.education_cache_directory = PathConfig.get_abs_path(PathConfig.EDUCATION_EMBEDDING_CACHE)
+        os.makedirs(self.education_cache_directory, exist_ok=True)
+        self.education_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(   # 교육과정 전용 캐시 기반 임베딩 래퍼
+            self.base_embeddings,
+            LocalFileStore(self.education_cache_directory),
+            namespace="education_embeddings"
+        )
+        self.vectorstore = None                                                      # Chroma 벡터 스토어 인스턴스 
+        self.ensemble_retriever = None                                               # 앙상블 리트리버 인스턴스
         
         # 교육과정 관련 경로 설정 (PathConfig 사용)
-        self.education_persist_dir = PathConfig.get_abs_path(PathConfig.EDUCATION_VECTOR_STORE)
-        self.education_docs_path = PathConfig.get_abs_path(PathConfig.EDUCATION_DOCS)
-        self.skill_mapping_path = PathConfig.get_abs_path(PathConfig.SKILL_MAPPING)
-        self.deduplication_index_path = PathConfig.get_abs_path(PathConfig.COURSE_DEDUPLICATION)
+        self.education_persist_dir = PathConfig.get_abs_path(PathConfig.EDUCATION_VECTOR_STORE)    # 교육과정 벡터 스토어 경로
+        self.education_docs_path = PathConfig.get_abs_path(PathConfig.EDUCATION_DOCS)              # 교육과정 문서 파일 경로
+        self.skill_mapping_path = PathConfig.get_abs_path(PathConfig.SKILL_MAPPING)                # 스킬-교육과정 매핑 파일 경로
+        self.deduplication_index_path = PathConfig.get_abs_path(PathConfig.COURSE_DEDUPLICATION)   # 과정 중복제거 인덱스 파일 경로
         
         # 회사 비전 관련 경로 설정 (PathConfig 사용)
-        self.company_vision_path = PathConfig.get_abs_path(PathConfig.COMPANY_VISION)
+        self.company_vision_path = PathConfig.get_abs_path(PathConfig.COMPANY_VISION)              # 회사 비전 데이터 파일 경로
         
         # 지연 로딩 속성
         self.education_vectorstore = None
@@ -155,7 +164,7 @@ class CareerEnsembleRetrieverAgent:
         # Chroma 벡터스토어 로드
         self.vectorstore = Chroma(
             persist_directory=self.persist_directory,
-            embedding_function=self.cached_embeddings,
+            embedding_function=self.career_cached_embeddings,
             collection_name="career_history"
         )
         # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
@@ -428,33 +437,6 @@ class CareerEnsembleRetrieverAgent:
         # 가장 최근 연도 반환
         return max(years) if years else None
 
-    def load_chat_history(self, user_id: str = None, chat_history_path: str = None):
-        """chat_history.json 파일을 불러와 사용자 ID별로 필터링하여 반환"""
-        try:
-            # PathConfig 사용 (기본값)
-            if chat_history_path is None:
-                chat_history_path = PathConfig.get_abs_path(PathConfig.CHAT_HISTORY)
-            
-            with open(chat_history_path, "r", encoding="utf-8") as f:
-                all_chat_history = json.load(f)
-            
-            # 사용자 ID가 제공된 경우 해당 사용자의 대화내역만 필터링
-            if user_id:
-                user_chat_history = [
-                    session for session in all_chat_history 
-                    if session.get("user_id") == user_id
-                ]
-                self.logger.info(f"사용자 {user_id}의 chat_history 로드 완료 (세션 수: {len(user_chat_history)})")
-                return user_chat_history
-            else:
-                # 사용자 ID가 없으면 전체 반환 (하위 호환성)
-                self.logger.info(f"전체 chat_history 로드 완료 (세션 수: {len(all_chat_history)})")
-                return all_chat_history
-                
-        except Exception as e:
-            self.logger.error(f"chat_history.json 로드 실패: {e}")
-            return []
-
     def _load_education_resources(self):
         """교육과정 리소스 지연 로딩"""
         if self.education_vectorstore is None:
@@ -465,16 +447,16 @@ class CareerEnsembleRetrieverAgent:
             self._load_deduplication_index()
     
     def _initialize_education_vectorstore(self):
-        """교육과정 VectorDB 초기화"""
+        """교육과정 VectorDB 초기화 (교육과정 전용 캐시 사용)"""
         try:
             if os.path.exists(self.education_persist_dir):
                 self.education_vectorstore = Chroma(
                     persist_directory=self.education_persist_dir,
-                    embedding_function=self.cached_embeddings,
+                    embedding_function=self.education_cached_embeddings,  # 교육과정 전용 캐시 사용
                     collection_name="education_courses"
                 )
-                self.logger.info("교육과정 VectorDB 로드 완료")
-                print(f"✅ [교육과정 VectorDB] 초기화 완료")
+                self.logger.info("교육과정 VectorDB 로드 완료 (교육과정 전용 캐시 적용)")
+                print(f"✅ [교육과정 VectorDB] 초기화 완료 (전용 캐시 적용)")
             else:
                 self.logger.warning("교육과정 VectorDB가 존재하지 않습니다. utils/education_data_processor.py를 실행해주세요.")
                 print(f"⚠️  [교육과정 VectorDB] 없음 - JSON 파일로 폴백 검색 진행")
