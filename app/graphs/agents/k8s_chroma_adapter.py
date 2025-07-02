@@ -7,47 +7,47 @@ from langchain.embeddings.base import Embeddings
 from langchain_openai import OpenAIEmbeddings
 from pydantic import Field, ConfigDict
 
-class K8sChromaDBAdapter:
+class K8sChromaRetriever(BaseRetriever):
     """
-    K8s 환경에서 외부 ChromaDB v2 Multi-tenant API를 사용하는 어댑터
-    로컬 Chroma vectorstore와 동일한 인터페이스 제공
+    K8s 환경에서 외부 ChromaDB v2 Multi-tenant API를 사용하는 통합 리트리버
+    (컬렉션 관리, 임베딩, 검색 등 모든 기능 포함)
     """
-    
-    def __init__(self, collection_name: str, embeddings: OpenAIEmbeddings):
-        """
-        K8s ChromaDB 어댑터 초기화
-        
-        Args:
-            collection_name: 사용할 컬렉션 이름 (career_history 또는 education_courses)
-            embeddings: OpenAI 임베딩 인스턴스
-        """
-        self.embeddings = embeddings
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    collection_name: str = Field(description="컬렉션 이름")
+    embeddings: Embeddings = Field(description="임베딩 인스턴스")
+    k: int = Field(default=3, description="검색할 문서 수")
+    pod_collection_name: str = Field(default=None, description="실제 Pod 컬렉션명")
+    collection_id: Optional[str] = Field(default=None, description="컬렉션 ID")
+
+    def __init__(self, collection_name: str, embeddings: Embeddings, k: int = 3, **kwargs):
+        super().__init__(
+            collection_name=collection_name,
+            embeddings=embeddings,
+            k=k,
+            **kwargs
+        )
         self.collection_name = collection_name
-        
+        self.embeddings = embeddings
+        self.k = k
+
         # K8s 내부 통신 URL
         self.base_url = "http://chromadb-1.sk-team-04.svc.cluster.local:8000/api/v2"
         self.tenant = "default_tenant"
         self.database = "default_database"
         self.collections_url = f"{self.base_url}/tenants/{self.tenant}/databases/{self.database}/collections"
-        
+
         # 컬렉션명 매핑 (로컬 → Pod)
         self.collection_mapping = {
             "career_history": "gnavi4_career_history_prod",
             "education_courses": "gnavi4_education_prod"
         }
-        
-        # 실제 사용할 Pod 컬렉션명
         self.pod_collection_name = self.collection_mapping.get(collection_name, collection_name)
         self.collection_id = None
-        
-        # 헤더 설정
         self.headers = {"Content-Type": "application/json"}
-        
-        # 컬렉션 ID 조회
         self._get_collection_id()
-    
+
     def _get_collection_id(self):
-        """컬렉션 ID 조회"""
         try:
             response = requests.get(self.collections_url, headers=self.headers, timeout=30)
             if response.status_code == 200:
@@ -55,91 +55,51 @@ class K8sChromaDBAdapter:
                 for collection in collections:
                     if collection.get('name') == self.pod_collection_name:
                         self.collection_id = collection.get('id')
-                        print(f"✅ [K8sChromaDB] 컬렉션 연결: {self.pod_collection_name} (ID: {self.collection_id})")
+                        print(f"✅ [K8sChromaRetriever] 컬렉션 연결: {self.pod_collection_name} (ID: {self.collection_id})")
                         return
-                print(f"❌ [K8sChromaDB] 컬렉션을 찾을 수 없습니다: {self.pod_collection_name}")
+                print(f"❌ [K8sChromaRetriever] 컬렉션을 찾을 수 없습니다: {self.pod_collection_name}")
             else:
-                print(f"❌ [K8sChromaDB] 컬렉션 목록 조회 실패: {response.status_code}")
+                print(f"❌ [K8sChromaRetriever] 컬렉션 목록 조회 실패: {response.status_code}")
         except Exception as e:
-            print(f"❌ [K8sChromaDB] 컬렉션 ID 조회 실패: {e}")
-    
-    def similarity_search(self, query: str, k: int = 3) -> List[Document]:
-        """
-        유사도 검색 (로컬 Chroma와 동일한 인터페이스)
-        
-        Args:
-            query: 검색 쿼리
-            k: 반환할 문서 수
-            
-        Returns:
-            Document 리스트
-        """
+            print(f"❌ [K8sChromaRetriever] 컬렉션 ID 조회 실패: {e}")
+
+    def similarity_search(self, query: str, k: int = None) -> List[Document]:
         if not self.collection_id:
-            print(f"❌ [K8sChromaDB] 컬렉션 ID가 없어서 검색할 수 없습니다")
+            print(f"❌ [K8sChromaRetriever] 컬렉션 ID가 없어서 검색할 수 없습니다")
             return []
-        
         try:
-            # 쿼리를 임베딩으로 변환
             query_embedding = self.embeddings.embed_query(query)
-            
-            # 검색 요청 데이터
             search_data = {
                 "query_embeddings": [query_embedding],
-                "n_results": k,
+                "n_results": k or self.k,
                 "include": ["documents", "metadatas"]
             }
-            
-            # API 호출
             search_url = f"{self.collections_url}/{self.collection_id}/query"
             response = requests.post(search_url, headers=self.headers, json=search_data, timeout=30)
-            
             if response.status_code == 200:
                 results = response.json()
                 documents = results.get('documents', [[]])
                 metadatas = results.get('metadatas', [[]])
-                
-                # Document 객체로 변환
                 docs = []
                 if documents and len(documents) > 0:
                     for i, doc_text in enumerate(documents[0]):
                         metadata = metadatas[0][i] if metadatas and len(metadatas[0]) > i else {}
                         docs.append(Document(page_content=doc_text, metadata=metadata))
-                
-                print(f"✅ [K8sChromaDB] 검색 완료: {len(docs)}개 문서 반환")
+                print(f"✅ [K8sChromaRetriever] 검색 완료: {len(docs)}개 문서 반환")
                 return docs
             else:
-                print(f"❌ [K8sChromaDB] 검색 실패: {response.status_code} - {response.text}")
+                print(f"❌ [K8sChromaRetriever] 검색 실패: {response.status_code} - {response.text}")
                 return []
-                
         except Exception as e:
-            print(f"❌ [K8sChromaDB] 검색 중 예외: {e}")
+            print(f"❌ [K8sChromaRetriever] 검색 중 예외: {e}")
             return []
-    
-    def as_retriever(self, search_type: str = "similarity", search_kwargs: Dict = None):
-        """
-        리트리버 객체 반환 (로컬 Chroma와 동일한 인터페이스)
-        
-        Args:
-            search_type: 검색 타입 (기본값: "similarity")
-            search_kwargs: 검색 파라미터 (k 값 등)
-            
-        Returns:
-            K8sChromaRetriever 인스턴스
-        """
-        search_kwargs = search_kwargs or {}
-        k = search_kwargs.get("k", 3)
-        return K8sChromaRetriever(self.collection_name, self.embeddings, adapter=self, k=k)
-    
+
     def get_collection_info(self) -> Dict:
-        """컬렉션 정보 조회"""
         if not self.collection_id:
             return {"status": "error", "message": "컬렉션 ID 없음"}
-        
         try:
-            # 문서 개수 조회
             count_url = f"{self.collections_url}/{self.collection_id}/count"
             count_response = requests.get(count_url, headers=self.headers, timeout=30)
-            
             if count_response.status_code == 200:
                 doc_count = count_response.json()
                 return {
@@ -150,52 +110,11 @@ class K8sChromaDBAdapter:
                 }
             else:
                 return {"status": "error", "message": f"카운트 조회 실패: {count_response.status_code}"}
-                
         except Exception as e:
             return {"status": "error", "message": f"예외 발생: {e}"}
 
-
-class K8sChromaRetriever(BaseRetriever):
-    """K8s ChromaDB용 리트리버 (BaseRetriever 상속)"""
-    
-    # Pydantic v2 스타일 모델 설정
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-    
-    # 필드 정의
-    collection_name: str = Field(description="컬렉션 이름")
-    embeddings: Embeddings = Field(description="임베딩 인스턴스")
-    k: int = Field(default=3, description="검색할 문서 수")
-    adapter: Any = Field(default=None, description="ChromaDB 어댑터")
-    
-    def __init__(self, collection_name: str, embeddings: Embeddings, adapter: Any, k: int = 3, **kwargs):
-        if adapter is None:
-            raise ValueError("K8sChromaRetriever requires an adapter instance. Do not instantiate without adapter.")
-        super().__init__(
-            collection_name=collection_name,
-            embeddings=embeddings,
-            k=k,
-            adapter=adapter,
-            **kwargs
-        )
-        self.adapter = adapter
-        self.k = k
+    def get_relevant_documents(self, query: str, *, run_manager=None) -> List[Document]:
+        return self.similarity_search(query, k=self.k)
 
     async def _aget_relevant_documents(self, query: str) -> List[Document]:
-        """Not implemented"""
         raise NotImplementedError("Async retrieval not implemented yet")
-
-    def _get_relevant_documents(self, query: str, *, run_manager=None) -> List[Document]:
-        """
-        query로부터 관련 문서를 검색합니다.
-        실제 K8sChromaDBAdapter를 사용하여 검색을 수행합니다.
-        """
-        try:
-            # K8sChromaDBAdapter를 통해 실제 검색 수행
-            return self.adapter.similarity_search(query, k=self.k)
-        except Exception as e:
-            print(f"❌ [K8sChromaRetriever] 검색 실패: {e}")
-            return []
-
-    def get_relevant_documents(self, query: str, *, run_manager=None) -> List[Document]:
-        """BaseRetriever 인터페이스와 호환되는 public 메서드"""
-        return self._get_relevant_documents(query, run_manager=run_manager)

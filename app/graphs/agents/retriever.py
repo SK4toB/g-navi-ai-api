@@ -14,7 +14,7 @@ from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
 from langchain.schema import Document
 from datetime import datetime, timedelta
-from .k8s_chroma_adapter import K8sChromaDBAdapter, K8sChromaRetriever
+from .k8s_chroma_adapter import K8sChromaRetriever
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -246,21 +246,16 @@ class CareerEnsembleRetrieverAgent:
         """K8s 환경: 외부 ChromaDB 사용"""
         print("🔗 [K8s ChromaDB] 외부 ChromaDB 연결 중...")
         
-        # K8s ChromaDB 어댑터 초기화
-        self.vectorstore = K8sChromaDBAdapter("career_history", self.career_cached_embeddings)
-        
+        # 통합 K8sChromaRetriever 사용
+        self.vectorstore = K8sChromaRetriever("career_history", self.career_cached_embeddings, k=3)
         # 컬렉션 정보 확인
         collection_info = self.vectorstore.get_collection_info()
         if collection_info.get("status") == "success":
             print(f"✅ [K8s ChromaDB] 연결 성공: {collection_info.get('document_count')}개 문서")
         else:
             print(f"❌ [K8s ChromaDB] 연결 실패: {collection_info.get('message')}")
-        
         # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
-        embedding_retriever = self.vectorstore.as_retriever(
-            search_type="similarity",
-            search_kwargs={"k": 3}
-        )
+        embedding_retriever = self.vectorstore
         
         # BM25용 docs 로드 (JSON 파일은 여전히 사용)
         docs_path = PathConfig.CAREER_DOCS
@@ -590,15 +585,13 @@ class CareerEnsembleRetrieverAgent:
         """K8s 환경: 외부 교육과정 ChromaDB 초기화"""
         try:
             print("🔗 [K8s 교육과정 ChromaDB] 외부 ChromaDB 연결 중...")
-            self.education_vectorstore = K8sChromaDBAdapter("education_courses", self.education_cached_embeddings)
-            
+            self.education_vectorstore = K8sChromaRetriever("education_courses", self.education_cached_embeddings, k=3)
             # 컬렉션 정보 확인
             collection_info = self.education_vectorstore.get_collection_info()
             if collection_info.get("status") == "success":
                 print(f"✅ [K8s 교육과정 ChromaDB] 연결 성공: {collection_info.get('document_count')}개 문서")
             else:
                 print(f"❌ [K8s 교육과정 ChromaDB] 연결 실패: {collection_info.get('message')}")
-                self.education_vectorstore = None
         except Exception as e:
             self.logger.error(f"K8s 교육과정 VectorDB 로드 실패: {e}")
             print(f"❌ [K8s 교육과정 ChromaDB] 로드 실패: {e}")
