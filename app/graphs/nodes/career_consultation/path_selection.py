@@ -2,10 +2,13 @@
 """
 커리어 경로 선택 처리 노드
 사용자가 선택한 경로에 대한 심화 논의를 진행
+AI 기반 개인 맞춤형 질문 생성 포함
 """
 
+import os
 from typing import Dict, Any
 from app.graphs.state import ChatState
+from app.utils.html_logger import save_career_response_to_html
 
 
 class PathSelectionNode:
@@ -15,6 +18,51 @@ class PathSelectionNode:
     
     def __init__(self, graph_builder):
         self.graph_builder = graph_builder
+    
+    async def _generate_personalized_questions(self, user_data: dict, selected_path: dict) -> str:
+        """선택한 경로에 따른 AI 맞춤형 심화 질문 생성"""
+        try:
+            from openai import AsyncOpenAI
+            
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                return ""
+            
+            client = AsyncOpenAI(api_key=api_key)
+            
+            skills_str = ", ".join(user_data.get('skills', ['정보 없음']))
+            path_name = selected_path.get('name', '선택된 경로')
+            path_focus = selected_path.get('focus', '해당 분야')
+            
+            prompt = f"""
+다음 정보를 가진 직장인이 "{path_name}" 경로를 선택했습니다:
+
+- 경력: {user_data.get('experience', '정보 없음')}
+- 보유 기술: {skills_str}
+- 도메인: {user_data.get('domain', '정보 없음')}
+- 선택 경로 초점: {path_focus}
+
+이 사람에게 가장 필요한 구체적이고 실무적인 질문 2-3개를 생성해주세요.
+질문은 다음을 포함해야 합니다:
+1. 현재 상황에서 이 경로로 가기 위한 현실적 첫 단계
+2. 예상되는 구체적 어려움과 해결 방안
+3. 성공을 위해 우선적으로 개발해야 할 스킬
+
+각 질문은 한 줄로, 구체적이고 실행 가능하도록 작성해주세요.
+"""
+            
+            response = await client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=500,
+                temperature=0.6
+            )
+            
+            return response.choices[0].message.content.strip()
+            
+        except Exception as e:
+            print(f"개인화 질문 생성 중 오류: {e}")
+            return ""
     
     async def process_path_selection_node(self, state: ChatState) -> Dict[str, Any]:
         """
@@ -37,6 +85,9 @@ class PathSelectionNode:
             selected_path = career_paths[0] if career_paths else {}
         
         user_data = self.graph_builder.get_user_info_from_session(state)
+        
+        # AI 기반 개인화 질문 생성
+        ai_questions = await self._generate_personalized_questions(user_data, selected_path)
         
         # 선택한 경로에 대한 전문적인 심화 분석 질문 생성
         deepening_response = {
@@ -64,15 +115,21 @@ class PathSelectionNode:
 
 **답변 예시**: "데이터 분석 역량을 키워 1년 내 데이터 사이언티스트로 전환하고 싶습니다. 현재 업무에서 간단한 분석은 하고 있지만, 머신러닝 지식이 부족해서 체계적으로 학습하고 싶어요."
 
+{("**🤖 추가 맞춤형 질문:**" + chr(10) + ai_questions) if ai_questions else ""}
+
 **상세하게 답변해주시면, 더 정확한 로드맵을 제시해드릴 수 있습니다.**""",
             "selected_path": selected_path
         }
+        
+        # HTML 로그 저장
+        save_career_response_to_html("path_selection", deepening_response, state.get("session_id", "unknown"))
         
         return {
             **state,
             "consultation_stage": "deepening",
             "selected_career_path": selected_path,
             "formatted_response": deepening_response,
+            "final_response": deepening_response,  # final_response 추가
             "awaiting_user_input": True,
             "next_expected_input": "goals_and_reasons",
             "processing_log": state.get("processing_log", []) + [f"경로 선택 완료: {selected_path.get('name', '')}"]

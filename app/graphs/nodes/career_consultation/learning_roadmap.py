@@ -2,10 +2,13 @@
 """
 학습 로드맵 설계 노드
 사내 교육과정 및 외부 리소스 추천
+AI 기반 개인 맞춤형 학습 계획 생성
 """
 
+import os
 from typing import Dict, Any
 from app.graphs.state import ChatState
+from app.utils.html_logger import save_career_response_to_html
 
 
 class LearningRoadmapNode:
@@ -17,6 +20,50 @@ class LearningRoadmapNode:
         self.graph_builder = graph_builder
         # 기존 교육과정 검색 기능 재활용
         self.data_retrieval_node = graph_builder.data_retrieval_node
+    
+    async def _generate_ai_learning_recommendations(self, user_data: dict, selected_path: dict, user_goals: str) -> str:
+        """AI 기반 개인 맞춤형 학습 추천 생성"""
+        try:
+            from openai import AsyncOpenAI
+            
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                return ""
+            
+            client = AsyncOpenAI(api_key=api_key)
+            
+            skills_str = ", ".join(user_data.get('skills', ['정보 없음']))
+            path_name = selected_path.get('name', '선택된 경로')
+            
+            prompt = f"""
+다음 프로필을 가진 직장인을 위한 맞춤형 학습 추천을 해주세요:
+
+- 경력: {user_data.get('experience', '정보 없음')}
+- 현재 스킬: {skills_str}
+- 목표 경로: {path_name}
+- 사용자 목표: {user_goals[:200]}
+
+다음을 포함하여 200-250단어 내외로 추천해주세요:
+1. 현재 스킬 갭 분석
+2. 우선순위가 높은 학습 영역 3가지
+3. 구체적인 학습 리소스 (책, 강의, 프로젝트)
+4. 학습 순서와 예상 소요 시간
+
+실무에 바로 적용 가능하고 구체적인 내용으로 작성해주세요.
+"""
+            
+            response = await client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=3000,
+                temperature=0.6
+            )
+            
+            return response.choices[0].message.content.strip()
+            
+        except Exception as e:
+            print(f"AI 학습 추천 생성 중 오류: {e}")
+            return ""
     
     async def create_learning_roadmap_node(self, state: ChatState) -> Dict[str, Any]:
         """
@@ -33,7 +80,12 @@ class LearningRoadmapNode:
         
         if wants_roadmap:
             # 기존 교육과정 데이터 검색 노드 활용
-            state = await self.data_retrieval_node.retrieve_additional_data_node(state)
+            state = self.data_retrieval_node.retrieve_additional_data_node(state)
+            
+            # AI 기반 개인 맞춤형 학습 추천 생성
+            ai_recommendations = await self._generate_ai_learning_recommendations(
+                user_data, selected_path, user_response
+            )
             
             roadmap_response = {
                 "message": f"""📚 **전문가 수준 학습 로드맵 설계**
@@ -44,6 +96,8 @@ class LearningRoadmapNode:
 - **실무 적용성**: 모든 학습 내용을 현재 업무에 즉시 적용
 - **단계적 발전**: 기초 → 심화 → 전문가 수준으로 체계적 진행
 - **성과 측정**: 각 단계별 명확한 평가 지표 설정
+
+{("**🤖 AI 맞춤형 학습 분석**" + chr(10) + ai_recommendations + chr(10)) if ai_recommendations else ""}
 
 **🏢 사내 교육 리소스 활용 전략**
 
@@ -173,10 +227,14 @@ class LearningRoadmapNode:
                 }
             }
         
+        # HTML 로그 저장
+        save_career_response_to_html("learning_roadmap", roadmap_response, state.get("session_id", "unknown"))
+        
         return {
             **state,
             "consultation_stage": "summary_request",
             "formatted_response": roadmap_response,
+            "final_response": roadmap_response,  # final_response 추가
             "awaiting_user_input": True,
             "next_expected_input": "summary_request",
             "processing_log": state.get("processing_log", []) + ["학습 로드맵 처리 완료"]

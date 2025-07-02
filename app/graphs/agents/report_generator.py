@@ -86,6 +86,16 @@ class ReportGeneratorAgent:
             
             # 마크다운 내용을 HTML로 변환
             markdown_content = final_response.get("formatted_content", "")
+            
+            # 커리어 상담인 경우 message 키 사용
+            if not markdown_content and final_response.get("message"):
+                markdown_content = final_response.get("message", "")
+            
+            # 빈 내용인 경우 보고서 생성하지 않음
+            if not markdown_content or len(markdown_content.strip()) < 10:
+                self.logger.warning("보고서 내용이 너무 짧아 생성을 건너뜁니다.")
+                return None
+                
             html_content = self._convert_markdown_to_html(markdown_content)
             
             # 파일명 생성

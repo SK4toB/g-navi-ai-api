@@ -8,7 +8,28 @@
 *                0. 메시지 검증 (message_check)
 *                1. 세션 대화내역 관리 (manage_session_history) 
 *                2. 의도 분석 (analyze_intent)
-*                3. 추가 데이터 검색 (retrieve_additional_data)
+*                     # 엣지 설정 (각 노드 간의 연결 관계)
+        workflow.add_edge("message_check", "manage_session_history")
+        
+        # 세션 관리 후 상담 진행 여부에 따른 분기
+        workflow.add_conditional_edges(
+            "manage_session_history",
+            self._check_if_career_consultation_in_progress,
+            {
+                "analyze_intent": "analyze_intent",  # 새로운 대화 시작 - 의도 분석 필요
+                "career_consultation_direct": "collect_user_info"  # 상담 진행 중 - 의도 분석 건너뛰고 바로 상담 단계로
+            }
+        )
+        
+        # 의도 분석 후 대화 유형에 따른 분기
+        workflow.add_conditional_edges(
+            "analyze_intent",
+            self._determine_conversation_flow,
+            {
+                "general_flow": "retrieve_additional_data",  # 범용 대화 플로우
+                "career_consultation": "collect_user_info"    # 커리어 상담 플로우 (정보 수집부터)
+            }
+        ) (retrieve_additional_data)
 *                4. 적응적 응답 포맷팅 (format_response)
 *                5. 다이어그램 생성 (generate_diagram)
 *                6. 관리자용 보고서 생성 (generate_report)
@@ -50,6 +71,7 @@ from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
 from typing import Dict, Any
 
+from app.config.settings import settings
 from app.graphs.state import ChatState
 from app.graphs.agents.retriever import CareerEnsembleRetrieverAgent as Retriever
 from app.graphs.agents.analyzer import IntentAnalysisAgent as Analyzer
@@ -135,6 +157,29 @@ class ChatGraphBuilder:
         self.consultation_summary_node = ConsultationSummaryNode(self)  # 상담 요약 노드
         self.user_info_collection_node = UserInfoCollectionNode(self)  # 사용자 정보 수집 노드
     
+    def _check_if_career_consultation_in_progress(self, state: ChatState) -> str:
+        """
+        커리어 상담이 진행 중인지 확인한다.
+        상담 진행 중이면 의도 분석을 건너뛰고 바로 상담 단계로 이동합니다.
+        
+        @param state: ChatState - 현재 워크플로우 상태
+        @return str - "analyze_intent" 또는 "career_consultation_direct"
+        """
+        consultation_stage = state.get("consultation_stage", "")
+        
+        # 상담이 진행 중인 단계들
+        active_consultation_stages = [
+            "collecting_info", "positioning_ready", "path_selection", 
+            "deepening", "learning_decision", "summary_request"
+        ]
+        
+        if consultation_stage in active_consultation_stages:
+            print(f"🔄 커리어 상담 진행 중 (단계: {consultation_stage}) - 의도 분석 건너뛰기")
+            return "career_consultation_direct"
+        else:
+            print("🆕 새로운 대화 시작 - 의도 분석 수행")
+            return "analyze_intent"
+    
     def _determine_conversation_flow(self, state: ChatState) -> str:
         """
         대화 유형에 따른 플로우를 결정한다.
@@ -143,6 +188,12 @@ class ChatGraphBuilder:
         @param state: ChatState - 현재 워크플로우 상태
         @return str - "general_flow" 또는 "career_consultation"
         """
+        # 🚨 중요: 이미 커리어 상담이 진행 중인 경우 상담 플로우 유지
+        consultation_stage = state.get("consultation_stage", "")
+        if consultation_stage and consultation_stage not in ["initial", ""]:
+            print(f"🔄 커리어 상담 진행 중 - 현재 단계: {consultation_stage}")
+            return "career_consultation"
+        
         # 의도 분석 결과 확인
         intent_analysis = state.get("intent_analysis", {})
         intent_type = intent_analysis.get("intent_type", "general")
@@ -209,6 +260,23 @@ class ChatGraphBuilder:
             print("💬 범용 대화 플로우로 진행")  
             return "general_flow"
     
+    def _should_continue_or_wait(self, state: ChatState) -> str:
+        """
+        사용자 입력을 기다려야 하는지 다음 단계로 진행해야 하는지 결정한다.
+        
+        @param state: ChatState - 현재 워크플로우 상태
+        @return str - "continue" (다음 단계로) 또는 "wait" (사용자 입력 대기)
+        """
+        awaiting_input = state.get("awaiting_user_input", False)
+        consultation_stage = state.get("consultation_stage", "")
+        
+        if awaiting_input:
+            print(f"⏸️ 사용자 입력 대기 중: {consultation_stage}")
+            return "wait"
+        else:
+            print(f"▶️ 다음 단계로 진행: {consultation_stage}")
+            return "continue"
+
     def _determine_career_consultation_stage(self, state: ChatState) -> str:
         """
         커리어 상담 진행 단계를 결정한다.
@@ -220,9 +288,28 @@ class ChatGraphBuilder:
         consultation_stage = state.get("consultation_stage", "initial")
         awaiting_input = state.get("awaiting_user_input", False)
         
-        # 초기 상담 시작 시 - 사용자 정보 충분성 먼저 체크
-        if consultation_stage == "initial" or not awaiting_input:
-            # 사용자 정보 충분성 확인
+        print(f"🔍 상담 단계 결정: stage={consultation_stage}, awaiting_input={awaiting_input}")
+        
+        # 사용자 입력을 기다리는 중이라면, 해당 단계를 그대로 진행
+        # (사용자가 응답했으므로 다음 단계로 진행)
+        if awaiting_input:
+            print(f"📨 사용자 응답 처리: {consultation_stage} 단계에서 사용자 입력 받음")
+        
+        # 각 단계별 처리
+        if consultation_stage == "collecting_info":
+            return "process_user_info"  # 사용자 정보 처리
+        elif consultation_stage == "positioning_ready":
+            return "career_positioning"  # 정보 수집 완료 후 포지셔닝
+        elif consultation_stage == "path_selection":
+            return "process_path_selection"
+        elif consultation_stage == "deepening":
+            return "process_deepening"
+        elif consultation_stage == "learning_decision":
+            return "create_learning_roadmap"
+        elif consultation_stage == "summary_request":
+            return "create_consultation_summary"
+        elif consultation_stage == "initial" or not consultation_stage:
+            # 초기 상담 시작 시 - 사용자 정보 충분성 먼저 체크
             user_data = self.get_user_info_from_session(state)
             collected_info = state.get("collected_user_info", {})
             merged_user_data = {**user_data, **collected_info}
@@ -242,21 +329,16 @@ class ChatGraphBuilder:
             else:
                 print("✅ 사용자 정보 충분 - 바로 포지셔닝 분석")
                 return "career_positioning"  # 바로 포지셔닝 분석
-        
-        elif consultation_stage == "collecting_info":
-            return "process_user_info"  # 사용자 정보 처리
-        elif consultation_stage == "positioning_ready":
-            return "career_positioning"  # 정보 수집 완료 후 포지셔닝
-        elif consultation_stage == "path_selection":
-            return "process_path_selection"
-        elif consultation_stage == "deepening":
-            return "process_deepening"
-        elif consultation_stage == "learning_decision":
-            return "create_learning_roadmap"
-        elif consultation_stage == "summary_request":
-            return "create_consultation_summary"
         else:
             return "collect_user_info"  # 기본값
+    
+    def _career_consultation_router_node(self, state: ChatState) -> Dict[str, Any]:
+        """
+        커리어 상담 라우터 노드 - 현재 상담 단계를 확인만 하고 상태를 그대로 반환
+        """
+        consultation_stage = state.get("consultation_stage", "")
+        print(f"🔄 커리어 상담 라우터: 현재 단계 = {consultation_stage}")
+        return state
     
     def get_session_info(self, conversation_id: str) -> Dict[str, Any]:
         """
@@ -354,7 +436,10 @@ class ChatGraphBuilder:
         workflow = StateGraph(ChatState)  # 상태 그래프 생성
         
         # G.Navi 7단계 노드들 추가 (메시지 검증부터 보고서 생성까지)
-        workflow.add_node("message_check", self.message_check_node.create_node())  # 메시지 검증 노드 추가
+        # 메시지 검증 노드는 설정에 따라 조건부로 추가
+        if settings.message_check_enabled:
+            workflow.add_node("message_check", self.message_check_node.create_node())  # 메시지 검증 노드 추가
+        
         workflow.add_node("manage_session_history", self.chat_history_node.retrieve_chat_history_node)  # 세션 히스토리 관리 노드 추가
         workflow.add_node("analyze_intent", self.intent_analysis_node.analyze_intent_node)  # 의도 분석 노드 추가
         
@@ -373,14 +458,38 @@ class ChatGraphBuilder:
         workflow.add_node("create_learning_roadmap", self.learning_roadmap_node.create_learning_roadmap_node)  # 학습 로드맵
         workflow.add_node("create_consultation_summary", self.consultation_summary_node.create_consultation_summary_node)  # 상담 요약
         
-        # 시작점
-        workflow.set_entry_point("message_check")  # 메시지 검증을 시작점으로 설정
+        # 시작점 설정 (메시지 검증 활성화 여부에 따라)
+        if settings.message_check_enabled:
+            workflow.set_entry_point("message_check")  # 메시지 검증을 시작점으로 설정
+            workflow.add_edge("message_check", "manage_session_history")  # 메시지 검증 후 세션 관리로 진행
+        else:
+            workflow.set_entry_point("manage_session_history")  # 메시지 검증 비활성화 시 세션 관리를 시작점으로 설정
         
-        # 메시지 검증 후 세션 관리로 진행
-        workflow.add_edge("message_check", "manage_session_history")
+        # 세션 관리 후 커리어 상담 진행 상태 확인
+        workflow.add_conditional_edges(
+            "manage_session_history",
+            self._check_if_career_consultation_in_progress,
+            {
+                "analyze_intent": "analyze_intent",  # 새로운 대화인 경우 의도 분석
+                "career_consultation_direct": "career_consultation_router"  # 상담 진행 중인 경우 상담 라우터로
+            }
+        )
         
-        # 세션 관리 후 의도 분석
-        workflow.add_edge("manage_session_history", "analyze_intent")
+        # 커리어 상담 라우터 노드 (상담 단계에 따라 적절한 노드로 라우팅)
+        workflow.add_node("career_consultation_router", self._career_consultation_router_node)
+        workflow.add_conditional_edges(
+            "career_consultation_router",
+            self._determine_career_consultation_stage,
+            {
+                "collect_user_info": "collect_user_info",
+                "process_user_info": "process_user_info", 
+                "career_positioning": "career_positioning",
+                "process_path_selection": "process_path_selection",
+                "process_deepening": "process_deepening",
+                "create_learning_roadmap": "create_learning_roadmap",
+                "create_consultation_summary": "create_consultation_summary"
+            }
+        )
         
         # 의도 분석 후 대화 유형에 따른 분기
         workflow.add_conditional_edges(
@@ -423,37 +532,37 @@ class ChatGraphBuilder:
         # 커리어 상담 단계별 조건부 분기
         workflow.add_conditional_edges(
             "career_positioning",
-            self._determine_career_consultation_stage,
+            self._should_continue_or_wait,
             {
-                "process_path_selection": "process_path_selection",
-                "career_positioning": END  # 첫 응답 후 사용자 입력 대기
+                "continue": "process_path_selection",
+                "wait": END  # 첫 응답 후 사용자 입력 대기
             }
         )
         
         workflow.add_conditional_edges(
             "process_path_selection", 
-            self._determine_career_consultation_stage,
+            self._should_continue_or_wait,
             {
-                "process_deepening": "process_deepening",
-                "process_path_selection": END  # 경로 선택 후 사용자 입력 대기
+                "continue": "process_deepening",
+                "wait": END  # 경로 선택 후 사용자 입력 대기
             }
         )
         
         workflow.add_conditional_edges(
             "process_deepening",
-            self._determine_career_consultation_stage,
+            self._should_continue_or_wait,
             {
-                "create_learning_roadmap": "create_learning_roadmap",
-                "process_deepening": END  # 심화 논의 후 사용자 입력 대기
+                "continue": "create_learning_roadmap",
+                "wait": END  # 심화 논의 후 사용자 입력 대기
             }
         )
         
         workflow.add_conditional_edges(
             "create_learning_roadmap",
-            self._determine_career_consultation_stage,
+            self._should_continue_or_wait,
             {
-                "create_consultation_summary": "create_consultation_summary",
-                "create_learning_roadmap": END  # 로드맵 제시 후 사용자 입력 대기
+                "continue": "create_consultation_summary",
+                "wait": END  # 로드맵 제시 후 사용자 입력 대기
             }
         )
         

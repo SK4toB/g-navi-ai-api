@@ -2,10 +2,13 @@
 """
 커리어 포지셔닝 및 시장 분석 노드
 기존의 intent_analysis + data_retrieval + response_formatting 노드를 재활용
+AI 답변을 활용한 개인 맞춤형 분석 추가
 """
 
+import os
 from typing import Dict, Any
 from app.graphs.state import ChatState
+from app.utils.html_logger import save_career_response_to_html
 
 
 class CareerPositioningNode:
@@ -20,6 +23,51 @@ class CareerPositioningNode:
         self.data_retrieval_node = graph_builder.data_retrieval_node
         self.response_formatting_node = graph_builder.response_formatting_node
     
+    async def _generate_ai_analysis(self, user_data: dict) -> str:
+        """AI를 활용한 개인 맞춤형 분석 생성"""
+        try:
+            from openai import AsyncOpenAI
+            
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                return "AI 분석 기능이 현재 이용 불가합니다."
+            
+            client = AsyncOpenAI(api_key=api_key)
+            
+            # 사용자 정보를 바탕으로 AI 프롬프트 구성
+            skills_str = ", ".join(user_data.get('skills', ['정보 없음']))
+            
+            prompt = f"""
+다음 프로필을 가진 직장인의 커리어 포지셔닝을 전문 상담사 관점에서 분석해주세요:
+
+- 이름: {user_data.get('name', '고객')}
+- 경력: {user_data.get('experience', '정보 없음')}
+- 보유 기술: {skills_str}
+- 도메인: {user_data.get('domain', '정보 없음')}
+- 현재 상황: {user_data.get('current_situation', '정보 없음')}
+
+다음 형식으로 100-150단어 내외로 분석해주세요:
+1. 현재 시장에서의 위치와 경쟁력
+2. 가장 두드러지는 강점 1-2가지
+3. 개선이 필요한 영역 1가지
+4. 시장 전망 및 기회 요소
+
+따뜻하면서도 전문적인 톤으로 작성해주세요.
+"""
+            
+            response = await client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=500,
+                temperature=0.3
+            )
+            
+            return response.choices[0].message.content.strip()
+            
+        except Exception as e:
+            print(f"AI 분석 생성 중 오류: {e}")
+            return "AI 분석을 생성하는 중 문제가 발생했습니다. 기본 분석을 제공합니다."
+    
     async def career_positioning_node(self, state: ChatState) -> Dict[str, Any]:
         """
         현재 데이터를 기반으로 포지셔닝 및 시장 분석을 수행하고
@@ -28,17 +76,20 @@ class CareerPositioningNode:
         print("🎯 커리어 포지셔닝 분석 시작...")
         
         # 1. 기존 의도 분석 노드 활용
-        state = await self.intent_analysis_node.analyze_intent_node(state)
+        state = self.intent_analysis_node.analyze_intent_node(state)
         
         # 2. 기존 데이터 검색 노드 활용
-        state = await self.data_retrieval_node.retrieve_additional_data_node(state)
+        state = self.data_retrieval_node.retrieve_additional_data_node(state)
         
         # 3. 사용자 정보 병합 (기존 정보 + 수집된 정보)
         user_data = self.graph_builder.get_user_info_from_session(state)
         collected_info = state.get("collected_user_info", {})
         merged_user_data = {**user_data, **collected_info}
         
-        # 4. 커리어 상담 전용 응답 포맷팅
+        # 4. AI 개인 맞춤형 분석 생성
+        ai_analysis = await self._generate_ai_analysis(merged_user_data)
+        
+        # 5. 커리어 상담 전용 응답 포맷팅
         # 포지셔닝 분석 응답 생성
         positioning_response = {
             "message": f"""👋 **안녕하세요, {merged_user_data.get('name', '고객')}님!**
@@ -57,6 +108,9 @@ class CareerPositioningNode:
 
 귀하는 현재 **{self._get_career_stage(merged_user_data)}**에 위치하고 계시며, 
 **{self._get_strength_summary(merged_user_data)}**가 가장 큰 강점입니다.
+
+### 🤖 **AI 전문 분석**
+{ai_analysis}
 
 ---
 
@@ -110,15 +164,18 @@ class CareerPositioningNode:
                     "name": "도메인 전문가 경로 (Domain Expert)", 
                     "description": "도메인 지식 확장 및 비즈니스 전문성",
                     "focus": "domain_expertise"
-                }
-            ]
+                }            ]
         }
         
+        # HTML 로그 저장
+        save_career_response_to_html("career_positioning", positioning_response, state.get("session_id", "unknown"))
+
         return {
             **state,
             "consultation_stage": "path_selection",
             "career_paths_suggested": positioning_response["career_paths"],
             "formatted_response": positioning_response,
+            "final_response": positioning_response,  # final_response 추가
             "awaiting_user_input": True,
             "next_expected_input": "career_path_choice",
             "collected_user_info": collected_info,  # 수집된 정보 유지

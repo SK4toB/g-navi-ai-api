@@ -1,10 +1,13 @@
 # app/graphs/nodes/career_consultation/consultation_summary.py
 """
 상담 요약 및 동기부여 마무리 노드
+AI 기반 개인화된 동기부여 메시지 생성
 """
 
+import os
 from typing import Dict, Any
 from app.graphs.state import ChatState
+from app.utils.html_logger import save_career_response_to_html
 
 
 class ConsultationSummaryNode:
@@ -16,6 +19,51 @@ class ConsultationSummaryNode:
         self.graph_builder = graph_builder
         # 기존 보고서 생성 노드 재활용
         self.report_generation_node = graph_builder.report_generation_node
+    
+    async def _generate_motivational_message(self, user_data: dict, selected_path: dict, consultation_context: dict) -> str:
+        """AI 기반 개인 맞춤형 동기부여 메시지 생성"""
+        try:
+            from openai import AsyncOpenAI
+            
+            api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                return f"{user_data.get('name', '고객')}님의 성공적인 커리어 전환을 응원합니다! 체계적인 계획을 바탕으로 꾸준히 실행해나가시면 반드시 목표를 달성하실 수 있습니다."
+            
+            client = AsyncOpenAI(api_key=api_key)
+            
+            skills_str = ", ".join(user_data.get('skills', ['다양한 역량']))
+            path_name = selected_path.get('name', '선택하신 경로')
+            
+            prompt = f"""
+다음 직장인에게 커리어 상담 마무리 동기부여 메시지를 작성해주세요:
+
+- 이름: {user_data.get('name', '고객')}
+- 경력: {user_data.get('experience', '경험')}
+- 보유 기술: {skills_str}
+- 선택한 경로: {path_name}
+- 도메인: {user_data.get('domain', '전문 분야')}
+
+다음을 포함하여 150-200단어로 작성해주세요:
+1. 개인의 강점과 잠재력 인정
+2. 선택한 경로에 대한 확신과 격려
+3. 구체적이고 실현 가능한 다음 단계 제시
+4. 따뜻하면서도 전문적인 응원 메시지
+
+진심어린 격려와 함께 자신감을 심어주는 톤으로 작성해주세요.
+"""
+            
+            response = await client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=3000,
+                temperature=0.3
+            )
+            
+            return response.choices[0].message.content.strip()
+            
+        except Exception as e:
+            print(f"동기부여 메시지 생성 중 오류: {e}")
+            return f"{user_data.get('name', '고객')}님의 성공적인 커리어 전환을 응원합니다! 체계적인 계획을 바탕으로 꾸준히 실행해나가시면 반드시 목표를 달성하실 수 있습니다."
     
     async def create_consultation_summary_node(self, state: ChatState) -> Dict[str, Any]:
         """
@@ -29,7 +77,12 @@ class ConsultationSummaryNode:
         processing_log = state.get("processing_log", [])
         
         # 기존 보고서 생성 노드 활용하여 구조화된 요약 생성
-        state = await self.report_generation_node.generate_report_node(state)
+        state = self.report_generation_node.generate_report_node(state)
+        
+        # AI 기반 개인 맞춤형 동기부여 메시지 생성
+        motivational_message = await self._generate_motivational_message(
+            user_data, selected_path, consultation_context
+        )
         
         # 전문적이고 체계적인 상담 요약 및 동기부여 메시지 생성
         summary_response = {
@@ -41,7 +94,7 @@ class ConsultationSummaryNode:
 
 **📊 현재 상황 진단 결과**
 ```
-• 경력 수준: {user_data.get('experience', 'N/A')}년차 ({self._get_career_level(user_data.get('experience', 0))})
+• 경력 수준: {user_data.get('experience', 'N/A')} ({self._get_career_level(user_data.get('experience', ''))})
 • 핵심 강점: {', '.join(user_data.get('skills', [])[:3])}
 • 성장 영역: {selected_path.get('focus', '선택된 분야')}
 • 현재 포지션: {user_data.get('position', 'N/A')}
@@ -142,20 +195,15 @@ class ConsultationSummaryNode:
 - 관련 프로젝트 참여 기회 탐색
 - 학습 스케줄 수립 및 실행 시작
 
-**💪 최종 격려 메시지**
+**💪 AI 맞춤형 격려 메시지**
 
-{user_data.get('name', '고객')}님은 이미 **{user_data.get('experience', 'N/A')}년의 소중한 경험**과 **{', '.join(user_data.get('skills', [])[:2])} 등의 검증된 역량**을 보유하고 계십니다.
-
-오늘 수립한 체계적인 전략과 단계별 실행 계획을 따라가시면, **18개월 내에 원하시는 목표에 도달**할 수 있을 것이라 확신합니다.
-
-**성공의 열쇠는 '일관성'입니다.** 
-매일 작은 한 걸음씩, 꾸준히 전진해나가세요!
+{motivational_message}
 
 ---
 
 **"당신의 꿈은 계획이 되고, 계획은 현실이 됩니다."**
 
-**🚀 Go for it! 응원합니다! �**""",
+**🚀 Go for it! 응원합니다! 💪**""",
             "summary": {
                 "consultation_type": "professional_career_consultation",
                 "selected_path": selected_path,
@@ -178,17 +226,9 @@ class ConsultationSummaryNode:
             }
         }
     
-    def _get_career_level(self, years: int) -> str:
-        """경력 연차에 따른 레벨 분류"""
-        if years <= 2:
-            return "주니어"
-        elif years <= 5:
-            return "미드레벨"
-        elif years <= 10:
-            return "시니어"
-        else:
-            return "전문가"
-        
+        # HTML 로그 저장
+        save_career_response_to_html("consultation_summary", summary_response, state.get("session_id", "unknown"))
+    
         return {
             **state,
             "consultation_stage": "completed",
@@ -197,3 +237,31 @@ class ConsultationSummaryNode:
             "awaiting_user_input": False,
             "processing_log": processing_log + ["커리어 상담 완료"]
         }
+    
+    def _get_career_level(self, experience: str) -> str:
+        """경력 연차에 따른 레벨 분류"""
+        if not experience:
+            return "정보 없음"
+            
+        experience_str = str(experience).lower().strip()
+        
+        # "신입" 관련 키워드 체크
+        if any(keyword in experience_str for keyword in ['신입', '인턴', '경험없음', '0년']):
+            return "신입"
+            
+        # 숫자 추출
+        import re
+        numbers = re.findall(r'\d+', experience_str)
+        if not numbers:
+            return "정보 부족"
+            
+        years = int(numbers[0])
+        
+        if years <= 2:
+            return "주니어"
+        elif years <= 5:
+            return "미드레벨"
+        elif years <= 10:
+            return "시니어"
+        else:
+            return "전문가"
