@@ -1,0 +1,202 @@
+name: FastAPI Docker Build & Push (Optimized)
+
+on:
+    push:
+        branches: [main, ci/k8s]
+    pull_request:
+        branches: [main]
+
+env:
+    IMAGE_REGISTRY: amdp-registry.skala-ai.com/skala25a
+    BASE_IMAGE_NAME: sk-gnavi4-ai-base
+    APP_IMAGE_NAME: sk-gnavi4-ai
+    DOCKER_CREDENTIAL_ID: skala-image-registry-id
+
+jobs:
+    # 베이스 이미지 변경 감지 및 빌드
+    check-base-changes:
+        runs-on: ubuntu-latest
+        outputs:
+            base-changed: ${{ steps.changes.outputs.base }}
+            requirements-hash: ${{ steps.hash.outputs.requirements-hash }}
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 2
+
+            - name: Check for base image changes
+              id: changes
+              run: |
+                  if git diff --name-only HEAD~1 HEAD | grep -E "(requirements\.txt|Dockerfile\.base)"; then
+                    echo "base=true" >> $GITHUB_OUTPUT
+                    echo "🔄 베이스 이미지 관련 파일 변경 감지"
+                  else
+                    echo "base=false" >> $GITHUB_OUTPUT
+                    echo "✅ 베이스 이미지 변경 없음"
+                  fi
+
+            - name: Generate requirements hash
+              id: hash
+              run: |
+                  REQUIREMENTS_HASH=$(sha256sum requirements.txt | cut -d' ' -f1 | cut -c1-12)
+                  echo "requirements-hash=$REQUIREMENTS_HASH" >> $GITHUB_OUTPUT
+                  echo "Requirements Hash: $REQUIREMENTS_HASH"
+
+    # 베이스 이미지 빌드 (requirements.txt 변경시에만)
+    build-base-image:
+        runs-on: ubuntu-latest
+        needs: check-base-changes
+        if: needs.check-base-changes.outputs.base-changed == 'true'
+        timeout-minutes: 20
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout@v4
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Log in to Docker registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.IMAGE_REGISTRY }}
+                  username: ${{ secrets.HARBOR_USERNAME }}
+                  password: ${{ secrets.HARBOR_PASSWORD }}
+
+            - name: Check if base image exists
+              id: check-base
+              run: |
+                  REQUIREMENTS_HASH="${{ needs.check-base-changes.outputs.requirements-hash }}"
+                  if docker manifest inspect ${{ env.IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:$REQUIREMENTS_HASH >/dev/null 2>&1; then
+                    echo "exists=true" >> $GITHUB_OUTPUT
+                    echo "✅ 베이스 이미지가 이미 존재합니다"
+                  else
+                    echo "exists=false" >> $GITHUB_OUTPUT
+                    echo "🔨 베이스 이미지 빌드가 필요합니다"
+                  fi
+
+            - name: Build and push base image
+              if: steps.check-base.outputs.exists == 'false'
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  file: ./Dockerfile.base
+                  platforms: linux/amd64
+                  push: true
+                  tags: |
+                      ${{ env.IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ needs.check-base-changes.outputs.requirements-hash }}
+                      ${{ env.IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:latest
+                  cache-from: type=gha,scope=base
+                  cache-to: type=gha,mode=max,scope=base
+                  build-args: |
+                      BUILDKIT_INLINE_CACHE=1
+
+            - name: Base image build success
+              run: |
+                  echo "✅ 베이스 이미지 빌드 완료"
+                  echo "이미지: ${{ env.IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ needs.check-base-changes.outputs.requirements-hash }}"
+
+    # 애플리케이션 이미지 빌드
+    build-and-push:
+        runs-on: ubuntu-latest
+        needs: [check-base-changes, build-base-image]
+        if: always() && !failure()
+        timeout-minutes: 15
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout@v4
+
+            - name: Set up Python 3.10
+              uses: actions/setup-python@v4
+              with:
+                  python-version: '3.10'
+
+            # Python 패키지 캐싱 (베이스 이미지에 포함되므로 빠른 검증용)
+            - name: Cache Python packages
+              uses: actions/cache@v3
+              with:
+                  path: ~/.cache/pip
+                  key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pip-
+
+            # 빠른 문법 체크 (베이스 이미지가 있으므로 간소화)
+            - name: Quick syntax validation
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+                  python -m py_compile app/main.py
+              timeout-minutes: 5
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Log in to Docker registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ${{ env.IMAGE_REGISTRY }}
+                  username: ${{ secrets.HARBOR_USERNAME }}
+                  password: ${{ secrets.HARBOR_PASSWORD }}
+
+            - name: Generate image tags
+              id: generate_tag
+              run: |
+                  BUILD_NUMBER="${{ github.run_number }}"
+                  HASH=$(date +%s%N | sha256sum | cut -c1-12)
+                  FINAL_IMAGE_TAG="${BUILD_NUMBER}-${HASH}"
+                  REQUIREMENTS_HASH="${{ needs.check-base-changes.outputs.requirements-hash }}"
+
+                  echo "FINAL_IMAGE_TAG=$FINAL_IMAGE_TAG" >> $GITHUB_ENV
+                  echo "BASE_IMAGE_TAG=$REQUIREMENTS_HASH" >> $GITHUB_ENV
+                  echo "Final Tag: $FINAL_IMAGE_TAG"
+                  echo "Base Image Tag: $REQUIREMENTS_HASH"
+
+            # 최적화된 애플리케이션 이미지 빌드
+            - name: Build and push application image
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  file: ./Dockerfile
+                  platforms: linux/amd64
+                  push: true
+                  tags: |
+                      ${{ env.IMAGE_REGISTRY }}/${{ env.APP_IMAGE_NAME }}:${{ env.FINAL_IMAGE_TAG }}
+                      ${{ env.IMAGE_REGISTRY }}/${{ env.APP_IMAGE_NAME }}:latest
+                  cache-from: type=gha,scope=app
+                  cache-to: type=gha,mode=max,scope=app
+                  build-args: |
+                      BUILDKIT_INLINE_CACHE=1
+                      BASE_IMAGE_TAG=${{ env.BASE_IMAGE_TAG }}
+              timeout-minutes: 10
+
+            - name: Application build success
+              run: |
+                  echo "✅ 애플리케이션 이미지 빌드 및 푸시 성공"
+                  echo "이미지: ${{ env.IMAGE_REGISTRY }}/${{ env.APP_IMAGE_NAME }}:${{ env.FINAL_IMAGE_TAG }}"
+                  echo "베이스 이미지: ${{ env.IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ env.BASE_IMAGE_TAG }}"
+                  echo "Harbor에서 확인바람"
+
+    # 빌드 요약 및 성능 리포트
+    build-summary:
+        runs-on: ubuntu-latest
+        needs: [check-base-changes, build-base-image, build-and-push]
+        if: always()
+        steps:
+            - name: Build Summary
+              run: |
+                  echo "## 🚀 빌드 요약 리포트"
+                  echo "### 베이스 이미지"
+                  if [ "${{ needs.check-base-changes.outputs.base-changed }}" == "true" ]; then
+                    echo "- 🔄 베이스 이미지 재빌드됨"
+                    echo "- Hash: ${{ needs.check-base-changes.outputs.requirements-hash }}"
+                  else
+                    echo "- ✅ 베이스 이미지 재사용됨 (빌드 시간 단축!)"
+                  fi
+
+                  echo "### 애플리케이션 이미지"
+                  echo "- 📦 최종 이미지: ${{ env.APP_IMAGE_NAME }}:${{ env.FINAL_IMAGE_TAG }}"
+                  echo "- 🎯 예상 빌드 시간 단축: 60-80%"
+
+                  echo "### 다음 단계"
+                  echo "- Harbor 레지스트리에서 이미지 확인"
+                  echo "- K8s 배포시 새로운 태그 사용"
