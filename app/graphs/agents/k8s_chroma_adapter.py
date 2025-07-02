@@ -127,7 +127,8 @@ class K8sChromaDBAdapter:
             K8sChromaRetriever 인스턴스
         """
         search_kwargs = search_kwargs or {}
-        return K8sChromaRetriever(self.collection_name, self.embeddings, adapter=self)
+        k = search_kwargs.get("k", 3)
+        return K8sChromaRetriever(self.collection_name, self.embeddings, adapter=self, k=k)
     
     def get_collection_info(self) -> Dict:
         """컬렉션 정보 조회"""
@@ -166,16 +167,18 @@ class K8sChromaRetriever(BaseRetriever):
     k: int = Field(default=3, description="검색할 문서 수")
     adapter: Any = Field(default=None, description="ChromaDB 어댑터")
     
-    def __init__(self, collection_name: str, embeddings: Embeddings, adapter: Any, **kwargs):
-        # adapter는 반드시 인자로 받아야 함
+    def __init__(self, collection_name: str, embeddings: Embeddings, adapter: Any, k: int = 3, **kwargs):
+        if adapter is None:
+            raise ValueError("K8sChromaRetriever requires an adapter instance. Do not instantiate without adapter.")
         super().__init__(
             collection_name=collection_name,
             embeddings=embeddings,
-            k=3,
+            k=k,
             adapter=adapter,
             **kwargs
         )
         self.adapter = adapter
+        self.k = k
 
     async def _aget_relevant_documents(self, query: str) -> List[Document]:
         """Not implemented"""
