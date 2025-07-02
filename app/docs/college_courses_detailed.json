@@ -1,0 +1,6787 @@
+[
+  {
+    "course_id": "COL-0000",
+    "course_name": "[Guided Project] Btv 시청데이터를 활용한 추천 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/7ffu7vs4",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0001",
+    "course_name": "[Guided Project] 공정 이미지 불량 탐지 모델 개발 with Tensorflow",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/tohx49y1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0002",
+    "course_name": "[Guided Project] SSL 기반 CCTV 이미지의 객체 탐지",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/6cfnnhbj",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0003",
+    "course_name": "[Guided Project] 기지국 장비 성능 통계의 EDA 및 불량 탐색",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/education/tdw5e2u2",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0004",
+    "course_name": "[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with Tensorflow",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/lq0gz6yg",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0005",
+    "course_name": "Generative AI 활용을 위한 Prompt Engineering",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Prompt Engineering",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.5,
+    "특화직무": [
+      "AIX - G.AI Model Dev."
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/rk8r89i1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0006",
+    "course_name": "New Tech. Fundamental",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://samsungu.ac.kr/education/b5032trt",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0007",
+    "course_name": "Digital Literacy",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data 이해",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 10.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://samsungu.ac.kr/learning/zv9t1ocg",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0008",
+    "course_name": "CDS Ⅰ_데이터 처리와 시각화",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data 이해",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 30.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://academy.samsung.com/lecture/bukjli4h",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0009",
+    "course_name": "CDS Ⅱ_머신러닝 모델링",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data 이해",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 20.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://samsungu.ac.kr/program/m3j81yd3",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0010",
+    "course_name": "머신러닝 실무 기초",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "머신러닝/딥러닝 기초",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 7.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/64atky62",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0011",
+    "course_name": "딥러닝 입문",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "머신러닝/딥러닝 기초",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 17.8,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/xo8ghc1x",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0012",
+    "course_name": "딥러닝 실무 기초",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "머신러닝/딥러닝 기초",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 7.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/hxvyiasx",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0013",
+    "course_name": "딥러닝 데이터 분석",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "머신러닝/딥러닝 기초",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 24.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/s7g9jbnx",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0014",
+    "course_name": "[SKADA] Practitioner",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 5.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/ovd9p6jd",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0015",
+    "course_name": "[Guided Project] 석유 정제 공정 운전 데이터를 활용한 물성 예측 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/w6xefh1z",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0016",
+    "course_name": "[Guided Project] Wavve OTT 고객 이탈 예측 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/o12nds8i",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0017",
+    "course_name": "[Guided Project] CCTV 이미지 분류 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/31s8l4f0",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0018",
+    "course_name": "[Guided Project] 공정 이미지 불량 탐지 모델 개발 with PyTorch",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/dd4vumli",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0019",
+    "course_name": "[Guided Project] 통화품질 VOC의 불만 유형 분류",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/lecture/5urjg80k",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0020",
+    "course_name": "[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with PyTorch",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/55obq2j3",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0021",
+    "course_name": "[Guided Project] DRAM 내부 회로의 파형 예측 with PyTorch",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/invriw6l",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0022",
+    "course_name": "이미지 처리 입문",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "데이터 모델링 과정 (정형/비정형)",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 6.7,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Model Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/lecture/yo5tllfe",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0023",
+    "course_name": "자연어 처리 입문",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "데이터 모델링 과정 (정형/비정형)",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Model Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/tm5fxlnb",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0024",
+    "course_name": "시계열 처리 입문",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "데이터 모델링 과정 (정형/비정형)",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 2.8,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Model Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/37lmpojq",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0025",
+    "course_name": "Machine Learning 실무_정형 데이터 분석",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "데이터 모델링 과정 (정형/비정형)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Model Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/xdklkt4c",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0026",
+    "course_name": "Deep Learning 실무_이미지",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "데이터 모델링 과정 (정형/비정형)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Model Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/9ry179b6",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0027",
+    "course_name": "Deep Learning 실무_자연어",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "데이터 모델링 과정 (정형/비정형)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Model Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/xu5lyun4",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0028",
+    "course_name": "Generative AI 기반 Orchestration",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Orchestration",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/6l5xhetg",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0029",
+    "course_name": "Prompt Engineering",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Prompt Engineering",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Model Dev."
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/a8gzksxk",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0030",
+    "course_name": "[SKADA] Advanced Practitioner -이미지-",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Adv. AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/bmo44e2l",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0031",
+    "course_name": "[SKADA] Advanced Practitioner -자연어-",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Adv. AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/digtb7wo",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0032",
+    "course_name": "[SKADA] Advanced Practitioner -시계열-",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Adv. AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/y8m5yy2t",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0033",
+    "course_name": "모델최적화 및 Data/Model Drift",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "모델 Pipeline 최적화",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 7.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/training/r8m5zg4y",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0034",
+    "course_name": "Inferencing 서비스 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Inferencing 서비스 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/dbbnq212",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0035",
+    "course_name": "Hadoop 이해와 활용",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Big Data Ecosystem 이해",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 12.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/wg4cvg7b",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0036",
+    "course_name": "빅데이터 플랫폼의 이해와 활용",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Big Data 클러스터 관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/education/any1x497",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0037",
+    "course_name": "Model Deploy/Serving 설계 및 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "모델 Pipeline 설계 및 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/381aobu7",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0038",
+    "course_name": "모델 Pipeline 설계 및 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "모델 Pipeline 설계 및 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/v6e5n4ju",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0039",
+    "course_name": "모델 최적화 - 모델 경량화 및 추론 가속화",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "모델 최적화",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/7mq3thtl",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0040",
+    "course_name": "Data Processing : Spark",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "대용량 데이터 처리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/cvudldlf",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0041",
+    "course_name": "Scala 이해와 활용",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "실시간 기술 이해",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 25.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/47m02zk2",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0042",
+    "course_name": "Data Ingestion : Sqoop/Flume/Kafka/NiFi",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "대용량 데이터 수집",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/7nxsi2hn",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0043",
+    "course_name": "Data Analysis : KUDU/Impala/Modern Tools",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "대용량 데이터 처리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/pn6so3sy",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0044",
+    "course_name": "Data Storage Options - NoSQL",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "대용량 데이터 처리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/training/wh2fhxmn",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0045",
+    "course_name": "[코드잇] 머신러닝 입문",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "머신러닝/딥러닝 기초",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 25.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/5uhia49a",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0046",
+    "course_name": " [Guided Project] DRAM 내부 회로의 파형 예측 with Tensorflow",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/0ytbrxi0",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0047",
+    "course_name": "[Guided Project] 통신탑 안전 이상 감지 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/lecture/rsxmgyc7",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0048",
+    "course_name": "[Guided Project] 석유 유정 펌프 이상 감지",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/ltp0eflk",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0049",
+    "course_name": " [Guided Project] AI 모델을 활용한 철근 단가 예측",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/y2lih7gm",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0050",
+    "course_name": "[Guided Project] 반도체 공정의 Wafer 품질 개선 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/meyg6xaw",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0051",
+    "course_name": "ChatGPT API를 활용한 서비스 구현",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "생성형 AI 활용 기초",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 10.0,
+    "특화직무": [
+      "AIX - G.AI Dev."
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "Biz. Supporting - Biz. Supporting",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/3ssfegjt",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0052",
+    "course_name": "CSP 기반 Data Pipeline 설계/구현",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Data Architecting(성능/비용 최적화 등)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/egfkbiwx",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0053",
+    "course_name": "LLM Fine-Tuning",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "G.AI Model Engineering",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Model Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/klq7dmeh",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0054",
+    "course_name": "LLM Mastery",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "G.AI Model Engineering",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Model Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/o94gj4pl",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0055",
+    "course_name": "sLLM을 위한 모델 경량화 및 모델서빙",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "모델 Pipeline 설계 및 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/course/zzvv8v1d",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0056",
+    "course_name": "Vector DB",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Orchestration",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/dg5lewe5",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0057",
+    "course_name": "코드 및 정형데이터 활용 생성형AI 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Prompt Engineering",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "AIX - G.AI Model Dev."
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/lecture/aximoupf",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0058",
+    "course_name": "실시간 데이터 처리",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "실시간 데이터 처리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/9mz45nb1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0059",
+    "course_name": "[Guided Project] SKADA 인증 Practitioner 시험 대비 문제 풀이",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/lecture/137v5d7n",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0060",
+    "course_name": "[Guided Project] 소보로 청각장애인을 위한 소리 분류 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/nfewt04z",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0061",
+    "course_name": "[Guided Project] SSD 반도체 신뢰성 사전 예측 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/yktjxvxd",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0062",
+    "course_name": " [Guided Project] AI 모델을 활용한 정유 공정 자율 운전 구현",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/soivfsjy",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0063",
+    "course_name": "[코드잇] 데이터 사이언스 정복하기",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "머신러닝/딥러닝 기초",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 25.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/course/4z73wo26",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0064",
+    "course_name": " ChatGPT를 활용한 데이터 분석(feat. 파이썬)",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "생성형 AI 활용 기초",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 15.0,
+    "특화직무": [
+      "AIX - G.AI Dev."
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "Biz. Supporting - Biz. Supporting",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/training/v67zdl5x",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0065",
+    "course_name": "[VOD] 코드 및 정형데이터 활용 생성형AI 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Prompt Engineering",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 3.3,
+    "특화직무": [
+      "AIX - G.AI Model Dev."
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/sq7ws4mf",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0066",
+    "course_name": "[VOD] 리더 생성형 AI Mastering (이론)",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "생성형 AI Fundamental",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.6,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://samsungu.ac.kr/education/dctj6vgm",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0067",
+    "course_name": "[VOD] 빅데이터 플랫폼의 이해와 활용",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Big Data 클러스터 관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 6.5,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/lecture/mk1vlpfn",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0068",
+    "course_name": "[VOD] Inferencing 서비스 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Inferencing 서비스 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 4.5,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/hko4salg",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0069",
+    "course_name": " [Guided Project] DMT 공정 에너지 절감을 위한 최저 운전 온도 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/s6sapgds",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0070",
+    "course_name": "[Guided Project] OCR 기반 영수증 텍스트 분류 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/training/uorqw3eg",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0071",
+    "course_name": "[Guided Project] Photo(노광) 공정 지표를 활용한 패키지 테스트 결과 예측 모델 개발",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/3c361zk2",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0072",
+    "course_name": "AI 시대 리더의 필수 역량: AIX for Leader",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "생성형 AI 활용 기초",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 2.4,
+    "특화직무": [
+      "AIX - G.AI Dev."
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "Biz. Supporting - Biz. Supporting",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/0dstd899",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0073",
+    "course_name": "Advanced RAG Pipeline",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Orchestration",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/gfsdz01u",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0074",
+    "course_name": "생성형 AI Agent",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "G.AI Model Engineering",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Model Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/learning/qek3kr3f",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0075",
+    "course_name": "생성형 AI 응용(Multimodal)",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "G.AI Model Engineering",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Model Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/course/4can368u",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0076",
+    "course_name": "생성형 AI Literacy (Starter Pack)",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "생성형 AI Fundamental",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 13.4,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://edu.samsung.com/training/ewkpb29p",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0077",
+    "course_name": "Python 데이터 분석",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "머신러닝/딥러닝 기초",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/5wlm6u93",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0078",
+    "course_name": "제조 Solution Day 2025",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI Trend/Insight",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 4.5,
+    "특화직무": [
+      "AIX - AI/Data Dev.",
+      "Biz. Consulting - AIX"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/education/cz9l6cfu",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0079",
+    "course_name": "LLM기반 Agent 구축 및 평가",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "Orchestration",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/z6rqf96t",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0080",
+    "course_name": "[Guided Project] 통신 체감 품질 데이터를 활용한 머신러닝 모델링 A to Z",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data Analytics",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "온라인집합",
+    "공개여부": "공개",
+    "학습시간": 40.0,
+    "특화직무": [
+      "AIX - AI/Data Dev."
+    ],
+    "추천직무": [
+      "AIX - G.AI Dev.",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/31m21o39",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0081",
+    "course_name": "반도체 사업向 AI 이해 및 활용",
+    "source": "college",
+    "학부": "AIX",
+    "표준과정": "AI/Data 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://samsungu.ac.kr/program/site25rv",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0082",
+    "course_name": "ERP 기본 – 모듈별 소개",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ERP Hands-on",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "Sales - Sales"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/zpmh04oa",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0083",
+    "course_name": "ERP Hands on",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ERP Hands-on",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 24.0,
+    "특화직무": [
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "Sales - Sales"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/training/om8rjxms",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0084",
+    "course_name": "Cloud Programming 실무 (SAP BTP)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "SAP Cloud/AI 개발 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/learning/he857m8r",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0085",
+    "course_name": "SAP In-memory DB(HANA DB) Administrator",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "SAP HANA DB Mgmt",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/7h40n2q6",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0086",
+    "course_name": "ERP Change management (SAP System Operation)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Solution Operation",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/byzkldu0",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0087",
+    "course_name": "ERP System landscape optimize (신규, 분리, 합병, 복제 등)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ERP Architecture 설계/개선",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Biz. Consulting - ERP"
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/5m5bvt29",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0088",
+    "course_name": "SAP In-memory DB(HANA DB) CDS view 생성",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "SAP Cloud/AI 개발 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/16lvh08m",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0089",
+    "course_name": "Tableau & SAP BW Data Analytics",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ERP Data 레포팅",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/v45jz9f5",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0090",
+    "course_name": "Order to cash (Warehouse Management 이해)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Biz. 프로세스 설계/개선",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/learning/7ovtyrky",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0091",
+    "course_name": "CO-CCA Distribution and Assessment",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Biz. 프로세스 설계/개선",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/education/vn54ycip",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0092",
+    "course_name": "SAP Data & Data Analytics Literacy",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ERP Data 레포팅",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/thp79mad",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0093",
+    "course_name": "Demand & Supply Chain",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Biz. 프로세스 설계/개선",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/rrdmiz11",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0094",
+    "course_name": "ERP Data 분석 시스템 구축 방법론",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ERP Data 레포팅",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/jjsjhdek",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0095",
+    "course_name": "ERP 구축 방법론 (VOD)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ERP 구축 방법론",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 5.3,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/91x0vtqc",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0096",
+    "course_name": "DW 솔루션 소개",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "DW 솔루션 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "추천직무": [
+      "Sales - Sales"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/learning/59e6s7o5",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0097",
+    "course_name": "SAP Business AI Portfolio",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "SAP Cloud/AI 개발 실무",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/m3wiwv8z",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0098",
+    "course_name": "CDS를 활용한 ERP Data 분석",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "SAP Cloud/AI 개발 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/vpj8pbno",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0099",
+    "course_name": "ERP 컨설팅 방법론 및 프로세스 이해/실습",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ERP 구축 방법론",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/xg21uknw",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0100",
+    "course_name": "Discovering End-to-End Business Processes for the Intelligent Enterprise",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Biz. 프로세스 설계/개선",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 22.0,
+    "특화직무": [
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/9pl0gmox",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0101",
+    "course_name": "Project 수행 Lessons learned를 활용한 고객 Value 제고 활동 공유",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Value proposition",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Biz. Consulting - ERP"
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/3xkngsk2",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0102",
+    "course_name": "Acquiring Core ABAP Skills",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Advanced Programming 개발/설계",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 40.0,
+    "특화직무": [
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "Biz. Consulting - ERP"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/ilhuh6mq",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0103",
+    "course_name": "Hi-Tech 산업 ERP 재무 특성",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/i5brwig1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0104",
+    "course_name": "Hi-Tech 산업 ERP 물류 특성",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/7y4uq8n8",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0105",
+    "course_name": "에너지 산업 ERP 특성",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/rlk4i4kk",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0106",
+    "course_name": "에너지 산업 ERP/CCS 특성",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/education/cqdmi38s",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0107",
+    "course_name": "통신 산업 ERP 재무 특성",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/a31rzwp8",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0108",
+    "course_name": "통신 산업 ERP 물류 특성",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/9ot0zups",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0109",
+    "course_name": "Chemical 산업 ERP 특성",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/8vswwpac",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0110",
+    "course_name": "Battery 산업 ERP 특성",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/de5f3sbp",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0111",
+    "course_name": "Active Directory 실무 (설계/설치/구성/관리기능/운영/최적화)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "DW 솔루션 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Solution - Biz. Solution"
+    ],
+    "추천직무": [
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/ucux6461",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0112",
+    "course_name": "메일 Exchange 실무",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "DW 솔루션 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Solution - Biz. Solution"
+    ],
+    "추천직무": [
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/education/lxwu7d9e",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0113",
+    "course_name": "OnWorkplace 실무",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "DW 솔루션 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Solution - Biz. Solution"
+    ],
+    "추천직무": [
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/66tvvnjk",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0114",
+    "course_name": "M365 실무",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "DW 솔루션 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Solution - Biz. Solution"
+    ],
+    "추천직무": [
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/course/ormhd0oy",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0115",
+    "course_name": "OKTA 실무",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "DW 솔루션 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Solution - Biz. Solution"
+    ],
+    "추천직무": [
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/jftuz53o",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0116",
+    "course_name": "모바일앱 실무",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "DW 솔루션 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Solution - Biz. Solution"
+    ],
+    "추천직무": [
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/1e6hzr3u",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0117",
+    "course_name": "제조 산업 ERP 생산 특성 ",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/g1b697rj",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0118",
+    "course_name": "SAP ABAP Programming 기초 (Dictionary, Report, Function 등)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ABAP Programming 기초",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 24.0,
+    "특화직무": [
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "Biz. Consulting - ERP",
+      "PM - Solution PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/course/a3upqgym",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0119",
+    "course_name": "SAP ABAP Programming 실무1 (Open SQL/Internal Table 실습)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ABAP 개발 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/learning/te8hn058",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0120",
+    "course_name": "SAP ABAP Programming 실무2 (Grid ALV 리포트 실습)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ABAP 개발 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/training/6ph2mru5",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0121",
+    "course_name": "SAP ABAP Programming 실무3 (ERP AMDP)",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "ABAP 개발 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/course/6nlnmlj5",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0122",
+    "course_name": "ERP 바이오 제조 특화 프로세스 ",
+    "source": "college",
+    "학부": "Biz. Solution",
+    "표준과정": "Industry별 ERP 실무 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Biz. Consulting - ERP",
+      "Solution - ERP Dev."
+    ],
+    "추천직무": [
+      "PM - Solution PM",
+      "Solution - Biz. Solution"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/6x235261",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0123",
+    "course_name": "네트워크 Essential",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "네트워크 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 2.5,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Sales - Sales",
+      "Biz. Consulting - ERP",
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/wndz4y7t",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0124",
+    "course_name": "Cloud Computing Essential",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Computing 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 5.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://samsungu.ac.kr/lecture/cypcfcvo",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0125",
+    "course_name": "Docker/Kubernetes의 이해",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "컨테이너 이해",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 3.5,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - Middleware/Database",
+      "Sales - Sales",
+      "Biz. Consulting - ERP",
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/1hl6pwq8",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0126",
+    "course_name": "Apache, Tomcat 기반 시스템 구성 및 관리",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "WEB/WAS 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/bnq7egqn",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0127",
+    "course_name": "Cache/Queue 기본",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cache/Queue 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/zvb5fbkq",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0128",
+    "course_name": "Cloud Managed 서비스 이해",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Service Engineering 입문",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/course/mrtn6h02",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0129",
+    "course_name": "Cloud 운영절차 이해",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "최적화 설계/구현",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/x5pomcul",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0130",
+    "course_name": "비용 최적화 실무",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "최적화 설계/구현",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/f1hw4kn0",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0131",
+    "course_name": "보안 최적화 실무",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "최적화 설계/구현",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/ujlczr6g",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0132",
+    "course_name": "Cloud 운영 관리 플랫폼",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Mgmt. System 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - Data Center"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/z3elctxv",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0133",
+    "course_name": "운영 지원 시스템과 유스케이스 기반 자동화의 이해",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Mgmt. System 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - Data Center"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/30awwvrb",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0134",
+    "course_name": "Microservice Modeling",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Native Archi. 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/npxfrky1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0135",
+    "course_name": "마이크로서비스 패턴 상세 구현",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Native Archi. 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/course/e5iww88s",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0136",
+    "course_name": "Container Orchestration(Docker & Kubernetes) on Azure",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Native Archi. 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 24.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/training/4bgpqlyr",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0137",
+    "course_name": "보안 담당자를 위한 정보보안 기본",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "정보 보안 진단 실무",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Cloud/Infra - Cyber Security"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/f04yi825",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0138",
+    "course_name": "해킹과 침투의 시대, 보안을 배우다",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "정보 보안 진단 실무",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 31.0,
+    "특화직무": [
+      "Cloud/Infra - Cyber Security"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/lecture/8qb1521g",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0139",
+    "course_name": "「정보보안책임자」가 전하는 정보보안 위험관리 실무",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "정보 보안 진단 실무",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Cloud/Infra - Cyber Security"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/9bjnq8in",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0140",
+    "course_name": "Cloud_기술",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Computing 이해",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 35.3,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://academy.samsung.com/lecture/z1b2zkyr",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0141",
+    "course_name": "Cloud_적용/활용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Computing 이해",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 12.9,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://samsungu.ac.kr/lecture/rchbezih",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0142",
+    "course_name": "Cloud_서비스",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Computing 이해",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 23.6,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://samsungu.ac.kr/learning/fa48fkoi",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0143",
+    "course_name": "Well-Architected 원칙에 따른 클라우드 운영 전략",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Well Architecture (아키텍쳐 입문)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Data Center",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/d9x27zmv",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0144",
+    "course_name": "컨테이너 플랫폼 및 시스템 아키텍처 이해",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Well Architecture (아키텍쳐 입문)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Data Center",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/iml9fhfp",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0145",
+    "course_name": "Building Streaming Data Analytics Solution on AWS",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cache/Queue 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/3qedn0t4",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0146",
+    "course_name": "Networking Essential for Cloud Application on AWS",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "네트워크 공통",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/course/tt7s394c",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0147",
+    "course_name": "Hynix Cloud Platform 이해 및 활용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "컨테이너 플랫폼 활용",
+    "사업별교육체계": "반도체",
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/lpb4hepr",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0148",
+    "course_name": "Generative AI on AWS",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "AI on Cloud",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Technical Archi.",
+      "Biz. Consulting - ERP",
+      "PM - Infra PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/h7rb8xfh",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0149",
+    "course_name": "Database 성능 최적화",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "DBMS 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/education/09ftzfzx",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0150",
+    "course_name": "Kafka 기본",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cache/Queue 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/c91bd16c",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0151",
+    "course_name": "On-Premise DCI 네트워크 구성(EVPN)",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "네트워크 공통",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/ttzohws9",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0152",
+    "course_name": "Cloud 표준 아키텍처 기반 네트워크 설계(AWS기반)",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "네트워크 설계",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 24.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Cyber Security"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/lf2d3ka9",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0153",
+    "course_name": "Container Orchestration(Docker & Kubernetes) on AWS",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Native Archi. 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/training/ziq5kojr",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0154",
+    "course_name": "DevOps를 위한 Kubernetes 실무",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "컨테이너 DevOps",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/byswoor0",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0155",
+    "course_name": "Infra/Cloud Architecture on AWS",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Well Architecture (아키텍쳐 입문)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Data Center",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/gg1puupp",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0156",
+    "course_name": "Infra/Cloud Architecture on Azure",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Well Architecture (아키텍쳐 입문)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Data Center",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/tpmi8ok2",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0157",
+    "course_name": "모니터링 솔루션의 적용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Mgmt. System 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - Data Center"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/enze1n6d",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0158",
+    "course_name": "ZCP (SK Container Platform) 컨테이너 관리 플랫폼 아키텍처 이해와 활용(Hands-On)",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "컨테이너 플랫폼 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/agex1nb5",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0159",
+    "course_name": "AMDP (DevOps) 표준개발체계 이해 및 활용(Hands-On)",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "컨테이너 DevOps",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/w7k4t6j4",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0160",
+    "course_name": "APIM 기반의 API Gateway 이해와 활용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cache/Queue 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/lecture/b8o2qax1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0161",
+    "course_name": "ZDB 를 활용한 DB 서비스 생성과 활용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "DBMS 활용",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/ggxax2xk",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0162",
+    "course_name": "OPMATE (서버 자동화 솔루션) 활용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud 시스템 관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/28mmkwkh",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0163",
+    "course_name": "Hybrid Cloud 운영 자동화 플랫폼 활용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud 시스템 관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/muoopdny",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0164",
+    "course_name": "그룹 공용 Infra Zone(SKPC) Architecture 및 활용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Computing 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/course/e8atc0q3",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0165",
+    "course_name": "AI Coding on AWS",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "AI-driven Development",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/hsqd5w0g",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0166",
+    "course_name": "MLOps on AWS",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "AI on Cloud",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Technical Archi.",
+      "Biz. Consulting - ERP",
+      "PM - Infra PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/training/hve4t89y",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0167",
+    "course_name": "(Generative) AI 서비스 이해 및 활용 on AWS",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "AI on Cloud",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Technical Archi.",
+      "Biz. Consulting - ERP",
+      "PM - Infra PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/learning/zquyrwi1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0168",
+    "course_name": "(Generative) AI 서비스 이해 및 활용 on Azure",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "AI on Cloud",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Technical Archi.",
+      "Biz. Consulting - ERP",
+      "PM - Infra PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/course/fyiobx4w",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0169",
+    "course_name": "AI DC 구축을 위한 인프라 아키텍처 설계 및 MLOps 플랫폼의 이해",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Data Center 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - Data Center"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/course/2zcnkmw4",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0170",
+    "course_name": "Lakehouse 개념 및 아키텍처 이해",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Data Cloud",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/lecture/9380i978",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0171",
+    "course_name": "AI Agent 구조 이해 및 활용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "AI-driven Development",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/c3gq662c",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0172",
+    "course_name": "Kubeflow/MLFlow 기반의 MLOps 이해 및 활용",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "AI on Cloud",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Technical Archi.",
+      "Biz. Consulting - ERP",
+      "PM - Infra PM",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/thzqlysy",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0173",
+    "course_name": "Databricks Lakehouse Platform 이해 및 실습",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "SaaS & ISV",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - Data Center",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/qx6af1wb",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0174",
+    "course_name": "IBM 생성형 AI 이해 및 실습(Watson X)",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "SaaS & ISV",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - Data Center",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/8e4m2f3w",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0175",
+    "course_name": "데이터 엔지니어링 심화",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Data Cloud",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/course/ohckgg3e",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0176",
+    "course_name": "AWS 데이터엔지니어링 비정형 데이터 처리(Spark)",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Data Cloud",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Cloud/Infra - Middleware/Database"
+    ],
+    "추천직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/training/c494w4f7",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0177",
+    "course_name": "Pricing and Billing Operations on AWS",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cloud Computing 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Architect - Technical Archi.",
+      "Cloud/Infra - System/Network"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/nj8jze3z",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0178",
+    "course_name": "Cache 기본",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Cache/Queue 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/pk6uoerl",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0179",
+    "course_name": " AI Trend와 AI DC 산업 전망",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Data Center 실무",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "온라인집합",
+    "공개여부": "공개",
+    "학습시간": 0.67,
+    "특화직무": [
+      "Cloud/Infra - Data Center"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/zwur4qi8",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0180",
+    "course_name": "AI Data Center 시장 특집",
+    "source": "college",
+    "학부": "Cloud",
+    "표준과정": "Data Center 실무",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "온라인집합",
+    "공개여부": "공개",
+    "학습시간": 0.67,
+    "특화직무": [
+      "Cloud/Infra - Data Center"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/lecture/5qkeqwaf",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0181",
+    "course_name": "AI를 활용한 프레젠테이션 기획 및 스피치",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "프레젠테이션 기획 및 스피치",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM"
+    ],
+    "추천직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/fh4ak5op",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0182",
+    "course_name": "AI를 활용한 제안전략 수립 및 제안서 작성 실무",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "제안전략 수립 및 제안서 작성",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Biz. Consulting - ESG/SHE",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/fztqx8cm",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0183",
+    "course_name": "PM 핵심 마스터링 : 사업 타당성 분석",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "사업 타당성 분석",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Biz. Consulting - ESG/SHE"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/0ko3ke7a",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0184",
+    "course_name": "PM 핵심 마스터링 : PJT 손익/원가관리",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "프로젝트 손익/원가관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/training/adg5tj8m",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0185",
+    "course_name": "PM 핵심 마스터링 : 요구사항분석 & 정의",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "요구사항분석 & 정의",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/f7dq1pl9",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0186",
+    "course_name": "PM 핵심 마스터링 : PJT 품질관리",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "프로젝트 품질관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/sdcp5edi",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0187",
+    "course_name": "PM 핵심 마스터링 : PJT 범위관리",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "프로젝트 범위관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/5hupw4wa",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0188",
+    "course_name": "PM 핵심 마스터링 : PJT 일정관리",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "프로젝트 일정관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ESG/SHE",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/oq83mbhe",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0189",
+    "course_name": "PM 핵심 마스터링 : 이해관계자 관리",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "이해관계자 관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/education/890hop72",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0190",
+    "course_name": "PM 핵심 마스터링 : PJT 리스크/이슈 관리",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "프로젝트 리스크/이슈 관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Biz. Consulting - ERP",
+      "Software - Front-end",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/do7d9gnd",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0191",
+    "course_name": "PM 핵심 마스터링 : PJT 통합관리",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "프로젝트 통합관리",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Manufacturing - Factory 기획/설계"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/1u5lard4",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0192",
+    "course_name": "SKPM Ⅲ (프로젝트 관리 시뮬레이션)",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "SKPM Ⅲ (프로젝트 관리 시뮬레이션)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/jsqcfm1t",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0193",
+    "course_name": "SKPM Ⅱ (C&C 프로세스)",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "SKPM Ⅱ (C&C 프로세스)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://learning.samsung.com/learning/hbjfm4dp",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0194",
+    "course_name": "SKPM Ⅰ(기본 지식)",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "SKPM Ⅰ (기본 지식)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://learning.samsung.com/course/nv9kelnj",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0195",
+    "course_name": "제안서 & PT 실전 클리닉",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "제안전략/PT 클리닉",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Sales - Sales"
+    ],
+    "추천직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/training/ks5tbxkl",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0196",
+    "course_name": "기능점수(Function Point) 산정 기본",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "기능점수(Function Point) 산정 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Biz. Consulting - ESG/SHE"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/vi1zuasi",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0197",
+    "course_name": "기능점수(Function Point) 산정 실무",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "기능점수(Function Point) 산정 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Sales - Sales",
+      "Biz. Consulting - AIX"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/3m1x06m1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0198",
+    "course_name": "CJ대한통운 차세대 택배시스템 구축 사례",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "PJT. 발굴/수행 Case Study",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.5,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Biz. Consulting - ESG/SHE"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/xqhydei2",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0199",
+    "course_name": "PM Bootcamp : 3일 완성! 프로젝트 관리 A to Z",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "PM 양성 : 프로젝트 관리 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Architect - Application Archi.",
+      "Biz. Consulting - ERP",
+      "Software - Front-end",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/38roj4u3",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0200",
+    "course_name": "AGS 활용 Guide (VOD)",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "SKPM Ⅱ (C&C 프로세스)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.2,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://learning.samsung.com/program/lg7eig42",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0201",
+    "course_name": "[VOD] 성공적인 차세대 프로젝트 수행을 위한 고려사항_박종철 전문교수",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "PJT. 발굴/수행 Case Study",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.0,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Biz. Consulting - ESG/SHE"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/uxa86qdu",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0202",
+    "course_name": "대형/차세대 PJT. Mgmt. 전문가 과정",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "대형/차세대 PJT. Mgmt.",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "온라인집합",
+    "공개여부": "공개",
+    "학습시간": 80.0,
+    "특화직무": [],
+    "추천직무": [
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/6tef2itr",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0203",
+    "course_name": "PM Bootcamp : 3일 완성! 프로젝트 관리 A to Z (1일차)",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "SKPM Ⅱ (C&C 프로세스)",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 6.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://academy.samsung.com/training/5iy83fbn",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0204",
+    "course_name": "AI를 활용한 제안전략 수립 및 제안서 작성 기본",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "제안전략/PT 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Manufacturing - 자동화",
+      "Solution - ERP Dev."
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/0020jraj",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0205",
+    "course_name": "하나은행 마케팅 플랫폼 및 데이터 허브 차세대 시스템 구축 사례",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "PJT. 발굴/수행 Case Study",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.5,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Biz. Consulting - ESG/SHE"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/71n0rkr1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0206",
+    "course_name": "[CL4의 Insight 세미나] 프로젝트 성공을 위한 PM 전략 및 주요 관리 Point",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "PJT. 발굴/수행 Case Study",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "온라인집합",
+    "공개여부": "공개",
+    "학습시간": 1.0,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Biz. Consulting - ESG/SHE"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/df9y7isn",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0207",
+    "course_name": "[CL4의 Insight 세미나] 프로젝트 성공을 위한 PM 전략 및 주요 관리 Point",
+    "source": "college",
+    "학부": "Project Mgmt",
+    "표준과정": "PJT. 발굴/수행 Case Study",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 0.0,
+    "특화직무": [
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "Biz. Consulting - ESG/SHE"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/puybmoyi",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0208",
+    "course_name": "SW Fundamental (소프트웨어 개발 프로세스 및 품질 관리, ITSM 이해)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SW Fundamental",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [],
+    "추천직무": [],
+    "공통필수직무": [
+      "Biz. Consulting - ESG/SHE",
+      "Biz. Supporting - Biz. Supporting",
+      "AIX - AI/Data Dev.",
+      "Architect - Application Archi.",
+      "Cloud/Infra - System/Network",
+      "Sales - Sales",
+      "Domain Expert - Domain Expert",
+      "Software - Front-end",
+      "Manufacturing - Factory 기획/설계",
+      "PM - Application PM",
+      "미부여 - 미부여",
+      "Solution - ERP Dev.",
+      "Quality Mgmt - PMO"
+    ],
+    "url": "https://edu.samsung.com/course/duzr5zyz",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0209",
+    "course_name": "[코딩 Test Lv.1] 개발 프로그래밍 – Java/C/Python ",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Programming 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 1.5,
+    "특화직무": [
+      "AIX - AI/Data Dev.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Biz. Consulting - ERP",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/sa3lqn13",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0210",
+    "course_name": "예제로 공부하는 Java 100 문제풀이 Part.1",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Programming 기본",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "AIX - AI/Data Dev.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Biz. Consulting - ERP",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/sl43zgp6",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0211",
+    "course_name": "나도코딩의 자바 기본편",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Programming 기본",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 20.0,
+    "특화직무": [
+      "AIX - AI/Data Dev.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Biz. Consulting - ERP",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/o3p0mizl",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0212",
+    "course_name": "파이썬 기초 강의 - 프로그래밍 입문",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Programming 기본",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 3.0,
+    "특화직무": [
+      "AIX - AI/Data Dev.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Biz. Consulting - ERP",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/0cv0eg2m",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0213",
+    "course_name": "Do it! C# 프로그래밍 입문",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Programming 기본",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 7.0,
+    "특화직무": [
+      "AIX - AI/Data Dev.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Biz. Consulting - ERP",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/47bvawrk",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0214",
+    "course_name": "Do it! HTML+CSS+자바스크립트 웹 표준의 정석",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Programming 기본",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 9.0,
+    "특화직무": [
+      "AIX - AI/Data Dev.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Biz. Consulting - ERP",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/kh0zc1tc",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0215",
+    "course_name": "초격차 패키지 : 왕초보를 위한 한 번에 끝내는 iOS 앱 개발 바이블",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Mobile 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 68.5,
+    "특화직무": [
+      "Software - Mobile"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/course/x8gyxgis",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0216",
+    "course_name": "35개 프로젝트로 배우는 Android 앱 개발 feat. jetpack Compose",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Mobile 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 109.0,
+    "특화직무": [
+      "Software - Mobile"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/lecture/4aai3kch",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0217",
+    "course_name": "[코딩 Test Lv.2] 개발 프로그래밍 –  알고리즘/디버깅 ",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 1.5,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/5jsspobx",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0218",
+    "course_name": "[코딩 Test Lv.2] 개발 프로그래밍  – 알고리즘(코드작성)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/c29p5qq7",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0219",
+    "course_name": "[코딩 Test Lv.2] 개발 프로그래밍  – 실무문제해결형 (Front-end)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/p4l7jckq",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0220",
+    "course_name": "Front-end 개발언어 및 도구",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 39.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/82e81aue",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0221",
+    "course_name": "Back-end 개발언어 및 도구",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 39.0,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/31rkdb3r",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0222",
+    "course_name": "초격차 패키지 : 10개 프로젝트로 완성하는 백엔드 웹개발(Java/Spring)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 121.0,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/qkj6tsdo",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0223",
+    "course_name": "10개 프로젝트로 끝내는 Node.js의 모든 것(Express & Nest.js) 초격차 패키지 Online.",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 32.5,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/02j04733",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0224",
+    "course_name": "JavaScript 알고리즘 베스트 10",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/rcfnsemd",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0225",
+    "course_name": "[ITⓔ코칭] JAVA로 잡는 실전 프로그래밍",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/9p0ghgsb",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0226",
+    "course_name": "[웹 개발 풀스택 코스] Vue.js 프로젝트 투입 일주일 전 - 기초에서 실무까지",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 24.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/no1isfyy",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0227",
+    "course_name": "독하게 되새기는 C 프로그래밍",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 11.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/s7b6g9wy",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0228",
+    "course_name": "C#.NET 0.5년차~3년차(파트1)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 5.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/zjp45696",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0229",
+    "course_name": "C#.Net 0.5년차~3년차(파트2)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 5.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/sknyfl2p",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0230",
+    "course_name": "[Test Lv.1] SQL Basic ",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Mobile",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/training/x8bhr11x",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0231",
+    "course_name": "초급 SQL 활용",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Mobile",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/m1pkvflu",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0232",
+    "course_name": "SQL 튜닝 기초 – MySQL/Maria",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Mobile",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/rnzf4bve",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0233",
+    "course_name": "SQL 튜닝 기초 – Oracle",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Mobile",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/course/berp8dl9",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0234",
+    "course_name": "초급 데이터 모델링",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Mobile",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/7hss4hu0",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0235",
+    "course_name": "Do it! SQL 입문",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 기본",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Mobile",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/a6vsq2x6",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0236",
+    "course_name": "[Test Lv.2] SQL Expert ",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/iwthzg2m",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0237",
+    "course_name": "중급 SQL 활용",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/mqlo3nfn",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0238",
+    "course_name": "고급 SQL 활용 및 성능 튜닝",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 실무",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 24.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/f9agis1o",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0239",
+    "course_name": "SW 개발자를 위한 성능 좋은 SQL 쿼리 작성법",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SQL 실무",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 6.2,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/11hj0ubr",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0240",
+    "course_name": "중급 데이터 모델링",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Data 모델링",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/ut2pwu4v",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0241",
+    "course_name": "고급 데이터 모델링  ",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Data 모델링",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/ccoqirv1",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0242",
+    "course_name": "RDBMS Modeling 실습",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Data 모델링",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 11.5,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/et4bgk2t",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0243",
+    "course_name": "DB 성능관리 방법론",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Data 성능 튜닝",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/9xobue6v",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0244",
+    "course_name": "Entity Framework Core DB 성능 튜닝 (for SQL Server)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Data 성능 튜닝",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 15.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/v0nar2pk",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0245",
+    "course_name": "MSSQL 2편 (튜닝 기본편, Performance Tunning, Senior DBA)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Data 성능 튜닝",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 3.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/learning/dat4ckhp",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0246",
+    "course_name": "UX/UI 기본",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "UX/UI 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/j7ttai9m",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0247",
+    "course_name": "UX/UI Trend",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "UX/UI 기본",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 11.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/xmsd38pu",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0248",
+    "course_name": "데이터 기반 고객경험 설계 방법론, DCX 프레임워크",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "UX/UI 기본",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 3.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/59ensltd",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0249",
+    "course_name": "The RED : 구글이 선택한 디자이너, 한유진의 디자인 시장 생존전략",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "UX/UI 기본",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 3.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/82a53ihw",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0250",
+    "course_name": "100개의 클론디자인으로 배우는 UX/UI",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "UX/UI 디자인 Tool",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 31.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/5m9l703s",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0251",
+    "course_name": "디자인 시스템 with 피그마",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "UX/UI 디자인 Tool",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 6.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/rjdslk31",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0252",
+    "course_name": "HTML+CSS+JS 포트폴리오 실전 퍼블리싱(시즌1)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "UX/UI 디자인 Tool",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 42.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/rsyfqzuj",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0253",
+    "course_name": "Design Thinking W/S",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Design Thinking",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/wsvdi8pf",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0254",
+    "course_name": "[퍼실리테이션] 애자일한 조직을 위한 수평적 집단 의사결정법",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Design Thinking",
+    "사업별교육체계": null,
+    "교육유형": "mySUNI",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/8xs5p5ag",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0255",
+    "course_name": "SKPE-UM2.0 CBD 분석/설계",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SW개발 방법론",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Domain Expert - Domain Expert",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/17kdbr8t",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0256",
+    "course_name": "[DevOps 정석 1] Monolith to Microservice 전환 with Spring/Python/Node.js와 Strangler Fig 패턴",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "개발 환경 도구",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 6.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/learning/r9cs1hbe",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0257",
+    "course_name": "[DevOps 정석 2] MSA 환경의 로그 분석 기술 구축을 통한 통합로깅",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "개발 환경 도구",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 6.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/jnigov3p",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0258",
+    "course_name": "[DevOps 정석 3] GitHub Actions으로 제대로 구축하는 CI",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "개발 환경 도구",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 7.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/education/12k4y0kc",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0259",
+    "course_name": "Practical Testing: 실용적인 테스트 가이드",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "소프트웨어 Testing",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 12.5,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/iwn9gtkp",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0260",
+    "course_name": "Java/Spring 테스트를 추가하고 싶은 개발자들의 오답노트",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "소프트웨어 Testing",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 6.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/program/g3iv1pu8",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0261",
+    "course_name": "단위 성능테스트 DEVWEB(LoadRunner Developer) Ⅰ",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "시스템/솔루션 성능테스트",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/lecture/nwx56vu2",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0262",
+    "course_name": "[코딩 Test Lv.2] 개발 프로그래밍  – 실무문제해결형 (Back-end)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "인증",
+    "공개여부": "공개",
+    "학습시간": 2.0,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/fq6vbakt",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0263",
+    "course_name": "UX Writing",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "UX/UI 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/program/745aextv",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0264",
+    "course_name": "백엔드 개발자를 위한 한 번에 끝내는 대용량 데이터 & 트래픽 처리",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Data 성능 튜닝",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 76.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/qzw3ibef",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0265",
+    "course_name": "반도체 사업 Data Architecture 설계",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Data 모델링",
+    "사업별교육체계": "반도체",
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "AIX - G.AI Dev.",
+      "Architect - Application Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - Middleware/Database",
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/ujetxsew",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0266",
+    "course_name": "Data Architect 육성",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Data 아키텍처 수립",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 56.0,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "Manufacturing - 지능화"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/lecture/gyeop768",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0267",
+    "course_name": "Application Architect 육성",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Application 아키텍처 전략 수립",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 80.0,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/wbhh88pu",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0268",
+    "course_name": "더 자바, 코드를 조작하는 다양한 방법",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Programming 기본",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 4.6,
+    "특화직무": [
+      "AIX - AI/Data Dev.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Cloud/Infra - System/Network",
+      "Biz. Consulting - ERP",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/9ud7n9di",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0269",
+    "course_name": "스프링 핵심 원리 - 고급편",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 16.7,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/9el195r7",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0270",
+    "course_name": "프론트엔드 개발자를 위한, 실전 웹 성능 최적화(feat. React) - Part. 1",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 2.9,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/training/8zxj5gxr",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0271",
+    "course_name": "프론트엔드 개발자를 위한, 실전 웹 성능 최적화(feat. React) - Part. 2",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 7.9,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/lecture/thxwquu3",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0272",
+    "course_name": "실전! 스프링 부트와 JPA 활용2 - API 개발과 성능 최적화",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 6.6,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/course/6bmz3chp",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0273",
+    "course_name": "스프링 부트 개념과 활용",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 11.9,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/i73a29up",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0274",
+    "course_name": "[The RED] 성능의 신 : 궁극의 성능 튜닝과 트러블슈팅",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "시스템/솔루션 성능테스트",
+    "사업별교육체계": null,
+    "교육유형": "외부과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 11.9,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/education/xkyf89gu",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0275",
+    "course_name": "반도체 생산 실행 시스템 Architecture 설계",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Application 아키텍처 설계",
+    "사업별교육체계": "반도체",
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 4.0,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/c2akvlog",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0276",
+    "course_name": "ADoNE 도구 활용 분석/설계",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Application 모델링 및 설계",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/kmy9tdlf",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0277",
+    "course_name": "Javascript 개발 실무",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/lecture/m02853w2",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0278",
+    "course_name": "Front-end Framework 실무",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 20.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/learning/ua4rhbcy",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0279",
+    "course_name": "SKPE-UM2.0 개발방법론 (VOD)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "SW개발 방법론",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 5.4,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Domain Expert - Domain Expert",
+      "PM - Infra PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/wprafi4f",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0280",
+    "course_name": "성능테스트 개론 (VOD)",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "시스템/솔루션 성능테스트",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 4.75,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/program/nehe12us",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0281",
+    "course_name": "Streamlit를 이용한 Application 개발",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Front-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end"
+    ],
+    "추천직무": [
+      "Software - Back-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://learning.samsung.com/course/7555rzdn",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0282",
+    "course_name": "Java 프로그래밍 실무",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/course/96jxv4kr",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0283",
+    "course_name": "Java Spring Framework 실무",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Back-end 개발",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Data Archi.",
+      "Software - Back-end"
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/8hfcx8s5",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0284",
+    "course_name": "Software Testing Fundamental",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "성능/Test 기본",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "AIX - AI/Data Dev.",
+      "Cloud/Infra - System/Network",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://academy.samsung.com/learning/if1tu8jv",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0285",
+    "course_name": "Application 아키텍처 설계",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "Application 아키텍처 설계",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 16.0,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/training/v25f9wwy",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0286",
+    "course_name": "단위 성능테스트 DEVWEB(LoadRunner Developer) Ⅱ",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "시스템/솔루션 성능테스트",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "오프라인집합",
+    "공개여부": "공개",
+    "학습시간": 8.0,
+    "특화직무": [
+      "Architect - Application Archi.",
+      "Software - Front-end",
+      "Quality Mgmt - Quality Eng."
+    ],
+    "추천직무": [
+      "PM - Application PM",
+      "Quality Mgmt - PMO"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/vh88ds72",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0287",
+    "course_name": "25년 시큐어코딩 PM",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "보안 시큐어 코딩",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 1.9,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/learning/3et7usp0",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0288",
+    "course_name": "25년 시큐어코딩 in C",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "보안 시큐어 코딩",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 5.8,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://samsungu.ac.kr/program/0knbed4t",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0289",
+    "course_name": "25년 시큐어코딩 in JAVA",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "보안 시큐어 코딩",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 7.5,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/96vvo8zh",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0290",
+    "course_name": "25년 시큐어코딩 in 닷넷",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "보안 시큐어 코딩",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 4.7,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/training/9cp2p38u",
+    "target_skills": []
+  },
+  {
+    "course_id": "COL-0291",
+    "course_name": "25년 시큐어코딩 in Python",
+    "source": "college",
+    "학부": "SW",
+    "표준과정": "보안 시큐어 코딩",
+    "사업별교육체계": null,
+    "교육유형": "사내과정",
+    "학습유형": "VOD",
+    "공개여부": "공개",
+    "학습시간": 4.2,
+    "특화직무": [
+      "Architect - Application Archi."
+    ],
+    "추천직무": [
+      "Software - Front-end",
+      "PM - Application PM"
+    ],
+    "공통필수직무": [],
+    "url": "https://edu.samsung.com/education/sv7i105e",
+    "target_skills": []
+  }
+]

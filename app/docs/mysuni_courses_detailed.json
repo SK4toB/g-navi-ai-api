@@ -1,0 +1,4656 @@
+[
+  {
+    "course_id": "SUN-0000",
+    "card_name": "[Guided Project] Btv 시청데이터를 활용한 추천 모델 개발",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.1,
+    "이수자수": "256",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/9yiphn1z",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0001",
+    "card_name": "[Guided Project] 석유 정제 공정 운전 데이터를 활용한 물성 예측 모델 개발",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.2,
+    "이수자수": "468",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/module/dbpmh84v",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0002",
+    "card_name": "[Guided Project] CCTV 이미지 분류 모델 개발",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.2,
+    "이수자수": "218",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/0my15dks",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0003",
+    "card_name": "[코세라] Machine Learning with Python (IBM)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.9,
+    "평점": 3.9,
+    "이수자수": "27",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/2jy0te1v",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0004",
+    "card_name": "[코드잇] 머신러닝 입문",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 25.0,
+    "평점": 4.4,
+    "이수자수": "648",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/x9jeiw88",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0005",
+    "card_name": "데이터 분석을 위한 Python 기초",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 7.5,
+    "평점": 4.3,
+    "이수자수": "4,947",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/6k0ekmg7",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0006",
+    "card_name": "[Guided Project] Wavve OTT 고객 이탈 예측 모델 개발",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.0,
+    "이수자수": "308",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/26beqbgq",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0007",
+    "card_name": "[Guided Project] 기지국 장비 성능 통계의 EDA 및 불량 탐색",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.2,
+    "이수자수": "203",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/study/hfs7u2sx",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0008",
+    "card_name": "[Guided Project] DRAM 내부 회로의 파형 예측 with Tensorflow",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.2,
+    "이수자수": "102",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/60fhoh7p",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0009",
+    "card_name": "CDS II_머신러닝 모델링",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 20.0,
+    "평점": 4.1,
+    "이수자수": "2,318",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/p8r17dy6",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0010",
+    "card_name": "[SKADA인증] Practitioner Test 신청",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.0,
+    "평점": 0.0,
+    "이수자수": "122",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/aktqgewz",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0011",
+    "card_name": "(심화) No Code CDS : 머신러닝 기초 with Orange3",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.0,
+    "평점": 4.2,
+    "이수자수": "41",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/rfsa0j1d",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0012",
+    "card_name": "[AI최신기술동향]Universal Domain Adaptation",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.5,
+    "평점": 0.0,
+    "이수자수": "691",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/aidtnfjk",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0013",
+    "card_name": "[AI최신기술동향]Good isn't good enough",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.4,
+    "평점": 0.0,
+    "이수자수": "511",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/5561kykx",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0014",
+    "card_name": "[AI최신기술동향]A New Benchmark for Evaluation of Cross-Domain Few-Shot Learning",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.4,
+    "평점": 0.0,
+    "이수자수": "634",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/qqf2yxsk",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0015",
+    "card_name": "AI서비스 기획/개발 기초 [기획]",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.5,
+    "평점": 3.4,
+    "이수자수": "1,368",
+    "직무": [
+      "Architect"
+    ],
+    "skillset": [
+      "AI Architect"
+    ],
+    "url": "https://content.samsung.com/module/w8rwvacj",
+    "target_skills": [
+      "S-16"
+    ]
+  },
+  {
+    "course_id": "SUN-0016",
+    "card_name": "AI서비스 기획/개발 기초 [구현]",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.4,
+    "평점": 3.9,
+    "이수자수": "1,432",
+    "직무": [
+      "Architect"
+    ],
+    "skillset": [
+      "AI Architect"
+    ],
+    "url": "https://content.samsung.com/study/oucvfjf3",
+    "target_skills": [
+      "S-16"
+    ]
+  },
+  {
+    "course_id": "SUN-0017",
+    "card_name": "[AI최신기술동향]A Review on Generative Adversarial Networks: Algorithm, Theory, and Applications",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.5,
+    "평점": 0.0,
+    "이수자수": "597",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/lvxj6i79",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0018",
+    "card_name": "[AI최신기술동향]What's Hidden in a Randomly Weighted Neural Network",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.5,
+    "평점": 0.0,
+    "이수자수": "716",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/resource/go2e3hgo",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0019",
+    "card_name": "[AI최신기술동향]Rethinking the Hyperparameters for Fine-tuning",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.3,
+    "평점": 0.0,
+    "이수자수": "785",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/card/0zgco3r5",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0020",
+    "card_name": "[AI최신기술동향]Direct Neural Architecture Search on Target Task and Hardware",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.4,
+    "평점": 0.0,
+    "이수자수": "600",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/card/2a9k2vty",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0021",
+    "card_name": "[코세라] Data Analysis with Python (IBM)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.8,
+    "평점": 2.9,
+    "이수자수": "314",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/content/2gmq8igl",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0022",
+    "card_name": "[코세라] Python for Data Science and AI (IBM)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.8,
+    "평점": 2.9,
+    "이수자수": "348",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/study/4md0mb09",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0023",
+    "card_name": "[AI최신기술동향] Slice-based Learning",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.5,
+    "평점": 3.4,
+    "이수자수": "809",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/content/918zbtch",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0024",
+    "card_name": "[AI최신기술동향] Dream to Control Learning Behaviors by Latent Imagination",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.4,
+    "평점": 3.5,
+    "이수자수": "617",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/material/x39z9m93",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0025",
+    "card_name": "[AI최신기술동향] Learning New Tricks From Old Dogs Multi-Source Transfer Learning ",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.3,
+    "평점": 3.5,
+    "이수자수": "695",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/resource/rulmvr7g",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0026",
+    "card_name": "[코세라] Sequence Models (Stanford Univ.)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.3,
+    "평점": 2.8,
+    "이수자수": "436",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/ji49lly5",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0027",
+    "card_name": "[코세라] Machine Learning (Stanford University) ",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 19.4,
+    "평점": 2.7,
+    "이수자수": "1,489",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/aw8sijl1",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0028",
+    "card_name": "[코세라] Machine Learning With Big Data (USCD)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 4.9,
+    "평점": 2.7,
+    "이수자수": "874",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/material/28dvkljq",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0029",
+    "card_name": "[AI최신기술동향] Automated Relational Meta-Learning",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.4,
+    "평점": 3.2,
+    "이수자수": "838",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/module/8mquzukr",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0030",
+    "card_name": "[AI최신기술동향] Bi-level Optimization Back-propagation through Optimization",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.2,
+    "평점": 0.0,
+    "이수자수": "654",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/module/ruqp0xmg",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0031",
+    "card_name": "[AI최신기술동향] Lagrangian Formalism for Back-propagation",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.2,
+    "평점": 0.0,
+    "이수자수": "736",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/lv3bzyvj",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0032",
+    "card_name": "[AI최신기술동향] Deep Anomaly Detection with Outlier Exposure",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.4,
+    "평점": 3.3,
+    "이수자수": "917",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/resource/4iebtstj",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0033",
+    "card_name": "[AI최신기술동향] Learning Finite State Representations of Recurrent Policy Networks",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.6,
+    "평점": 3.1,
+    "이수자수": "1,198",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/nq3yr21f",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0034",
+    "card_name": "[AI최신기술동향]Revisiting the Sibling Head in Object Detector",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.5,
+    "평점": 3.2,
+    "이수자수": "1,090",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/azyhkk42",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0035",
+    "card_name": "[AI최신기술동향]Automatically Discovering and Learning New Visual Categories with Ranking Statistics",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.6,
+    "평점": 3.2,
+    "이수자수": "1,470",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/99a386lv",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0036",
+    "card_name": "[AI최신기술동향] Mogrifier LSTM",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.1,
+    "평점": 3.0,
+    "이수자수": "886",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/resource/rrl2f58s",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0037",
+    "card_name": "[AI최신기술동향]Adversarially Trained End-to-end Korean Singing Voice Synthesis System",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.4,
+    "평점": 0.0,
+    "이수자수": "868",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/resource/esr405gg",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0038",
+    "card_name": "[AI최신기술동향]Learning to zoom a Saliency-based sampling layer for neural networks",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.3,
+    "평점": 0.0,
+    "이수자수": "739",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/content/k2ew19ql",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0039",
+    "card_name": "[AI최신기술동향]AutoML-Zero Evolving Machine Learning Algorithms From Scratch",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.5,
+    "평점": 0.0,
+    "이수자수": "1,089",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/q3u4dxew",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0040",
+    "card_name": "[AI최신기술동향] DDSP Differentiable Digital Signal Processing",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.3,
+    "평점": 0.0,
+    "이수자수": "1,048",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/resource/n5amogk5",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0041",
+    "card_name": "[Guided Project] 공정 이미지 불량 탐지 모델 개발 with Tensorflow",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 3.9,
+    "이수자수": "198",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/drkznqcb",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0042",
+    "card_name": "[Guided Project] SSL 기반 CCTV 이미지의 객체 탐지",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Expert",
+    "인정학습시간": 32.0,
+    "평점": 4.3,
+    "이수자수": "96",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/resource/mjxae8rj",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0043",
+    "card_name": "[Guided Project] 통화품질 VOC의 불만 유형 분류",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.0,
+    "이수자수": "199",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/content/bfoumlaj",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0044",
+    "card_name": "[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with Tensorflow",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.1,
+    "이수자수": "176",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/study/wuozbkrf",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0045",
+    "card_name": "[Guided Project] 공정 이미지 불량 탐지 모델 개발 with PyTorch",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.2,
+    "이수자수": "105",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/study/afslt8su",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0046",
+    "card_name": "[Guided Project] DRAM 내부 회로의 파형 예측 with PyTorch",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.2,
+    "이수자수": "174",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/resource/4ze8n90s",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0047",
+    "card_name": "[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with PyTorch",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.3,
+    "이수자수": "169",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/ooiat16u",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0048",
+    "card_name": "[딥러닝 수학 #1] 미적분학",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.8,
+    "평점": 4.0,
+    "이수자수": "915",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/module/7qjlyoy4",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0049",
+    "card_name": "[딥러닝 수학 #2] 확률과 통계",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.7,
+    "평점": 4.2,
+    "이수자수": "674",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/module/ntmi7gms",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0050",
+    "card_name": "[딥러닝 수학 #3] 정보이론",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.7,
+    "평점": 4.1,
+    "이수자수": "627",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/sm703ynr",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0051",
+    "card_name": "[딥러닝 수학 #4] 선형대수",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 2.7,
+    "평점": 4.1,
+    "이수자수": "465",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/3l91aqqz",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0052",
+    "card_name": "[딥러닝 원리 #1] Deep Learning Intro",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.9,
+    "평점": 4.2,
+    "이수자수": "834",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/content/ylkpm4wz",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0053",
+    "card_name": "[딥러닝 원리 #2] Forward Propagation",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.9,
+    "평점": 4.1,
+    "이수자수": "664",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/content/p0jcm5c2",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0054",
+    "card_name": "[딥러닝 원리 #3] Backward Propagation",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.2,
+    "평점": 4.1,
+    "이수자수": "562",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/content/re26965c",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0055",
+    "card_name": "[딥러닝 원리 #4] Pytorch 실습",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.6,
+    "평점": 4.0,
+    "이수자수": "512",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/v3680nx8",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0056",
+    "card_name": "[딥러닝 모델 학습 및 평가 #1] Optimization",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.3,
+    "평점": 4.2,
+    "이수자수": "462",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/resource/qcgo2tsx",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0057",
+    "card_name": "[딥러닝 모델 학습 및 평가 #2] Activation Functions, Normalization, Regularization",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.9,
+    "평점": 4.2,
+    "이수자수": "422",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/material/trhetjbe",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0058",
+    "card_name": "[딥러닝 기초 모듈 #1] Convolutional Neural Network",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 2.0,
+    "평점": 4.2,
+    "이수자수": "467",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/module/eyokuqbl",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0059",
+    "card_name": "[딥러닝 기초 모듈 #2] Reccurent Neural Network",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 2.0,
+    "평점": 4.2,
+    "이수자수": "422",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/xsu2tlfb",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0060",
+    "card_name": "[딥러닝 기초 모듈 #3] Attention-based Neural Network",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 3.0,
+    "평점": 4.2,
+    "이수자수": "405",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/pxwh4g22",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0061",
+    "card_name": "[딥러닝 기초 모듈 #4] Generative model",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 2.1,
+    "평점": 4.1,
+    "이수자수": "378",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/study/dkr3r7rj",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0062",
+    "card_name": "[이미지 처리 입문 #1] Image Preprocessing & Classification",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 2.2,
+    "평점": 4.2,
+    "이수자수": "258",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/module/i2j2nbz2",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0063",
+    "card_name": "[이미지 처리 입문 #2] Object Detection",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.8,
+    "평점": 4.1,
+    "이수자수": "232",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/card/3i8esxge",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0064",
+    "card_name": "[이미지 처리 입문 #3] Image Segmentation",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.5,
+    "평점": 4.1,
+    "이수자수": "217",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/mtp92w04",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0065",
+    "card_name": "[이미지 처리 입문 #5] Vision Practice",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.5,
+    "평점": 4.1,
+    "이수자수": "200",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/elq9xqsi",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0066",
+    "card_name": "[자연어 처리 입문 #1] Tokenization & Embedding",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 2.7,
+    "평점": 4.1,
+    "이수자수": "368",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/cuw6aehv",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0067",
+    "card_name": "[자연어 처리 입문 #2] Pretrained Models",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.1,
+    "평점": 4.1,
+    "이수자수": "333",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/3xb4r9a9",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0068",
+    "card_name": "[자연어 처리 입문 #3] Huggingface 실습",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.2,
+    "평점": 4.1,
+    "이수자수": "303",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/card/sqaahah2",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0069",
+    "card_name": "[자연어 처리 입문 #5] NLP Practice",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.7,
+    "평점": 4.1,
+    "이수자수": "287",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/module/j5qzgr3i",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0070",
+    "card_name": "[시계열 처리 입문 #1] Time Series Intro & Preprocessing",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.8,
+    "평점": 4.2,
+    "이수자수": "296",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/content/bdxu5ftq",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0071",
+    "card_name": "[시계열 처리 입문 #2] Forecasting Case Study",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.5,
+    "평점": 4.2,
+    "이수자수": "259",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/mvjdaw1m",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0072",
+    "card_name": "[시계열 처리 입문 #3] Anomaly Detection Case Study",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.6,
+    "평점": 4.1,
+    "이수자수": "254",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/content/m0o9y4m6",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0073",
+    "card_name": "[시계열 처리 입문 #4] Time Series Practice",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.9,
+    "평점": 4.1,
+    "이수자수": "218",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/card/ctv6cvcl",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0074",
+    "card_name": "[딥러닝 모델 학습 및 평가 #3] Evaluation for Classification Model",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.9,
+    "평점": 4.2,
+    "이수자수": "416",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/cpac925h",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0075",
+    "card_name": "[이미지 처리 입문 #4] Generative model for Images",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.6,
+    "평점": 4.1,
+    "이수자수": "227",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/card/urmoc1e5",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0076",
+    "card_name": "[자연어 처리 입문 #4] Text Generation",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.3,
+    "평점": 4.1,
+    "이수자수": "320",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/content/dkerv1ua",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0077",
+    "card_name": "[Guided Project] 통신탑 안전 이상 감지 모델 개발",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.4,
+    "이수자수": "42",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/study/0eke182r",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0078",
+    "card_name": "[Guided Project] 반도체 공정의 웨이퍼 품질 개선 모델 개발",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.2,
+    "이수자수": "49",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/study/pt4h69fg",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0079",
+    "card_name": "[Guided Project] AI 모델을 활용한 철근 단가 예측",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.3,
+    "이수자수": "54",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/resource/i7bju6dy",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0080",
+    "card_name": "[Guided Project] 석유 유정 펌프 이상 감지",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 3.8,
+    "이수자수": "29",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/material/65atx6xg",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0081",
+    "card_name": "[Guided Project] AI 모델을 활용한 정유 공정 자율 운전 구현",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 32.0,
+    "평점": 4.7,
+    "이수자수": "29",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/content/gjvt7znc",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0082",
+    "card_name": "[Guided Project] SSD 반도체 신뢰성 사전 예측 모델 개발",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 3.9,
+    "이수자수": "31",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/fhhqkqfp",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0083",
+    "card_name": "[Guided Project] 청각장애인을 위한 소리 분류 모델 개발",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 32.0,
+    "평점": 4.6,
+    "이수자수": "25",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/card/p304gp6v",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0084",
+    "card_name": "[생성형 AI #1] Large Model",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 2.0,
+    "평점": 4.2,
+    "이수자수": "788",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/study/q4ki2ben",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0085",
+    "card_name": "[생성형 AI #2] Large Language Model",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 6.6,
+    "평점": 4.1,
+    "이수자수": "448",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/module/6a8uxxzo",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0086",
+    "card_name": "[생성형 AI #3] Multi-Modal Model",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 0.9,
+    "평점": 4.1,
+    "이수자수": "448",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/module/xjxg6ajk",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0087",
+    "card_name": "[코세라] Neural Networks and Deep Learning (Stanford University)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 6.8,
+    "평점": 2.8,
+    "이수자수": "650",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/resource/6q4hf7ol",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0088",
+    "card_name": "[코세라] Convolutional Neural Networks",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Expert",
+    "인정학습시간": 6.7,
+    "평점": 2.8,
+    "이수자수": "786",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://learning.samsung.com/content/c8tfqpwn",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0089",
+    "card_name": "[코세라] Natural Language Processing in Tensorflow",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.9,
+    "평점": 2.8,
+    "이수자수": "405",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://learning.samsung.com/module/hpbwbolo",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0090",
+    "card_name": "chatGPT를 통한 업무 자동화 : 1) chatGPT 활용하기",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.7,
+    "평점": 4.0,
+    "이수자수": "950",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://learning.samsung.com/material/1s607q6b",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0091",
+    "card_name": "chatGPT를 통한 업무 자동화 : 2) 자동화 프로세스",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.2,
+    "평점": 4.0,
+    "이수자수": "671",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/material/yufmtta0",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0092",
+    "card_name": "비용을 줄이는 LLM(대규모 언어모델) Prompt Tuning",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.5,
+    "평점": 4.1,
+    "이수자수": "448",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://learning.samsung.com/module/yqfycnex",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0093",
+    "card_name": "LLM을 위한 NLP 마스터 1탄",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.3,
+    "평점": 4.1,
+    "이수자수": "372",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/sci8hxip",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0094",
+    "card_name": "LLM을 위한 NLP 마스터 2탄",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.4,
+    "평점": 4.2,
+    "이수자수": "280",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/card/359901v3",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0095",
+    "card_name": "Digital Me with 생성형 AI",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 56.0,
+    "평점": 0.0,
+    "이수자수": "394",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://learning.samsung.com/content/lsg0epyg",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0096",
+    "card_name": "Digital Me with 생성형 AI (서포터)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 16.0,
+    "평점": 0.0,
+    "이수자수": "11",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/study/ex0yytt3",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0097",
+    "card_name": "[2024 이천포럼 사전학습] 생성형 AI의 이해와 전망",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.0,
+    "평점": 4.3,
+    "이수자수": "3,264",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/material/g10b7c1u",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0098",
+    "card_name": "[2024 이천포럼 사전학습] Prompt Cheat Sheet & Playground 접속!!! ",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.0,
+    "평점": 4.2,
+    "이수자수": "1,468",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://mysuni.samsung.com/resource/djfbrlik",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0099",
+    "card_name": "생성형 AI가 촉발한 새로운 비즈니스와 패러다임의 변화",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.2,
+    "평점": 4.1,
+    "이수자수": "666",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://learning.samsung.com/card/peszx6ml",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0100",
+    "card_name": "LLM Essence for PO ",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 14.0,
+    "평점": 0.0,
+    "이수자수": "26",
+    "직무": [
+      "Architect"
+    ],
+    "skillset": [
+      "AI Architect"
+    ],
+    "url": "https://learning.samsung.com/resource/kc3rf5gw",
+    "target_skills": [
+      "S-16"
+    ]
+  },
+  {
+    "course_id": "SUN-0101",
+    "card_name": "RAG를 활용하는 LLM Application 개발",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 35.0,
+    "평점": 0.0,
+    "이수자수": "26",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/content/z0w7y8yc",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0102",
+    "card_name": "서비스 운영을 위한 LLMOps",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 21.0,
+    "평점": 0.0,
+    "이수자수": "23",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://learning.samsung.com/study/85tb8hzf",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0103",
+    "card_name": "LLM Fine-Tuning",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "AI",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 35.0,
+    "평점": 0.0,
+    "이수자수": "23",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/resource/669o84m4",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0104",
+    "card_name": "Apache Kafka 이해와 활용",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 4.5,
+    "평점": 4.2,
+    "이수자수": "248",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/g2qbzana",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0105",
+    "card_name": "Prometheus & Grafana 이해와 활용",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.9,
+    "평점": 4.0,
+    "이수자수": "301",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/resource/n1yw4yow",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0106",
+    "card_name": "EIM의 이해",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.7,
+    "평점": 4.1,
+    "이수자수": "3,897",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/lbckq47e",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0107",
+    "card_name": "Hadoop 이해와 활용 4 (HiveQL, Pig Script,HUE & Oozie, Security)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 3.0,
+    "평점": 3.3,
+    "이수자수": "411",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/study/didjxws9",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0108",
+    "card_name": "Hadoop 이해와 활용 3 (Configuration, Data Ingestion/Analytics)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.9,
+    "평점": 3.3,
+    "이수자수": "470",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/72zviivy",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0109",
+    "card_name": "Hadoop 이해와 활용 2 (HDFS, YARN)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 3.1,
+    "평점": 3.4,
+    "이수자수": "587",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/ku3xktbj",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0110",
+    "card_name": "Hadoop 이해와 활용 1 (What is Hadoop, Hadoop Distribution/Ecosystem)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.9,
+    "평점": 3.4,
+    "이수자수": "900",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/resource/hf57jk5t",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0111",
+    "card_name": "[코세라] Introduction to Big Data (UCSD)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 4.4,
+    "평점": 2.7,
+    "이수자수": "1,608",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/study/1c8cjhr3",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0112",
+    "card_name": "[코세라] Big Data Modeling and Management Systems (UCSD)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 4.1,
+    "평점": 2.7,
+    "이수자수": "1,097",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/card/810x1du0",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0113",
+    "card_name": "[코세라] Big Data Integration and Processing (UCSD)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.2,
+    "평점": 2.7,
+    "이수자수": "1,086",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/module/t0hczbnt",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0114",
+    "card_name": "NoSQL 이해와 활용 1 (What is NoSQL)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.3,
+    "평점": 0.0,
+    "이수자수": "2,081",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/card/udqflrxi",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0115",
+    "card_name": "NoSQL 이해와 활용 2 (HBase)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.6,
+    "평점": 0.0,
+    "이수자수": "1,295",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/module/e5yex19k",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0116",
+    "card_name": "NoSQL 이해와 활용 3 (Cassandra)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.0,
+    "평점": 0.0,
+    "이수자수": "1,000",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/resource/c42v4z2t",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0117",
+    "card_name": "NoSQL 이해와 활용 4 (MongoDB)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.0,
+    "평점": 0.0,
+    "이수자수": "984",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/z1iesqbk",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0118",
+    "card_name": "Scala 이해와 활용 1 (Background of Scala ~ Control Structure)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 6.8,
+    "평점": 3.8,
+    "이수자수": "445",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/card/d5dvew9u",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0119",
+    "card_name": "Scala 이해와 활용 2 (Functions ~ Collections)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 8.0,
+    "평점": 3.8,
+    "이수자수": "284",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/resource/4ija4j38",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0120",
+    "card_name": "Scala 이해와 활용 3 (Scala class & object)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 6.1,
+    "평점": 3.8,
+    "이수자수": "243",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/oylvhtg4",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0121",
+    "card_name": "Scala 이해와 활용 4 (Function type , Programimg)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 3.7,
+    "평점": 3.7,
+    "이수자수": "145",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/resource/qxtc52s9",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0122",
+    "card_name": "[코세라] Data Visualization with Python (IBM)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.4,
+    "평점": 3.7,
+    "이수자수": "23",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/module/v6lgfc2z",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0123",
+    "card_name": "[코세라] What is Data Science? (IBM)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.3,
+    "평점": 3.9,
+    "이수자수": "141",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/resource/8acqoku6",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0124",
+    "card_name": "[코세라] Data Analysis Using Python (University of Pennsylvania)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.4,
+    "평점": 3.6,
+    "이수자수": "28",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/card/o9a30rcc",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0125",
+    "card_name": "[코드잇] 데이터 사이언스 입문",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 25.0,
+    "평점": 4.4,
+    "이수자수": "1,187",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/material/4htyyw1z",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0126",
+    "card_name": "CDS I_데이터 처리와 시각화",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 30.0,
+    "평점": 4.3,
+    "이수자수": "2,589",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/1z7g59wy",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0127",
+    "card_name": "ChatGPT를 활용한 데이터 분석(feat. 파이썬)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 6.3,
+    "평점": 4.2,
+    "이수자수": "1,296",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/resource/c46dp8rj",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0128",
+    "card_name": "[코드잇] 데이터 사이언스 정복하기",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 25.0,
+    "평점": 4.5,
+    "이수자수": "64",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/study/62z5gdtk",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0129",
+    "card_name": "[Elice] R 패키지로 배우는 데이터 분석",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 16.0,
+    "평점": 3.2,
+    "이수자수": "205",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/3sb1layu",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0130",
+    "card_name": "엑셀로 배우는 데이터 전처리",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 2.3,
+    "평점": 3.6,
+    "이수자수": "1,697",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/ahp6f5ux",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0131",
+    "card_name": "[코세라] Exploring and Producing Data for Business Decision Making (Univ. of Illinois)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.6,
+    "평점": 3.1,
+    "이수자수": "299",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/card/bw3ehpnk",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0132",
+    "card_name": "[코세라] Data-driven Decision Making (PwC)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 2.6,
+    "평점": 3.1,
+    "이수자수": "213",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/6efj4mug",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0133",
+    "card_name": "[코세라] Data Visualization (Univ. of Illinois)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 6.0,
+    "평점": 2.9,
+    "이수자수": "440",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/card/cqc06o7j",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0134",
+    "card_name": "[코세라] Customer Analytics (Wharton)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 4.7,
+    "평점": 2.4,
+    "이수자수": "11,042",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/material/urfns3q5",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0135",
+    "card_name": "[코세라] Business Metrics for Data-Driven Companies (Duke)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.8,
+    "평점": 2.4,
+    "이수자수": "10,591",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/content/jvxbhfs8",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0136",
+    "card_name": "[코세라] Introduction to Data Science in Python (Univ. of Michigan)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 2.7,
+    "평점": 2.9,
+    "이수자수": "327",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/i2gnccci",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0137",
+    "card_name": "[코세라] Graph Analytics for Big Data (UCSD)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 4.4,
+    "평점": 2.8,
+    "이수자수": "797",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/1mlqudsk",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0138",
+    "card_name": "Hello! Python",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 7.3,
+    "평점": 3.4,
+    "이수자수": "30,735",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/content/gtjcp6xo",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0139",
+    "card_name": "Data로 생각하는 인재되기 (16가지 역량)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.2,
+    "평점": 3.4,
+    "이수자수": "36,393",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/study/dj9bmdle",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0140",
+    "card_name": "Customer Measure & Analytics 기본",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 2.6,
+    "평점": 3.9,
+    "이수자수": "32,489",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/study/xz6f1bvm",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0141",
+    "card_name": "[코세라] Inferential and Predictive Statistics for Business (Univ. of illinois)",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.1,
+    "평점": 3.1,
+    "이수자수": "302",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/module/mwwgmvud",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0142",
+    "card_name": "[AI수학 #1] 선형대수 기초",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 3.7,
+    "평점": 3.5,
+    "이수자수": "1,520",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/module/9ctjoo0m",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0143",
+    "card_name": "[AI수학 #2] 확률통계 기초",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Data Science",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 4.4,
+    "평점": 3.8,
+    "이수자수": "2,439",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/fwan5949",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0144",
+    "card_name": "Cloud 입문 A to Z",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 0.4,
+    "평점": 4.0,
+    "이수자수": "36,064",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://learning.samsung.com/resource/9s1656h6",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0145",
+    "card_name": "Big Data 입문 A to Z",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 0.5,
+    "평점": 4.0,
+    "이수자수": "35,230",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://learning.samsung.com/study/stywct51",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0146",
+    "card_name": "[ Module III-② ] 생성형 AI로 차별화된 PPT 제작비법",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.0,
+    "평점": 4.1,
+    "이수자수": "7,913",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/study/2kdlddti",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0147",
+    "card_name": "[ Module II-① ] 프롬프트 엔지니어링 - 기본 가이드",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.7,
+    "평점": 4.1,
+    "이수자수": "10,866",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://mysuni.samsung.com/material/qnc6tyr8",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0148",
+    "card_name": "[ Module II-② ] 프롬프트 엔지니어링 - 활용 가이드",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.7,
+    "평점": 4.2,
+    "이수자수": "9,165",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/resource/m6gkpjgz",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0149",
+    "card_name": "[ Module III-① ] ChatGPT를 활용한 엑셀 자동화",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.1,
+    "평점": 4.1,
+    "이수자수": "8,181",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/content/jth38cp7",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0150",
+    "card_name": "[ Module I-① ] 생성형 AI의 이해와 전망",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.0,
+    "평점": 4.3,
+    "이수자수": "17,357",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/mu8el51r",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0151",
+    "card_name": "[ Module I-② ] ChatGPT, LLM의 작동 원리",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 2.0,
+    "평점": 4.2,
+    "이수자수": "14,579",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/n97jp7qz",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0152",
+    "card_name": "[ Module II-③ ] 프롬프트 엔지니어링 - 마스터 가이드",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 2.6,
+    "평점": 4.2,
+    "이수자수": "8,237",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://content.samsung.com/resource/f051d0ke",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0153",
+    "card_name": "[ Module III-③ ] 생성형AI 200% 활용하기",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 2.2,
+    "평점": 4.2,
+    "이수자수": "7,780",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://learning.samsung.com/module/nivvomr9",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0154",
+    "card_name": "[자료] Prompt Cheat Sheet",
+    "source": "mysuni",
+    "카테고리명": "AI",
+    "채널명": "Literacy",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.0,
+    "평점": 0.0,
+    "이수자수": "845",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "Generative AI Development"
+    ],
+    "url": "https://mysuni.samsung.com/study/i6meg7sv",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0155",
+    "card_name": "[Elice] 도레미 파이썬 Vol.1",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 16.0,
+    "평점": 3.8,
+    "이수자수": "2,377",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://mysuni.samsung.com/module/ecwqzcp8",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0156",
+    "card_name": "[Elice] 도레미 파이썬 Vol.2",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 16.0,
+    "평점": 3.7,
+    "이수자수": "1,330",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://learning.samsung.com/resource/fb1yjfq8",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0157",
+    "card_name": "[Elice] R 프로그래밍 기초",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 16.0,
+    "평점": 3.3,
+    "이수자수": "366",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://content.samsung.com/card/9yekagz3",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0158",
+    "card_name": "가장 쉽게 배우는 MLOps, 기초부터 ML서비스까지!",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 9.3,
+    "평점": 4.2,
+    "이수자수": "113",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://mysuni.samsung.com/study/4u0e5exw",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0159",
+    "card_name": "[Elice] 리눅스 기초",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 16.0,
+    "평점": 4.1,
+    "이수자수": "537",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://content.samsung.com/resource/9sfa309u",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0160",
+    "card_name": "[Elice] SQL 기초",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 16.0,
+    "평점": 4.2,
+    "이수자수": "1,032",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://learning.samsung.com/content/kdu8p3gd",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0161",
+    "card_name": "[Elice] Spring 프레임워크 입문",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 16.0,
+    "평점": 3.8,
+    "이수자수": "505",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://content.samsung.com/resource/922dk37q",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0162",
+    "card_name": "[Elice] Git을 사용한 버전 관리",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 16.0,
+    "평점": 4.0,
+    "이수자수": "589",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/yzgyd4gc",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0163",
+    "card_name": "Bigdata 분석을 위한 Python 이해와 활용 4 (Advanced Python Function, Exception Handling, Classes and Objects)",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.6,
+    "평점": 3.5,
+    "이수자수": "898",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/resource/y5l3w1l1",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0164",
+    "card_name": "Bigdata 분석을 위한 Python 이해와 활용 3 (Collections Data Type - List/Tuple/Set/Dictionary)",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.8,
+    "평점": 3.5,
+    "이수자수": "1,002",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/material/qdcgl0i0",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0165",
+    "card_name": "Bigdata 분석을 위한 Python 이해와 활용 2 (Python Functions, Decision Making, Repeating Code, Iteration)",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.9,
+    "평점": 3.5,
+    "이수자수": "1,300",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://content.samsung.com/study/1cq4utms",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0166",
+    "card_name": "Bigdata 분석을 위한 Python 이해와 활용 1 (Why Python, Variables & Data Types, String Methods, Math Functions)",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.7,
+    "평점": 3.4,
+    "이수자수": "2,462",
+    "직무": [
+      "AIX"
+    ],
+    "skillset": [
+      "AI/Data Development"
+    ],
+    "url": "https://mysuni.samsung.com/resource/d287uvsp",
+    "target_skills": [
+      "S-35"
+    ]
+  },
+  {
+    "course_id": "SUN-0167",
+    "card_name": "Hello ! Python  Essentials",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 4.1,
+    "평점": 3.8,
+    "이수자수": "19,254",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://learning.samsung.com/card/h0bnp6k8",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0168",
+    "card_name": "Automation Anywhere RPA 기초",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 10.4,
+    "평점": 4.1,
+    "이수자수": "659",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Back-end Development"
+    ],
+    "url": "https://mysuni.samsung.com/content/5dvvqrhd",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0169",
+    "card_name": "피그마로 UI/UX 마스터하기",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Software",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 11.4,
+    "평점": 4.1,
+    "이수자수": "55",
+    "직무": [
+      "Software Development"
+    ],
+    "skillset": [
+      "Front-end Development"
+    ],
+    "url": "https://content.samsung.com/content/x2la7cvn",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0170",
+    "card_name": "가장 쉽게 배우는 AWS, 기초부터 실무까지",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 8.9,
+    "평점": 4.1,
+    "이수자수": "146",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://mysuni.samsung.com/resource/fb58g1n9",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0171",
+    "card_name": "차이를 만드는 AWS 클라우드 보안 첫걸음",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 4.6,
+    "평점": 4.1,
+    "이수자수": "73",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://content.samsung.com/module/yaqpryme",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0172",
+    "card_name": "뜬구름 잡지 말고 클라우드 제대로 이해하기",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 4.3,
+    "평점": 4.2,
+    "이수자수": "126",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://mysuni.samsung.com/study/h6htzp0d",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0173",
+    "card_name": "MS Azure 입문",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 2.9,
+    "평점": 4.0,
+    "이수자수": "76",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://learning.samsung.com/card/b364yxr4",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0174",
+    "card_name": "도커/쿠버네티스의 비즈니스 활용 ",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.2,
+    "평점": 4.0,
+    "이수자수": "62",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://learning.samsung.com/module/msw6bpol",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0175",
+    "card_name": "실무까지 한번에 끝내는 DevOps: Docker 1탄",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 8.4,
+    "평점": 4.1,
+    "이수자수": "84",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://learning.samsung.com/card/0pi65x5p",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0176",
+    "card_name": "실무까지 한번에 끝내는 DevOps: Docker 2탄",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 8.8,
+    "평점": 4.2,
+    "이수자수": "61",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://learning.samsung.com/card/c2h1lbuj",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0177",
+    "card_name": "실무까지 한번에 끝내는 DevOps: Kubernetes 1탄",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 6.4,
+    "평점": 4.2,
+    "이수자수": "68",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://learning.samsung.com/material/0f091yut",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0178",
+    "card_name": "실무까지 한번에 끝내는 DevOps: Kubernetes 2탄",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.9,
+    "평점": 4.2,
+    "이수자수": "65",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://mysuni.samsung.com/content/ulf58e2n",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0179",
+    "card_name": "실무까지 한번에 끝내는 DevOps: Kubernetes 3탄",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.3,
+    "평점": 4.2,
+    "이수자수": "53",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://learning.samsung.com/card/z6uzv166",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0180",
+    "card_name": "Cloud Technical Essentials (Feat. Azure) 1: Azure 둘러보기, 가상서버 만들기",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.4,
+    "평점": 0.0,
+    "이수자수": "2,412",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://content.samsung.com/card/oji3r2tx",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0181",
+    "card_name": "Cloud Technical Essentials (Feat. Azure) 2:  Azure Functions 이해, Azure 스토리지 활용 및 데이터 백업/마이그레이션 방법",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.8,
+    "평점": 0.0,
+    "이수자수": "1,695",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://content.samsung.com/module/4x3wrwn6",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0182",
+    "card_name": "Cloud Technical Essentials (Feat. Azure) 3: Azure VNET 생성, 부하분산 서비스 이해,  Azure DevOps 환경 ",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.8,
+    "평점": 0.0,
+    "이수자수": "1,452",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://content.samsung.com/content/tz7w8bym",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0183",
+    "card_name": "Cloud Technical Essentials (Feat. Azure) 4: Azure 모니터링/거버넌스/보안의 이해와 활용, Azure + 인공지능/IoT/블록체인",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.8,
+    "평점": 0.0,
+    "이수자수": "1,437",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://learning.samsung.com/material/r0i9jmdy",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0184",
+    "card_name": "[코세라] Cloud Computing Concepts, Part 1 (UIUC)",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 11.4,
+    "평점": 2.7,
+    "이수자수": "2,021",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://mysuni.samsung.com/material/xs1c506d",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0185",
+    "card_name": "[코세라] Cloud Computing Concepts: Part 2 (UIUC)",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 9.0,
+    "평점": 2.8,
+    "이수자수": "1,471",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://mysuni.samsung.com/study/9m3hgbmx",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0186",
+    "card_name": "[코세라] Cloud Networking (UIUC)",
+    "source": "mysuni",
+    "카테고리명": "DT",
+    "채널명": "Cloud",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 8.3,
+    "평점": 2.8,
+    "이수자수": "1,363",
+    "직무": [
+      "Cloud/Infra Engneering"
+    ],
+    "skillset": [
+      "System/Network Engineering"
+    ],
+    "url": "https://content.samsung.com/card/szgfjjjf",
+    "target_skills": []
+  },
+  {
+    "course_id": "SUN-0187",
+    "card_name": "데이터 기반 고객경험 설계 방법론,  DCX 프레임워크",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.0,
+    "평점": 4.2,
+    "이수자수": "455",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://mysuni.samsung.com/study/7oaemazd",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0188",
+    "card_name": "생성형 AI시대 고객이 바뀐다. 고객의 좌표가 이동한다.",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 3.1,
+    "평점": 4.3,
+    "이수자수": "703",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://mysuni.samsung.com/module/7qbm0xyf",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0189",
+    "card_name": "고객가치관점의 사업전략, 어떻게 수립하나요?",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.0,
+    "평점": 4.3,
+    "이수자수": "47",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/content/824gy3lg",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0190",
+    "card_name": "기업의 가치 창출 시스템, 어떻게 한 눈에 볼 수 있을까요?",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.0,
+    "평점": 4.3,
+    "이수자수": "47",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/module/199cjoyy",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0191",
+    "card_name": "비즈니스 모델의 성공 요소, 어떻게 검증할 수 있을까요?",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.0,
+    "평점": 4.2,
+    "이수자수": "54",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/study/0bp1pi86",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0192",
+    "card_name": "내 제품/기술의 가치를 알고 신사업 구상하기",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.6,
+    "평점": 4.3,
+    "이수자수": "55",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://learning.samsung.com/study/3a5579lw",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0193",
+    "card_name": "고객 Needs, 왜 알아야 할까?",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 0.7,
+    "평점": 4.3,
+    "이수자수": "49",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://learning.samsung.com/resource/cv714b8f",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0194",
+    "card_name": "고객 Needs, 고객 가치와 연결하기",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.3,
+    "평점": 4.2,
+    "이수자수": "74",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/material/myv807id",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0195",
+    "card_name": "고객 리서치를 통한 고객 공감 업그레이드!",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 4.7,
+    "평점": 4.3,
+    "이수자수": "50",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://mysuni.samsung.com/content/zk0bh61e",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0196",
+    "card_name": "고객과 시장을 사로잡는 Project Agenda 작성하기",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 5.9,
+    "평점": 4.3,
+    "이수자수": "20",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/resource/fcp75gjc",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0197",
+    "card_name": "내 업무의 고객 가치를 높이는 고객 경험 디자인",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 4.5,
+    "평점": 4.1,
+    "이수자수": "16",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://learning.samsung.com/card/zrt5dhtb",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0198",
+    "card_name": "고객 문제에 집중하여 고객 중심 제품/기술 개발하기",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.7,
+    "평점": 4.2,
+    "이수자수": "145",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/content/zc2ykwbm",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0199",
+    "card_name": "리스크를 최소화하고 고객을 확보하는 MVP",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.7,
+    "평점": 4.2,
+    "이수자수": "79",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://learning.samsung.com/content/yibid9fq",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0200",
+    "card_name": "처음부터 끝까지 고객에 집중하는 워킹백워드 프로세스 ",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 4.0,
+    "평점": 4.2,
+    "이수자수": "92",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/study/mxu0emgx",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0201",
+    "card_name": "빠르고 유연하게, 스크럼 프레임워크",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.4,
+    "평점": 4.1,
+    "이수자수": "66",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://learning.samsung.com/resource/tfm5o64c",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0202",
+    "card_name": "내 업무의 모든 것, 업무 정체 파악하기",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 2.2,
+    "평점": 4.2,
+    "이수자수": "249",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/material/6dyl8ced",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0203",
+    "card_name": "성공적 의사결정을 위한 리스크 관리 전략 ",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 1.0,
+    "평점": 4.2,
+    "이수자수": "89",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/card/1xzh6mgo",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0204",
+    "card_name": "리스크, 전략적으로 관리하자. ",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Advanced",
+    "인정학습시간": 2.4,
+    "평점": 4.3,
+    "이수자수": "66",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/resource/m77cfsj7",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0205",
+    "card_name": "프로젝트 성패를 좌우하는 탄탄한 리스크 관리 기법",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 1.8,
+    "평점": 4.2,
+    "이수자수": "72",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://learning.samsung.com/study/rwv72qxl",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0206",
+    "card_name": "문제를 미리 방지하는 리스크 관리 개념과 실습 ",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 7.0,
+    "평점": 4.2,
+    "이수자수": "32",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://learning.samsung.com/resource/f1lqv3ht",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0207",
+    "card_name": "가장 가까운 고객, 구성원을 통해 효율 key 찾기",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Basic",
+    "인정학습시간": 2.9,
+    "평점": 4.2,
+    "이수자수": "174",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://content.samsung.com/card/p4myekmb",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0208",
+    "card_name": "프로세스 맵핑으로 효율을 위한 지도 그리기",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.5,
+    "평점": 4.2,
+    "이수자수": "195",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://mysuni.samsung.com/resource/ofu2pw9w",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  },
+  {
+    "course_id": "SUN-0209",
+    "card_name": "네 탓? 내 탓? 업무 선후관계 파악을 통한 프로세스 개선",
+    "source": "mysuni",
+    "카테고리명": "일하는 방식",
+    "채널명": "프로젝트 관리",
+    "태그명": "",
+    "난이도": "Intermediate",
+    "인정학습시간": 1.9,
+    "평점": 4.2,
+    "이수자수": "99",
+    "직무": [
+      "Project Management"
+    ],
+    "skillset": [
+      "Application PM",
+      "Infra PM",
+      "Solution PM"
+    ],
+    "url": "https://mysuni.samsung.com/material/tpb4gd6s",
+    "target_skills": [
+      "P-2",
+      "P-1",
+      "P-4"
+    ]
+  }
+]

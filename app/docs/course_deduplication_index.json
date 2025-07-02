@@ -1,0 +1,931 @@
+{
+  "guided project btv 시청데이터를 활용한 추천 모델 개발": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0000",
+        "name": "[Guided Project] Btv 시청데이터를 활용한 추천 모델 개발",
+        "primary": true,
+        "url": "https://samsungu.ac.kr/lecture/7ffu7vs4",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0000",
+        "name": "[Guided Project] Btv 시청데이터를 활용한 추천 모델 개발",
+        "primary": false,
+        "url": "https://learning.samsung.com/material/9yiphn1z",
+        "metadata": {
+          "평점": 4.1,
+          "이수자수": "256",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.1,
+      "mysuni_enrollments": "256"
+    }
+  },
+  "guided project 공정 이미지 불량 탐지 모델 개발 with tensorflow": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0001",
+        "name": "[Guided Project] 공정 이미지 불량 탐지 모델 개발 with Tensorflow",
+        "primary": true,
+        "url": "https://academy.samsung.com/education/tohx49y1",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0041",
+        "name": "[Guided Project] 공정 이미지 불량 탐지 모델 개발 with Tensorflow",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/content/drkznqcb",
+        "metadata": {
+          "평점": 3.9,
+          "이수자수": "198",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 3.9,
+      "mysuni_enrollments": "198"
+    }
+  },
+  "guided project ssl 기반 cctv 이미지의 객체 탐지": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0002",
+        "name": "[Guided Project] SSL 기반 CCTV 이미지의 객체 탐지",
+        "primary": true,
+        "url": "https://academy.samsung.com/learning/6cfnnhbj",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0042",
+        "name": "[Guided Project] SSL 기반 CCTV 이미지의 객체 탐지",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/resource/mjxae8rj",
+        "metadata": {
+          "평점": 4.3,
+          "이수자수": "96",
+          "난이도": "Expert",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.3,
+      "mysuni_enrollments": "96"
+    }
+  },
+  "guided project 기지국 장비 성능 통계의 eda 및 불량 탐색": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0003",
+        "name": "[Guided Project] 기지국 장비 성능 통계의 EDA 및 불량 탐색",
+        "primary": true,
+        "url": "https://samsungu.ac.kr/education/tdw5e2u2",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0007",
+        "name": "[Guided Project] 기지국 장비 성능 통계의 EDA 및 불량 탐색",
+        "primary": false,
+        "url": "https://learning.samsung.com/study/hfs7u2sx",
+        "metadata": {
+          "평점": 4.2,
+          "이수자수": "203",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.2,
+      "mysuni_enrollments": "203"
+    }
+  },
+  "guided project 통신 core 장비에 대한 이상 징후 감지 with tensorflow": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0004",
+        "name": "[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with Tensorflow",
+        "primary": true,
+        "url": "https://academy.samsung.com/program/lq0gz6yg",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0044",
+        "name": "[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with Tensorflow",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/study/wuozbkrf",
+        "metadata": {
+          "평점": 4.1,
+          "이수자수": "176",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.1,
+      "mysuni_enrollments": "176"
+    }
+  },
+  "guided project 석유 정제 공정 운전 데이터를 활용한 물성 예측 모델 개발": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0015",
+        "name": "[Guided Project] 석유 정제 공정 운전 데이터를 활용한 물성 예측 모델 개발",
+        "primary": true,
+        "url": "https://academy.samsung.com/course/w6xefh1z",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0001",
+        "name": "[Guided Project] 석유 정제 공정 운전 데이터를 활용한 물성 예측 모델 개발",
+        "primary": false,
+        "url": "https://learning.samsung.com/module/dbpmh84v",
+        "metadata": {
+          "평점": 4.2,
+          "이수자수": "468",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.2,
+      "mysuni_enrollments": "468"
+    }
+  },
+  "guided project wavve ott 고객 이탈 예측 모델 개발": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0016",
+        "name": "[Guided Project] Wavve OTT 고객 이탈 예측 모델 개발",
+        "primary": true,
+        "url": "https://academy.samsung.com/lecture/o12nds8i",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0006",
+        "name": "[Guided Project] Wavve OTT 고객 이탈 예측 모델 개발",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/content/26beqbgq",
+        "metadata": {
+          "평점": 4.0,
+          "이수자수": "308",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.0,
+      "mysuni_enrollments": "308"
+    }
+  },
+  "guided project cctv 이미지 분류 모델 개발": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0017",
+        "name": "[Guided Project] CCTV 이미지 분류 모델 개발",
+        "primary": true,
+        "url": "https://academy.samsung.com/program/31s8l4f0",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0002",
+        "name": "[Guided Project] CCTV 이미지 분류 모델 개발",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/module/0my15dks",
+        "metadata": {
+          "평점": 4.2,
+          "이수자수": "218",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.2,
+      "mysuni_enrollments": "218"
+    }
+  },
+  "guided project 공정 이미지 불량 탐지 모델 개발 with pytorch": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0018",
+        "name": "[Guided Project] 공정 이미지 불량 탐지 모델 개발 with PyTorch",
+        "primary": true,
+        "url": "https://edu.samsung.com/program/dd4vumli",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0045",
+        "name": "[Guided Project] 공정 이미지 불량 탐지 모델 개발 with PyTorch",
+        "primary": false,
+        "url": "https://learning.samsung.com/study/afslt8su",
+        "metadata": {
+          "평점": 4.2,
+          "이수자수": "105",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.2,
+      "mysuni_enrollments": "105"
+    }
+  },
+  "guided project 통화품질 voc의 불만 유형 분류": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0019",
+        "name": "[Guided Project] 통화품질 VOC의 불만 유형 분류",
+        "primary": true,
+        "url": "https://learning.samsung.com/lecture/5urjg80k",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0043",
+        "name": "[Guided Project] 통화품질 VOC의 불만 유형 분류",
+        "primary": false,
+        "url": "https://learning.samsung.com/content/bfoumlaj",
+        "metadata": {
+          "평점": 4.0,
+          "이수자수": "199",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.0,
+      "mysuni_enrollments": "199"
+    }
+  },
+  "guided project 통신 core 장비에 대한 이상 징후 감지 with pytorch": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0020",
+        "name": "[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with PyTorch",
+        "primary": true,
+        "url": "https://samsungu.ac.kr/training/55obq2j3",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0047",
+        "name": "[Guided Project] 통신 Core 장비에 대한 이상 징후 감지 with PyTorch",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/content/ooiat16u",
+        "metadata": {
+          "평점": 4.3,
+          "이수자수": "169",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.3,
+      "mysuni_enrollments": "169"
+    }
+  },
+  "guided project dram 내부 회로의 파형 예측 with pytorch": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0021",
+        "name": "[Guided Project] DRAM 내부 회로의 파형 예측 with PyTorch",
+        "primary": true,
+        "url": "https://academy.samsung.com/program/invriw6l",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0046",
+        "name": "[Guided Project] DRAM 내부 회로의 파형 예측 with PyTorch",
+        "primary": false,
+        "url": "https://learning.samsung.com/resource/4ze8n90s",
+        "metadata": {
+          "평점": 4.2,
+          "이수자수": "174",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.2,
+      "mysuni_enrollments": "174"
+    }
+  },
+  "코드잇 머신러닝 입문": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0045",
+        "name": "[코드잇] 머신러닝 입문",
+        "primary": true,
+        "url": "https://academy.samsung.com/course/5uhia49a",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "머신러닝/딥러닝 기초",
+          "학습시간": 25.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0004",
+        "name": "[코드잇] 머신러닝 입문",
+        "primary": false,
+        "url": "https://content.samsung.com/study/x9jeiw88",
+        "metadata": {
+          "평점": 4.4,
+          "이수자수": "648",
+          "난이도": "Basic",
+          "인정학습시간": 25.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.4,
+      "mysuni_enrollments": "648"
+    }
+  },
+  "guided project dram 내부 회로의 파형 예측 with tensorflow": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0046",
+        "name": " [Guided Project] DRAM 내부 회로의 파형 예측 with Tensorflow",
+        "primary": true,
+        "url": "https://learning.samsung.com/education/0ytbrxi0",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0008",
+        "name": "[Guided Project] DRAM 내부 회로의 파형 예측 with Tensorflow",
+        "primary": false,
+        "url": "https://content.samsung.com/study/60fhoh7p",
+        "metadata": {
+          "평점": 4.2,
+          "이수자수": "102",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.2,
+      "mysuni_enrollments": "102"
+    }
+  },
+  "guided project 통신탑 안전 이상 감지 모델 개발": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0047",
+        "name": "[Guided Project] 통신탑 안전 이상 감지 모델 개발",
+        "primary": true,
+        "url": "https://learning.samsung.com/lecture/rsxmgyc7",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0077",
+        "name": "[Guided Project] 통신탑 안전 이상 감지 모델 개발",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/study/0eke182r",
+        "metadata": {
+          "평점": 4.4,
+          "이수자수": "42",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.4,
+      "mysuni_enrollments": "42"
+    }
+  },
+  "guided project 석유 유정 펌프 이상 감지": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0048",
+        "name": "[Guided Project] 석유 유정 펌프 이상 감지",
+        "primary": true,
+        "url": "https://learning.samsung.com/program/ltp0eflk",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0080",
+        "name": "[Guided Project] 석유 유정 펌프 이상 감지",
+        "primary": false,
+        "url": "https://content.samsung.com/material/65atx6xg",
+        "metadata": {
+          "평점": 3.8,
+          "이수자수": "29",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 3.8,
+      "mysuni_enrollments": "29"
+    }
+  },
+  "guided project ai 모델을 활용한 철근 단가 예측": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0049",
+        "name": " [Guided Project] AI 모델을 활용한 철근 단가 예측",
+        "primary": true,
+        "url": "https://learning.samsung.com/course/y2lih7gm",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0079",
+        "name": "[Guided Project] AI 모델을 활용한 철근 단가 예측",
+        "primary": false,
+        "url": "https://learning.samsung.com/resource/i7bju6dy",
+        "metadata": {
+          "평점": 4.3,
+          "이수자수": "54",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.3,
+      "mysuni_enrollments": "54"
+    }
+  },
+  "llm finetuning": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0053",
+        "name": "LLM Fine-Tuning",
+        "primary": true,
+        "url": "https://edu.samsung.com/education/klq7dmeh",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "G.AI Model Engineering",
+          "학습시간": 16.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0103",
+        "name": "LLM Fine-Tuning",
+        "primary": false,
+        "url": "https://content.samsung.com/resource/669o84m4",
+        "metadata": {
+          "평점": 0.0,
+          "이수자수": "23",
+          "난이도": "Advanced",
+          "인정학습시간": 35.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 0.0,
+      "mysuni_enrollments": "23"
+    }
+  },
+  "guided project ssd 반도체 신뢰성 사전 예측 모델 개발": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0061",
+        "name": "[Guided Project] SSD 반도체 신뢰성 사전 예측 모델 개발",
+        "primary": true,
+        "url": "https://samsungu.ac.kr/lecture/yktjxvxd",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0082",
+        "name": "[Guided Project] SSD 반도체 신뢰성 사전 예측 모델 개발",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/content/fhhqkqfp",
+        "metadata": {
+          "평점": 3.9,
+          "이수자수": "31",
+          "난이도": "Intermediate",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 3.9,
+      "mysuni_enrollments": "31"
+    }
+  },
+  "guided project ai 모델을 활용한 정유 공정 자율 운전 구현": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0062",
+        "name": " [Guided Project] AI 모델을 활용한 정유 공정 자율 운전 구현",
+        "primary": true,
+        "url": "https://academy.samsung.com/course/soivfsjy",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "AI/Data Analytics",
+          "학습시간": 32.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0081",
+        "name": "[Guided Project] AI 모델을 활용한 정유 공정 자율 운전 구현",
+        "primary": false,
+        "url": "https://content.samsung.com/content/gjvt7znc",
+        "metadata": {
+          "평점": 4.7,
+          "이수자수": "29",
+          "난이도": "Advanced",
+          "인정학습시간": 32.0,
+          "카테고리명": "AI",
+          "채널명": "AI"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.7,
+      "mysuni_enrollments": "29"
+    }
+  },
+  "코드잇 데이터 사이언스 정복하기": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0063",
+        "name": "[코드잇] 데이터 사이언스 정복하기",
+        "primary": true,
+        "url": "https://edu.samsung.com/course/4z73wo26",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "머신러닝/딥러닝 기초",
+          "학습시간": 25.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0128",
+        "name": "[코드잇] 데이터 사이언스 정복하기",
+        "primary": false,
+        "url": "https://learning.samsung.com/study/62z5gdtk",
+        "metadata": {
+          "평점": 4.5,
+          "이수자수": "64",
+          "난이도": "Basic",
+          "인정학습시간": 25.0,
+          "카테고리명": "AI",
+          "채널명": "Data Science"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.5,
+      "mysuni_enrollments": "64"
+    }
+  },
+  "chatgpt를 활용한 데이터 분석feat 파이썬": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0064",
+        "name": " ChatGPT를 활용한 데이터 분석(feat. 파이썬)",
+        "primary": true,
+        "url": "https://academy.samsung.com/training/v67zdl5x",
+        "metadata": {
+          "학부": "AIX",
+          "표준과정": "생성형 AI 활용 기초",
+          "학습시간": 15.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0127",
+        "name": "ChatGPT를 활용한 데이터 분석(feat. 파이썬)",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/resource/c46dp8rj",
+        "metadata": {
+          "평점": 4.2,
+          "이수자수": "1,296",
+          "난이도": "Basic",
+          "인정학습시간": 6.3,
+          "카테고리명": "AI",
+          "채널명": "Data Science"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.2,
+      "mysuni_enrollments": "1,296"
+    }
+  },
+  "cl4의 insight 세미나 프로젝트 성공을 위한 pm 전략 및 주요 관리 point": {
+    "platforms": [
+      "college"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0206",
+        "name": "[CL4의 Insight 세미나] 프로젝트 성공을 위한 PM 전략 및 주요 관리 Point",
+        "primary": true,
+        "url": "https://academy.samsung.com/program/df9y7isn",
+        "metadata": {
+          "학부": "Project Mgmt",
+          "표준과정": "PJT. 발굴/수행 Case Study",
+          "학습시간": 1.0
+        }
+      },
+      {
+        "platform": "College",
+        "course_id": "COL-0207",
+        "name": "[CL4의 Insight 세미나] 프로젝트 성공을 위한 PM 전략 및 주요 관리 Point",
+        "primary": true,
+        "url": "https://samsungu.ac.kr/program/puybmoyi",
+        "metadata": {
+          "학부": "Project Mgmt",
+          "표준과정": "PJT. 발굴/수행 Case Study",
+          "학습시간": 0.0
+        }
+      }
+    ],
+    "ratings": {}
+  },
+  "데이터 기반 고객경험 설계 방법론 dcx 프레임워크": {
+    "platforms": [
+      "college",
+      "mysuni"
+    ],
+    "courses": [
+      {
+        "platform": "College",
+        "course_id": "COL-0248",
+        "name": "데이터 기반 고객경험 설계 방법론, DCX 프레임워크",
+        "primary": true,
+        "url": "https://samsungu.ac.kr/program/59ensltd",
+        "metadata": {
+          "학부": "SW",
+          "표준과정": "UX/UI 기본",
+          "학습시간": 3.0
+        }
+      },
+      {
+        "platform": "mySUNI",
+        "course_id": "SUN-0187",
+        "name": "데이터 기반 고객경험 설계 방법론,  DCX 프레임워크",
+        "primary": false,
+        "url": "https://mysuni.samsung.com/study/7oaemazd",
+        "metadata": {
+          "평점": 4.2,
+          "이수자수": "455",
+          "난이도": "Basic",
+          "인정학습시간": 3.0,
+          "카테고리명": "일하는 방식",
+          "채널명": "프로젝트 관리"
+        }
+      }
+    ],
+    "ratings": {
+      "mysuni_rating": 4.2,
+      "mysuni_enrollments": "455"
+    }
+  }
+}
