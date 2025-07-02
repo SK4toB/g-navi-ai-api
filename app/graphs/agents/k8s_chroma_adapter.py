@@ -4,6 +4,7 @@ import os
 from typing import List, Dict, Any
 from langchain.schema import Document
 from langchain_openai import OpenAIEmbeddings
+from langchain.schema.runnable import Runnable  # Import Runnable interface
 
 class K8sChromaDBAdapter:
     """
@@ -152,7 +153,7 @@ class K8sChromaDBAdapter:
             return {"status": "error", "message": f"예외 발생: {e}"}
 
 
-class K8sChromaRetriever:
+class K8sChromaRetriever(Runnable):  # Inherit from Runnable
     """
     K8s ChromaDB 리트리버 (로컬 Chroma retriever와 동일한 인터페이스)
     """
