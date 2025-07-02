@@ -76,3 +76,17 @@ class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허�
     processing_log: List[str]                       # 처리 로그 추적
     error_messages: List[str]                       # 오류 메시지 수집
     total_processing_time: float                    # 총 처리 시간
+    
+    # === 커리어 상담 전용 상태 ===
+    conversation_flow: str                          # 대화 플로우 타입 (general, career_consultation)
+    consultation_stage: str                         # 상담 진행 단계 (positioning, path_selection, deepening, planning, learning, summary)
+    career_paths_suggested: List[Dict[str, Any]]    # 제시된 커리어 경로들
+    selected_career_path: Dict[str, Any]            # 사용자가 선택한 커리어 경로
+    awaiting_user_input: bool                       # 사용자 입력 대기 상태
+    next_expected_input: str                        # 다음에 기대되는 입력 유형
+    consultation_context: Dict[str, Any]            # 상담 컨텍스트 (목표, 이유 등)
+    
+    # === 사용자 정보 수집 관련 ===
+    missing_info_fields: List[str]                  # 부족한 정보 필드들 (experience, skills, domain)
+    collected_user_info: Dict[str, Any]             # 사용자로부터 수집한 추가 정보
+    info_collection_stage: str                      # 정보 수집 단계 (experience, skills, domain, complete)
