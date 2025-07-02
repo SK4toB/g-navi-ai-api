@@ -1,10 +1,10 @@
 # app/graphs/agents/k8s_chroma_adapter.py
 import requests
 import os
-from typing import List, Dict, Any
-from langchain.schema import Document
+from typing import List, Dict, Any, Optional
+from langchain.schema import Document, BaseRetriever
+from langchain.embeddings.base import Embeddings
 from langchain_openai import OpenAIEmbeddings
-from langchain.schema.runnable import Runnable  # Import Runnable interface
 
 class K8sChromaDBAdapter:
     """
@@ -126,7 +126,7 @@ class K8sChromaDBAdapter:
             K8sChromaRetriever 인스턴스
         """
         search_kwargs = search_kwargs or {}
-        return K8sChromaRetriever(self, search_kwargs.get('k', 3))
+        return K8sChromaRetriever(self.collection_name, self.embeddings)
     
     def get_collection_info(self) -> Dict:
         """컬렉션 정보 조회"""
@@ -153,35 +153,32 @@ class K8sChromaDBAdapter:
             return {"status": "error", "message": f"예외 발생: {e}"}
 
 
-class K8sChromaRetriever(Runnable):  # Inherit from Runnable
-    """
-    K8s ChromaDB 리트리버 (로컬 Chroma retriever와 동일한 인터페이스)
-    """
-    
-    def __init__(self, adapter: K8sChromaDBAdapter, k: int = 3):
-        self.adapter = adapter
-        self.k = k
-    
-    def invoke(self, query: str) -> List[Document]:
-        """
-        검색 실행 (LangChain retriever와 동일한 인터페이스)
+class K8sChromaRetriever(BaseRetriever):
+    def __init__(self, collection_name: str, embeddings: Embeddings):
+        super().__init__()
+        self.collection_name = collection_name
+        self.embeddings = embeddings
+        self.k = 3  # 기본값 설정
         
-        Args:
-            query: 검색 쿼리
-            
-        Returns:
-            Document 리스트
+        # K8sChromaDBAdapter 인스턴스 생성
+        self.adapter = K8sChromaDBAdapter(collection_name, embeddings)
+
+    async def _aget_relevant_documents(self, query: str) -> List[Document]:
+        """Not implemented"""
+        raise NotImplementedError("Async retrieval not implemented yet")
+
+    def _get_relevant_documents(self, query: str, *, run_manager=None) -> List[Document]:
         """
-        return self.adapter.similarity_search(query, k=self.k)
-    
-    def get_relevant_documents(self, query: str) -> List[Document]:
+        query로부터 관련 문서를 검색합니다.
+        실제 K8sChromaDBAdapter를 사용하여 검색을 수행합니다.
         """
-        관련 문서 검색 (LangChain retriever와 동일한 인터페이스)
-        
-        Args:
-            query: 검색 쿼리
-            
-        Returns:
-            Document 리스트
-        """
-        return self.invoke(query)
+        try:
+            # K8sChromaDBAdapter를 통해 실제 검색 수행
+            return self.adapter.similarity_search(query, k=self.k)
+        except Exception as e:
+            print(f"❌ [K8sChromaRetriever] 검색 실패: {e}")
+            return []
+
+    def get_relevant_documents(self, query: str, *, run_manager=None) -> List[Document]:
+        """BaseRetriever 인터페이스와 호환되는 public 메서드"""
+        return self._get_relevant_documents(query, run_manager=run_manager)
