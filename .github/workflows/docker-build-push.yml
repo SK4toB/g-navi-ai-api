@@ -88,7 +88,7 @@ jobs:
           # 빌드 최적화를 위한 빌드 인자
           build-args: |
             BUILDKIT_INLINE_CACHE=1
-        timeout-minutes: 15
+        timeout-minutes: 30
 
       - name: Image build success
         run: |
