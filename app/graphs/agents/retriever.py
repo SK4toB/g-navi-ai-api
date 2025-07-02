@@ -338,7 +338,8 @@ class CareerEnsembleRetrieverAgent:
             return []
         
         # 기본 검색 수행
-        all_docs = self.ensemble_retriever.invoke(query)
+        # all_docs = self.ensemble_retriever.invoke(query)
+        all_docs = self.ensemble_retriever.get_relevant_documents(query)
         
         # 최근 키워드 감지 및 연도 추출
         recent_keywords = ['최근', '최신', 'recent', '요즘', '지금', '현재', '새로운', '신규', '트렌드']
