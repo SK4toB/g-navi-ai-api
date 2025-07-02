@@ -5,6 +5,7 @@ from typing import List, Dict, Any, Optional
 from langchain.schema import Document, BaseRetriever
 from langchain.embeddings.base import Embeddings
 from langchain_openai import OpenAIEmbeddings
+from pydantic import Field, ConfigDict
 
 class K8sChromaDBAdapter:
     """
@@ -156,23 +157,27 @@ class K8sChromaDBAdapter:
 class K8sChromaRetriever(BaseRetriever):
     """K8s ChromaDB용 리트리버 (BaseRetriever 상속)"""
     
-    # Pydantic 모델 필드로 정의
-    collection_name: str
-    embeddings: Embeddings
-    k: int = 3
+    # Pydantic v2 스타일 모델 설정
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    
+    # 필드 정의
+    collection_name: str = Field(description="컬렉션 이름")
+    embeddings: Embeddings = Field(description="임베딩 인스턴스")
+    k: int = Field(default=3, description="검색할 문서 수")
+    adapter: Any = Field(default=None, description="ChromaDB 어댑터")
     
     def __init__(self, collection_name: str, embeddings: Embeddings, **kwargs):
-        super().__init__(**kwargs)
-        # 필드 초기화
-        object.__setattr__(self, 'collection_name', collection_name)
-        object.__setattr__(self, 'embeddings', embeddings)
-        object.__setattr__(self, 'k', 3)
+        # Pydantic 모델 초기화
+        super().__init__(
+            collection_name=collection_name,
+            embeddings=embeddings,
+            k=3,
+            adapter=None,
+            **kwargs
+        )
         
-        # K8sChromaDBAdapter 인스턴스 생성
-        object.__setattr__(self, 'adapter', K8sChromaDBAdapter(collection_name, embeddings))
-
-    class Config:
-        arbitrary_types_allowed = True
+        # K8sChromaDBAdapter 인스턴스 생성 (초기화 후)
+        self.adapter = K8sChromaDBAdapter(collection_name, embeddings)
 
     async def _aget_relevant_documents(self, query: str) -> List[Document]:
         """Not implemented"""
