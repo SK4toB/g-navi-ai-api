@@ -1,5 +1,5 @@
 # 최적화된 메인 애플리케이션 Dockerfile
-ARG BASE_IMAGE_TAG=latest
+ARG BASE_IMAGE_TAG=1.0.0
 FROM amdp-registry.skala-ai.com/skala25a/sk-gnavi4-ai-base:${BASE_IMAGE_TAG}
 
 # 애플리케이션 코드 복사
