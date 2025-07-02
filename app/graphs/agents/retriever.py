@@ -50,21 +50,21 @@ class PathConfig:
     
     @classmethod
     def _get_smart_docs_path(cls, filename: str) -> str:
-        """K8s 환경이면 PVC 경로, 아니면 로컬 app/docs 경로 반환"""
+        """K8s 환경이면 PVC 경로, 아니면 로컬 app/storage/docs 경로 반환"""
         if cls._is_k8s_environment():
             # K8s 환경: /mnt/gnavi/docs/filename
             k8s_path = os.path.join(cls._get_k8s_pvc_path(), 'docs', filename)
             if os.path.exists(k8s_path):
                 return k8s_path
             # K8s 환경이지만 PVC에 파일이 없으면 로컬 폴백
-            local_fallback = os.path.join(cls._get_app_root_dir(), 'docs', filename)
+            local_fallback = os.path.join(cls._get_app_root_dir(), 'storage', 'docs', filename)
             if os.path.exists(local_fallback):
                 return local_fallback
             # 둘 다 없으면 K8s 경로 반환 (원래 의도대로)
             return k8s_path
         else:
-            # 로컬 환경: app/docs/filename  
-            return os.path.join(cls._get_app_root_dir(), 'docs', filename)
+            # 로컬 환경: app/storage/docs/filename  
+            return os.path.join(cls._get_app_root_dir(), 'storage', 'docs', filename)
     
     # 📊 벡터 스토어 경로 (Chroma DB 저장소) - 기존 방식 유지
     CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"
