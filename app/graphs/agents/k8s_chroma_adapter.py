@@ -127,7 +127,7 @@ class K8sChromaDBAdapter:
             K8sChromaRetriever 인스턴스
         """
         search_kwargs = search_kwargs or {}
-        return K8sChromaRetriever(self.collection_name, self.embeddings)
+        return K8sChromaRetriever(self.collection_name, self.embeddings, adapter=self)
     
     def get_collection_info(self) -> Dict:
         """컬렉션 정보 조회"""
@@ -166,18 +166,21 @@ class K8sChromaRetriever(BaseRetriever):
     k: int = Field(default=3, description="검색할 문서 수")
     adapter: Any = Field(default=None, description="ChromaDB 어댑터")
     
-    def __init__(self, collection_name: str, embeddings: Embeddings, **kwargs):
+    def __init__(self, collection_name: str, embeddings: Embeddings, adapter: Any = None, **kwargs):
         # Pydantic 모델 초기화
         super().__init__(
             collection_name=collection_name,
             embeddings=embeddings,
             k=3,
-            adapter=None,
+            adapter=adapter,
             **kwargs
         )
         
-        # K8sChromaDBAdapter 인스턴스 생성 (초기화 후)
-        self.adapter = K8sChromaDBAdapter(collection_name, embeddings)
+        # adapter가 이미 있으면 새로 만들지 않음
+        if adapter is not None:
+            self.adapter = adapter
+        else:
+            self.adapter = K8sChromaDBAdapter(collection_name, embeddings)
 
     async def _aget_relevant_documents(self, query: str) -> List[Document]:
         """Not implemented"""
