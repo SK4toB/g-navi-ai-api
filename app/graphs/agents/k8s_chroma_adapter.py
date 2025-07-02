@@ -154,14 +154,25 @@ class K8sChromaDBAdapter:
 
 
 class K8sChromaRetriever(BaseRetriever):
-    def __init__(self, collection_name: str, embeddings: Embeddings):
-        super().__init__()
-        self.collection_name = collection_name
-        self.embeddings = embeddings
-        self.k = 3  # 기본값 설정
+    """K8s ChromaDB용 리트리버 (BaseRetriever 상속)"""
+    
+    # Pydantic 모델 필드로 정의
+    collection_name: str
+    embeddings: Embeddings
+    k: int = 3
+    
+    def __init__(self, collection_name: str, embeddings: Embeddings, **kwargs):
+        super().__init__(**kwargs)
+        # 필드 초기화
+        object.__setattr__(self, 'collection_name', collection_name)
+        object.__setattr__(self, 'embeddings', embeddings)
+        object.__setattr__(self, 'k', 3)
         
         # K8sChromaDBAdapter 인스턴스 생성
-        self.adapter = K8sChromaDBAdapter(collection_name, embeddings)
+        object.__setattr__(self, 'adapter', K8sChromaDBAdapter(collection_name, embeddings))
+
+    class Config:
+        arbitrary_types_allowed = True
 
     async def _aget_relevant_documents(self, query: str) -> List[Document]:
         """Not implemented"""
