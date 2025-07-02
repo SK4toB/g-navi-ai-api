@@ -11,34 +11,42 @@ from app.services.chat_service import ChatService
 
 router = APIRouter()
 
-@router.post("/", response_model=ChatRoomResponse)
+@router.post("", response_model=ChatRoomResponse)
 async def create_or_load_room(
     request: ChatRoomCreate,
     chat_service: ChatService = Depends(get_chat_service)
 ):
     """
     채팅방 생성 또는 로드
-    SpringBoot에서 member_id, conversation_id, user_info와 함께 호출
+    SpringBoot에서 member_id, conversation_id, user_info, messages와 함께 호출
+    messages가 빈 리스트면 새 방, 아니면 기존 방 로드
     """
     try:
-        print(f"채팅방 요청: member_id={request.member_id}, conversation_id={request.conversation_id}")
-        print(f"사용자 정보: {request.user_info}")
+        print(f"채팅방 요청: member_id={request.member_id}, conversation_id={request.conversation_id}, user_info: {request.user_info}, 기존 메시지 개수: {len(request.messages)}")
         
-        # TODO: MongoDB에서 기존 방 확인 (나중에 추가)
-        # 지금은 간단하게 처리
-        is_new_room = True  # 임시로 항상 새 방으로 처리
+        # messages 리스트로 새 방인지 판단
+        if len(request.messages) == 0:
+            is_new_room = True
+            print("채팅방 생성")
+        else: 
+            is_new_room = False
+            print("채팅방 로드")
+
+        if is_new_room:
+            bot_message = await chat_service.create_chat_session(
+                conversation_id=request.conversation_id,
+                user_info=request.user_info
+            )
         
-        print(f"{'새 채팅방' if is_new_room else '기존 채팅방'}: {request.conversation_id}")
-        
-        # LangGraph 서비스로 초기 메시지 생성
-        bot_message = await chat_service.create_chat_session(
-            conversation_id=request.conversation_id,
-            user_info=request.user_info
-        )
-        
-        print(f"AI 응답 생성 완료: {bot_message[:50]}...")
-        
-        # TODO: MongoDB에 채팅방과 메시지 저장 (나중에 추가)
+        else:
+            load_result = await chat_service.load_chat_session(
+                conversation_id=request.conversation_id,
+                user_info=request.user_info,
+                previous_messages=request.messages
+            )
+            # 로드 시에는 봇 메시지를 반환하지 않음
+            bot_message = load_result.get("message", "채팅방을 로드했습니다.")
+            print(f"로드 결과: {load_result['status']}")
         
         return ChatRoomResponse(
             conversationId=request.conversation_id,

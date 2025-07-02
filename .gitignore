@@ -9,6 +9,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+venv310/
+output/
+app/data/
 
 # Environment variables
 .env
@@ -35,3 +38,6 @@ Thumbs.db
 
 # Build artifacts
 k8s/secrets.yaml
+
+# Temporary files
+app/storage/

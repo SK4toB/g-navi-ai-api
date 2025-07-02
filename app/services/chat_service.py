@@ -1,138 +1,184 @@
-# app/services/chat_service.py (조건부 분기 방식)
+# app/services/chat_service.py (리팩토링된 버전)
 
 from typing import Dict, Any
-import os
-from app.graphs.graph_builder import ChatGraphBuilder
+from datetime import datetime
+from app.services.session_manager import SessionManager
+from app.services.message_processor import MessageProcessor
+from app.services.chat_session_service import ChatSessionService
+
 
 class ChatService:
     """
-    조건부 분기 방식 채팅 서비스
-    interrupt 없이 메시지별로 그래프 실행
+    채팅 서비스 클래스
+    - 채팅 세션 생성/로드
+    - 메시지 처리
+    - 세션 관리 위임
+    - 각 책임별 서비스 분리
     """
     
-    def __init__(self):
-        self.graph_builder = ChatGraphBuilder()
-        self.active_sessions = {}  # conversation_id -> {graph, thread_id, config}
-        self.openai_client = None
-        self._init_openai()
-        print("ChatService 초기화 (조건부 분기 방식)")
+    def __init__(self, session_timeout_hours: int = 1):
+        # 각 책임별 서비스 초기화
+        self.session_manager = SessionManager(session_timeout_hours)
+        self.message_processor = MessageProcessor()
+        self.chat_session_service = ChatSessionService()
+        
+        print("ChatService 초기화 완료")
     
-    def _init_openai(self):
-        """OpenAI 클라이언트 초기화 (초기 메시지용)"""
-        try:
-            from openai import AsyncOpenAI
-            api_key = os.getenv("OPENAI_API_KEY")
-            if api_key:
-                self.openai_client = AsyncOpenAI(api_key=api_key)
-                self.model = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
-                self.max_tokens = int(os.getenv("OPENAI_MAX_TOKENS", "1000"))
-                self.temperature = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))
-                print("ChatService OpenAI 연결")
-        except Exception as e:
-            print(f"OpenAI 초기화 실패: {e}")
+    # ============================================================================
+    # 메인 채팅 기능
+    # ============================================================================
     
     async def create_chat_session(self, conversation_id: str, user_info: Dict[str, Any]) -> str:
-        """
-        조건부 분기 방식 채팅 세션 생성
-        """
-        print(f"조건부 분기 채팅 세션 생성: {conversation_id}")
+        """새 채팅 세션 생성"""
+        print(f"ChatService 새 채팅 세션 생성: {conversation_id}")
         
-        # 1. LangGraph 빌드
-        compiled_graph = await self.graph_builder.build_persistent_chat_graph(conversation_id, user_info)
+        # 1. 새 세션 생성 (그래프 빌드 + 초기 메시지)
+        compiled_graph, thread_id, config, initial_message = await self.chat_session_service.create_new_session(
+            conversation_id, user_info
+        )
         
-        # 2. 세션 정보 저장 (실행하지 않음)
-        thread_id = f"thread_{conversation_id}"
-        config = {"configurable": {"thread_id": thread_id}}
+        # 2. 세션 매니저에 등록
+        self.session_manager.create_session(
+            conversation_id=conversation_id,
+            graph=compiled_graph,
+            thread_id=thread_id,
+            config=config,
+            user_info=user_info
+        )
         
-        self.active_sessions[conversation_id] = {
-            "graph": compiled_graph,
-            "thread_id": thread_id,
-            "config": config,
-            "user_info": user_info
-        }
-        
-        print(f"조건부 분기 세션 생성 완료: {conversation_id}")
-        
-        # 3. 환영 메시지 생성
-        initial_message = await self._generate_welcome_message(user_info)
-        
+        print(f"ChatService 새 채팅 세션 생성 완료: {conversation_id}")
         return initial_message
     
-    async def send_message(self, conversation_id: str, member_id: str, message_text: str) -> str:
-        """
-        조건부 분기 방식 메시지 처리
-        """
-        print(f"조건부 분기 메시지 처리: {conversation_id}")
+    async def load_chat_session(
+        self, 
+        conversation_id: str, 
+        user_info: Dict[str, Any], 
+        previous_messages: list = None
+    ) -> Dict[str, Any]:
+        """기존 채팅방 로드"""
+        print(f"ChatService 채팅방 로드 요청: {conversation_id}")
         
-        if conversation_id not in self.active_sessions:
-            raise ValueError(f"활성화된 세션이 없습니다: {conversation_id}")
+        # 1. 기존 세션 확인
+        existing_session = self.session_manager.get_session(conversation_id)
         
-        session = self.active_sessions[conversation_id]
-        graph = session["graph"]
-        config = session["config"]
-        user_info = session.get("user_info", {})
-        
-        try:
-            print(f"📨 입력 메시지: {message_text}")
+        if existing_session and not self.session_manager.is_session_expired(conversation_id):
+            # 기존 세션 재사용
+            self.session_manager.update_last_active(conversation_id)
             
-            # 전체 상태 구성 (메시지 포함)
-            input_state = {
-                "message_text": message_text,  # 실제 메시지
-                "member_id": member_id,
+            session_age = datetime.utcnow() - existing_session.get("created_at")
+            last_active = existing_session.get("last_active")
+            inactive_duration = datetime.utcnow() - last_active
+            
+            print(f"ChatService 기존 세션 재사용: {conversation_id}")
+            
+            return {
+                "status": "session_reused",
+                "message": "기존 세션을 재사용합니다",
                 "conversation_id": conversation_id,
-                "user_info": user_info,
-                # 나머지 필드들 초기화
-                "intent": None,
-                "embedding_vector": None,
-                "memory_results": None,
-                "similarity_score": None,
-                "profiling_data": None,
-                "connection_suggestions": None,
-                "bot_message": None
+                "session_age_minutes": int(session_age.total_seconds() / 60),
+                "inactive_minutes": int(inactive_duration.total_seconds() / 60),
+                "requires_initial_message": False
             }
-            
-            print(f"조건부 분기 그래프 실행...")
-            
-            # 전체 그래프 실행 (조건부 분기로 메시지 처리)
-            result = await graph.ainvoke(input_state, config)
-            
-            print(f"조건부 분기 실행 완료")
-            print(f"실행 결과 키들: {list(result.keys())}")
-            
-            # 최종 응답 추출
-            bot_message = result.get("bot_message")
-            
-            if bot_message is None:
-                print("bot_message is None입니다.")
-                print(f"result 전체 내용: {result}")
-                bot_message  = "조건부 분기: 응답을 생성할 수 없습니다."
-            
-            print(f"조건부 분기 최종 응답: {str(bot_message )[:100]}...")
-            return bot_message 
-            
-        except Exception as e:
-            print(f"조건부 분기 처리 실패: {e}")
-            import traceback
-            print(f"상세 에러: {traceback.format_exc()}")
-            return f"죄송합니다. 메시지 처리 중 오류가 발생했습니다: {str(e)}"
+        
+        # 2. 만료되었거나 없는 세션 - 새로 생성
+        if existing_session:
+            print(f"ChatService 만료된 세션 발견, 새 세션으로 교체: {conversation_id}")
+            self.session_manager.close_session(conversation_id)
+        
+        print(f"ChatService 새 세션 생성: {conversation_id}")
+        
+        # 3. 새 세션 생성 및 히스토리 복원
+        compiled_graph, thread_id, config, load_result = await self.chat_session_service.load_existing_session(
+            conversation_id, user_info, previous_messages
+        )
+        
+        # 4. 세션 매니저에 등록
+        self.session_manager.create_session(
+            conversation_id=conversation_id,
+            graph=compiled_graph,
+            thread_id=thread_id,
+            config=config,
+            user_info=user_info
+        )
+        
+        # load_type 표시
+        session = self.session_manager.get_session(conversation_id)
+        session["load_type"] = "restored"
+        
+        print(f"ChatService 채팅방 로드 완료: {conversation_id}")
+        return load_result
     
-    async def close_chat_session(self, conversation_id: str):
+    async def send_message(self, conversation_id: str, member_id: str, message_text: str) -> str:
+        """메시지 전송 및 처리"""
+        print(f"ChatService 메시지 처리 요청: {conversation_id}")
+        
+        # 1. 세션 존재 여부 확인
+        session = self.session_manager.get_session(conversation_id)
+        if not session:
+            raise ValueError(f"ChatService 활성화된 세션이 없습니다: {conversation_id}")
+        
+        # 2. 마지막 활동 시간 업데이트
+        self.session_manager.update_last_active(conversation_id)
+        
+        # 3. 메시지 처리
+        bot_message = await self.message_processor.process_message(
+            graph=session["graph"],
+            config=session["config"],
+            conversation_id=conversation_id,
+            member_id=member_id,
+            user_question=message_text,  # user_question으로 수정
+            user_info=session.get("user_info", {})
+        )
+        
+        print(f"ChatService 메시지 처리 완료: {conversation_id}")
+        return bot_message
+    
+    # ============================================================================
+    # 세션 관리 위임 메서드들
+    # ============================================================================
+    
+    async def close_chat_session(self, conversation_id: str) -> Dict[str, Any]:
         """채팅 세션 종료"""
-        if conversation_id in self.active_sessions:
-            del self.active_sessions[conversation_id]
-            print(f"조건부 분기 채팅 세션 종료: {conversation_id}")
+        return self.session_manager.close_session(conversation_id)
+    
+    def close_all_sessions(self) -> Dict[str, Any]:
+        """모든 세션 종료"""
+        return self.session_manager.close_all_sessions()
+    
+    def close_sessions_by_user(self, user_name: str) -> Dict[str, Any]:
+        """특정 사용자의 모든 세션 종료"""
+        return self.session_manager.close_sessions_by_user(user_name)
     
     def get_session_status(self, conversation_id: str) -> Dict[str, Any]:
         """세션 상태 조회"""
-        if conversation_id in self.active_sessions:
-            return {
-                "conversation_id": conversation_id,
-                "status": "active",
-                "thread_id": self.active_sessions[conversation_id]["thread_id"]
-            }
-        return {"conversation_id": conversation_id, "status": "inactive"}
+        return self.session_manager.get_session_status(conversation_id)
     
-    async def _generate_welcome_message(self, user_info: Dict[str, Any]) -> str:
-        """간단한 환영 메시지 생성 (테스트용)"""
-        name = user_info.get('name', '사용자')
-        return f"안녕하세요 {name}님! G.Navi입니다. 무엇을 도와드릴까요?"
+    def get_session_health(self, conversation_id: str) -> Dict[str, Any]:
+        """세션 헬스체크"""
+        return self.session_manager.get_session_health(conversation_id)
+    
+    def get_all_active_sessions(self) -> Dict[str, Any]:
+        """전체 활성 세션 조회"""
+        return self.session_manager.get_all_active_sessions()
+    
+    def cleanup_expired_sessions(self) -> Dict[str, Any]:
+        """만료된 세션 정리"""
+        return self.session_manager.cleanup_expired_sessions()
+    
+    # ============================================================================
+    # 호환성을 위한 속성 접근자들 (기존 코드와의 호환성 유지)
+    # ============================================================================
+    
+    @property
+    def active_sessions(self) -> Dict[str, Dict[str, Any]]:
+        """기존 코드 호환성을 위한 active_sessions 접근자"""
+        return self.session_manager.active_sessions
+    
+    @property
+    def session_timeout(self):
+        """기존 코드 호환성을 위한 session_timeout 접근자"""
+        return self.session_manager.session_timeout
+
+    async def process_message(self, conversation_id: str, member_id: str, user_question: str) -> str:
+        """메시지 처리 (호환성 있는 시그니처)"""
+        return await self.send_message(conversation_id, member_id, user_question)

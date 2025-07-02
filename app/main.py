@@ -7,7 +7,10 @@ from app.config.settings import settings
 app = FastAPI(
     title="Career Path Chat API",
     description="LangGraph 기반 사내 커리어패스 추천 LLM 서비스",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/ai/docs",           
+    redoc_url="/ai/redoc",         
+    openapi_url="/ai/openapi.json"
 )
 
 # CORS 설정
@@ -20,10 +23,9 @@ app.add_middleware(
 )
 
 # API 라우터 등록
-# app.include_router(api_router, prefix="/api/v1")
 app.include_router(api_router, prefix="/ai")
 
-@app.get("/")
+@app.get("/ai")
 async def root():
     return {
         "message": "Career Path Chat API", 

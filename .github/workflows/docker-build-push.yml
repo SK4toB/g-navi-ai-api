@@ -19,11 +19,22 @@ jobs:
         steps:
             - name: Checkout source code
               uses: actions/checkout@v4
+      # 디스크 공간 확보 추가
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
 
-            - name: Set up Python 3.10
-              uses: actions/setup-python@v4
-              with:
-                  python-version: '3.10'
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
             # Python 패키지 캐싱
             - name: Cache Python packages
@@ -61,22 +72,22 @@ jobs:
                   echo "FINAL_IMAGE_TAG=$FINAL_IMAGE_TAG" >> $GITHUB_ENV
                   echo "Final Tag: $FINAL_IMAGE_TAG"
 
-            # Docker 빌드 최적화 - 멀티스테이지 빌드와 캐시 활용
-            - name: Build and push Docker image
-              uses: docker/build-push-action@v5
-              with:
-                  context: .
-                  platforms: linux/amd64
-                  push: true
-                  tags: |
-                      ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FINAL_IMAGE_TAG }}
-                      ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-                  cache-from: type=gha
-                  cache-to: type=gha,mode=max
-                  # 빌드 최적화를 위한 빌드 인자
-                  build-args: |
-                      BUILDKIT_INLINE_CACHE=1
-              timeout-minutes: 15
+      # Docker 빌드 최적화 - 멀티스테이지 빌드와 캐시 활용
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FINAL_IMAGE_TAG }}
+            ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # 빌드 최적화를 위한 빌드 인자
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+        timeout-minutes: 30
 
             - name: Image build success
               run: |
