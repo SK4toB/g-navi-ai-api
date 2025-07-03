@@ -20,28 +20,31 @@ class ConsultationSummaryNode:
         # 기존 보고서 생성 노드 재활용
         self.report_generation_node = graph_builder.report_generation_node
     
-    async def _generate_motivational_message(self, user_data: dict, selected_path: dict, consultation_context: dict) -> str:
+    async def _generate_motivational_message(self, merged_user_data: dict, selected_path: dict, consultation_context: dict) -> str:
         """AI 기반 개인 맞춤형 동기부여 메시지 생성"""
         try:
             from openai import AsyncOpenAI
             
             api_key = os.getenv("OPENAI_API_KEY")
             if not api_key:
-                return f"{user_data.get('name', '고객')}님의 성공적인 커리어 전환을 응원합니다! 체계적인 계획을 바탕으로 꾸준히 실행해나가시면 반드시 목표를 달성하실 수 있습니다."
+                return f"{merged_user_data.get('name', '고객')}님의 성공적인 커리어 전환을 응원합니다! 체계적인 계획을 바탕으로 꾸준히 실행해나가시면 반드시 목표를 달성하실 수 있습니다."
             
             client = AsyncOpenAI(api_key=api_key)
             
-            skills_str = ", ".join(user_data.get('skills', ['다양한 역량']))
+            skills_str = ", ".join(merged_user_data.get('skills', ['다양한 역량']))
             path_name = selected_path.get('name', '선택하신 경로')
+            
+            # 디버깅: AI 메서드에 전달된 데이터 확인
+            print(f"🔍 DEBUG - consultation_summary AI 메서드에 전달된 merged_user_data: {merged_user_data}")
             
             prompt = f"""
 다음 직장인에게 커리어 상담 마무리 동기부여 메시지를 작성해주세요:
 
-- 이름: {user_data.get('name', '고객')}
-- 경력: {user_data.get('experience', '경험')}
+- 이름: {merged_user_data.get('name', '고객')}
+- 경력: {merged_user_data.get('experience', '경험')}
 - 보유 기술: {skills_str}
 - 선택한 경로: {path_name}
-- 도메인: {user_data.get('domain', '전문 분야')}
+- 도메인: {merged_user_data.get('domain', '전문 분야')}
 
 다음을 포함하여 150-200단어로 작성해주세요:
 1. 개인의 강점과 잠재력 인정
@@ -63,7 +66,7 @@ class ConsultationSummaryNode:
             
         except Exception as e:
             print(f"동기부여 메시지 생성 중 오류: {e}")
-            return f"{user_data.get('name', '고객')}님의 성공적인 커리어 전환을 응원합니다! 체계적인 계획을 바탕으로 꾸준히 실행해나가시면 반드시 목표를 달성하실 수 있습니다."
+            return f"{merged_user_data.get('name', '고객')}님의 성공적인 커리어 전환을 응원합니다! 체계적인 계획을 바탕으로 꾸준히 실행해나가시면 반드시 목표를 달성하실 수 있습니다."
     
     async def create_consultation_summary_node(self, state: ChatState) -> Dict[str, Any]:
         """
@@ -74,30 +77,37 @@ class ConsultationSummaryNode:
         selected_path = state.get("selected_career_path", {})
         consultation_context = state.get("consultation_context", {})
         user_data = self.graph_builder.get_user_info_from_session(state)
+        collected_info = state.get("collected_user_info", {})
+        merged_user_data = {**user_data, **collected_info}
         processing_log = state.get("processing_log", [])
+        
+        # 디버깅: 데이터 확인
+        print(f"🔍 DEBUG - consultation_summary user_data from session: {user_data}")
+        print(f"🔍 DEBUG - consultation_summary collected_info: {collected_info}")
+        print(f"🔍 DEBUG - consultation_summary merged_user_data: {merged_user_data}")
         
         # 기존 보고서 생성 노드 활용하여 구조화된 요약 생성
         state = self.report_generation_node.generate_report_node(state)
         
         # AI 기반 개인 맞춤형 동기부여 메시지 생성
         motivational_message = await self._generate_motivational_message(
-            user_data, selected_path, consultation_context
+            merged_user_data, selected_path, consultation_context
         )
         
         # 전문적이고 체계적인 상담 요약 및 동기부여 메시지 생성
         summary_response = {
             "message": f"""🎉 **전문 커리어 상담 완료 보고서**
 
-**{user_data.get('name', '고객')}님, 체계적인 커리어 컨설팅이 성공적으로 완료되었습니다.**
+**{merged_user_data.get('name', '고객')}님, 체계적인 커리어 컨설팅이 성공적으로 완료되었습니다.**
 
 ---
 
 **📊 현재 상황 진단 결과**
 ```
-• 경력 수준: {user_data.get('experience', 'N/A')} ({self._get_career_level(user_data.get('experience', ''))})
-• 핵심 강점: {', '.join(user_data.get('skills', [])[:3])}
+• 경력 수준: {merged_user_data.get('experience', 'N/A')} ({self._get_career_level(merged_user_data.get('experience', ''))})
+• 핵심 강점: {', '.join(merged_user_data.get('skills', [])[:3])}
 • 성장 영역: {selected_path.get('focus', '선택된 분야')}
-• 현재 포지션: {user_data.get('position', 'N/A')}
+• 현재 포지션: {merged_user_data.get('position', 'N/A')}
 • 성장 잠재력: 높음 ⭐⭐⭐⭐⭐
 ```
 

@@ -1,15 +1,7 @@
 # app/graphs/nodes/career_consultation/path_deepening.py
 """
 선택한 경로에 대한 심화 논의 노드
-사용자의 목표와 이유를 분석하여**🔍 현재 상황 분석 (Gap Analysis)**
-- **보유 역량**: {', '.join(user_data.get('skills', [])[:3])} 등
-- **경력 수준**: {user_data.get('experience', 'N/A')}년차
-- **부족 역량**: [응답 기반 분석 필요]
-- **성장 가능성**: 높음 (기존 경험 활용 가능)
-
-{("**🤖 AI 맞춤형 전략 분석**" + chr(10) + ai_strategy + chr(10)) if ai_strategy else ""}
-
-**🗺️ 체계적 실행 로드맵** 수립
+사용자의 목표와 이유를 분석하여 사내 데이터 기반 액션 플랜 수립
 AI 기반 개인 맞춤형 전략 분석 포함
 """
 
@@ -29,50 +21,120 @@ class PathDeepeningNode:
         # 기존 데이터 검색 노드 재활용
         self.data_retrieval_node = graph_builder.data_retrieval_node
     
-    async def _generate_personalized_strategy(self, user_data: dict, selected_path: dict, user_goals: str) -> str:
-        """AI 기반 개인 맞춤형 실행 전략 생성"""
+    async def _generate_ai_action_plan(self, merged_user_data: dict, selected_path: dict, user_goals: str, retrieved_data: dict) -> str:
+        """AI 기반 사내 데이터를 활용한 액션 플랜 및 멘토 추천 생성"""
         try:
             from openai import AsyncOpenAI
             
             api_key = os.getenv("OPENAI_API_KEY")
             if not api_key:
-                return ""
+                return "AI 분석 기능이 현재 이용 불가합니다."
             
             client = AsyncOpenAI(api_key=api_key)
             
-            skills_str = ", ".join(user_data.get('skills', ['현재 스킬']))
+            skills_str = ", ".join(merged_user_data.get('skills', ['정보 없음']))
             path_name = selected_path.get('name', '선택된 경로')
             
+            # 디버깅: AI 메서드에 전달된 데이터 확인
+            print(f"🔍 DEBUG - path_deepening AI 메서드에 전달된 merged_user_data: {merged_user_data}")
+            print(f"🔍 DEBUG - path_deepening user_goals: {user_goals}")
+            
+            # retrieved_data에서 사내 경력 데이터 추출
+            career_data = retrieved_data.get('career_data', [])
+            career_context = ""
+            if career_data:
+                # 사내 구성원 데이터를 더 상세히 활용
+                career_profiles = []
+                for i, profile in enumerate(career_data[:10]):  # 최대 10개만 상세 분석
+                    name = profile.get('name', f'구성원{i+1}')
+                    experience = profile.get('experience', '정보없음')
+                    skills = profile.get('skills', [])
+                    domain = profile.get('domain', '정보없음')
+                    career_path = profile.get('career_path', '정보없음')
+                    
+                    profile_info = f"- {name}: {experience}, 기술: {', '.join(skills[:3])}, 도메인: {domain}, 경로: {career_path}"
+                    career_profiles.append(profile_info)
+                
+                career_context = f"""
+**사내 구성원 성공 사례 ({len(career_data)}명 분석):**
+{chr(10).join(career_profiles)}
+
+**데이터 분석 결과:**
+- 총 {len(career_data)}명의 사내 구성원 데이터 분석
+- 유사 경로 성공 사례 및 성장 패턴 파악 가능
+"""
+            else:
+                career_context = "사내 구성원 데이터: 현재 분석 가능한 데이터 없음"
+            
             prompt = f"""
-다음 직장인을 위한 맞춤형 커리어 전략을 수립해주세요:
+당신은 G.Navi의 전문 커리어 상담사입니다. 현재 상담이 진행 중이며, 사내 구성원 데이터를 기반으로 실무적인 액션 플랜을 수립해주세요.
 
-- 경력: {user_data.get('experience', '정보 없음')}
-- 현재 스킬: {skills_str}
-- 목표 경로: {path_name}
-- 목표 및 동기: {user_goals[:300]}
-- 도메인: {user_data.get('domain', '전문 분야')}
+**고객 정보:**
+- 이름: {merged_user_data.get('name', '고객')}
+- 경력: {merged_user_data.get('experience', '정보 없음')}
+- 보유 기술: {skills_str}
+- 도메인: {merged_user_data.get('domain', '정보 없음')}
+- 선택한 경로: {path_name}
+- 목표 및 동기: {user_goals[:200]}
 
-다음을 포함하여 200-250단어로 작성해주세요:
-1. 현재 상황에서 이 경로로 가기 위한 구체적 갭 분석
-2. 3-6개월 내 달성 가능한 현실적 첫 단계
-3. 가장 중요한 스킬 개발 우선순위 3가지
-4. 예상되는 어려움과 해결 방안
+**사내 데이터:**
+{career_context}
 
-실무적이고 구체적인 조언으로 작성해주세요.
+**요청사항:**
+1. 사내 경력 데이터를 기반으로 한 장기 액션 플랜 수립
+2. **사내 구성원 벤치마킹**: 위의 사내 데이터에서 {path_name} 경로와 유사한 구성원들의 실제 성장 사례를 구체적으로 분석하고 벤치마킹 (이름, 경험, 성장 경로 등을 구체적으로 언급)
+3. 데이터 기반 멘토/롤모델 추천 (실제 사내 인물명 또는 유사 프로필 활용)
+4. 네트워킹 기회 제안 (사내 커뮤니티, 스터디 그룹 등)
+5. 학습 로드맵 설계 필요성에 대한 유도 멘트
+
+**응답 형식 (반드시 마크다운 문법을 사용하여 작성해주세요):**
+
+## 맞춤형 액션 플랜
+
+{merged_user_data.get('name', '고객')}님이 설정하신 목표를 달성하기 위한 구체적인 실행 계획을 제안드립니다.
+
+### 사내 성공 사례 벤치마킹
+
+**유사 성장 경로 분석:**
+- [사내 구성원들의 실제 성장 사례를 구체적으로 분석 - 이름, 경험, 성장 과정 포함]
+- [선택한 경로와 유사한 패턴을 보인 구성원들의 성공 요인 분석]
+
+### 추천 액션 플랜
+
+**1. 멘토/롤모델**
+- [사내 데이터에서 추출한 실제 구성원명을 활용한 멘토 추천]
+
+**2. 네트워킹 기회**
+- [사내 커뮤니티 및 스터디 그룹 제안]
+
+**3. 단계별 실행 계획**
+- [구체적이고 실행 가능한 단계별 계획]
+
+다음 단계로 **사내 교육과정을 추천**해드릴까요?
+
+**작성 지침:**
+- 반드시 마크다운 문법을 사용하여 응답 (## 제목, ### 소제목, **굵은글씨**, - 리스트 등)
+- 인사말 없이 바로 "## 맞춤형 액션 플랜" 제목으로 시작
+- 상담사처럼 친근하고 전문적인 톤으로 작성
+- 250-300단어 내외로 간결하게 작성
+- 구체적이고 실행 가능한 조언 위주
+- 사내 데이터를 적극 활용한 맞춤형 추천
+- **사내 성공 사례 벤치마킹을 필수로 포함**
+- 마지막에 학습 로드맵 설계 제안을 자연스럽게 포함
 """
             
             response = await client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=3000,
+                max_tokens=1000,
                 temperature=0.6
             )
             
             return response.choices[0].message.content.strip()
             
         except Exception as e:
-            print(f"개인화 전략 생성 중 오류: {e}")
-            return ""
+            print(f"AI 액션 플랜 생성 중 오류: {e}")
+            return "액션 플랜을 생성하는 중 문제가 발생했습니다. 다시 시도해주세요."
     
     async def process_deepening_node(self, state: ChatState) -> Dict[str, Any]:
         """
@@ -83,13 +145,28 @@ class PathDeepeningNode:
         user_response = state.get("user_question", "")
         selected_path = state.get("selected_career_path", {})
         user_data = self.graph_builder.get_user_info_from_session(state)
+        collected_info = state.get("collected_user_info", {})
+        merged_user_data = {**user_data, **collected_info}
         
-        # 기존 데이터 검색 노드로 관련 정보 수집
-        state = self.data_retrieval_node.retrieve_additional_data_node(state)
+        # 디버깅: 데이터 확인
+        print(f"🔍 DEBUG - path_deepening user_data from session: {user_data}")
+        print(f"🔍 DEBUG - path_deepening collected_info: {collected_info}")
+        print(f"🔍 DEBUG - path_deepening merged_user_data: {merged_user_data}")
         
-        # AI 기반 개인 맞춤형 전략 생성
-        ai_strategy = await self._generate_personalized_strategy(
-            user_data, selected_path, user_response
+        # 기존 데이터 검색 노드로 사내 경력 데이터 수집
+        # career_positioning에서 이미 검색한 데이터가 있으면 재사용, 없으면 새로 검색
+        existing_career_data = state.get("retrieved_career_data", [])
+        if existing_career_data:
+            print(f"🔍 DEBUG - career_positioning에서 저장된 사내 구성원 데이터 재사용: {len(existing_career_data)}개")
+            retrieved_data = {"career_data": existing_career_data}
+        else:
+            print("🔍 DEBUG - 새로운 사내 구성원 데이터 검색 실행")
+            state = self.data_retrieval_node.retrieve_additional_data_node(state)
+            retrieved_data = state.get("retrieved_data", {})
+        
+        # AI 기반 사내 데이터 활용 액션 플랜 생성
+        ai_response = await self._generate_ai_action_plan(
+            merged_user_data, selected_path, user_response, retrieved_data
         )
         
         # 사용자 응답 컨텍스트 저장
@@ -99,62 +176,12 @@ class PathDeepeningNode:
             "analysis_timestamp": "2025-07-02"
         }
         
-        # 전문적인 실행 전략 및 분석 생성
+        # 응답 구성
         strategy_response = {
-            "message": f"""🎯 **전문적 커리어 분석 및 실행 전략**
-
-{user_data.get('name', '고객')}님의 목표와 현재 상황을 종합 분석한 결과를 바탕으로, **{selected_path.get('name', '선택하신 경로')}** 달성을 위한 체계적인 전략을 제시합니다.
-
-**� 현재 상황 분석 (Gap Analysis)**
-- **보유 역량**: {', '.join(user_data.get('skills', [])[:3])} 등
-- **경력 수준**: {user_data.get('experience', 'N/A')}년차
-- **부족 역량**: [응답 기반 분석 필요]
-- **성장 가능성**: 높음 (기존 경험 활용 가능)
-
-**🗺️ 체계적 실행 로드맵**
-
-**Phase 1: 기반 구축 (1-3개월)**
-- **역량 진단**: 현재 수준 객관적 평가
-- **Quick Win 프로젝트**: 관련 업무에서 작은 성과 창출
-- **네트워크 구축**: 해당 분야 사내 전문가 1-2명과 관계 형성
-- **학습 환경 구축**: 필요 도구/리소스 확보
-
-**Phase 2: 역량 강화 (3-9개월)**
-- **핵심 스킬 개발**: {selected_path.get('focus', '관련 분야')} 전문성 강화
-- **실무 적용**: 현재 업무에 새로운 방법론 적용
-- **멘토링 시작**: 선배 전문가와 정기 멘토링 세션
-- **외부 활동**: 관련 커뮤니티 참여 및 네트워킹
-
-**Phase 3: 성과 창출 (9-18개월)**
-- **프로젝트 리드**: 관련 분야 프로젝트 주도
-- **지식 공유**: 사내 세미나/교육 진행
-- **성과 측정**: 정량적 성과 지표 수집
-- **경력 준비**: 목표 포지션 지원 준비
-
-**🎯 핵심 성공 요인 (Critical Success Factors)**
-1. **지속적 학습**: 주 5-10시간 투자
-2. **실무 적용**: 배운 내용 즉시 업무 적용
-3. **네트워킹**: 월 1-2회 전문가 네트워킹
-4. **성과 기록**: 모든 성과 문서화 및 정량화
-
-**⚠️ 주의사항 및 리스크 관리**
-- **시간 관리**: 현재 업무 품질 유지하며 성장
-- **번아웃 방지**: 단계적 목표 설정으로 지속가능성 확보
-- **조직 내 정치**: 상사 및 동료와의 커뮤니케이션 강화
-
-**📈 성공 지표 (KPI)**
-- 3개월: 관련 업무 참여율 30% 증가
-- 6개월: 해당 분야 사내 전문가 인정
-- 12개월: 관련 프로젝트 성과 창출
-- 18개월: 목표 포지션 지원 자격 획득
-
-**다음 단계로 맞춤형 학습 계획을 수립해드릴까요?**
-구체적인 교육과정, 도서, 프로젝트 등을 포함한 상세 학습 로드맵이 필요하시면 "네, 학습 계획도 받고 싶습니다"라고 답변해주세요.""",
+            "message": ai_response,
             "action_plan": {
-                "phase1": "기반 구축 (1-3개월)",
-                "phase2": "역량 강화 (3-9개월)", 
-                "phase3": "성과 창출 (9-18개월)",
-                "success_factors": ["지속적 학습", "실무 적용", "네트워킹", "성과 기록"]
+                "context": consultation_context,
+                "data_sources": ["career_data", "networking_opportunities"]
             }
         }
         
@@ -166,7 +193,7 @@ class PathDeepeningNode:
             "consultation_stage": "learning_decision",
             "consultation_context": consultation_context,
             "formatted_response": strategy_response,
-            "final_response": strategy_response,  # final_response 추가
+            "final_response": strategy_response,
             "awaiting_user_input": True,
             "next_expected_input": "learning_roadmap_decision",
             "processing_log": state.get("processing_log", []) + ["실행 전략 수립 완료"]

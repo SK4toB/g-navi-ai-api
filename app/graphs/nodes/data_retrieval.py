@@ -88,7 +88,22 @@ class DataRetrievalNode:
             if not career_keywords:
                 career_keywords = [user_question]
             career_query = " ".join(career_keywords[:2])
-            career_cases = self.career_retriever_agent.retrieve(career_query, k=2)
+            
+            # 상태에서 요청된 검색 개수 확인 (기본값: 2)
+            career_search_count = state.get("career_search_count", 2)
+            print(f"🔍 DEBUG - 커리어 검색 요청: k={career_search_count}, query='{career_query}'")
+            career_cases = self.career_retriever_agent.retrieve(career_query, k=career_search_count)
+            print(f"🔍 DEBUG - 커리어 검색 결과: 실제 반환된 개수={len(career_cases)}")
+            
+            # 각 검색 결과의 메타데이터 확인
+            for i, case in enumerate(career_cases):
+                metadata = getattr(case, 'metadata', {})
+                employee_id = metadata.get('employee_id', 'Unknown')
+                print(f"🔍 DEBUG - 결과 {i+1}: Employee {employee_id}")
+            
+            if len(career_cases) < career_search_count:
+                print(f"⚠️ WARNING - 요청한 {career_search_count}개보다 적은 {len(career_cases)}개만 검색됨")
+                print(f"⚠️ WARNING - Vector Store에 저장된 데이터가 부족하거나 검색 쿼리와 유사도가 낮은 것으로 추정")
             
             # 3. 교육과정 검색 (학습 경로)
             education_results = self._search_education_courses(state, intent_analysis)
@@ -103,7 +118,7 @@ class DataRetrievalNode:
             state["news_data"] = news_results
             
             state["processing_log"].append(
-                f"데이터 검색 완료: 커리어 사례 {len(career_cases)}개, "
+                f"데이터 검색 완료 (검색 개수: {career_search_count}): 커리어 사례 {len(career_cases)}개, "
                 f"교육과정 {len(education_results.get('recommended_courses', []))}개, "
                 f"뉴스 데이터 {len(news_results)}개, "
                 f"과거 대화 {len(past_conversations)}개"
@@ -125,12 +140,12 @@ class DataRetrievalNode:
             state["processing_log"] = processing_log
             
             print(f"✅ [3단계] 추가 데이터 검색 완료")
-            print(f"📊 커리어 사례: {len(career_cases)}개, 교육과정: {len(education_results.get('recommended_courses', []))}개, 뉴스: {len(news_results)}개, 과거 대화: {len(past_conversations)}개")
+            print(f"📊 커리어 사례: {len(career_cases)}개 (요청 개수: {career_search_count}), 교육과정: {len(education_results.get('recommended_courses', []))}개, 뉴스: {len(news_results)}개, 과거 대화: {len(past_conversations)}개")
             print(f"🔍 검색 쿼리: {career_query[:50]}...")
             print(f"⏱️  [3단계] 처리 시간: {time_display}")
             
             self.logger.info(
-                f"커리어 사례 {len(career_cases)}개, "
+                f"커리어 사례 {len(career_cases)}개 (요청 개수: {career_search_count}), "
                 f"교육과정 {len(education_results.get('recommended_courses', []))}개, "
                 f"뉴스 데이터 {len(news_results)}개, "
                 f"과거 대화 {len(past_conversations)}개 검색 완료"
@@ -204,14 +219,19 @@ class DataRetrievalNode:
         #     return {"recommended_courses": [], "course_analysis": {}, "learning_path": []}
         
         try:
+            # 교육과정 검색 개수 설정 (기본값 15, state에서 지정 가능)
+            education_search_count = state.get("education_search_count", 15)
+            
             # CareerEnsembleRetrieverAgent의 교육과정 검색 활용
             education_results = self.career_retriever_agent.search_education_courses(
                 query=user_question,
                 user_profile=user_data,
-                intent_analysis=intent_analysis
+                intent_analysis=intent_analysis,
+                max_results=education_search_count
             )
             
-            self.logger.info(f"교육과정 검색 완료: {len(education_results.get('recommended_courses', []))}개")
+            self.logger.info(f"교육과정 검색 완료: {len(education_results.get('recommended_courses', []))}개 (요청 개수: {education_search_count})")
+            print(f"🔍 DEBUG - 교육과정 검색 완료: {len(education_results.get('recommended_courses', []))}개 (요청 개수: {education_search_count})")
             return education_results
             
         except Exception as e:
