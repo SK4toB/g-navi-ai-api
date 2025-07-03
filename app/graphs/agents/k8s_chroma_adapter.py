@@ -12,7 +12,7 @@ class K8sChromaRetriever(BaseRetriever):
     K8s 환경에서 외부 ChromaDB v2 Multi-tenant API를 사용하는 통합 리트리버
     (컬렉션 관리, 임베딩, 검색 등 모든 기능 포함)
     """
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config = ConfigDict(arbitrary_types_allowed=True, extra='allow')
 
     collection_name: str = Field(description="컬렉션 이름")
     embeddings: Embeddings = Field(description="임베딩 인스턴스")
@@ -34,17 +34,20 @@ class K8sChromaRetriever(BaseRetriever):
     )
 
     def __init__(self, collection_name: str, embeddings: Embeddings, k: int = 3, **kwargs):
-        # 먼저 Pydantic 초기화
+        # pod_collection_name 계산 (collection_mapping 사용)
+        pod_collection_name = {
+            "career_history": "gnavi4_career_history_prod",
+            "education_courses": "gnavi4_education_prod"
+        }.get(collection_name, collection_name)
+        
+        # 먼저 Pydantic 초기화 (모든 필드를 명시적으로 전달)
         super().__init__(
             collection_name=collection_name,
             embeddings=embeddings,
             k=k,
+            pod_collection_name=pod_collection_name,
             **kwargs
         )
-        
-        # 계산된 값들 설정
-        self.pod_collection_name = self.collection_mapping.get(collection_name, collection_name)
-        self.collections_url = f"{self.base_url}/tenants/{self.tenant}/databases/{self.database}/collections"
         
         # 컬렉션 ID 조회
         self._get_collection_id()
