@@ -34,7 +34,6 @@ class LearningRoadmapNode:
             
             client = AsyncOpenAI(api_key=api_key)
             
-            skills_str = ", ".join(merged_user_data.get('skills', ['정보 없음']))
             path_name = selected_path.get('name', '선택된 경로')
             
             # 교육과정 데이터 추출
@@ -83,7 +82,7 @@ class LearningRoadmapNode:
 **사용자 프로필:**
 - 이름: {merged_user_data.get('name', '고객')}
 - 경력: {merged_user_data.get('experience', '정보 없음')}
-- 보유 기술: {skills_str}
+- 보유 기술: {', '.join(merged_user_data.get('skills', ['정보 없음'])) if merged_user_data.get('skills') and merged_user_data.get('skills') != ['정보 없음'] else '정보 없음'}
 - 도메인: {merged_user_data.get('domain', '정보 없음')}
 - 목표 경로: {path_name}
 - 사용자 목표: {user_goals[:200]}
@@ -119,7 +118,7 @@ class LearningRoadmapNode:
 **4-6개월 (실무 적용)**
 - [구체적인 학습 활동과 목표]
 
-### 다음 단계
+**다음 단계: 상담 마무리**
 
 이제 오늘 상담의 핵심 내용을 정리해드리겠습니다. 어떤 부분이 가장 도움이 되셨나요?
 

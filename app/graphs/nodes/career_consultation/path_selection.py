@@ -164,10 +164,7 @@ class PathSelectionNode:
         
         # path_selection에서 수집된 정보를 path_deepening에서 활용할 수 있도록 저장
         path_selection_info = {
-            "selected_path_name": selected_path.get("name", "선택된 경로"),
-            "selected_path_id": selected_path.get("id", ""),
-            "selection_timestamp": "2025-07-03",
-            "user_input_for_deepening": user_question  # 다음 단계에서 분석할 사용자 응답
+            "user_input_for_deepening": user_question  # 다음 단계에서 분석할 사용자 응답 (유일하게 실제 사용되는 정보)
         }
         
         # HTML 로그 저장
