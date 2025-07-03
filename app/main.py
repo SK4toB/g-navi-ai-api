@@ -32,6 +32,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.api.v1.api import api_router
 from app.config.settings import settings
+from dotenv import load_dotenv
+import os
+
+# 환경변수 로드 (최상단에 위치)
+load_dotenv()
+
 from app.core.dependencies import get_service_container
 
 
