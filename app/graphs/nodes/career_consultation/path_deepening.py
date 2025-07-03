@@ -21,7 +21,7 @@ class PathDeepeningNode:
         # 기존 데이터 검색 노드 재활용
         self.data_retrieval_node = graph_builder.data_retrieval_node
     
-    async def _generate_ai_action_plan(self, merged_user_data: dict, selected_path: dict, user_goals: str, retrieved_data: dict) -> str:
+    async def _generate_ai_action_plan(self, merged_user_data: dict, selected_path: dict, user_goals: str, retrieved_data: dict, path_selection_context: dict = None) -> str:
         """AI 기반 사내 데이터를 활용한 액션 플랜 및 멘토 추천 생성"""
         try:
             from openai import AsyncOpenAI
@@ -32,12 +32,25 @@ class PathDeepeningNode:
             
             client = AsyncOpenAI(api_key=api_key)
             
-            skills_str = ", ".join(merged_user_data.get('skills', ['정보 없음']))
+            # 회사 비전 컨텍스트 가져오기
+            company_vision_context = ""
+            try:
+                # data_retrieval_node를 통해 retriever 인스턴스에 접근
+                if hasattr(self.data_retrieval_node, 'career_ensemble_retriever'):
+                    company_vision_context = self.data_retrieval_node.career_ensemble_retriever.get_company_vision_context()
+                    print(f"🔍 DEBUG - path_deepening에서 회사 비전 컨텍스트 가져오기 성공: {len(company_vision_context)}자")
+                else:
+                    print("⚠️ WARNING - path_deepening에서 career_ensemble_retriever에 접근할 수 없음")
+            except Exception as e:
+                print(f"❌ WARNING - path_deepening에서 회사 비전 컨텍스트 가져오기 실패: {e}")
+            
             path_name = selected_path.get('name', '선택된 경로')
             
             # 디버깅: AI 메서드에 전달된 데이터 확인
             print(f"🔍 DEBUG - path_deepening AI 메서드에 전달된 merged_user_data: {merged_user_data}")
+            print(f"🔍 DEBUG - 상담 대상자 정보: 이름={merged_user_data.get('name', 'None')}, 경력={merged_user_data.get('experience', 'None')}, 스킬={merged_user_data.get('skills', 'None')}, 도메인={merged_user_data.get('domain', 'None')}")
             print(f"🔍 DEBUG - path_deepening user_goals: {user_goals}")
+            print(f"🔍 DEBUG - path_selection_context: {path_selection_context}")
             
             # retrieved_data에서 사내 경력 데이터 추출
             career_data = retrieved_data.get('career_data', [])
@@ -51,21 +64,21 @@ class PathDeepeningNode:
             career_context = ""
             if career_data:
                 print(f"✅ SUCCESS - {len(career_data)}개의 사내 구성원 데이터 활용 가능")
-                # 사내 구성원 데이터를 익명화하여 활용
+                # 데이터 구조에 상관없이 간단히 처리
                 career_profiles = []
                 for i, profile in enumerate(career_data[:10]):  # 최대 10개만 상세 분석
                     # 개인정보 보호를 위해 익명화 처리
                     anonymous_id = f'구성원{chr(65+i)}'  # 구성원A, 구성원B, ...
-                    experience = profile.get('experience', '정보없음')
-                    skills = profile.get('skills', [])
-                    domain = profile.get('domain', '정보없음')
-                    career_path = profile.get('career_path', '정보없음')
                     
-                    profile_info = f"- {anonymous_id}: {experience}, 기술: {', '.join(skills[:3])}, 도메인: {domain}, 경로: {career_path}"
+                    # 실제 데이터 구조 확인 (디버깅용)
+                    print(f"🔍 DEBUG - {anonymous_id} 데이터 구조: {type(profile)}")
+                    if isinstance(profile, dict):
+                        profile_keys = list(profile.keys())
+                        print(f"🔍 DEBUG - {anonymous_id} 키들: {profile_keys[:5]}...")  # 처음 5개 키만 출력
+                    
+                    # 구조에 상관없이 기본 정보만 생성
+                    profile_info = f"- {anonymous_id}: 사내 구성원 데이터 확인됨"
                     career_profiles.append(profile_info)
-                    
-                    # 각 구성원 데이터 디버깅
-                    print(f"🔍 DEBUG - {anonymous_id}: experience={experience}, skills={skills[:3]}, domain={domain}")
                 
                 career_context = f"""
 **사내 구성원 성공 사례 ({len(career_data)}명 분석, 익명화 처리):**
@@ -73,7 +86,7 @@ class PathDeepeningNode:
 
 **데이터 분석 결과:**
 - 총 {len(career_data)}명의 사내 구성원 데이터 분석 (개인정보 익명화)
-- career_positioning 단계에서 검색된 데이터 활용
+- career_positioning 단계에서 검색된 실제 데이터 활용
 - 유사 경로 성공 사례 및 성장 패턴 파악 가능
 """
                 print(f"🔍 DEBUG - 생성된 career_context 길이: {len(career_context)}")
@@ -83,79 +96,114 @@ class PathDeepeningNode:
                 print("❌ WARNING - career_data가 비어있어 기본 메시지 사용")
                 print("🔍 DEBUG - existing_career_data → retrieved_data → career_data 전달 과정에서 문제 발생 가능성")
             
+            # path_selection_context 정보를 프롬프트에 추가
+            selection_context_str = ""
+            if path_selection_context:
+                selection_context_str = f"""
+**경로 선택 컨텍스트:**
+- 선택한 경로: {path_selection_context.get('selected_path_name', '정보 없음')}
+- 선택 이유: {path_selection_context.get('path_selection_reason', '정보 없음')}
+- 현재 목표/동기: {path_selection_context.get('current_goals', '정보 없음')[:150]}"""
+            
             prompt = f"""
-당신은 G.Navi의 전문 커리어 상담사입니다. 현재 상담이 진행 중이며, 사내 구성원 데이터를 기반으로 실무적인 액션 플랜을 수립해주세요.
+당신은 SKAX의 시니어 커리어 멘토입니다. 동료 구성원인 {merged_user_data.get('name', '고객')}님의 커리어 성장을 위한 실무적인 조언과 구체적인 액션 플랜을 제공해주세요.
 
-**고객 정보:**
-- 이름: {merged_user_data.get('name', '고객')}
-- 경력: {merged_user_data.get('experience', '정보 없음')}
-- 보유 기술: {skills_str}
-- 도메인: {merged_user_data.get('domain', '정보 없음')}
-- 선택한 경로: {path_name}
-- 목표 및 동기: {user_goals[:200]}
+{company_vision_context}
 
-**사내 데이터:**
+**상담 대상자 정보:**
+- 이름: {merged_user_data.get('name', '고객')}님
+- 현재 경력: {merged_user_data.get('experience', '정보 없음')}
+- 보유 스킬: {merged_user_data.get('skills', '정보 없음')}
+- 담당 도메인: {merged_user_data.get('domain', '정보 없음')}
+- 희망 성장 방향: {path_name}
+- 고민과 목표: {user_goals[:200]}
+
+{selection_context_str}
+
+**사내 동료들의 성장 사례:**
 {career_context}
 
-**요청사항:**
-1. 사내 경력 데이터를 기반으로 한 장기 액션 플랜 수립
-2. **사내 구성원 벤치마킹**: 위의 익명화된 사내 데이터에서 {path_name} 경로와 유사한 구성원들의 성장 사례를 분석하고 벤치마킹 
-   - 반드시 위에 제시된 구성원A, 구성원B 등의 실제 데이터를 구체적으로 활용하여 분석
-   - 각 구성원의 경험, 기술, 도메인, 경로를 바탕으로 성장 패턴 도출
-   - 선택한 경로와 가장 유사한 구성원들을 식별하고 그들의 성공 요인 분석
-3. 데이터 기반 멘토/롤모델 추천 (익명화된 프로필을 활용한 특성 기반 추천)
-4. 네트워킹 기회 제안 (사내 커뮤니티, 스터디 그룹 등)
-5. 학습 로드맵 설계 필요성에 대한 유도 멘트
+**멘토링 가이드라인:**
+1. **실제 동료 사례 기반 조언**: 위에 언급된 사내 구성원들의 실제 성장 경험을 바탕으로 구체적인 성장 경로 제시
+2. **SKAX 내부 리소스 활용**: 사내에서 실제로 활용 가능한 멘토링, 스터디, 프로젝트 기회 안내
+3. **회사 비전 연계**: 회사의 최신 기술 트렌드 및 전략 방향과 개인 성장을 연결한 조언 제공
+4. **단계별 실행 계획**: 다음 3-6개월 내 실천 가능한 구체적인 액션 아이템 제공
+5. **사내 네트워킹**: 도움이 될 수 있는 사내 커뮤니티나 팀 소개
 
-**응답 형식 (반드시 마크다운 문법을 사용하여 작성해주세요):**
+**멘토링 응답 형식:**
 
-## 맞춤형 액션 플랜
+## {merged_user_data.get('name', '고객')}님을 위한 성장 로드맵
 
-{merged_user_data.get('name', '고객')}님이 설정하신 목표를 달성하기 위한 구체적인 실행 계획을 제안드립니다.
+안녕하세요! {merged_user_data.get('name', '고객')}님의 **{path_name}** 방향 성장을 함께 계획해보겠습니다.
 
-### 1. 사내 성공 사례 벤치마킹
+### 사내 선배들의 성공 사례
 
-**유사 성장 경로 분석:**
-- 반드시 위에 제시된 실제 사내 구성원 데이터(구성원A, 구성원B 등)를 활용하여 구체적으로 분석
-- {path_name} 경로와 가장 유사한 구성원들을 식별하고, 그들의 경험, 기술, 도메인을 바탕으로 성장 패턴을 구체적으로 제시
-- 예: "구성원A는 3년차 개발자에서 {{}}, 구성원B는 {{}} 기술을 활용하여 {{}} 경로로 성장" 형태로 실제 데이터 활용
+**{path_name} 로드맵 관련 동료들의 실제 성장 스토리:**
 
-### 2. 추천 멘토/롤모델
+**데이터 기반 성장 사례 분석:**
+{f"- **{merged_user_data.get('name', '고객')}님**과 유사한 배경을 가진 사내 선배 {len(career_data)}명의 실제 데이터를 분석했습니다" if career_data else "- 유사한 경험을 가진 동료들의 실제 데이터를 분석해보면"}
+- 구성원A: [실제 데이터를 바탕으로 한 구체적인 성장 스토리와 현재 경로 선택 배경]
+- 구성원B: [다른 관점의 성장 경험과 **{merged_user_data.get('name', '고객')}님**과의 공통점]
+- 구성원C: [유사한 기술 스택/도메인에서 성공한 사례와 핵심 전략]
 
-- 위에 제시된 실제 구성원 데이터에서 가장 적합한 멘토 유형을 구체적으로 추천 (예: "구성원C와 같은 {{}} 배경의 멘토")
+**{merged_user_data.get('name', '고객')}님과의 데이터 일치점:**
+- **경력 수준**: [고객의 현재 경력과 일치하는 선배들의 당시 상황]
+- **기술 스택**: [고객의 보유 기술과 유사한 선배들의 시작점]
+- **도메인 경험**: [고객의 도메인과 겹치는 선배들의 성장 배경]
+- **성장 동기**: [고객의 목표와 일치하는 선배들의 당시 목표]
 
-### 3. SKAX 사내 네트워킹 기회
+**신뢰할 수 있는 성장 패턴:**
+- **핵심 성공 요인**: [실제 데이터에서 발견되는 공통적인 성장 전략]
+- **단계별 성장 과정**: [데이터로 검증된 1년차→3년차→5년차 성장 경로]
+- **성공 지표**: [선배들이 실제로 달성한 구체적인 성과 지표]
 
-**전문 커뮤니티:**
-- **AI/Tech Innovation Lab**: 매주 목요일 17:00-18:00, 판교 본사 15층 Innovation Hub
-- **데이터 사이언스 스터디**: 격주 화요일 19:00-21:00, 온라인/오프라인 병행
-- **클라우드 아키텍처 포럼**: 매월 첫째주 금요일 14:00-16:00, 본사 컨퍼런스룸
+**{merged_user_data.get('name', '고객')}님을 위한 맞춤형 벤치마킹:**
+- [고객의 현재 데이터와 가장 일치하는 선배 사례 기반 구체적인 성장 방향]
+- [데이터 분석 결과 도출된 **{merged_user_data.get('name', '고객')}님**만의 최적 성장 전략]
 
-**성장 네트워크:**
-- **SKX 멘토링 프로그램**: 분기별 매칭, HR팀 주관 (내부 신청 시스템 활용)
-- **Cross-Function 협업 TF**: 다양한 부서 간 프로젝트 참여 기회
-- **리더십 워크샵**: 매월 마지막주 토요일 09:00-16:00, 연수원
+*🌟 이 추천 방향성은 개인의 경험 데이터와 함께 SKAX의 최신 기술 트렌드 및 비전 방향성을 종합 분석하여 제시됩니다.*
 
-**실무 네트워킹:**
-- **점심시간 Tech Talk**: 매주 수요일 12:30-13:30, 카페테리아 세미나실
-- **사내 해커톤**: 분기별 개최 (팀 빌딩 및 아이디어 공유)
-- **업무 역량 강화 모임**: 팀 리드급 이상 대상 월간 모임
+### 추천 멘토/선배
 
-### 4. 단계별 실행 계획
+**실제 구성원 데이터 기반 멘토 추천:**
 
-- [위의 벤치마킹 결과와 사내 네트워킹 기회를 바탕으로 한 구체적이고 실행 가능한 3-6개월 단계별 계획]
+**멘토 A (추천도: ★★★★★)**
+- **배경**: [**{merged_user_data.get('name', '고객')}님**과 유사한 경력/기술 스택을 가진 선배의 구체적 프로필]
+- **성장 경험**: [해당 멘토가 실제로 겪은 **{path_name}** 관련 성장 과정과 성과]
+- **추천 이유**: [**{merged_user_data.get('name', '고객')}님**의 현재 상황과 목표에 왜 이 멘토가 최적인지 구체적 설명]
+- **멘토링 가능 영역**: [실제 도움받을 수 있는 구체적 분야들]
 
-다음 단계로 **SKAX 사내 교육과정을 추천**해드릴까요?
+**멘토 B (추천도: ★★★★☆)**  
+- **배경**: [다른 관점에서 **{path_name}** 경로를 성공적으로 걸어온 선배의 프로필]
+- **성장 경험**: [해당 멘토의 독특한 성장 스토리와 핵심 인사이트]
+- **추천 이유**: [**{merged_user_data.get('name', '고객')}님**이 놓칠 수 있는 부분을 보완해줄 수 있는 이유]
+- **멘토링 가능 영역**: [이 멘토만의 특별한 조언 가능 분야]
 
-**작성 지침:**
-- 반드시 마크다운 문법을 사용하여 응답 (## 제목, ### 소제목, **굵은글씨**, - 리스트 등)
-- 인사말 없이 바로 "## 맞춤형 액션 플랜" 제목으로 시작
-- 상담사처럼 친근하고 전문적인 톤으로 작성
-- 250-300단어 내외로 간결하게 작성
-- 구체적이고 실행 가능한 조언 위주
-- 사내 데이터를 적극 활용한 맞춤형 추천 (단, 개인정보는 익명화하여 활용)
-- **사내 성공 사례 벤치마킹을 필수로 포함**: 제시된 실제 구성원 데이터를 반드시 활용하여 구체적인 분석 제공
-- 마지막에 학습 로드맵 설계 제안을 자연스럽게 포함
+**멘토링 신청 및 연결 방법:**
+- **사내 멘토링 프로그램**: HR팀 공식 채널 통해 신청 (월 1회 매칭)
+- **비공식 멘토링**: 사내 메신저나 이메일을 통한 개별 컨택
+- **그룹 멘토링**: 유사한 목표를 가진 동료들과 함께하는 그룹 세션 참여
+
+### 성장 전략 종합
+
+따라서, **{merged_user_data.get('name', '고객')}님**은 **{path_name}** 분야를 조금 더 학습하시는 것을 추천드립니다.
+
+---
+
+**다음 스텝: 체계적인 학습 로드맵 설계**
+위에서 제시한 성장 전략과 멘토링 계획을 바탕으로, 더욱 구체적이고 실행 가능한 학습 로드맵을 함께 설계해보시겠어요?
+
+**💡 학습 로드맵을 원하시면 "네, 학습 로드맵을 설계해주세요"라고 답변해주세요!**
+
+---
+
+**작성 원칙:**
+- 동료에게 조언하는 따뜻하고 실무적인 톤
+- 실제 사내에서 활용 가능한 리소스와 기회 중심
+- 구체적이고 실행 가능한 단기/중기 계획
+- 개인정보는 익명화하되 실제 사례의 진정성 유지
+- 회사 비전 정보가 제공된 경우, 해당 가치와 전략 방향에 부합하는 멘토링과 액션 플랜 제공
+- 200-250단어로 간결하면서도 실용적으로 작성
 """
             
             response = await client.chat.completions.create(
@@ -165,7 +213,9 @@ class PathDeepeningNode:
                 temperature=0.6
             )
             
-            return response.choices[0].message.content.strip()
+            ai_content = response.choices[0].message.content.strip()
+            
+            return ai_content
             
         except Exception as e:
             print(f"AI 액션 플랜 생성 중 오류: {e}")
@@ -177,44 +227,112 @@ class PathDeepeningNode:
         """
         print("🎯 경로 심화 논의 시작...")
         
+        # State 전달 트레이싱 확인 (디버깅)
+        print(f"🔍 DEBUG - path_deepening에서 받은 state 트레이싱:")
+        print(f"🔍 DEBUG - state_trace: {state.get('state_trace', 'None')}")
+        print(f"🔍 DEBUG - career_positioning_timestamp: {state.get('career_positioning_timestamp', 'None')}")
+        print(f"🔍 DEBUG - consultation_stage: {state.get('consultation_stage', 'None')}")
+        print(f"🔍 DEBUG - awaiting_user_input: {state.get('awaiting_user_input', 'None')}")
+        
         user_response = state.get("user_question", "")
         selected_path = state.get("selected_career_path", {})
         user_data = self.graph_builder.get_user_info_from_session(state)
         collected_info = state.get("collected_user_info", {})
         merged_user_data = {**user_data, **collected_info}
         
+        # path_selection 단계에서의 사용자 선택 정보 추출
+        path_selection_info = state.get("path_selection_info", {})
+        path_selection_context = {
+            "selected_path_name": selected_path.get("name", "선택된 경로"),
+            "selected_path_id": selected_path.get("id", ""),
+            "path_selection_reason": "",  # 사용자가 해당 경로를 선택한 이유 추출
+            "current_goals": user_response,  # 현재 단계에서의 목표/동기
+            "previous_user_input": path_selection_info.get("user_input_for_deepening", "")  # path_selection에서의 사용자 입력
+        }
+        
+        # 사용자 응답에서 경로 선택 이유 추출 (키워드 기반)
+        selection_keywords = {
+            "관심": "해당 분야에 관심",
+            "경험": "관련 경험 보유",
+            "성장": "성장 가능성",
+            "기회": "기회 확대",
+            "전문성": "전문성 개발",
+            "도전": "새로운 도전",
+            "적성": "적성에 맞음",
+            "비전": "비전 일치",
+            "시장": "시장 전망",
+            "미래": "미래 가능성"
+        }
+        
+        # 현재 응답과 이전 응답 모두에서 이유 추출
+        combined_response = f"{user_response} {path_selection_context['previous_user_input']}"
+        
+        for keyword, description in selection_keywords.items():
+            if keyword in combined_response:
+                path_selection_context["path_selection_reason"] += f"{description}, "
+        
+        # 이유를 찾지 못한 경우 전체 응답을 이유로 활용
+        if not path_selection_context["path_selection_reason"]:
+            path_selection_context["path_selection_reason"] = user_response[:100] + "..." if len(user_response) > 100 else user_response
+        else:
+            path_selection_context["path_selection_reason"] = path_selection_context["path_selection_reason"].rstrip(", ")
+        
         # 디버깅: 데이터 확인
         print(f"🔍 DEBUG - path_deepening user_data from session: {user_data}")
         print(f"🔍 DEBUG - path_deepening collected_info: {collected_info}")
         print(f"🔍 DEBUG - path_deepening merged_user_data: {merged_user_data}")
+        print(f"🔍 DEBUG - path_selection_context: {path_selection_context}")
         
-        # 기존 데이터 검색 노드로 사내 경력 데이터 수집
-        # career_positioning에서 이미 검색한 데이터가 있으면 재사용, 없으면 새로 검색
+        # career_positioning에서 검색된 사내 경력 데이터 활용
+        # path_selection과 path_deepening 사이에는 데이터 손실이 없어야 함
+        
+        # 먼저 state의 모든 career 관련 키들을 확인
+        career_related_keys = [key for key in state.keys() if 'career' in key.lower()]
+        print(f"🔍 DEBUG - state의 career 관련 키들: {career_related_keys}")
+        
+        # 전체 state 키 확인 (디버깅용)
+        all_state_keys = list(state.keys())
+        print(f"🔍 DEBUG - 전체 state 키 개수: {len(all_state_keys)}")
+        print(f"🔍 DEBUG - 모든 state 키들: {all_state_keys}")
+        
+        # retrieved_career_data 확인
         existing_career_data = state.get("retrieved_career_data", [])
-        print(f"🔍 DEBUG - state에서 가져온 existing_career_data: {len(existing_career_data)}개")
-        print(f"🔍 DEBUG - existing_career_data 샘플: {existing_career_data[:1] if existing_career_data else 'None'}")
+        print(f"🔍 DEBUG - state에서 가져온 retrieved_career_data: {len(existing_career_data)}개")
+        print(f"🔍 DEBUG - retrieved_career_data 타입: {type(existing_career_data)}")
         
         if existing_career_data:
-            print(f"🔍 DEBUG - career_positioning에서 저장된 사내 구성원 데이터 재사용: {len(existing_career_data)}개")
+            print(f"🔍 DEBUG - 첫 번째 데이터 샘플: {existing_career_data[0] if existing_career_data else 'None'}")
+            print(f"🔍 DEBUG - 모든 employee_id: {[item.get('employee_id', 'N/A') for item in existing_career_data[:5]]}")
+            
+            # 데이터 구조 검증
+            if isinstance(existing_career_data[0], dict):
+                sample_keys = list(existing_career_data[0].keys())
+                print(f"🔍 DEBUG - 데이터 구조 검증 OK - 샘플 키들: {sample_keys}")
+            else:
+                print(f"❌ WARNING - 데이터 구조 이상: 첫 번째 항목이 dict가 아님 - {type(existing_career_data[0])}")
+        else:
+            print("❌ WARNING - retrieved_career_data가 비어있음!")
+        
+        if existing_career_data and len(existing_career_data) > 0:
+            print(f"✅ SUCCESS - career_positioning에서 저장된 사내 구성원 데이터 재사용: {len(existing_career_data)}개")
             retrieved_data = {"career_data": existing_career_data}
             print(f"🔍 DEBUG - retrieved_data 구성 완료: career_data 키에 {len(retrieved_data['career_data'])}개 데이터 저장")
         else:
-            print("🔍 DEBUG - 새로운 사내 구성원 데이터 검색 실행")
-            state = self.data_retrieval_node.retrieve_additional_data_node(state)
-            retrieved_data = state.get("retrieved_data", {})
-            print(f"🔍 DEBUG - 새로 검색된 retrieved_data: {list(retrieved_data.keys()) if retrieved_data else 'None'}")
+            print("❌ WARNING - retrieved_career_data가 비어있거나 없음. 빈 데이터로 처리")
+            retrieved_data = {"career_data": []}
         
-        print(f"🔍 DEBUG - AI 호출 전 retrieved_data 확인: career_data={len(retrieved_data.get('career_data', []))}개")
+        print(f"🔍 DEBUG - AI 호출 전 최종 retrieved_data 확인: career_data={len(retrieved_data.get('career_data', []))}개")
         
-        # AI 기반 사내 데이터 활용 액션 플랜 생성
+        # AI 기반 사내 데이터 활용 액션 플랜 생성 (path_selection 컨텍스트 포함)
         ai_response = await self._generate_ai_action_plan(
-            merged_user_data, selected_path, user_response, retrieved_data
+            merged_user_data, selected_path, user_response, retrieved_data, path_selection_context
         )
         
-        # 사용자 응답 컨텍스트 저장
+        # 사용자 응답 컨텍스트 저장 (path_selection 정보 포함)
         consultation_context = {
             "user_goals": user_response,
             "selected_path": selected_path,
+            "path_selection_context": path_selection_context,
             "analysis_timestamp": "2025-07-02"
         }
         

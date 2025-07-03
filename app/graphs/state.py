@@ -90,3 +90,11 @@ class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허�
     missing_info_fields: List[str]                  # 부족한 정보 필드들 (experience, skills, domain)
     collected_user_info: Dict[str, Any]             # 사용자로부터 수집한 추가 정보
     info_collection_stage: str                      # 정보 수집 단계 (experience, skills, domain, complete)
+    
+    # === 커리어 데이터 관련 ===
+    retrieved_career_data: List[Dict[str, Any]]     # career_positioning에서 검색된 사내 구성원 데이터 (15명까지)
+    path_selection_info: Dict[str, Any]             # path_selection 단계에서 수집된 정보
+    
+    # === 상태 추적용 디버깅 필드 ===
+    state_trace: List[str]                          # state 전달 추적용
+    career_positioning_timestamp: float             # career_positioning 완료 시간

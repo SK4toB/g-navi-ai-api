@@ -202,7 +202,7 @@ class ChatGraphBuilder:
         # 커리어 상담 키워드 확인 (더 구체적으로 조정)
         career_consultation_phrases = [
             # 직접적인 상담 요청
-            "커리어 상담", "진로 상담", "경력 상담", "career 상담",
+            "커리어", "career", "커리어 상담", "진로 상담", "경력 상담", "career 상담",
             "커리어 고민", "진로 고민", "경력 고민", "career 고민",
             "커리어 조언", "진로 조언", "경력 조언", "career 조언",
             
@@ -269,6 +269,13 @@ class ChatGraphBuilder:
         """
         awaiting_input = state.get("awaiting_user_input", False)
         consultation_stage = state.get("consultation_stage", "")
+        
+        # State 전달 디버깅
+        print(f"🔍 DEBUG - _should_continue_or_wait에서 state 확인:")
+        print(f"🔍 DEBUG - consultation_stage: {consultation_stage}")
+        print(f"🔍 DEBUG - awaiting_user_input: {awaiting_input}")
+        print(f"🔍 DEBUG - state_trace: {state.get('state_trace', 'None')}")
+        print(f"🔍 DEBUG - retrieved_career_data: {len(state.get('retrieved_career_data', []))}개")
         
         if awaiting_input:
             print(f"⏸️ 사용자 입력 대기 중: {consultation_stage}")

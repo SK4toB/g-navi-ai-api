@@ -137,24 +137,30 @@ class UserInfoCollectionNode:
     
     def _extract_nested_fields(self, user_data: dict) -> dict:
         """간단한 중첩 필드 추출 (projects의 첫 번째 항목에서만)"""
-        if 'projects' not in user_data or not user_data['projects']:
+        if 'projects' not in user_data or not user_data['projects'] or len(user_data['projects']) == 0:
+            print(f"🔍 projects가 없거나 비어있음: {user_data.get('projects', 'None')}")
             return user_data
             
         # 첫 번째 프로젝트에서만 정보 추출
-        project = user_data['projects'][0] if isinstance(user_data['projects'], list) else user_data['projects']
-        
-        if not isinstance(project, dict):
-            return user_data
+        try:
+            project = user_data['projects'][0] if isinstance(user_data['projects'], list) else user_data['projects']
             
-        # skills 추출 (최상위에 없을 때만)
-        if not user_data.get('skills') and 'skills' in project:
-            user_data['skills'] = project['skills']
-            print(f"🔍 projects에서 skills 추출: {project['skills']}")
-            
-        # domain 추출 (최상위에 없을 때만)  
-        if not user_data.get('domain') and 'domain' in project:
-            user_data['domain'] = project['domain']
-            print(f"🔍 projects에서 domain 추출: {project['domain']}")
+            if not isinstance(project, dict):
+                print(f"🔍 첫 번째 project가 dict가 아님: {type(project)}")
+                return user_data
+                
+            # skills 추출 (최상위에 없을 때만)
+            if not user_data.get('skills') and 'skills' in project:
+                user_data['skills'] = project['skills']
+                print(f"🔍 projects에서 skills 추출: {project['skills']}")
+                
+            # domain 추출 (최상위에 없을 때만)  
+            if not user_data.get('domain') and 'domain' in project:
+                user_data['domain'] = project['domain']
+                print(f"🔍 projects에서 domain 추출: {project['domain']}")
+                
+        except (IndexError, KeyError, TypeError) as e:
+            print(f"🔍 projects 필드 추출 중 오류 (무시하고 진행): {e}")
             
         return user_data
     
@@ -201,7 +207,7 @@ class UserInfoCollectionNode:
 
             'domain': f"""🎯 마지막으로 **업무 도메인 전문성** 파악이 필요합니다.
 
-**🏢 현재 담당 업무 분야**를 알려주세요:
+**🏢 현재 담당하시는 업무 분야나 도메인**을 알려주세요:
 
 **도메인 분류 예시**
 - **비즈니스 도메인**: 전자상거래, 금융/핀테크, 게임, 교육, 헬스케어
@@ -243,7 +249,7 @@ class UserInfoCollectionNode:
 
 *보유 스킬은 강점 분석과 성장 방향 설정의 핵심 지표입니다.*""",
 
-            'domain': f"""**🏢 {user_name}님의 현재 담당 업무 분야**를 알려주세요.
+            'domain': f"""**🏢 {user_name}님의 현재 담당하시는 업무 분야나 도메인**을 알려주세요.
 
 **입력 예시**: "전자상거래", "핀테크 앱 개발", "게임 기획", "교육 서비스"
 
@@ -368,14 +374,29 @@ class UserInfoCollectionNode:
         else:
             # 아직 부족한 정보가 있으면 계속 수집
             print(f"📋 추가 정보 수집 필요: {missing_fields}")
+            
+            # 다음 정보 요청 메시지 생성
+            next_field = missing_fields[0]
+            user_name = user_data.get('name', '고객')
+            next_request_message = self._get_simple_info_request_message(next_field, user_name)
+            response_data = {"message": next_request_message}
+            
+            # HTML 로그 저장
+            save_career_response_to_html("user_info_collection", response_data, state.get("session_id", "unknown"))
+            
             return {
                 **state,
                 "user_data": user_data,  # 업데이트된 사용자 데이터
                 "collected_user_info": collected_info,
                 "consultation_stage": "collecting_info",
                 "missing_info_fields": missing_fields,
-                "awaiting_user_input": False,
+                "info_collection_stage": next_field,  # 다음 필드로 업데이트
+                "formatted_response": response_data,
+                "final_response": response_data,
+                "awaiting_user_input": True,
+                "next_expected_input": f"user_{next_field}",
                 "processing_log": state.get("processing_log", []) + [
-                    f"{current_field} 정보 수집 완료: {user_response[:20]}..."
+                    f"{current_field} 정보 수집 완료: {user_response[:20]}...",
+                    f"{next_field} 정보 요청"
                 ]
             }

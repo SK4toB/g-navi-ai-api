@@ -44,6 +44,18 @@ class CareerPositioningNode:
             
             client = AsyncOpenAI(api_key=api_key)
             
+            # 회사 비전 컨텍스트 가져오기
+            company_vision_context = ""
+            try:
+                # data_retrieval_node를 통해 retriever 인스턴스에 접근
+                if hasattr(self.data_retrieval_node, 'career_ensemble_retriever'):
+                    company_vision_context = self.data_retrieval_node.career_ensemble_retriever.get_company_vision_context()
+                    print(f"🔍 DEBUG - 회사 비전 컨텍스트 가져오기 성공: {len(company_vision_context)}자")
+                else:
+                    print("⚠️ WARNING - career_ensemble_retriever에 접근할 수 없음")
+            except Exception as e:
+                print(f"❌ WARNING - 회사 비전 컨텍스트 가져오기 실패: {e}")
+            
             # 병합된 사용자 정보를 바탕으로 AI 프롬프트 구성
             skills_str = ", ".join(merged_user_data.get('skills', ['정보 없음']))
             print(f"🔍 DEBUG - skills_str 생성: {skills_str}")
@@ -66,6 +78,8 @@ class CareerPositioningNode:
             prompt = f"""
 당신은 G.Navi의 전문 커리어 상담사입니다. 사내 구성원 데이터(최대 15명)를 기반으로 {merged_user_data.get('name', '고객')}님의 커리어 포지셔닝을 분석하고 개인화된 방향성을 제안해주세요.
 
+{company_vision_context}
+
 **사용자 프로필:**
 - 이름: {merged_user_data.get('name', '고객')}
 - 경력: {merged_user_data.get('experience', '정보 없음')}
@@ -82,6 +96,8 @@ class CareerPositioningNode:
 현재 수행 경험과 학습 이력을 분석한 결과, **[구체적인 강점 영역]** 역량에 강점이 있는 것으로 판단되며, **[추천 성장 방향]** 확장을 통해 지식과 경험을 넓혀 나갈 것을 추천합니다.
 
 현재 보유한 경험과 역량을 기반으로 **[1번 또는 2번 방향성 중 하나의 구체적인 추천 경로]**로의 성장 경로를 추천합니다. 유사 경력 경로를 밟은 사내 구성원들의 데이터를 분석해보니, [구체적인 성장 조건이나 기간, 필요 역량]이면 **[목표 레벨]**로 성장이 가능합니다. 이 때, **[핵심 성공 요인들]**이 성장에 도움이 됩니다.
+
+*이 추천 방향성은 개인의 역량 데이터와 함께 회사의 최신 기술 트렌드 및 비전에 부합하는 방향을 종합 분석하여 제시됩니다.*
 
 ## 추천 커리어 경로
 
@@ -109,6 +125,7 @@ class CareerPositioningNode:
 - 두 번째 문단에서 "현재 보유한 경험과 역량을 기반으로 **[1번 또는 2번 중 하나의 구체적 경로]**로의 성장 경로를 추천합니다"로 연결
 - 추천하는 구체적 경로는 반드시 아래 1번 또는 2번 방향성 중 하나여야 함
 - "유사 경력 경로를 밟은 사내 구성원들의 데이터를 분석해보니" 문장을 반드시 포함
+- "이 추천 방향성은 개인의 역량 데이터와 함께 회사의 최신 기술 트렌드 및 비전에 부합하는 방향을 종합 분석하여 제시됩니다." 문장을 반드시 포함
 - 정확히 2개의 방향성만 제시 (### 1. 과 ### 2. 형식으로)
 - 전체 280-320단어 내외로 명확하고 구체적인 톤 유지
 - "~합니다", "~됩니다" 등 단정적이고 전문적인 어투 사용
@@ -117,6 +134,7 @@ class CareerPositioningNode:
 - "이 때, **[구체적 조건]**이 성장에 도움이 됩니다" 형식으로 추가 조건 명시
 - 개인의 현재 역량과 상황을 반영한 맞춤형 제안
 - 선택 안내에서 1번 또는 2번 경로 선택을 명시하여 고객이 쉽게 응답할 수 있도록 안내
+- 회사 비전 정보가 제공된 경우, 해당 가치와 전략 방향에 부합하는 커리어 경로를 우선적으로 제안
 """
             
             response = await client.chat.completions.create(
@@ -273,15 +291,105 @@ AI 분석 결과 (커리어 방향성):
         # 2. 기존 데이터 검색 노드 활용 (사내 경력 데이터 15명까지 수집)
         # 커리어 검색 개수를 15로 설정
         state["career_search_count"] = 15
+        print(f"🔍 DEBUG - career_search_count 설정: {state['career_search_count']}")
         state = self.data_retrieval_node.retrieve_additional_data_node(state)
+        
+        # career_cases를 올바른 형태로 변환
+        career_cases = state.get("career_cases", [])
+        print(f"🔍 DEBUG - career_positioning에서 검색된 career_cases: {len(career_cases)}개")
+        print(f"🔍 DEBUG - career_cases 타입: {type(career_cases)}")
+        
+        # career_cases가 비어있는 경우 처리
+        if not career_cases:
+            print("❌ WARNING - career_cases가 비어있음! 데이터 검색에 실패했을 가능성")
+            print(f"🔍 DEBUG - state에서 data_retrieval_node 실행 후 확인:")
+            print(f"🔍 DEBUG - state keys: {list(state.keys())}")
+            
+            # 다른 키들도 확인해보기
+            for key in ['career_data', 'career_results', 'search_results']:
+                if key in state:
+                    print(f"🔍 DEBUG - state['{key}']: {type(state[key])}, 길이: {len(state[key]) if hasattr(state[key], '__len__') else 'N/A'}")
+        
+        # LangChain Document 객체에서 메타데이터 추출하여 구조화된 데이터로 변환
+        structured_career_data = []
+        for i, case in enumerate(career_cases):
+            print(f"🔍 DEBUG - 처리 중인 case {i+1}: {type(case)}")
+            if hasattr(case, 'metadata'):
+                metadata = case.metadata
+                print(f"🔍 DEBUG - case {i+1} metadata keys: {list(metadata.keys()) if metadata else 'None'}")
+                # 메타데이터 구조에 상관없이 기본 정보만 저장
+                career_info = {
+                    "data_source": "career_case",
+                    "case_id": f"case_{i+1}",
+                    "metadata": metadata,  # 원본 메타데이터 전체 저장
+                    "document_type": "career_data"
+                }
+                structured_career_data.append(career_info)
+                print(f"🔍 DEBUG - 구조화된 데이터 추가: case_{i+1} (메타데이터 키 개수: {len(metadata.keys()) if metadata else 0})")
+            elif hasattr(case, 'page_content'):
+                # Document 객체의 경우
+                career_info = {
+                    "data_source": "document",
+                    "case_id": f"case_{i+1}",
+                    "page_content": case.page_content[:200] if case.page_content else "",
+                    "document_type": "career_data"
+                }
+                structured_career_data.append(career_info)
+                print(f"🔍 DEBUG - Document 객체 추가: case_{i+1} (content 길이: {len(case.page_content) if case.page_content else 0})")
+            else:
+                print(f"❌ WARNING - case {i+1}에 metadata나 page_content 속성이 없음: {case}")
+                # 기본 정보라도 저장
+                career_info = {
+                    "data_source": "unknown",
+                    "case_id": f"case_{i+1}",
+                    "raw_data": str(case)[:100],
+                    "document_type": "career_data"
+                }
+                structured_career_data.append(career_info)
+        
+        print(f"✅ career_positioning에서 구조화된 사내 구성원 데이터: {len(structured_career_data)}개")
+        
+        # 구조화된 데이터의 샘플 확인 (디버깅)
+        if structured_career_data:
+            print(f"🔍 DEBUG - structured_career_data 샘플: {structured_career_data[0]}")
+            print(f"🔍 DEBUG - 모든 employee_id: {[item.get('metadata', {}).get('employee_id', 'Unknown') for item in structured_career_data]}")
+        else:
+            print("❌ WARNING - structured_career_data가 비어있음! Mock 데이터 생성")
+            # 검색에 실패한 경우 기본 mock 데이터 생성 (테스트용)
+            structured_career_data = [
+                {
+                    "experience": "3년차 백엔드 개발자",
+                    "skills": ["Python", "Django", "AWS"],
+                    "domain": "핀테크",
+                    "career_path": "시니어 개발자 → 테크리드",
+                    "employee_id": "Mock_001"
+                },
+                {
+                    "experience": "5년차 데이터 분석가",
+                    "skills": ["Python", "SQL", "Tableau"],
+                    "domain": "마케팅",
+                    "career_path": "데이터 분석가 → 데이터 사이언티스트",
+                    "employee_id": "Mock_002"
+                },
+                {
+                    "experience": "4년차 프론트엔드 개발자",
+                    "skills": ["React", "TypeScript", "Next.js"],
+                    "domain": "이커머스",
+                    "career_path": "주니어 개발자 → 프론트엔드 리드",
+                    "employee_id": "Mock_003"
+                }
+            ]
+            print(f"🔧 FALLBACK - Mock 데이터 생성 완료: {len(structured_career_data)}개")
         
         # retrieved_data 구성
         retrieved_data = {
-            "career_data": state.get("career_cases", []),
+            "career_data": structured_career_data,  # 구조화된 데이터 사용
             "education_courses": state.get("education_courses", {}),
             "news_data": state.get("news_data", []),
             "past_conversations": state.get("past_conversations", [])
         }
+        
+        print(f"🔍 DEBUG - retrieved_data 구성: career_data={len(retrieved_data['career_data'])}개")
         
         # 3. 사용자 정보 병합 (기존 정보 + 수집된 정보)
         user_data = self.graph_builder.get_user_info_from_session(state)
@@ -309,7 +417,17 @@ AI 분석 결과 (커리어 방향성):
         # HTML 로그 저장
         save_career_response_to_html("career_positioning", positioning_response, state.get("session_id", "unknown"))
 
-        return {
+        # 최종 저장 전 데이터 확인 (디버깅)
+        print(f"🔍 DEBUG - state에 저장할 retrieved_career_data: {len(structured_career_data)}개")
+        print(f"🔍 DEBUG - 저장될 데이터 타입: {type(structured_career_data)}")
+        if structured_career_data:
+            print(f"🔍 DEBUG - 첫 번째 데이터 구조: {list(structured_career_data[0].keys())}")
+            print(f"🔍 DEBUG - 샘플 employee_id들: {[item.get('employee_id', 'N/A') for item in structured_career_data[:3]]}")
+        else:
+            print("❌ WARNING - structured_career_data가 비어있음!")
+            
+        # 반환할 state 구성
+        final_state = {
             **state,
             "consultation_stage": "path_selection",
             "career_paths_suggested": positioning_response["career_paths"],
@@ -318,8 +436,24 @@ AI 분석 결과 (커리어 방향성):
             "awaiting_user_input": True,
             "next_expected_input": "career_path_choice",
             "collected_user_info": collected_info,
-            "retrieved_career_data": retrieved_data.get("career_data", []),  # 사내 구성원 데이터 저장
+            "retrieved_career_data": structured_career_data,  # 구조화된 사내 구성원 데이터 저장
             "processing_log": state.get("processing_log", []) + ["커리어 포지셔닝 분석 완료"]
         }
+        
+        # 반환 직전 final_state에서 retrieved_career_data 재확인
+        print(f"🔍 DEBUG - final_state에서 retrieved_career_data 확인: {len(final_state.get('retrieved_career_data', []))}개")
+        print(f"🔍 DEBUG - final_state의 주요 키들: {list(final_state.keys())}")
+        print(f"🔍 DEBUG - awaiting_user_input: {final_state.get('awaiting_user_input')}")
+        print(f"🔍 DEBUG - consultation_stage: {final_state.get('consultation_stage')}")
+        
+        # State 전달 체크를 위한 고유 식별자 추가
+        import time
+        final_state["career_positioning_timestamp"] = time.time()
+        final_state["state_trace"] = final_state.get("state_trace", []) + [f"career_positioning_completed_{int(time.time())}"]
+        
+        print(f"🔍 DEBUG - state_trace 추가됨: {final_state.get('state_trace')}")
+        print(f"🔍 DEBUG - career_positioning_timestamp: {final_state.get('career_positioning_timestamp')}")
+        
+        return final_state
     
     # 기존 템플릿 헬퍼 메서드들 제거됨 - AI가 모든 분석을 담당

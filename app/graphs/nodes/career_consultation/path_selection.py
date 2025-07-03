@@ -48,35 +48,45 @@ class PathSelectionNode:
 - 선택한 경로: {path_name}
 
 **요청사항:**
-1. 경로 선택에 대한 간단한 확인
-2. 선택 이유를 묻는 질문
-3. 구체적인 목표 설정을 위한 질문들
+1. 경로 선택에 대한 간단한 확인 및 격려
+2. 다음 단계 맞춤형 분석을 위한 핵심 질문 3개 (각 카테고리당 1개씩만)
 
 **응답 형식 (반드시 마크다운 문법을 사용하여 작성해주세요):**
 
 ## 경로 선택 확인
 
 **{merged_user_data.get('name', '고객')}님**이 선택하신 **{path_name}** 경로는 훌륭한 선택입니다! 
+더 구체적이고 실무적인 액션 플랜을 수립하기 위해 3가지 핵심 질문을 준비했습니다
 
-### 선택 이유 및 목표 설정
+### 맞춤형 전략 수립을 위한 질문
 
-이제 더 구체적인 계획을 세워보겠습니다. 아래 질문들에 답변해 주세요:
+**💡 참고사항**
+아래 질문들에 답변해 주시면 더욱 정확한 맞춤형 전략을 제안드릴 수 있지만, **답변하지 않으셔도 됩니다**. 현재까지 수집된 고객님의 정보(경력, 기술스택, 도메인)와 사내 데이터를 기반으로도 충분히 실무적인 성공 전략을 제안드릴 수 있습니다!
+
 
 **1. 선택 이유**
-- 이 경로를 선택하신 구체적인 이유는 무엇인가요?
+- 이 경로를 선택하신 가장 중요한 이유 한 가지는 무엇인가요?
 
-**2. 목표 설정**
-- [구체적인 목표 관련 질문]
-- [달성 가능한 단계별 계획 질문]
-- [시간 제한이 있는 목표 질문]
+**2. 구체적 목표**  
+- 이 경로를 통해 1년 후 달성하고 싶은 구체적인 목표는 무엇인가요?
+
+**3. 현재 상황**
+- 현재 이 목표 달성에 가장 큰 걸림돌이나 고민은 무엇인가요?
+
+---
+
+**다음 스텝: 맞춤형 성장 로드맵**
+
+위 질문들에 대한 답변을 바탕으로 더욱 구체적이고 실무적인 성장 로드맵을 함께 설계해보시겠어요? 개인 맞춤형 학습 계획과 실행 전략을 제안드릴 수 있습니다!
 
 **작성 지침:**
 - 반드시 마크다운 문법을 사용하여 응답 (## 제목, ### 소제목, **굵은글씨**, - 리스트 등)
 - 인사말 없이 바로 "## 경로 선택 확인" 제목으로 시작
 - 상담사처럼 친근하고 전문적인 톤으로 작성
-- 100-120단어 내외로 간결하게 작성
-- 고객이 구체적으로 답변할 수 있는 명확한 질문들 포함
-- 구체적(Specific), 달성가능(Achievable), 시간제한(Time-bound) 관점에서 질문 구성
+- 120-150단어 내외로 간결하게 작성
+- 각 카테고리당 정확히 1개의 질문만 포함
+- **선택 이유**, **구체적 목표**, **현재 상황** 각각 1개씩 총 3개 질문
+- 다음 단계(path_deepening)에서 활용할 수 있는 핵심 컨텍스트 정보 수집에 초점
 """
             
             response = await client.chat.completions.create(
@@ -152,17 +162,35 @@ class PathSelectionNode:
             "selected_path": selected_path
         }
         
+        # path_selection에서 수집된 정보를 path_deepening에서 활용할 수 있도록 저장
+        path_selection_info = {
+            "selected_path_name": selected_path.get("name", "선택된 경로"),
+            "selected_path_id": selected_path.get("id", ""),
+            "selection_timestamp": "2025-07-03",
+            "user_input_for_deepening": user_question  # 다음 단계에서 분석할 사용자 응답
+        }
+        
         # HTML 로그 저장
         save_career_response_to_html("path_selection", deepening_response, state.get("session_id", "unknown"))
+        
+        # State 전달 확인 (디버깅)
+        print(f"🔍 DEBUG - path_selection에서 받은 retrieved_career_data: {len(state.get('retrieved_career_data', []))}개")
+        print(f"🔍 DEBUG - path_selection에서 받은 state_trace: {state.get('state_trace', 'None')}")
+        
+        # path_selection에서 state_trace에 추가
+        import time
+        updated_state_trace = state.get("state_trace", []) + [f"path_selection_completed_{int(time.time())}"]
         
         return {
             **state,
             "consultation_stage": "deepening",
             "selected_career_path": selected_path,
+            "path_selection_info": path_selection_info,  # path_deepening에서 활용할 정보
             "path_name": selected_path.get("path_name") or selected_path.get("name", "선택된 경로"),  # learning_roadmap에서 사용
             "formatted_response": deepening_response,
             "final_response": deepening_response,
             "awaiting_user_input": True,
             "next_expected_input": "goals_and_reasons",
+            "state_trace": updated_state_trace,  # 추적 정보 업데이트
             "processing_log": state.get("processing_log", []) + [f"경로 선택 완료: {selected_path.get('name', '')} (번호: {selected_path.get('number', 'N/A')})"]
         }

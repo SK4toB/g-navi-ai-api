@@ -688,7 +688,10 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
         
         # 커리어 관련 질문인 경우 회사 비전 정보 추가
         if is_career_question:
-            company_vision_section = self._get_company_vision_context()
+            # Retriever에서 회사 비전 컨텍스트 가져오기
+            from .retriever import CareerEnsembleRetrieverAgent
+            retriever = CareerEnsembleRetrieverAgent()
+            company_vision_section = retriever.get_company_vision_context()
             if company_vision_section.strip():
                 context_sections.append(company_vision_section)
         
@@ -1131,87 +1134,3 @@ Application PM으로의 성장 경로에 대해 궁금하시군요. 좋은 목�
             self.logger.warning(f"상세 커리어 사례 마크다운 생성 실패: {e}")
             # 폴백: 기본 방식 사용
             return self._dict_to_markdown(case, show_empty=show_empty)
-    
-    def _get_company_vision_context(self) -> str:
-        """회사 비전 정보를 LLM 컨텍스트용으로 포맷팅"""
-        try:
-            import os
-            import json
-            
-            # 회사 비전 파일 경로
-            vision_path = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 
-                "../../storage/docs/company_vision.json"
-            ))
-            
-            if not os.path.exists(vision_path):
-                return ""
-            
-            with open(vision_path, "r", encoding="utf-8") as f:
-                vision_data = json.load(f)
-            
-            if not vision_data:
-                return ""
-            
-            sections = []
-            sections.append("🏢 **회사 비전 및 가치 (커리어 가이드에 반영)**:")
-            sections.append("")
-            
-            # 회사 기본 정보
-            if vision_data.get('company_name'):
-                sections.append(f"**회사명**: {vision_data['company_name']}")
-            
-            # 비전
-            if vision_data.get('vision'):
-                vision = vision_data['vision']
-                sections.append(f"**비전**: {vision.get('title', '')}")
-                if vision.get('description'):
-                    sections.append(f"*{vision['description']}*")
-            
-            sections.append("")
-            
-            # 핵심 가치
-            if vision_data.get('core_values'):
-                sections.append("**핵심 가치**:")
-                for value in vision_data['core_values']:
-                    sections.append(f"- **{value.get('name', '')}**: {value.get('description', '')}")
-                sections.append("")
-            
-            # 전략 방향
-            if vision_data.get('strategic_directions'):
-                sections.append("**전략 방향**:")
-                for direction in vision_data['strategic_directions']:
-                    sections.append(f"- **{direction.get('category', '')}**: {direction.get('description', '')}")
-                sections.append("")
-            
-            # 인재 개발
-            if vision_data.get('talent_development'):
-                talent = vision_data['talent_development']
-                sections.append(f"**인재 개발 철학**: {talent.get('philosophy', '')}")
-                if talent.get('focus_areas'):
-                    sections.append("**역량 개발 중점 영역**:")
-                    for area in talent['focus_areas']:
-                        sections.append(f"- **{area.get('area', '')}**: {area.get('description', '')}")
-                sections.append("")
-            
-            # 커리어 가이드 원칙
-            if vision_data.get('career_guidance_principles'):
-                sections.append("**커리어 가이드 원칙**:")
-                for principle in vision_data['career_guidance_principles']:
-                    sections.append(f"- **{principle.get('principle', '')}**: {principle.get('description', '')}")
-                sections.append("")
-            
-            # 적용 가이드라인
-            sections.append("**⚠️ 중요: 회사 비전 활용 지침**")
-            sections.append("- 커리어 상담 시 개인의 목표와 AI Powered ITS 비전을 연결하여 조언")
-            sections.append("- 핵심 가치(사람 중심, Digital 혁신, Identity 자율화, Business 혁신, 최고의 Delivery)와 일치하는 방향 제시")
-            sections.append("- Multi-Skill Set을 통한 글로벌 수준의 전문가 육성 강조")
-            sections.append("- IT → Digital → AI로의 기술 진화에 능동적 적응과 자기주도적 성장 강조")
-            sections.append("- Process 혁신과 업무 자동화/지능화를 반영한 커리어 방향 제안")
-            sections.append("- Offshoring 대응을 위한 글로벌 경쟁력 확보 방안 제시")
-            
-            return "\n".join(sections)
-            
-        except Exception as e:
-            self.logger.error(f"회사 비전 컨텍스트 생성 실패: {e}")
-            return ""

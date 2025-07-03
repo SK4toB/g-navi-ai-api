@@ -94,6 +94,8 @@ class LearningRoadmapNode:
 
 ## 학습 로드맵 설계
 
+안녕하세요! **{merged_user_data.get('name', '고객')}님**의 개인 데이터와 사내 데이터를 기반으로 **{path_name}** 성장 방향을 계획해보겠습니다.
+
 ### 학습 우선순위 및 순서
 
 **핵심 학습 영역 (우선순위 순):**
@@ -272,7 +274,7 @@ class LearningRoadmapNode:
                 "learning_resources": roadmap_result["learning_resources"]
             }
         else:
-            # 학습 로드맵 생략 시 상담 정리 유도
+            # 학습 로드맵 생략 시 바로 상담 요약 단계로 이동
             roadmap_response = {
                 "message": f"""## 실행 중심 접근
 
@@ -282,7 +284,7 @@ class LearningRoadmapNode:
 
 **이번 주 실행 목표:**
 - 관련 업무 기회 탐색 및 상사와 커리어 대화
-- 사내 해당 분야 전문가 1명과 커피챗 요청
+- **{selected_path.get('name', '선택된 경로')}** 관련 프로젝트 참여 기회 모색
 
 **다음 단계:**
 - **{selected_path.get('name', '선택된 경로')}** 목표를 향한 구체적인 실행 계획 수립
@@ -294,8 +296,8 @@ class LearningRoadmapNode:
                     "focus": "execution_over_learning",
                     "immediate_actions": [
                         "관련 업무 기회 탐색",
-                        "사내 전문가와 네트워킹",
-                        "프로젝트 참여 기회 찾기"
+                        "프로젝트 참여 기회 찾기",
+                        "실무 경험 축적"
                     ]
                 }
             }
@@ -303,9 +305,12 @@ class LearningRoadmapNode:
         # HTML 로그 저장
         save_career_response_to_html("learning_roadmap", roadmap_response, state.get("session_id", "unknown"))
         
+        # 학습 로드맵 생략 시 바로 상담 요약 단계로 이동
+        next_stage = "consultation_summary" if not wants_roadmap else "summary_request"
+        
         return {
             **state,
-            "consultation_stage": "summary_request",
+            "consultation_stage": next_stage,
             "formatted_response": roadmap_response,
             "final_response": roadmap_response,
             "awaiting_user_input": True,
