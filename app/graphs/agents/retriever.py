@@ -53,39 +53,132 @@ from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
 from langchain.schema import Document
 from datetime import datetime, timedelta
+from .k8s_chroma_adapter import K8sChromaRetriever
 
 from dotenv import load_dotenv
 load_dotenv()
+
 
 # ==================== 📂 경로 설정 (수정 필요시 여기만 변경) ====================
 class PathConfig:
     """
     모든 경로 설정을 한 곳에서 관리하는 클래스
-    경로 변경이 필요할 때는 이 부분만 수정하면 됩니다.
+    K8s 환경에서는 PVC 마운트 경로를 우선 사용하고, 로컬 환경에서는 기존 경로를 사용합니다.
     """
     BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # app 디렉토리
     
-    # 📊 벡터 스토어 경로 (Chroma DB 저장소)
-    CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"           # 커리어 사례 벡터 데이터베이스
-    EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"  # 교육과정 벡터 데이터베이스
-    NEWS_VECTOR_STORE = "../../storage/vector_stores/news_data"               # 뉴스 데이터 벡터 데이터베이스
+    @classmethod
+    def _get_k8s_pvc_path(cls) -> str:
+        """K8s PVC 마운트 경로 반환"""
+        return os.environ.get('APP_STORAGE_PVC_PATH', '/mnt/gnavi')
     
-    # 🗄️ 캐시 경로 (임베딩 캐시)
-    CAREER_EMBEDDING_CACHE = "../../storage/cache/embedding_cache"            # 커리어 사례 임베딩 캐시 저장소
-    EDUCATION_EMBEDDING_CACHE = "../../storage/cache/education_embedding_cache" # 교육과정 임베딩 캐시 저장소
+    @classmethod
+    def _is_k8s_environment(cls) -> bool:
+        """K8s 환경인지 확인"""
+        pvc_path = cls._get_k8s_pvc_path()
+        return os.path.exists(pvc_path)
     
-    # 📄 문서 경로 (JSON 데이터 파일들)
-    CAREER_DOCS = "../../storage/docs/career_history.json"                    # 커리어 히스토리 원본 데이터
-    EDUCATION_DOCS = "../../storage/docs/education_courses.json"              # 교육과정 문서 데이터2
-    SKILL_MAPPING = "../../storage/docs/skill_education_mapping.json"         # 스킬-교육과정 매핑 테이블
-    COURSE_DEDUPLICATION = "../../storage/docs/course_deduplication_index.json"  # 과정 중복 제거 인덱스
-    MYSUNI_DETAILED = "../../storage/docs/mysuni_courses_detailed.json"       # mySUNI 과정 상세 정보
-    COLLEGE_DETAILED = "../../storage/docs/college_courses_detailed.json"     # College 과정 상세 정보
+    @classmethod
+    def _get_app_root_dir(cls) -> str:
+        """app 루트 디렉토리 반환 (graphs/agents에서 app까지 올라가기)"""
+        # 현재 파일이 app/graphs/agents/retriever.py 라면
+        # app 디렉토리까지 올라가야 함
+        current_dir = os.path.dirname(__file__)  # app/graphs/agents/
+        app_dir = os.path.dirname(os.path.dirname(current_dir))  # app/
+        return app_dir
+    
+    @classmethod
+    def _get_smart_docs_path(cls, filename: str) -> str:
+        """K8s 환경이면 PVC 경로, 아니면 로컬 app/storage/docs 경로 반환"""
+        if cls._is_k8s_environment():
+            # K8s 환경: /mnt/gnavi/docs/filename
+            k8s_path = os.path.join(cls._get_k8s_pvc_path(), 'docs', filename)
+            if os.path.exists(k8s_path):
+                return k8s_path
+            # K8s 환경이지만 PVC에 파일이 없으면 로컬 폴백
+            local_fallback = os.path.join(cls._get_app_root_dir(), 'storage', 'docs', filename)
+            if os.path.exists(local_fallback):
+                return local_fallback
+            # 둘 다 없으면 K8s 경로 반환 (원래 의도대로)
+            return k8s_path
+        else:
+            # 로컬 환경: app/storage/docs/filename  
+            return os.path.join(cls._get_app_root_dir(), 'storage', 'docs', filename)
+    
+    # 📊 벡터 스토어 경로 (Chroma DB 저장소) - 기존 방식 유지
+    CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"
+    EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"
+    
+    # 🗄️ 캐시 경로 (임베딩 캐시) - 기존 방식 유지  
+    CAREER_EMBEDDING_CACHE = "../../storage/cache/embedding_cache"
+    EDUCATION_EMBEDDING_CACHE = "../../storage/cache/education_embedding_cache"
+    
+    # 📄 문서 경로 (JSON 데이터 파일들) - 스마트 경로 적용 (기존 속성명 유지)
+    @classmethod
+    def _init_paths(cls):
+        """경로 초기화 - 모듈 로드 시 한 번만 실행"""
+        cls.CAREER_DOCS = cls._get_smart_docs_path("career_history.json")
+        cls.EDUCATION_DOCS = cls._get_smart_docs_path("education_courses.json") 
+        cls.SKILL_MAPPING = cls._get_smart_docs_path("skill_education_mapping.json")
+        cls.COURSE_DEDUPLICATION = cls._get_smart_docs_path("course_deduplication_index.json")
+        cls.COMPANY_VISION = cls._get_smart_docs_path("company_vision.json")
+        cls.MYSUNI_DETAILED = cls._get_smart_docs_path("mysuni_courses_detailed.json")
+        cls.COLLEGE_DETAILED = cls._get_smart_docs_path("college_courses_detailed.json")
     
     @classmethod
     def get_abs_path(cls, relative_path: str) -> str:
         """상대 경로를 절대 경로로 변환"""
         return os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path))
+    
+    @classmethod
+    def log_current_environment(cls):
+        """현재 환경 정보 로그 출력"""
+        env_type = "K8s PVC" if cls._is_k8s_environment() else "로컬"
+        print(f"🔍 [PathConfig] 환경 감지: {env_type}")
+        print(f"📁 [PathConfig] App 루트 디렉토리: {cls._get_app_root_dir()}")
+        if cls._is_k8s_environment():
+            print(f"📁 [PathConfig] PVC 경로: {cls._get_k8s_pvc_path()}")
+        print(f"📄 [PathConfig] 커리어 문서: {cls.CAREER_DOCS}")
+        print(f"📚 [PathConfig] 교육과정 문서: {cls.EDUCATION_DOCS}")
+        print(f"🔗 [PathConfig] 스킬 매핑: {cls.SKILL_MAPPING}")
+        print(f"🔄 [PathConfig] 중복제거 인덱스: {cls.COURSE_DEDUPLICATION}")
+        print(f"🏢 [PathConfig] 회사 비전: {cls.COMPANY_VISION}")
+        print(f"🎓 [PathConfig] mySUNI 상세: {cls.MYSUNI_DETAILED}")
+        print(f"🏫 [PathConfig] College 상세: {cls.COLLEGE_DETAILED}")
+        return env_type
+    
+    @classmethod
+    def check_files_exist(cls):
+        """모든 파일이 존재하는지 확인"""
+        files_to_check = {
+            "커리어 문서": cls.CAREER_DOCS,
+            "교육과정 문서": cls.EDUCATION_DOCS,
+            "스킬 매핑": cls.SKILL_MAPPING,
+            "중복제거 인덱스": cls.COURSE_DEDUPLICATION,
+            "회사 비전": cls.COMPANY_VISION,
+            "mySUNI 상세": cls.MYSUNI_DETAILED,
+            "College 상세": cls.COLLEGE_DETAILED
+        }
+        
+        missing_files = []
+        existing_files = []
+        
+        for name, path in files_to_check.items():
+            if os.path.exists(path):
+                existing_files.append(f"✅ {name}: {path}")
+            else:
+                missing_files.append(f"❌ {name}: {path}")
+        
+        print("📋 [PathConfig] 파일 존재 여부 확인:")
+        for file_info in existing_files:
+            print(f"  {file_info}")
+        for file_info in missing_files:
+            print(f"  {file_info}")
+        
+        return len(missing_files) == 0
+
+# 클래스 로드 시 경로 초기화 실행
+PathConfig._init_paths()
 
 # ==================== 📂 경로 설정 끝 ====================
 
@@ -108,47 +201,70 @@ class CareerEnsembleRetrieverAgent:
             persist_directory: 커리어 벡터 스토어 경로 (기본값: PathConfig.CAREER_VECTOR_STORE)
             cache_directory: 커리어 임베딩 캐시 경로 (기본값: PathConfig.CAREER_EMBEDDING_CACHE)
         """
-        # 경로 설정 (PathConfig 사용)
+        # 로거 초기화
+        self.logger = logging.getLogger(__name__)
+        
+        # 환경 정보 및 파일 존재 여부 확인
+        env_type = PathConfig.log_current_environment()
+        self.is_k8s = PathConfig._is_k8s_environment()
+        print(f"🔍 [CareerRetrieverAgent] 환경: {env_type}, K8s: {self.is_k8s}")
+        
+        # 경로 설정 (기존 속성 방식 사용)
         self.persist_directory = PathConfig.get_abs_path(
             persist_directory or PathConfig.CAREER_VECTOR_STORE
-        )                                                                            # 커리어 벡터 스토어 절대 경로
+        )
         self.career_cache_directory = PathConfig.get_abs_path(
             cache_directory or PathConfig.CAREER_EMBEDDING_CACHE
-        )                                                                            # 커리어 임베딩 캐시 절대 경로
-        self.base_dir = PathConfig.BASE_DIR                                          # 기본 디렉토리 경로
-        self.logger = logging.getLogger(__name__)                                    # 로거 인스턴스
+        )
+        self.base_dir = PathConfig.BASE_DIR
         
-        # 디렉토리 생성
-        os.makedirs(self.persist_directory, exist_ok=True)                           # 벡터 스토어 디렉토리 생성
-        os.makedirs(self.career_cache_directory, exist_ok=True)                      # 커리어 캐시 디렉토리 생성
+        # 디렉토리 생성 (로컬 환경에서만)
+        if not self.is_k8s:
+            os.makedirs(self.persist_directory, exist_ok=True)
+            os.makedirs(self.career_cache_directory, exist_ok=True)
 
         # 커리어 전용 임베딩 설정
-        self.base_embeddings = OpenAIEmbeddings(                                     # OpenAI 기본 임베딩 모델
+        self.base_embeddings = OpenAIEmbeddings(
             model="text-embedding-3-small",
             dimensions=1536
         )
-        self.career_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(      # 커리어 전용 캐시 기반 임베딩 래퍼
-            self.base_embeddings,
-            LocalFileStore(self.career_cache_directory),
-            namespace="career_embeddings"
-        )
+        
+        # 캐시 설정 (로컬 환경에서만)
+        if not self.is_k8s:
+            self.career_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
+                self.base_embeddings,
+                LocalFileStore(self.career_cache_directory),
+                namespace="career_embeddings"
+            )
+        else:
+            # K8s 환경에서는 캐시 없이 직접 임베딩 사용
+            self.career_cached_embeddings = self.base_embeddings
         
         # 교육과정 전용 임베딩 설정
-        self.education_cache_directory = PathConfig.get_abs_path(PathConfig.EDUCATION_EMBEDDING_CACHE)
-        os.makedirs(self.education_cache_directory, exist_ok=True)
-        self.education_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(   # 교육과정 전용 캐시 기반 임베딩 래퍼
-            self.base_embeddings,
-            LocalFileStore(self.education_cache_directory),
-            namespace="education_embeddings"
-        )
-        self.vectorstore = None                                                      # Chroma 벡터 스토어 인스턴스 
-        self.ensemble_retriever = None                                               # 앙상블 리트리버 인스턴스
+        if not self.is_k8s:
+            self.education_cache_directory = PathConfig.get_abs_path(PathConfig.EDUCATION_EMBEDDING_CACHE)
+            os.makedirs(self.education_cache_directory, exist_ok=True)
+            self.education_cached_embeddings = CacheBackedEmbeddings.from_bytes_store(
+                self.base_embeddings,
+                LocalFileStore(self.education_cache_directory),
+                namespace="education_embeddings"
+            )
+        else:
+            # K8s 환경에서는 캐시 없이 직접 임베딩 사용
+            self.education_cached_embeddings = self.base_embeddings
         
-        # 교육과정 관련 경로 설정 (PathConfig 사용)
-        self.education_persist_dir = PathConfig.get_abs_path(PathConfig.EDUCATION_VECTOR_STORE)    # 교육과정 벡터 스토어 경로
-        self.education_docs_path = PathConfig.get_abs_path(PathConfig.EDUCATION_DOCS)              # 교육과정 문서 파일 경로
-        self.skill_mapping_path = PathConfig.get_abs_path(PathConfig.SKILL_MAPPING)                # 스킬-교육과정 매핑 파일 경로
-        self.deduplication_index_path = PathConfig.get_abs_path(PathConfig.COURSE_DEDUPLICATION)   # 과정 중복제거 인덱스 파일 경로
+        self.vectorstore = None
+        self.ensemble_retriever = None
+        
+        # 교육과정 관련 경로 설정 (기존 속성 방식 사용)
+        if not self.is_k8s:
+            self.education_persist_dir = PathConfig.get_abs_path(PathConfig.EDUCATION_VECTOR_STORE)
+        self.education_docs_path = PathConfig.EDUCATION_DOCS
+        self.skill_mapping_path = PathConfig.SKILL_MAPPING
+        self.deduplication_index_path = PathConfig.COURSE_DEDUPLICATION
+        
+        # 회사 비전 관련 경로 설정
+        self.company_vision_path = PathConfig.COMPANY_VISION
         
         # 지연 로딩 속성
         self.education_vectorstore = None
@@ -158,6 +274,58 @@ class CareerEnsembleRetrieverAgent:
         self._load_vectorstore_and_retriever()
 
     def _load_vectorstore_and_retriever(self):
+        """벡터스토어와 앙상블 리트리버 로드 (환경별 분기)"""
+        if self.is_k8s:
+            self._load_k8s_vectorstore_and_retriever()
+        else:
+            self._load_local_vectorstore_and_retriever()
+
+    def _load_k8s_vectorstore_and_retriever(self):
+        """K8s 환경: 외부 ChromaDB 사용"""
+        print("🔗 [K8s ChromaDB] 외부 ChromaDB 연결 중...")
+        
+        # 통합 K8sChromaRetriever 사용
+        self.vectorstore = K8sChromaRetriever("career_history", self.career_cached_embeddings, k=3)
+        # 컬렉션 정보 확인
+        collection_info = self.vectorstore.get_collection_info()
+        if collection_info.get("status") == "success":
+            print(f"✅ [K8s ChromaDB] 연결 성공: {collection_info.get('document_count')}개 문서")
+        else:
+            print(f"❌ [K8s ChromaDB] 연결 실패: {collection_info.get('message')}")
+        # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
+        embedding_retriever = self.vectorstore
+        
+        # BM25용 docs 로드 (JSON 파일은 여전히 사용)
+        docs_path = PathConfig.CAREER_DOCS
+        all_docs = []
+        try:
+            with open(docs_path, 'r', encoding='utf-8') as f:
+                json_docs = json.load(f)
+                all_docs = [Document(page_content=doc['page_content'], metadata=doc['metadata']) for doc in json_docs]
+            self.logger.info(f"BM25용 career_docs.json 로드 완료 (문서 수: {len(all_docs)}) - 경로: {docs_path}")
+        except Exception as e:
+            self.logger.warning(f"BM25용 career_docs.json 로드 실패: {e} - 경로: {docs_path}")
+        
+        # 앙상블 리트리버 구성
+        retrievers = [embedding_retriever]
+        weights = [1.0]
+        if all_docs:
+            bm25_retriever = BM25Retriever.from_documents(all_docs)
+            bm25_retriever.k = 3  # BM25도 3개로 제한
+            retrievers.append(bm25_retriever)
+            weights = [0.3, 0.7]  # K8s ChromaDB: 30%, BM25: 70%
+        
+        self.ensemble_retriever = EnsembleRetriever(
+            retrievers=retrievers,
+            weights=weights
+        )
+        self.logger.info(f"K8s Career 앙상블 리트리버 준비 완료 (JSON 문서 수: {len(all_docs)})")
+        print(f"✅ [K8s 커리어 사례 VectorDB] 초기화 완료")
+    
+    def _load_local_vectorstore_and_retriever(self):
+        """로컬 환경: 기존 로컬 ChromaDB 사용"""
+        print("💾 [로컬 ChromaDB] 로컬 ChromaDB 로드 중...")
+        
         # Chroma 벡터스토어 로드
         self.vectorstore = Chroma(
             persist_directory=self.persist_directory,
@@ -169,16 +337,17 @@ class CareerEnsembleRetrieverAgent:
             search_type="similarity",
             search_kwargs={"k": 2}
         )
-        # BM25용 docs 로드 (PathConfig 사용)
-        docs_path = PathConfig.get_abs_path(PathConfig.CAREER_DOCS)
+        # BM25용 docs 로드
+        docs_path = PathConfig.CAREER_DOCS
         all_docs = []
         try:
             with open(docs_path, 'r', encoding='utf-8') as f:
                 json_docs = json.load(f)
                 all_docs = [Document(page_content=doc['page_content'], metadata=doc['metadata']) for doc in json_docs]
-            self.logger.info(f"BM25용 career_docs.json 로드 완료 (문서 수: {len(all_docs)})")
+            self.logger.info(f"BM25용 career_docs.json 로드 완료 (문서 수: {len(all_docs)}) - 경로: {docs_path}")
         except Exception as e:
-            self.logger.warning(f"BM25용 career_docs.json 로드 실패: {e}")
+            self.logger.warning(f"BM25용 career_docs.json 로드 실패: {e} - 경로: {docs_path}")
+        
         retrievers = [embedding_retriever]
         weights = [1.0]
         if all_docs:
@@ -190,19 +359,12 @@ class CareerEnsembleRetrieverAgent:
             retrievers=retrievers,
             weights=weights
         )
-        self.logger.info(f"Career 앙상블 리트리버 준비 완료 (JSON 문서 수: {len(all_docs)})")
-        
-        # Vector Store에 실제 저장된 데이터 개수 확인
-        try:
-            collection = self.vectorstore._collection
-            total_count = collection.count()
-            print(f"✅ [커리어 사례 VectorDB] 초기화 완료 - JSON: {len(all_docs)}개, Vector Store: {total_count}개")
-        except Exception as e:
-            print(f"✅ [커리어 사례 VectorDB] 초기화 완료 - JSON: {len(all_docs)}개, Vector Store: 개수 확인 실패({e})")
+        self.logger.info(f"로컬 Career 앙상블 리트리버 준비 완료 (문서 수: {len(all_docs)})")
+        print(f"✅ [로컬 커리어 사례 VectorDB] 초기화 완료")
 
-    def retrieve(self, query: str, k: int = 2):
-        """앙상블 리트리버로 검색 + 시간 기반 필터링"""
-        print(f"🔍 [커리어 사례 검색] 시작 - '{query}' (요청 개수: {k})")
+    def retrieve(self, query: str, k: int = 3):
+        """앙상블 리트리버로 검색 (기본 3개 결과) + 시간 기반 필터링"""
+        print(f"🔍 [커리어 사례 검색] 시작 - '{query}'")
         
         if not self.ensemble_retriever:
             print(f"❌ [커리어 사례 검색] 앙상블 리트리버가 없음")
@@ -325,16 +487,21 @@ class CareerEnsembleRetrieverAgent:
         else:
             final_docs = all_docs[:k]
         
-        print(f"✅ [커리어 사례 검색] 완료: 요청 {k}개 → 실제 반환 {len(final_docs)}개")
+        # 회사 비전 정보를 결과에 추가 (커리어 관련 질문인 경우)
+        career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직']
+        if any(keyword in query.lower() for keyword in career_keywords):
+            company_vision = self._load_company_vision()
+            if company_vision:
+                # 회사 비전을 Document 형태로 추가
+                vision_content = self._format_company_vision_for_context(company_vision)
+                vision_doc = Document(
+                    page_content=vision_content,
+                    metadata={"type": "company_vision", "source": "company_vision.json"}
+                )
+                final_docs.append(vision_doc)
+                self.logger.info("회사 비전 정보가 검색 결과에 추가되었습니다.")
         
-        # 최종 결과의 employee_id 출력
-        employee_ids = []
-        for doc in final_docs:
-            metadata = getattr(doc, 'metadata', {})
-            emp_id = metadata.get('employee_id', 'Unknown')
-            employee_ids.append(emp_id)
-        print(f"🔍 DEBUG - 최종 반환된 Employee IDs: {employee_ids}")
-        
+        print(f"✅ [커리어 사례 검색] 완료: {len(final_docs)}개 결과 반환")
         return final_docs
     
     def _extract_years_from_query(self, query: str) -> dict:
@@ -484,22 +651,45 @@ class CareerEnsembleRetrieverAgent:
             self._load_deduplication_index()
     
     def _initialize_education_vectorstore(self):
-        """교육과정 VectorDB 초기화 (교육과정 전용 캐시 사용)"""
+        """교육과정 VectorDB 초기화 (환경별 분기)"""
+        if self.is_k8s:
+            self._initialize_k8s_education_vectorstore()
+        else:
+            self._initialize_local_education_vectorstore()
+    
+    def _initialize_k8s_education_vectorstore(self):
+        """K8s 환경: 외부 교육과정 ChromaDB 초기화"""
+        try:
+            print("🔗 [K8s 교육과정 ChromaDB] 외부 ChromaDB 연결 중...")
+            self.education_vectorstore = K8sChromaRetriever("education_courses", self.education_cached_embeddings, k=3)
+            # 컬렉션 정보 확인
+            collection_info = self.education_vectorstore.get_collection_info()
+            if collection_info.get("status") == "success":
+                print(f"✅ [K8s 교육과정 ChromaDB] 연결 성공: {collection_info.get('document_count')}개 문서")
+            else:
+                print(f"❌ [K8s 교육과정 ChromaDB] 연결 실패: {collection_info.get('message')}")
+        except Exception as e:
+            self.logger.error(f"K8s 교육과정 VectorDB 로드 실패: {e}")
+            print(f"❌ [K8s 교육과정 ChromaDB] 로드 실패: {e}")
+            self.education_vectorstore = None
+    
+    def _initialize_local_education_vectorstore(self):
+        """로컬 환경: 기존 로컬 교육과정 ChromaDB 초기화"""
         try:
             if os.path.exists(self.education_persist_dir):
                 self.education_vectorstore = Chroma(
                     persist_directory=self.education_persist_dir,
-                    embedding_function=self.education_cached_embeddings,  # 교육과정 전용 캐시 사용
+                    embedding_function=self.education_cached_embeddings,
                     collection_name="education_courses"
                 )
-                self.logger.info("교육과정 VectorDB 로드 완료 (교육과정 전용 캐시 적용)")
-                print(f"✅ [교육과정 VectorDB] 초기화 완료 (전용 캐시 적용)")
+                self.logger.info("로컬 교육과정 VectorDB 로드 완료")
+                print(f"✅ [로컬 교육과정 VectorDB] 초기화 완료")
             else:
-                self.logger.warning("교육과정 VectorDB가 존재하지 않습니다. utils/education_data_processor.py를 실행해주세요.")
-                print(f"⚠️  [교육과정 VectorDB] 없음 - JSON 파일로 폴백 검색 진행")
+                self.logger.warning("로컬 교육과정 VectorDB가 존재하지 않습니다.")
+                print(f"⚠️  [로컬 교육과정 VectorDB] 없음 - JSON 파일로 폴백 검색 진행")
         except Exception as e:
-            self.logger.error(f"교육과정 VectorDB 로드 실패: {e}")
-            print(f"❌ [교육과정 VectorDB] 로드 실패: {e} - JSON 파일로 폴백 검색 진행")
+            self.logger.error(f"로컬 교육과정 VectorDB 로드 실패: {e}")
+            print(f"❌ [로컬 교육과정 VectorDB] 로드 실패: {e}")
             self.education_vectorstore = None
     
     def _load_skill_education_mapping(self):
@@ -533,6 +723,7 @@ class CareerEnsembleRetrieverAgent:
     def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict, max_results: int = 15) -> Dict:
         """교육과정 검색 메인 함수 - 지정된 개수까지 검색"""
         print(f"🔍 [교육과정 검색] 시작 - '{query}' (최대 {max_results}개)")
+        print(f"🔍 [교육과정 검색] 시작 - '{query}'")
         self._load_education_resources()
         
         try:
@@ -1012,25 +1203,25 @@ class CareerEnsembleRetrieverAgent:
         return path
 
     def _load_original_course_data(self):
-        """원본 교육과정 상세 데이터 로드"""
+        """원본 교육과정 상세 데이터 로드 (기존 속성 방식 사용)"""
         if not hasattr(self, 'original_mysuni_data'):
             try:
-                mysuni_path = PathConfig.get_abs_path(PathConfig.MYSUNI_DETAILED)
+                mysuni_path = PathConfig.MYSUNI_DETAILED
                 with open(mysuni_path, "r", encoding="utf-8") as f:
                     self.original_mysuni_data = json.load(f)
-                self.logger.info(f"mySUNI 원본 데이터 로드 완료: {len(self.original_mysuni_data)}개")
+                self.logger.info(f"mySUNI 원본 데이터 로드 완료: {len(self.original_mysuni_data)}개 - 경로: {mysuni_path}")
             except FileNotFoundError:
-                self.logger.warning("mySUNI 원본 데이터 파일을 찾을 수 없습니다.")
+                self.logger.warning(f"mySUNI 원본 데이터 파일을 찾을 수 없습니다. - 경로: {PathConfig.MYSUNI_DETAILED}")
                 self.original_mysuni_data = []
                 
         if not hasattr(self, 'original_college_data'):
             try:
-                college_path = PathConfig.get_abs_path(PathConfig.COLLEGE_DETAILED)
+                college_path = PathConfig.COLLEGE_DETAILED
                 with open(college_path, "r", encoding="utf-8") as f:
                     self.original_college_data = json.load(f)
-                self.logger.info(f"College 원본 데이터 로드 완료: {len(self.original_college_data)}개")
+                self.logger.info(f"College 원본 데이터 로드 완료: {len(self.original_college_data)}개 - 경로: {college_path}")
             except FileNotFoundError:
-                self.logger.warning("College 원본 데이터 파일을 찾을 수 없습니다.")
+                self.logger.warning(f"College 원본 데이터 파일을 찾을 수 없습니다. - 경로: {PathConfig.COLLEGE_DETAILED}")
                 self.original_college_data = []
 
     def _enrich_course_with_original_data(self, course: Dict) -> Dict:
