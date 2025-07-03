@@ -35,14 +35,14 @@ class PathDeepeningNode:
             # 회사 비전 컨텍스트 가져오기
             company_vision_context = ""
             try:
-                # data_retrieval_node를 통해 retriever 인스턴스에 접근
-                if hasattr(self.data_retrieval_node, 'career_ensemble_retriever'):
-                    company_vision_context = self.data_retrieval_node.career_ensemble_retriever.get_company_vision_context()
-                    print(f"🔍 DEBUG - path_deepening에서 회사 비전 컨텍스트 가져오기 성공: {len(company_vision_context)}자")
-                else:
-                    print("⚠️ WARNING - path_deepening에서 career_ensemble_retriever에 접근할 수 없음")
+                # retriever 모듈에서 직접 회사 비전 컨텍스트 생성
+                from app.graphs.agents.retriever import CareerEnsembleRetrieverAgent
+                temp_retriever = CareerEnsembleRetrieverAgent()
+                company_vision_context = temp_retriever.get_company_vision_context()
+                print(f"🔍 DEBUG - path_deepening에서 회사 비전 컨텍스트 가져오기 성공: {len(company_vision_context)}자")
             except Exception as e:
                 print(f"❌ WARNING - path_deepening에서 회사 비전 컨텍스트 가져오기 실패: {e}")
+                company_vision_context = ""
             
             path_name = selected_path.get('name', '선택된 경로')
             
@@ -184,16 +184,12 @@ class PathDeepeningNode:
 - **비공식 멘토링**: 사내 메신저나 이메일을 통한 개별 컨택
 - **그룹 멘토링**: 유사한 목표를 가진 동료들과 함께하는 그룹 세션 참여
 
-### 성장 전략 종합
-
-따라서, **{merged_user_data.get('name', '고객')}님**은 **{path_name}** 분야를 조금 더 학습하시는 것을 추천드립니다.
-
----
+---(이 대시부분 무조건 포함)
 
 **다음 스텝: 체계적인 학습 로드맵 설계**
-위에서 제시한 성장 전략과 멘토링 계획을 바탕으로, 더욱 구체적이고 실행 가능한 학습 로드맵을 함께 설계해보시겠어요?
 
-**💡 학습 로드맵을 원하시면 "네, 학습 로드맵을 설계해주세요"라고 답변해주세요!**
+위에서 제시한 성장 전략과 멘토링 계획을 바탕으로, 더욱 구체적이고 실행 가능한 학습 로드맵을 함께 설계해보시겠어요?
+학습 로드맵을 원하시면 "네, 학습 로드맵을 설계해주세요"라고 답변해주세요!
 
 ---
 

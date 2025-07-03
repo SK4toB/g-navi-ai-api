@@ -47,14 +47,14 @@ class CareerPositioningNode:
             # 회사 비전 컨텍스트 가져오기
             company_vision_context = ""
             try:
-                # data_retrieval_node를 통해 retriever 인스턴스에 접근
-                if hasattr(self.data_retrieval_node, 'career_ensemble_retriever'):
-                    company_vision_context = self.data_retrieval_node.career_ensemble_retriever.get_company_vision_context()
-                    print(f"🔍 DEBUG - 회사 비전 컨텍스트 가져오기 성공: {len(company_vision_context)}자")
-                else:
-                    print("⚠️ WARNING - career_ensemble_retriever에 접근할 수 없음")
+                # retriever 모듈에서 직접 회사 비전 컨텍스트 생성
+                from app.graphs.agents.retriever import CareerEnsembleRetrieverAgent
+                temp_retriever = CareerEnsembleRetrieverAgent()
+                company_vision_context = temp_retriever.get_company_vision_context()
+                print(f"🔍 DEBUG - 회사 비전 컨텍스트 가져오기 성공: {len(company_vision_context)}자")
             except Exception as e:
                 print(f"❌ WARNING - 회사 비전 컨텍스트 가져오기 실패: {e}")
+                company_vision_context = ""
             
             # 병합된 사용자 정보를 바탕으로 AI 프롬프트 구성
             skills_str = ", ".join(merged_user_data.get('skills', ['정보 없음']))

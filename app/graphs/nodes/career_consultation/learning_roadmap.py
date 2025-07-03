@@ -118,9 +118,13 @@ class LearningRoadmapNode:
 **4-6개월 (실무 적용)**
 - [구체적인 학습 활동과 목표]
 
-**다음 단계: 상담 마무리**
+### 🎯 커리어 상담 완료
 
-이제 오늘 상담의 핵심 내용을 정리해드리겠습니다. 어떤 부분이 가장 도움이 되셨나요?
+**{merged_user_data.get('name', '고객')}님**의 커리어 상담이 완료되었습니다!
+
+오늘 함께 설계한 학습 로드맵을 바탕으로 차근차근 실행해보시고, 궁금한 점이 있으시면 언제든 다시 상담받으세요.
+
+**성공적인 커리어 성장을 응원합니다! 🚀**
 
 **작성 지침:**
 - 반드시 마크다운 문법 사용 (## 제목, ### 소제목, **굵은글씨**, - 리스트)
@@ -273,7 +277,7 @@ class LearningRoadmapNode:
                 "learning_resources": roadmap_result["learning_resources"]
             }
         else:
-            # 학습 로드맵 생략 시 바로 상담 요약 단계로 이동
+            # 학습 로드맵 생략 시 바로 상담 완료
             roadmap_response = {
                 "message": f"""## 실행 중심 접근
 
@@ -288,9 +292,13 @@ class LearningRoadmapNode:
 **다음 단계:**
 - **{selected_path.get('name', '선택된 경로')}** 목표를 향한 구체적인 실행 계획 수립
 
-### 상담 정리
+### 🎯 커리어 상담 완료
 
-이제 오늘 상담의 핵심 내용을 정리해드리겠습니다. 오늘 대화에서 어떤 부분이 가장 도움이 되셨나요?""",
+**{merged_user_data.get('name', '고객')}님**의 커리어 상담이 완료되었습니다! 
+
+오늘 함께 계획한 내용을 바탕으로 실행해보시고, 궁금한 점이 있으시면 언제든 다시 상담받으세요. 
+
+**성공적인 커리어 성장을 응원합니다! 🚀**""",
                 "learning_resources": {
                     "focus": "execution_over_learning",
                     "immediate_actions": [
@@ -304,15 +312,25 @@ class LearningRoadmapNode:
         # HTML 로그 저장
         save_career_response_to_html("learning_roadmap", roadmap_response, state.get("session_id", "unknown"))
         
-        # 학습 로드맵 생략 시 바로 상담 요약 단계로 이동
-        next_stage = "consultation_summary" if not wants_roadmap else "summary_request"
+        # 학습 로드맵 처리 후 상담 완료 처리
+        if wants_roadmap:
+            # 학습 로드맵을 제공한 경우 - 상담 완료
+            next_stage = "completed"
+            awaiting_input = False
+            next_expected = "consultation_completed"
+        else:
+            # 학습 로드맵을 생략한 경우 - 바로 상담 완료
+            next_stage = "completed"
+            awaiting_input = False
+            next_expected = "consultation_completed"
         
         return {
             **state,
             "consultation_stage": next_stage,
             "formatted_response": roadmap_response,
             "final_response": roadmap_response,
-            "awaiting_user_input": True,
-            "next_expected_input": "summary_request",
-            "processing_log": state.get("processing_log", []) + ["학습 로드맵 처리 완료"]
+            "awaiting_user_input": awaiting_input,
+            "next_expected_input": next_expected,
+            "career_consultation_completed": True,  # 커리어 상담 완료 플래그
+            "processing_log": state.get("processing_log", []) + ["커리어 상담 완료 - 플로우 종료"]
         }
