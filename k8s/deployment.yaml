@@ -4,7 +4,7 @@ metadata:
   name: gnavi4-ai
   namespace: sk-team-04
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: gnavi4-ai
