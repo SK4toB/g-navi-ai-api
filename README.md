@@ -94,12 +94,12 @@ graph TB
             RG[6️⃣ Report Generation]
             
             subgraph "Career Consultation Workflow"
-                UIC[📋 User Info Collection]
-                CP[🎯 Career Positioning]
-                PS[🛤️ Path Selection]
-                LR[📚 Learning Roadmap]
-                PD[🔍 Path Deepening]
-                CS[📝 Consultation Summary]
+                UIC[1️⃣ User Info Collection]
+                CP[2️⃣ Career Positioning]
+                PS[3️⃣ Path Selection]
+                PD[4️⃣ Path Deepening]
+                LR[5️⃣ Learning Roadmap]
+                CS[6️⃣ Consultation Summary]
             end
             
             MC --> CH
@@ -113,9 +113,9 @@ graph TB
             IA -.-> UIC
             UIC --> CP
             CP --> PS
-            PS --> LR
-            LR --> PD
-            PD --> CS
+            PS --> PD
+            PD --> LR
+            LR --> CS
             CS -.-> RF
         end
         
@@ -340,18 +340,18 @@ flowchart TD
         CC1A[사용자 정보 부족 항목<br/>AI 맞춤형 질문 생성]
         CC2A[현재 포지션 분석<br/>시장 트렌드 매핑]
         CC3A[가능한 경로 제시<br/>장단점 분석]
-        CC4A[맞춤형 학습 계획<br/>사내 교육과정 연계]
-        CC5A[구체적 액션 플랜<br/>멘토 추천]
+        CC4A[구체적 액션 플랜<br/>멘토 추천]
+        CC5A[맞춤형 학습 계획<br/>사내 교육과정 연계]
         CC6A[상담 요약 및<br/>동기부여 메시지]
     end
     
     %% Career Consultation Branch
-    Step2 -.->|커리어 컨설팅 요청| CC1[📋 정보 수집]
-    CC1 --> CC2[🎯 커리어 포지셔닝]
-    CC2 --> CC3[🛤️ 경로 선택]
-    CC3 --> CC4[📚 학습 로드맵]
-    CC4 --> CC5[🔍 경로 심화]
-    CC5 --> CC6[📝 상담 요약]
+    Step2 -.->|커리어 컨설팅 요청| CC1[1️⃣ 정보 수집]
+    CC1 --> CC2[2️⃣ 커리어 포지셔닝]
+    CC2 --> CC3[3️⃣ 경로 선택]
+    CC3 --> CC4[4️⃣ 경로 심화]
+    CC4 --> CC5[5️⃣ 학습 로드맵]
+    CC5 --> CC6[6️⃣ 상담 요약]
     CC6 -.-> Step4
     
     Check --> Step0A
@@ -380,6 +380,8 @@ flowchart TD
     CC4 --> CC4A
     CC5 --> CC5A
     CC6 --> CC6A
+    CC5 --> CC5A
+    CC6 --> CC6A
 ```
 
 ### 🎯 커리어 컨설팅 워크플로우
@@ -391,11 +393,58 @@ G.Navi는 구조화된 6단계 커리어 컨설팅 워크플로우를 제공합�
 | **1단계** | 📋 UserInfoCollection | 사용자 정보 수집 | 경력, 스킬, 도메인 등 부족 정보 AI 맞춤형 질문 |
 | **2단계** | 🎯 CareerPositioning | 커리어 포지셔닝 | 현재 위치 분석, 시장 트렌드 매핑, 강점 발굴 |
 | **3단계** | 🛤️ PathSelection | 경로 선택 | 가능한 커리어 경로 제시, 장단점 분석 |
-| **4단계** | 📚 LearningRoadmap | 학습 로드맵 | 맞춤형 학습 계획, 사내 교육과정 연계 |
-| **5단계** | 🔍 PathDeepening | 경로 심화 | 구체적 액션 플랜, 멘토 추천, 실행 전략 |
-| **6단계** | 📝 ConsultationSummary | 상담 요약 | 종합 요약, 동기부여 메시지, 지속 지원 |
+| **4단계** | � PathDeepening | 경로 심화 | 구체적 액션 플랜, 멘토 추천, 실행 전략 |
+| **5단계** | �📚 LearningRoadmap | 학습 로드맵 | 맞춤형 학습 계획, 사내 교육과정 연계 |
+| **6단계** | � ConsultationSummary | 상담 요약 | 종합 요약, 동기부여 메시지, 지속 지원 |
 
-### 📊 각 단계별 상세 설명
+### 📊 커리어 컨설팅 상세 프로세스
+
+#### 🎯 커리어 컨설팅 노드별 세부 기능
+
+| 노드 | 파일 경로 | 주요 기능 | 출력 형태 |
+|------|-----------|-----------|----------|
+| **UserInfoCollection** | `nodes/career_consultation/user_info_collection.py` | 사용자 정보 수집 및 처리 | 대화형 질문 생성, 정보 완성도 체크 |
+| **CareerPositioning** | `nodes/career_consultation/career_positioning.py` | 커리어 포지셔닝 분석 | 현재 위치 분석, 시장 트렌드 매핑 |
+| **PathSelection** | `nodes/career_consultation/path_selection.py` | 경로 선택 지원 | 가능한 경로 제시, 장단점 분석 |
+| **PathDeepening** | `nodes/career_consultation/path_deepening.py` | 선택 경로 심화 논의 | 액션 플랜, 멘토 추천, 성장 전략 |
+| **LearningRoadmap** | `nodes/career_consultation/learning_roadmap.py` | 학습 로드맵 설계 | 맞춤형 학습 계획, 교육과정 추천 |
+| **ConsultationSummary** | `nodes/career_consultation/consultation_summary.py` | 상담 요약 및 마무리 | 종합 요약, 격려 메시지 |
+
+#### 🔄 커리어 컨설팅 워크플로우 흐름
+
+```mermaid
+graph TD
+    subgraph "커리어 컨설팅 워크플로우"
+        UIC[1️⃣ 사용자 정보 수집<br/>UserInfoCollection]
+        CP[2️⃣ 커리어 포지셔닝<br/>CareerPositioning]
+        PS[3️⃣ 경로 선택<br/>PathSelection]
+        PD[4️⃣ 경로 심화<br/>PathDeepening]
+        LR[5️⃣ 학습 로드맵<br/>LearningRoadmap]
+        CS[6️⃣ 상담 요약<br/>ConsultationSummary]
+    end
+    
+    UIC --> CP
+    CP --> PS
+    PS --> PD
+    PD --> LR
+    LR --> CS
+    
+    subgraph "대화형 처리"
+        UIC -.-> |사용자 응답 대기| UIC
+        PS -.-> |경로 선택 대기| PS
+        PD -.-> |심화 논의 대기| PD
+        LR -.-> |학습 계획 피드백 대기| LR
+    end
+    
+    style UIC fill:#e8f5e8
+    style CP fill:#f3e5f5
+    style PS fill:#e3f2fd
+    style PD fill:#fff3e0
+    style LR fill:#e0f2f1
+    style CS fill:#fce4ec
+```
+
+#### 🎯 단계별 상세 기능
 
 | 단계 | 담당 Node | 주요 기능 | 출력 |
 |------|-----------|-----------|------|
@@ -406,6 +455,42 @@ G.Navi는 구조화된 6단계 커리어 컨설팅 워크플로우를 제공합�
 | **4단계** | ResponseFormattingNode | 질문 유형별 적응적 응답 생성 | `formatted_response` |
 | **5단계** | DiagramGenerationNode | Mermaid 다이어그램 생성 및 검증 + 📨 **bot_message 설정** | `mermaid_diagram`, `diagram_generated` |
 | **6단계** | ReportGenerationNode | 다이어그램 통합 + HTML 보고서 생성 (🔒 관리자 기능) | `final_response`, `report_path` |
+
+**1️⃣ 사용자 정보 수집 (UserInfoCollection)**:
+- 🔍 **정보 완성도 체크**: 경력, 스킬, 도메인 등 필수 정보 확인
+- 🤖 **AI 맞춤형 질문 생성**: 부족한 정보에 대한 개인화된 질문 생성
+- 📝 **정보 수집 및 처리**: 사용자 응답 분석 및 프로필 완성
+- 🔄 **대화형 처리**: 정보가 충분할 때까지 반복적 질문
+
+**2️⃣ 커리어 포지셔닝 (CareerPositioning)**:
+- 📊 **현재 위치 분석**: 사용자 스킬셋과 경력 수준 분석
+- 🎯 **시장 트렌드 매핑**: 업계 동향과 개인 역량 매칭
+- 🔍 **강점 발굴**: 숨겨진 강점과 성장 가능성 발견
+- 📈 **성장 방향 제시**: 데이터 기반 성장 방향 추천
+
+**3️⃣ 경로 선택 (PathSelection)**:
+- 🛤️ **가능한 경로 제시**: 다양한 커리어 경로 옵션 제공
+- ⚖️ **장단점 분석**: 각 경로의 장단점 상세 분석
+- 🎯 **개인 적합성 평가**: 사용자 프로필에 맞는 경로 우선순위 제시
+- 💬 **선택 지원**: 사용자의 경로 선택을 돕는 대화형 상담
+
+**4️⃣ 경로 심화 (PathDeepening)**:
+- 🎯 **구체적 액션 플랜**: 선택된 경로에 대한 상세 실행 계획
+- 👥 **멘토 추천**: 사내 데이터 기반 멘토 매칭 및 추천
+- 📈 **성장 전략**: 개인 맞춤형 성장 전략 수립
+- 🤝 **네트워킹 가이드**: 사내 네트워킹 기회 및 방법 제시
+
+**5️⃣ 학습 로드맵 (LearningRoadmap)**:
+- 📚 **맞춤형 학습 계획**: 개인 목표에 맞는 체계적 학습 계획
+- 🎓 **사내 교육과정 연계**: mySUNI, College 등 사내 교육 자원 활용
+- 📅 **단계별 학습 일정**: 3-6개월 단위 구체적 학습 스케줄
+- 🎯 **학습 우선순위**: 현재 스킬 갭 분석 기반 학습 우선순위 제시
+
+**6️⃣ 상담 요약 (ConsultationSummary)**:
+- 📝 **종합 요약**: 전체 상담 내용 및 결정 사항 정리
+- 💪 **격려 메시지**: 개인화된 동기부여 및 격려 메시지
+- 🔄 **지속 지원**: 향후 상담 및 피드백 방법 안내
+- 📋 **액션 아이템**: 실행 가능한 구체적 다음 단계 제시
 
 #### 🎯 커리어 컨설팅 특화 기능
 
@@ -1007,12 +1092,12 @@ g-navi-ai-api/
 │   │   │   │
 │   │   │   └── 📁 career_consultation/     # 🎯 커리어 컨설팅 워크플로우
 │   │   │       ├── 📄 __init__.py
-│   │   │       ├── 📄 user_info_collection.py    # 📋 사용자 정보 수집
-│   │   │       ├── 📄 career_positioning.py      # 🎯 커리어 포지셔닝
-│   │   │       ├── 📄 path_selection.py          # 🛤️ 경로 선택
-│   │   │       ├── 📄 learning_roadmap.py        # 📚 학습 로드맵
-│   │   │       ├── 📄 path_deepening.py          # 🔍 경로 심화
-│   │   │       └── 📄 consultation_summary.py    # 📝 상담 요약
+│   │   │       ├── 📄 user_info_collection.py    # 1️⃣ 사용자 정보 수집
+│   │   │       ├── 📄 career_positioning.py      # 2️⃣ 커리어 포지셔닝
+│   │   │       ├── 📄 path_selection.py          # 3️⃣ 경로 선택
+│   │   │       ├── 📄 path_deepening.py          # 4️⃣ 경로 심화
+│   │   │       ├── 📄 learning_roadmap.py        # 5️⃣ 학습 로드맵
+│   │   │       └── 📄 consultation_summary.py    # 6️⃣ 상담 요약
 │   │   │
 │   │   └── 📁 agents/ 🤖            # AI 에이전트
 │   │       ├── 📄 __init__.py
@@ -1629,16 +1714,18 @@ G.Navi AI Agent 개발에 기여해 주신 모든 분들께 감사드립니다.
 
 ### v2.2.0 (2025-07-04)
 - 🎯 **커리어 컨설팅 워크플로우 추가**: 6단계 체계적 상담 프로세스 구현
-  - 📋 사용자 정보 수집 (UserInfoCollection)
-  - 🎯 커리어 포지셔닝 분석 (CareerPositioning)
-  - 🛤️ 경로 선택 및 탐색 (PathSelection)
-  - 📚 맞춤형 학습 로드맵 (LearningRoadmap)
-  - 🔍 경로 심화 및 액션 플랜 (PathDeepening)
-  - 📝 상담 요약 및 마무리 (ConsultationSummary)
+  - 1️⃣ 사용자 정보 수집 (UserInfoCollection)
+  - 2️⃣ 커리어 포지셔닝 분석 (CareerPositioning)
+  - 3️⃣ 경로 선택 및 탐색 (PathSelection)
+  - 4️⃣ 경로 심화 및 액션 플랜 (PathDeepening)
+  - 5️⃣ 맞춤형 학습 로드맵 (LearningRoadmap)
+  - 6️⃣ 상담 요약 및 마무리 (ConsultationSummary)
 - 🤖 AI 기반 개인화 질문 생성 시스템
-- 📊 사내 교육과정 연계 추천 시스템
-- 📋 체계적 상담 보고서 생성 기능
+- 📊 사내 교육과정 연계 추천 시스템 (mySUNI, College)
+- � 사내 멘토 추천 및 네트워킹 가이드
+- �📋 체계적 상담 보고서 생성 기능
 - 🔄 기존 AgentRAG 워크플로우와 통합
+- 💬 대화형 상담 프로세스 지원 (단계별 사용자 피드백)
 
 ### v2.1.1 (2025-06-23)
 - 🗑️ 레거시 노드 정리: `openai_response_node.py`, `wait_node.py` 삭제
