@@ -116,7 +116,6 @@ graph TB
             PS --> PD
             PD --> LR
             LR --> CS
-            CS -.-> RF
         end
         
         subgraph "Core Components"
@@ -352,7 +351,7 @@ flowchart TD
     CC3 --> CC4[4️⃣ 경로 심화]
     CC4 --> CC5[5️⃣ 학습 로드맵]
     CC5 --> CC6[6️⃣ 상담 요약]
-    CC6 -.-> Step4
+    CC6 --> FinalEnd[최종 응답 반환]
     
     Check --> Step0A
     Check --> Step0B
@@ -421,6 +420,7 @@ graph TD
         PD[4️⃣ 경로 심화<br/>PathDeepening]
         LR[5️⃣ 학습 로드맵<br/>LearningRoadmap]
         CS[6️⃣ 상담 요약<br/>ConsultationSummary]
+        END_CC[🏁 커리어 컨설팅 완료]
     end
     
     UIC --> CP
@@ -428,6 +428,7 @@ graph TD
     PS --> PD
     PD --> LR
     LR --> CS
+    CS --> END_CC
     
     subgraph "대화형 처리"
         UIC -.-> |사용자 응답 대기| UIC
@@ -442,6 +443,7 @@ graph TD
     style PD fill:#fff3e0
     style LR fill:#e0f2f1
     style CS fill:#fce4ec
+    style END_CC fill:#ffcdd2
 ```
 
 #### 🎯 단계별 상세 기능
@@ -491,6 +493,7 @@ graph TD
 - 💪 **격려 메시지**: 개인화된 동기부여 및 격려 메시지
 - 🔄 **지속 지원**: 향후 상담 및 피드백 방법 안내
 - 📋 **액션 아이템**: 실행 가능한 구체적 다음 단계 제시
+- 🏁 **상담 완료**: 커리어 컨설팅 워크플로우 종료 및 최종 응답 반환
 
 #### 🎯 커리어 컨설팅 특화 기능
 
@@ -498,9 +501,9 @@ graph TD
 - 🔍 **정보 수집**: 부족한 정보 AI 맞춤형 질문 생성
 - 📊 **포지셔닝 분석**: 현재 위치 분석 및 시장 트렌드 매핑
 - 🛤️ **경로 탐색**: 가능한 커리어 경로 제시 및 장단점 분석
-- 📚 **학습 설계**: 맞춤형 학습 계획 및 사내 교육과정 연계
 - 🎯 **실행 전략**: 구체적 액션 플랜 및 멘토 추천
-- 📝 **종합 요약**: 상담 요약 및 동기부여 메시지
+- 📚 **학습 설계**: 맞춤형 학습 계획 및 사내 교육과정 연계
+- 📝 **종합 요약**: 상담 요약 및 동기부여 메시지 후 **워크플로우 완료**
 
 **AI 기반 개인화**:
 - 사용자 프로필 기반 맞춤형 질문 생성
