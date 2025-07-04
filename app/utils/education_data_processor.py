@@ -283,7 +283,18 @@ class EducationDataProcessor:
         
         # 과정명 정규화 함수
         def normalize_course_name(name: str) -> str:
-            normalized = re.sub(r'[^\w\s]', '', name.lower())
+            # name이 None이거나 NaN인 경우 처리
+            if pd.isna(name) or name is None:
+                return ""
+            
+            # name을 문자열로 변환
+            name_str = str(name).strip()
+            
+            # 빈 문자열인 경우 처리
+            if not name_str:
+                return ""
+            
+            normalized = re.sub(r'[^\w\s]', '', name_str.lower())
             normalized = re.sub(r'\s+', ' ', normalized).strip()
             return normalized
         
@@ -291,8 +302,22 @@ class EducationDataProcessor:
         course_groups = {}
         
         for course in college_courses + mysuni_courses:
-            name = course.get("course_name", course.get("card_name", ""))
+            # 과정명 안전하게 추출
+            name = ""
+            if course["source"] == "college":
+                name = course.get("course_name", "")
+            else:  # mysuni
+                name = course.get("card_name", "")
+            
+            # 빈 이름인 경우 건너뛰기
+            if not name or pd.isna(name):
+                continue
+                
             normalized_name = normalize_course_name(name)
+            
+            # 정규화된 이름이 빈 문자열인 경우 건너뛰기
+            if not normalized_name:
+                continue
             
             if normalized_name not in course_groups:
                 course_groups[normalized_name] = []

@@ -195,7 +195,8 @@ class ChatGraphBuilder:
         """
         # 🚨 중요: 이미 커리어 상담이 진행 중인 경우 상담 플로우 유지
         consultation_stage = state.get("consultation_stage", "")
-        if consultation_stage and consultation_stage not in ["initial", ""]:
+        # 상담 완료 상태는 제외하고, 진행 중인 단계만 상담 플로우 유지
+        if consultation_stage and consultation_stage not in ["initial", "", "completed"]:
             print(f"🔄 커리어 상담 진행 중 - 현재 단계: {consultation_stage}")
             return "career_consultation"
         
@@ -464,7 +465,7 @@ class ChatGraphBuilder:
         # 커리어 상담 전용 노드들 추가
         workflow.add_node("collect_user_info", self.user_info_collection_node.collect_user_info_node)  # 사용자 정보 수집
         workflow.add_node("process_user_info", self.user_info_collection_node.process_user_info_node)  # 사용자 정보 처리
-        workflow.add_node("career_positioning", self.career_positioning_node.career_positioning_node)  # 커리어 포지셔닝
+        workflow.add_node("career_positioning", self.career_positioning_node.analyze_career_positioning)  # 커리어 포지셔닝
         workflow.add_node("process_path_selection", self.path_selection_node.process_path_selection_node)  # 경로 선택 처리
         workflow.add_node("process_deepening", self.path_deepening_node.process_deepening_node)  # 경로 심화 노드
         workflow.add_node("create_learning_roadmap", self.learning_roadmap_node.create_learning_roadmap_node)  # 학습 로드맵

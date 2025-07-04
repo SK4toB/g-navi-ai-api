@@ -49,11 +49,33 @@ class LearningRoadmapNode:
                 mysuni_info = ""
                 if mysuni_courses:
                     mysuni_sample = mysuni_courses[:5]  # 처음 5개만 샘플로 표시
+                    # 첫 번째 과정의 데이터 구조 확인을 위한 디버깅
+                    if mysuni_sample:
+                        print(f"🔍 DEBUG - mySUNI 첫 번째 과정 데이터 구조: {mysuni_sample[0].keys()}")
+                        print(f"🔍 DEBUG - mySUNI 첫 번째 과정 샘플: {mysuni_sample[0]}")
+                    
                     # URL이 있는 경우 마크다운 링크 형식으로 생성
                     mysuni_formatted = []
                     for course in mysuni_sample:
-                        course_name = course.get('title', course.get('name', '과정명 없음'))
+                        # 여러 필드에서 과정명을 찾아서 추출
+                        course_name = (
+                            course.get('title') or 
+                            course.get('name') or 
+                            course.get('course_name') or 
+                            course.get('course_title') or
+                            course.get('content_title') or
+                            course.get('subject') or
+                            '과정명 미확인'
+                        )
                         course_url = course.get('url', course.get('link', ''))
+                        
+                        # 과정명이 비어있거나 None인 경우 처리
+                        if not course_name or course_name.strip() == '':
+                            course_name = '과정명 미확인'
+                        
+                        # 디버깅: 과정명 추출 결과 확인
+                        print(f"🔍 DEBUG - mySUNI 과정명 추출 결과: '{course_name}' (URL: {course_url})")
+                        
                         if course_url:
                             mysuni_formatted.append(f"[{course_name}]({course_url})")
                         else:
@@ -63,11 +85,33 @@ class LearningRoadmapNode:
                 college_info = ""
                 if college_courses:
                     college_sample = college_courses[:5]  # 처음 5개만 샘플로 표시
+                    # 첫 번째 과정의 데이터 구조 확인을 위한 디버깅
+                    if college_sample:
+                        print(f"🔍 DEBUG - College 첫 번째 과정 데이터 구조: {college_sample[0].keys()}")
+                        print(f"🔍 DEBUG - College 첫 번째 과정 샘플: {college_sample[0]}")
+                    
                     # URL이 있는 경우 마크다운 링크 형식으로 생성
                     college_formatted = []
                     for course in college_sample:
-                        course_name = course.get('title', course.get('name', '과정명 없음'))
+                        # 여러 필드에서 과정명을 찾아서 추출
+                        course_name = (
+                            course.get('title') or 
+                            course.get('name') or 
+                            course.get('course_name') or 
+                            course.get('course_title') or
+                            course.get('content_title') or
+                            course.get('subject') or
+                            '과정명 미확인'
+                        )
                         course_url = course.get('url', course.get('link', ''))
+                        
+                        # 과정명이 비어있거나 None인 경우 처리
+                        if not course_name or course_name.strip() == '':
+                            course_name = '과정명 미확인'
+                        
+                        # 디버깅: 과정명 추출 결과 확인
+                        print(f"🔍 DEBUG - College 과정명 추출 결과: '{course_name}' (URL: {course_url})")
+                        
                         if course_url:
                             college_formatted.append(f"[{course_name}]({course_url})")
                         else:
@@ -138,14 +182,11 @@ class LearningRoadmapNode:
 **4-6개월 (실무 적용)**
 - [구체적인 학습 활동과 목표]
 
-### 🎯 다음 단계
+--- (이 대시 부분 무조건 포함)
+** 다음 단계 : 상담 종합 및 마무리 ** 
 
 **{merged_user_data.get('name', '고객')}님**의 맞춤형 학습 로드맵을 제시해드렸습니다!
-
-위의 학습 로드맵에 대해 어떻게 생각하시나요? 
-- 궁금한 점이 있으시다면 언제든 질문해주세요
-- 추가로 상담받고 싶은 내용이 있으시면 말씀해주세요
-- 오늘 상담을 마무리하고 싶으시다면 "상담 완료" 또는 "마무리"라고 말씀해주세요
+오늘 상담을 마무리하시려면 "네" 라고 말씀해주세요!
 
 **성공적인 커리어 성장을 응원합니다! 🚀**
 
@@ -161,11 +202,18 @@ class LearningRoadmapNode:
 - 마지막에 상담 정리를 위한 유도 질문 포함
 """
             
+            # --- 인사말 없이 바로 시작하도록 명확히 안내 ---
+            prompt += """
+
+**중요:** 아래 학습 로드맵 응답은 '안녕하세요' 등 인사말 없이 바로 '## 학습 로드맵 설계'로 시작하세요. 첫 문장은 반드시 분석/제안/계획 요약으로 시작해야 합니다.
+
+"""
+            
             response = await client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=800,
-                temperature=0.6
+                temperature=0.4
             )
             
             ai_content = response.choices[0].message.content.strip()

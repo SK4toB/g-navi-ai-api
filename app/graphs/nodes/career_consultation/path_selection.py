@@ -33,10 +33,6 @@ class PathSelectionNode:
             skills_str = ", ".join(merged_user_data.get('skills', ['정보 없음']))
             path_name = selected_path.get('name', '선택된 경로')
             
-            # 디버깅: AI 메서드에 전달된 데이터 확인
-            print(f"🔍 DEBUG - path_selection AI 메서드에 전달된 merged_user_data: {merged_user_data}")
-            print(f"🔍 DEBUG - path_selection selected_path: {selected_path}")
-            
             prompt = f"""
 당신은 G.Navi의 전문 커리어 상담사입니다. 현재 상담이 진행 중이며, {merged_user_data.get('name', '고객')}님이 "{path_name}" 경로를 선택했습니다.
 
@@ -92,8 +88,8 @@ class PathSelectionNode:
             response = await client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=400,
-                temperature=0.6
+                max_tokens=1000,
+                temperature=0.4
             )
             
             return response.choices[0].message.content.strip()
@@ -111,47 +107,34 @@ class PathSelectionNode:
         user_question = state.get("user_question", "").strip()
         career_paths = state.get("career_paths_suggested", [])
         
-        # 사용자 선택 파싱 - 다양한 형태의 선택을 처리
+        # 사용자 선택 파싱
         selected_path = None
         user_question_upper = user_question.upper()
         
-        # 디버깅: 선택 파싱 로직 확인
-        print(f"🔍 DEBUG - user_question: '{user_question}'")
-        print(f"🔍 DEBUG - career_paths: {career_paths}")
-        
-        # 1. 번호 기반 선택 처리 ("1번", "2번", "첫번째", "두번째" 등)
+        # 번호 기반 선택 처리
         if "1번" in user_question or "1" in user_question or "첫" in user_question or "ONE" in user_question_upper:
             selected_path = career_paths[0] if len(career_paths) > 0 else None
-            print(f"🔍 DEBUG - 1번 경로 선택됨: {selected_path}")
         elif "2번" in user_question or "2" in user_question or "둘" in user_question or "TWO" in user_question_upper:
             selected_path = career_paths[1] if len(career_paths) > 1 else None
-            print(f"🔍 DEBUG - 2번 경로 선택됨: {selected_path}")
         else:
-            # 2. ID나 이름 기반 선택 처리 (기존 로직)
-            for i, path in enumerate(career_paths):
+            # ID나 이름 기반 선택 처리
+            for path in career_paths:
                 if (path.get("id", "") in user_question_upper or 
                     path.get("name", "") in user_question):
                     selected_path = path
-                    print(f"🔍 DEBUG - ID/이름 기반으로 {i+1}번째 경로 선택됨: {selected_path}")
                     break
         
-        # 3. 기본값 처리 (선택을 인식하지 못한 경우 첫 번째 경로)
+        # 기본값 처리
         if not selected_path:
             selected_path = career_paths[0] if career_paths else {"name": "기본 경로", "id": "default_path"}
-            print(f"🔍 DEBUG - 기본값으로 첫 번째 경로 선택: {selected_path}")
         
-        # 4. selected_path에 path_name 추가 (learning_roadmap에서 사용)
+        # selected_path에 path_name 추가
         if selected_path and "path_name" not in selected_path:
             selected_path["path_name"] = selected_path.get("name", "선택된 경로")
         
         user_data = self.graph_builder.get_user_info_from_session(state)
         collected_info = state.get("collected_user_info", {})
         merged_user_data = {**user_data, **collected_info}
-        
-        # 디버깅: 데이터 확인
-        print(f"🔍 DEBUG - path_selection user_data from session: {user_data}")
-        print(f"🔍 DEBUG - path_selection collected_info: {collected_info}")
-        print(f"🔍 DEBUG - path_selection merged_user_data: {merged_user_data}")
         
         # AI 기반 경로 선택 확인 및 목표 설정 질문 생성
         ai_response = await self._generate_path_selection_response(merged_user_data, selected_path)
@@ -169,10 +152,6 @@ class PathSelectionNode:
         
         # HTML 로그 저장
         save_career_response_to_html("path_selection", deepening_response, state.get("session_id", "unknown"))
-        
-        # State 전달 확인 (디버깅)
-        print(f"🔍 DEBUG - path_selection에서 받은 retrieved_career_data: {len(state.get('retrieved_career_data', []))}개")
-        print(f"🔍 DEBUG - path_selection에서 받은 state_trace: {state.get('state_trace', 'None')}")
         
         # path_selection에서 state_trace에 추가
         import time

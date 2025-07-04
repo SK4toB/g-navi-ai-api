@@ -108,6 +108,7 @@ class PathConfig:
     # 📊 벡터 스토어 경로 (Chroma DB 저장소) - 기존 방식 유지
     CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"
     EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"
+    NEWS_VECTOR_STORE = "../../storage/vector_stores/news_data"
     
     # 🗄️ 캐시 경로 (임베딩 캐시) - 기존 방식 유지  
     CAREER_EMBEDDING_CACHE = "../../storage/cache/embedding_cache"
@@ -490,16 +491,18 @@ class CareerEnsembleRetrieverAgent:
         # 회사 비전 정보를 결과에 추가 (커리어 관련 질문인 경우)
         career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직']
         if any(keyword in query.lower() for keyword in career_keywords):
-            company_vision = self._load_company_vision()
-            if company_vision:
-                # 회사 비전을 Document 형태로 추가
-                vision_content = self._format_company_vision_for_context(company_vision)
-                vision_doc = Document(
-                    page_content=vision_content,
-                    metadata={"type": "company_vision", "source": "company_vision.json"}
-                )
-                final_docs.append(vision_doc)
-                self.logger.info("회사 비전 정보가 검색 결과에 추가되었습니다.")
+            try:
+                company_vision_context = self.get_company_vision_context()
+                if company_vision_context:
+                    # 회사 비전을 Document 형태로 추가
+                    vision_doc = Document(
+                        page_content=company_vision_context,
+                        metadata={"type": "company_vision", "source": "company_vision.json"}
+                    )
+                    final_docs.append(vision_doc)
+                    self.logger.info("회사 비전 정보가 검색 결과에 추가되었습니다.")
+            except Exception as e:
+                self.logger.warning(f"회사 비전 정보 추가 실패: {e}")
         
         print(f"✅ [커리어 사례 검색] 완료: {len(final_docs)}개 결과 반환")
         return final_docs

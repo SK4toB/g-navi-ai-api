@@ -26,12 +26,12 @@ class UserInfoCollectionNode:
             
             api_key = os.getenv("OPENAI_API_KEY")
             if not api_key:
-                return self._get_default_info_request_message(field, user_name)
+                return self._get_info_request_message(field, user_name, is_first_request=True)
             
             client = AsyncOpenAI(api_key=api_key)
             
             field_descriptions = {
-                'experience': '경력 연차 정보',
+                'level': '경력 레벨 정보 (CL1~CL5)',
                 'skills': '기술 스택과 역량',
                 'domain': '업무 도메인과 전문 분야'
             }
@@ -56,15 +56,15 @@ class UserInfoCollectionNode:
             response = await client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=1000,
-                temperature=0.7
+                max_tokens=500,
+                temperature=0.4
             )
             
             return response.choices[0].message.content.strip()
             
         except Exception as e:
             print(f"개인화 질문 생성 중 오류: {e}")
-            return self._get_default_info_request_message(field, user_name)
+            return self._get_info_request_message(field, user_name, is_first_request=True)
     
     def _check_missing_info(self, user_data: Dict[str, Any]) -> List[str]:
         """
@@ -81,25 +81,29 @@ class UserInfoCollectionNode:
             user_data = self._extract_nested_fields(user_data)
             print(f"🔍 중첩 필드 추출 후 user_data: {user_data}")
         
-        # 연차 확인 - 실제 연차 정보인지 검증
-        experience = user_data.get('experience')
-        print(f"🔍 연차 체크: experience = {experience}, type = {type(experience)}")
+        # 레벨 확인 - CL1~CL5 레벨 정보인지 검증
+        level = user_data.get('level')
+        print(f"🔍 레벨 체크: level = {level}, type = {type(level)}")
         
-        # 연차 정보가 유효한지 검증 (숫자나 '신입' 포함 여부)
-        is_valid_experience = False
-        if experience and isinstance(experience, str):
-            experience_lower = experience.lower().strip()
-            # 유효한 연차 패턴: 숫자 포함 또는 '신입' 포함
-            import re
-            has_number = bool(re.search(r'\d+', experience_lower))
-            has_freshman_keyword = any(keyword in experience_lower for keyword in ['신입', '인턴', '경험없음', '0년'])
-            is_valid_experience = has_number or has_freshman_keyword
+        # 레벨 정보가 유효한지 검증 (CL1~CL5 형태)
+        is_valid_level = False
+        
+        if level is not None:
+            if isinstance(level, str):
+                level_upper = level.upper().strip()
+                # CL1~CL5 패턴 확인
+                valid_levels = ['CL1', 'CL2', 'CL3', 'CL4', 'CL5']
+                is_valid_level = level_upper in valid_levels
+                print(f"🔍 레벨 검증: {level} → {level_upper}, 유효: {is_valid_level}")
             
-        if not is_valid_experience:
-            missing_fields.append('experience')
-            print(f"❌ 연차 부족 (유효하지 않은 정보: {experience})")
+        if not is_valid_level:
+            missing_fields.append('level')
+            print(f"❌ 레벨 부족 (유효하지 않은 정보: {level})")
         else:
-            print(f"✅ 연차 있음: {experience}")
+            print(f"✅ 레벨 있음: {level}")
+            # 레벨을 연차로 매핑하여 experience 필드에 저장
+            user_data['experience'] = self._map_level_to_experience(level)
+            print(f"🔍 매핑된 연차: {user_data['experience']}")
         
         # 기술스택 확인  
         skills = user_data.get('skills', [])
@@ -164,100 +168,118 @@ class UserInfoCollectionNode:
             
         return user_data
     
-    def _get_default_info_request_message(self, field: str, user_name: str) -> str:
+    def _get_info_request_message(self, field: str, user_name: str, is_first_request: bool = True) -> str:
         """
-        전문적이고 체계적인 정보 요청 메시지를 생성한다.
+        정보 요청 메시지를 생성한다.
         
         @param field: 요청할 정보 필드
-        @param user_name: 사용자 이름
+        @param user_name: 사용자 이름  
+        @param is_first_request: 첫 번째 요청인지 여부 (True: 상세 메시지, False: 간단 메시지)
         @return: 요청 메시지
         """
-        messages = {
-            'experience': f"""👋 안녕하세요 {user_name}님! **전문 커리어 컨설팅**을 시작하겠습니다.
+        if is_first_request:
+            # 첫 번째 요청 시 상세한 메시지
+            messages = {
+                'level': f"""안녕하세요 {user_name}님! 전문 커리어 컨설팅을 시작하겠습니다.
 
-**정확한 분석을 위해 현재 경력 수준을 확인하겠습니다.**
+정확한 분석을 위해 현재 경력 레벨을 확인하겠습니다.
 
-**💼 총 경력 연차**를 알려주세요:
+경력 레벨을 알려주세요:
 
-**📊 경력 구분 가이드**
-- **0-1년**: 신입/인턴 (예: "신입", "1년차")
-- **2-3년**: 주니어 (예: "2년", "3년차") 
-- **4-7년**: 미드레벨 (예: "5년", "6년 3개월")
-- **8년 이상**: 시니어+ (예: "10년", "12년차")
+레벨 구분 가이드
+- CL1: 1~3년 (주니어 레벨)
+- CL2: 4~6년 (중급 레벨)
+- CL3: 7~9년 (시니어 레벨)
+- CL4: 10~12년 (전문가 레벨)
+- CL5: 13년 이상 (리더 레벨)
 
-**입력 예시**: "5년", "3년차", "신입", "7년 6개월"
+입력 예시: "CL1", "CL2", "CL3", "CL4", "CL5"
 
-*정확한 연차 정보는 맞춤형 커리어 전략 수립에 필수적입니다.*""",
+정확한 레벨 정보는 맞춤형 커리어 전략 수립에 필수적입니다.""",
 
-            'skills': f"""📝 {user_name}님의 **전문 역량 분석**을 위한 정보가 필요합니다.
+                'skills': f"""{user_name}님의 전문 역량 분석을 위한 정보가 필요합니다.
 
-**🛠️ 보유 기술스택 및 핵심 스킬**을 알려주세요:
+보유 기술스택 및 핵심 스킬을 알려주세요:
 
-**기술 분야별 예시**
-- **개발**: Java, Spring Boot, React, Python, AWS
-- **데이터**: SQL, Python, Tableau, Excel, 통계분석
-- **기획**: 요구사항 분석, 프로젝트 관리, 사용자 조사
-- **마케팅**: Google Analytics, 퍼포먼스 마케팅, 콘텐츠 기획
-- **디자인**: Figma, Photoshop, UI/UX 설계
+기술 분야별 예시
+- 개발: Java, Spring Boot, React, Python, AWS
+- 데이터: SQL, Python, Tableau, Excel, 통계분석
+- 기획: 요구사항 분석, 프로젝트 관리, 사용자 조사
+- 마케팅: Google Analytics, 퍼포먼스 마케팅, 콘텐츠 기획
+- 디자인: Figma, Photoshop, UI/UX 설계
 
-**입력 방법**: 기술명을 쉼표로 구분
-**예시**: "Java, Spring, MySQL, AWS" 또는 "기획, 데이터분석, SQL, 엑셀"
+입력 방법: 기술명을 쉼표로 구분
+예시: "Java, Spring, MySQL, AWS" 또는 "기획, 데이터분석, SQL, 엑셀"
 
-*보유 스킬은 강점 분석과 성장 방향 설정의 핵심 지표입니다.*""",
+보유 스킬은 강점 분석과 성장 방향 설정의 핵심 지표입니다.""",
 
-            'domain': f"""🎯 마지막으로 **업무 도메인 전문성** 파악이 필요합니다.
+                'domain': f"""마지막으로 업무 도메인 전문성 파악이 필요합니다.
 
-**🏢 현재 담당하시는 업무 분야나 도메인**을 알려주세요:
+현재 담당하시는 업무 분야나 도메인을 알려주세요:
 
-**도메인 분류 예시**
-- **비즈니스 도메인**: 전자상거래, 금융/핀테크, 게임, 교육, 헬스케어
-- **기술 도메인**: 백엔드 개발, 프론트엔드, 데이터 엔지니어링, DevOps
-- **직무 도메인**: 상품 기획, 마케팅, 영업, 인사, 재무
+도메인 분류 예시
+- 비즈니스 도메인: 전자상거래, 금융/핀테크, 게임, 교육, 헬스케어
+- 기술 도메인: 백엔드 개발, 프론트엔드, 데이터 엔지니어링, DevOps
+- 직무 도메인: 상품 기획, 마케팅, 영업, 인사, 재무
 
-**업무 특성 예시**
+업무 특성 예시
 - "B2C 이커머스 플랫폼 백엔드 개발"
 - "핀테크 앱 사용자 경험 기획"  
 - "게임 서비스 데이터 분석"
 - "교육 콘텐츠 마케팅"
 
-**입력 예시**: "전자상거래", "핀테크 앱 개발", "게임 기획", "교육 서비스"
+입력 예시: "전자상거래", "핀테크 앱 개발", "게임 기획", "교육 서비스"
 
-*도메인 전문성은 커리어 경로 설정의 중요한 기준점입니다.*"""
-        }
+도메인 전문성은 커리어 경로 설정의 중요한 기준점입니다."""
+            }
+        else:
+            # 후속 요청 시 간단한 메시지
+            messages = {
+                'level': f"""{user_name}님의 경력 레벨을 알려주세요.
+
+입력 예시: "CL1", "CL2", "CL3", "CL4", "CL5"
+
+정확한 레벨 정보는 맞춤형 커리어 전략 수립에 필수적입니다.""",
+
+                'skills': f"""{user_name}님의 보유 기술스택 및 핵심 스킬을 알려주세요.
+
+입력 방법: 기술명을 쉼표로 구분
+예시: "Java, Spring, MySQL, AWS" 또는 "기획, 데이터분석, SQL, 엑셀"
+
+보유 스킬은 강점 분석과 성장 방향 설정의 핵심 지표입니다.""",
+
+                'domain': f"""{user_name}님의 현재 담당하시는 업무 분야나 도메인을 알려주세요.
+
+입력 예시: "전자상거래", "핀테크 앱 개발", "게임 기획", "교육 서비스"
+
+도메인 전문성은 커리어 경로 설정의 중요한 기준점입니다."""
+            }
         
         return messages.get(field, f"{field} 정보를 알려주세요.")
-        
-    def _get_simple_info_request_message(self, field: str, user_name: str) -> str:
-        """
-        간단한 정보 요청 메시지 (인사말 없이)
-        
-        @param field: 수집할 정보 필드
-        @param user_name: 사용자 이름
-        @return: 간단한 요청 메시지
-        """
-        simple_messages = {
-            'experience': f"""**💼 {user_name}님의 총 경력 연차**를 알려주세요.
-
-**입력 예시**: "5년", "3년차", "신입", "7년 6개월"
-
-*정확한 연차 정보는 맞춤형 커리어 전략 수립에 필수적입니다.*""",
-
-            'skills': f"""**🛠️ {user_name}님의 보유 기술스택 및 핵심 스킬**을 알려주세요.
-
-**입력 방법**: 기술명을 쉼표로 구분
-**예시**: "Java, Spring, MySQL, AWS" 또는 "기획, 데이터분석, SQL, 엑셀"
-
-*보유 스킬은 강점 분석과 성장 방향 설정의 핵심 지표입니다.*""",
-
-            'domain': f"""**🏢 {user_name}님의 현재 담당하시는 업무 분야나 도메인**을 알려주세요.
-
-**입력 예시**: "전자상거래", "핀테크 앱 개발", "게임 기획", "교육 서비스"
-
-*도메인 전문성은 커리어 경로 설정의 중요한 기준점입니다.*"""
-        }
-        
-        return simple_messages.get(field, f"**{field}** 정보를 알려주세요.")
     
+    def _normalize_user_data(self, user_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        사용자 데이터를 정규화한다 (특히 level 필드)
+        
+        @param user_data: 원본 사용자 데이터
+        @return: 정규화된 사용자 데이터
+        """
+        normalized_data = user_data.copy()
+        
+        # level 필드 정규화 및 experience 필드 생성
+        level = normalized_data.get('level')
+        if level is not None:
+            if isinstance(level, str):
+                # 레벨을 대문자로 정규화
+                normalized_level = level.upper().strip()
+                normalized_data['level'] = normalized_level
+                
+                # 레벨을 연차로 매핑하여 experience 필드 생성
+                normalized_data['experience'] = self._map_level_to_experience(normalized_level)
+                print(f"🔍 레벨 정규화: {level} → {normalized_level}, 연차: {normalized_data['experience']}")
+        
+        return normalized_data
+
     async def collect_user_info_node(self, state: ChatState) -> Dict[str, Any]:
         """
         부족한 사용자 정보를 수집한다. (간단화된 버전)
@@ -271,7 +293,10 @@ class UserInfoCollectionNode:
         # 수집된 정보로 기본 데이터 업데이트
         user_data.update(collected_info)
         
-        print(f"🔍 최종 사용자 데이터: {user_data}")
+        # 사용자 데이터 정규화 (특히 experience 필드)
+        user_data = self._normalize_user_data(user_data)
+        
+        print(f"🔍 정규화된 사용자 데이터: {user_data}")
         
         # 부족한 정보 확인 (_check_missing_info에서 중첩 필드 추출도 함께 처리)
         missing_fields = self._check_missing_info(user_data)
@@ -293,7 +318,7 @@ class UserInfoCollectionNode:
         current_field = missing_fields[0]
         user_name = user_data.get('name', '고객')
         
-        request_message = self._get_simple_info_request_message(current_field, user_name)
+        request_message = self._get_info_request_message(current_field, user_name, is_first_request=False)
         response_data = {"message": request_message}
         
         # HTML 로그 저장
@@ -323,7 +348,7 @@ class UserInfoCollectionNode:
         
         # 사용자 응답 검증
         if len(user_response) < 1:
-            error_response = {"message": "정보를 입력해주세요! 간단히라도 적어주시면 됩니다. 😊"}
+            error_response = {"message": "정보를 입력해주세요! 간단히라도 적어주시면 됩니다."}
             return {
                 **state,
                 "formatted_response": error_response,
@@ -332,15 +357,17 @@ class UserInfoCollectionNode:
             }
         
         # 필드별 정보 처리 및 정규화
-        if current_field == "experience":
-            import re
-            numbers = re.findall(r'\d+', user_response)
-            if numbers:
-                collected_info["experience"] = f"{numbers[0]}년"
-            elif "신입" in user_response.lower():
-                collected_info["experience"] = "신입"
+        if current_field == "level":
+            # 레벨 정보 정규화
+            level_input = user_response.upper().strip()
+            valid_levels = ['CL1', 'CL2', 'CL3', 'CL4', 'CL5']
+            if level_input in valid_levels:
+                collected_info["level"] = level_input
+                # 레벨을 연차로 매핑
+                collected_info["experience"] = self._map_level_to_experience(level_input)
             else:
-                collected_info["experience"] = user_response
+                # 유효하지 않은 레벨인 경우 그대로 저장하고 다시 요청
+                collected_info["level"] = user_response
                 
         elif current_field == "skills":
             skills_list = [skill.strip() for skill in user_response.split(',') if skill.strip()]
@@ -352,6 +379,9 @@ class UserInfoCollectionNode:
         # state의 user_data에 수집된 정보 반영
         user_data = state.get("user_data", {})
         user_data.update(collected_info)
+        
+        # 사용자 데이터 정규화 (특히 experience 필드)
+        user_data = self._normalize_user_data(user_data)
         
         # 여전히 부족한 정보가 있는지 확인
         missing_fields = self._check_missing_info(user_data)
@@ -378,7 +408,7 @@ class UserInfoCollectionNode:
             # 다음 정보 요청 메시지 생성
             next_field = missing_fields[0]
             user_name = user_data.get('name', '고객')
-            next_request_message = self._get_simple_info_request_message(next_field, user_name)
+            next_request_message = self._get_info_request_message(next_field, user_name, is_first_request=False)
             response_data = {"message": next_request_message}
             
             # HTML 로그 저장
@@ -400,3 +430,26 @@ class UserInfoCollectionNode:
                     f"{next_field} 정보 요청"
                 ]
             }
+    
+    def _map_level_to_experience(self, level: str) -> str:
+        """
+        CL 레벨을 연차 정보로 매핑한다.
+        
+        @param level: CL1, CL2, CL3, CL4, CL5 등의 레벨
+        @return: 연차 정보 문자열
+        """
+        level_mapping = {
+            "CL1": "1~3년",
+            "CL2": "4~6년", 
+            "CL3": "7~9년",
+            "CL4": "10~12년",
+            "CL5": "13년 이상"
+        }
+        
+        if level and level.upper() in level_mapping:
+            mapped_experience = level_mapping[level.upper()]
+            print(f"🔍 레벨 매핑: {level} → {mapped_experience}")
+            return mapped_experience
+        else:
+            print(f"🔍 알 수 없는 레벨: {level}")
+            return level if level else "레벨 정보 없음"

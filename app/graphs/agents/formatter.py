@@ -31,7 +31,7 @@ import re
 
 class ResponseFormattingAgent:
     """
-    📝 LLM 기반 적응적 응답 포맷팅 에이전트
+    LLM 기반 적응적 응답 포맷팅 에이전트
     
     AI가 질문 유형과 컨텍스트를 분석하여 최적화된 응답을 생성합니다.
     검색된 커리어 사례와 교육과정을 자연스럽게 통합하여 
