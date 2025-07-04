@@ -55,9 +55,9 @@ class IntentAnalysisNode:
         import time
         start_time = time.perf_counter()
         
-        try:
+        try:  # 의도 분석 처리 시작
             # 메시지 검증 실패 시 처리 건너뛰기
-            if state.get("workflow_status") == "validation_failed":
+            if state.get("workflow_status") == "validation_failed":  # 검증 실패 상태 확인
                 print(f"⚠️  [2단계] 메시지 검증 실패로 처리 건너뛰기")
                 return state
                 
@@ -65,9 +65,9 @@ class IntentAnalysisNode:
             self.logger.info("=== 2단계: 의도 분석 및 상황 이해 ===")
             
             # 세션 정보에서 사용자 데이터 가져오기
-            user_data = self.graph_builder.get_user_info_from_session(state)
+            user_data = self.graph_builder.get_user_info_from_session(state)  # 사용자 정보 조회 호출
             
-            intent_analysis = self.intent_analysis_agent.analyze_intent_and_context(
+            intent_analysis = self.intent_analysis_agent.analyze_intent_and_context(  # 의도 분석 에이전트 호출
                 user_question=state.get("user_question", ""),
                 user_data=user_data,
                 chat_history=state.get("current_session_messages", [])
@@ -80,11 +80,11 @@ class IntentAnalysisNode:
             end_time = time.perf_counter()
             step_time = end_time - start_time
             
-            if step_time < 0.001:
+            if step_time < 0.001:  # 마이크로초 단위인 경우
                 time_display = f"{step_time * 1000000:.0f}μs"
-            elif step_time < 0.01:
+            elif step_time < 0.01:  # 밀리초 단위인 경우
                 time_display = f"{step_time * 1000:.1f}ms"
-            else:
+            else:  # 초 단위인 경우
                 time_display = f"{step_time:.3f}초"
             
             processing_log = state.get("processing_log", [])
@@ -92,8 +92,8 @@ class IntentAnalysisNode:
             state["processing_log"] = processing_log
             
             # 분석 결과 요약
-            intent_type = intent_analysis.get("intent", "일반 상담")
-            career_keywords = intent_analysis.get("career_history", [])
+            intent_type = intent_analysis.get("intent", "일반 상담")  # 의도 타입 추출
+            career_keywords = intent_analysis.get("career_history", [])  # 커리어 키워드 추출
             
             print(f"✅ [2단계] 의도 분석 및 상황 이해 완료")
             print(f"📊 분석된 의도: {intent_type}")
@@ -102,16 +102,16 @@ class IntentAnalysisNode:
             
             self.logger.info("의도 분석 및 상황 이해 완료")
             
-        except Exception as e:
+        except Exception as e:  # 예외 처리
             # 오류 발생 시에도 처리 시간 기록
             end_time = time.perf_counter()
             step_time = end_time - start_time
             
-            if step_time < 0.001:
+            if step_time < 0.001:  # 마이크로초 단위인 경우
                 time_display = f"{step_time * 1000000:.0f}μs"
-            elif step_time < 0.01:
+            elif step_time < 0.01:  # 밀리초 단위인 경우
                 time_display = f"{step_time * 1000:.1f}ms"
-            else:
+            else:  # 초 단위인 경우
                 time_display = f"{step_time:.3f}초"
                 
             processing_log = state.get("processing_log", [])

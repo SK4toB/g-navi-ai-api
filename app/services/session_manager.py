@@ -107,22 +107,22 @@ class SessionManager:
     
     def update_last_active(self, conversation_id: str) -> bool:
         """마지막 활동 시간 업데이트"""
-        if conversation_id in self.active_sessions:
-            self.active_sessions[conversation_id]["last_active"] = datetime.utcnow()
-            return True
-        return False
+        if conversation_id in self.active_sessions:  # 세션이 존재하는 경우
+            self.active_sessions[conversation_id]["last_active"] = datetime.utcnow()  # 현재 시간으로 업데이트
+            return True  # 성공 반환
+        return False  # 세션이 없는 경우 실패 반환
     
     def is_session_expired(self, conversation_id: str) -> bool:
         """세션 만료 여부 확인"""
-        session = self.get_session(conversation_id)
-        if not session:
-            return True
+        session = self.get_session(conversation_id)  # 세션 조회
+        if not session:  # 세션이 없는 경우
+            return True  # 만료된 것으로 간주
         
-        now = datetime.utcnow()
-        last_active = session.get("last_active", session.get("created_at"))
-        inactive_duration = now - last_active
+        now = datetime.utcnow()  # 현재 시간 획득
+        last_active = session.get("last_active", session.get("created_at"))  # 마지막 활동 시간 또는 생성 시간 확인
+        inactive_duration = now - last_active  # 비활성 기간 계산
         
-        return inactive_duration > self.session_timeout
+        return inactive_duration > self.session_timeout  # 타임아웃 시간 초과 여부 반환
     
     async def close_session(self, conversation_id: str, current_session_messages: List[Dict[str, Any]] = None) -> Dict[str, Any]:
         """

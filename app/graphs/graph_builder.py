@@ -167,6 +167,11 @@ class ChatGraphBuilder:
         """
         consultation_stage = state.get("consultation_stage", "")
         
+        # 상담 완료 상태 확인
+        if consultation_stage == "completed":
+            print("✅ 커리어 상담 완료 - 새로운 대화로 진행")
+            return "analyze_intent"
+        
         # 상담이 진행 중인 단계들
         active_consultation_stages = [
             "collecting_info", "positioning_ready", "path_selection", 
@@ -226,7 +231,7 @@ class ChatGraphBuilder:
         ]
         
         # 더 정확한 매칭을 위해 구문 단위로 확인
-        is_career_consultation = any(phrase in user_question for phrase in career_consultation_phrases)
+        is_career_consultation = any(phrase in user_question for phrase in career_consultation_phrases)  # 커리어 상담 키워드 포함 여부 확인
         
         # 커리어 상담이 아닌 경우를 명확히 구분 (제외 키워드)
         non_career_phrases = [
@@ -248,16 +253,16 @@ class ChatGraphBuilder:
         ]
         
         # 제외 키워드가 있으면 일반 대화로 분류
-        has_non_career_phrases = any(phrase in user_question for phrase in non_career_phrases)
+        has_non_career_phrases = any(phrase in user_question for phrase in non_career_phrases)  # 제외 키워드 포함 여부 확인
         
         # 최종 판단: 커리어 키워드가 있고 + 제외 키워드가 없어야 커리어 상담
-        is_career_consultation = is_career_consultation and not has_non_career_phrases
+        is_career_consultation = is_career_consultation and not has_non_career_phrases  # 커리어 상담 최종 판단
         
-        if is_career_consultation or intent_type == "career_consultation":
-            print("🎯 커리어 상담 플로우로 진행")
+        if is_career_consultation or intent_type == "career_consultation":  # 커리어 상담 조건 확인
+            print("🎯 커리어 상담 플로우로 진행")  # 커리어 상담 플로우 선택 로그
             return "career_consultation"
-        else:
-            print("💬 범용 대화 플로우로 진행")  
+        else:  # 일반 대화인 경우
+            print("💬 범용 대화 플로우로 진행")  # 일반 대화 플로우 선택 로그
             return "general_flow"
     
     def _should_continue_or_wait(self, state: ChatState) -> str:
@@ -267,8 +272,8 @@ class ChatGraphBuilder:
         @param state: ChatState - 현재 워크플로우 상태
         @return str - "continue" (다음 단계로) 또는 "wait" (사용자 입력 대기)
         """
-        awaiting_input = state.get("awaiting_user_input", False)
-        consultation_stage = state.get("consultation_stage", "")
+        awaiting_input = state.get("awaiting_user_input", False)  # 사용자 입력 대기 상태 확인
+        consultation_stage = state.get("consultation_stage", "")  # 현재 상담 단계 확인
         
         # State 전달 디버깅
         print(f"🔍 DEBUG - _should_continue_or_wait에서 state 확인:")
@@ -277,11 +282,11 @@ class ChatGraphBuilder:
         print(f"🔍 DEBUG - state_trace: {state.get('state_trace', 'None')}")
         print(f"🔍 DEBUG - retrieved_career_data: {len(state.get('retrieved_career_data', []))}개")
         
-        if awaiting_input:
-            print(f"⏸️ 사용자 입력 대기 중: {consultation_stage}")
+        if awaiting_input:  # 사용자 입력 대기 중인 경우
+            print(f"⏸️ 사용자 입력 대기 중: {consultation_stage}")  # 대기 상태 로그
             return "wait"
-        else:
-            print(f"▶️ 다음 단계로 진행: {consultation_stage}")
+        else:  # 다음 단계로 진행할 경우
+            print(f"▶️ 다음 단계로 진행: {consultation_stage}")  # 진행 상태 로그
             return "continue"
 
     def _determine_career_consultation_stage(self, state: ChatState) -> str:
@@ -292,8 +297,8 @@ class ChatGraphBuilder:
         @param state: ChatState - 현재 워크플로우 상태
         @return str - 다음 상담 단계
         """
-        consultation_stage = state.get("consultation_stage", "initial")
-        awaiting_input = state.get("awaiting_user_input", False)
+        consultation_stage = state.get("consultation_stage", "initial")  # 현재 상담 단계 확인
+        awaiting_input = state.get("awaiting_user_input", False)  # 사용자 입력 대기 상태 확인
         
         print(f"🔍 상담 단계 결정: stage={consultation_stage}, awaiting_input={awaiting_input}")
         

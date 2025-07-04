@@ -36,6 +36,7 @@
 - **🎨 시각적 다이어그램**: Mermaid.js 기반 커리어 로드맵 자동 생성
 - **💬 연속 대화 지원**: LangGraph MemorySaver 기반 세션 관리
 - **🔒 관리자 리포트**: HTML 보고서 자동 생성 (관리자 전용)
+- **📋 체계적 커리어 컨설팅**: 6단계 구조화된 커리어 상담 워크플로우
 
 ### 🎯 핵심 가치
 
@@ -50,6 +51,7 @@
 - **Agent-based RAG**: 각 노드별 전문화된 추론 과정
 - **구조화된 워크플로우**: 7단계 파이프라인으로 명확한 역할 분담
 - **상태 기반 처리**: TypedDict를 활용한 강타입 상태 관리
+- **커리어 컨설팅 전용 워크플로우**: 6단계 체계적 상담 프로세스
 
 #### 📊 하이브리드 검색 시스템
 - **BM25 + Embedding 앙상블**: 키워드와 의미 기반 검색 결합
@@ -91,12 +93,30 @@ graph TB
             DG[5️⃣ Diagram Generation]
             RG[6️⃣ Report Generation]
             
+            subgraph "Career Consultation Workflow"
+                UIC[📋 User Info Collection]
+                CP[🎯 Career Positioning]
+                PS[🛤️ Path Selection]
+                LR[📚 Learning Roadmap]
+                PD[🔍 Path Deepening]
+                CS[📝 Consultation Summary]
+            end
+            
             MC --> CH
             CH --> IA
             IA --> DR
             DR --> RF
             RF --> DG
             DG --> RG
+            
+            %% Career Consultation Flow
+            IA -.-> UIC
+            UIC --> CP
+            CP --> PS
+            PS --> LR
+            LR --> PD
+            PD --> CS
+            CS -.-> RF
         end
         
         subgraph "Core Components"
@@ -146,6 +166,12 @@ graph TB
     style LG fill:#f3e5f5
     style GPT fill:#e8f5e8
     style HTML fill:#fff3e0
+    style UIC fill:#e8f5e8
+    style CP fill:#f3e5f5
+    style PS fill:#e3f2fd
+    style LR fill:#fff3e0
+    style PD fill:#e0f2f1
+    style CS fill:#fce4ec
 ```
 
 ### 🏗️ AgentRAG 상세 아키텍처
@@ -255,6 +281,7 @@ G.Navi는 **AgentRAG(Agent-based Retrieval Augmented Generation)** 아키텍처�
 
 #### 🎯 핵심 특징
 - **7단계 AgentRAG 워크플로우**로 구조화된 추론 과정 (메시지 검증 포함)
+- **6단계 커리어 컨설팅 워크플로우**로 체계적 상담 프로세스
 - **LangGraph + MemorySaver 기반** 상태 관리 및 대화 지속성
 - **실제 커리어 사례** 기반 추천 시스템 (BM25 + Embedding 앙상블)
 - **적응적 응답 포맷팅**으로 사용자 맞춤형 출력
@@ -309,6 +336,24 @@ flowchart TD
         Step6D[최종 응답에<br/>보고서 정보 추가]
     end
     
+    subgraph "Career Consultation Details"
+        CC1A[사용자 정보 부족 항목<br/>AI 맞춤형 질문 생성]
+        CC2A[현재 포지션 분석<br/>시장 트렌드 매핑]
+        CC3A[가능한 경로 제시<br/>장단점 분석]
+        CC4A[맞춤형 학습 계획<br/>사내 교육과정 연계]
+        CC5A[구체적 액션 플랜<br/>멘토 추천]
+        CC6A[상담 요약 및<br/>동기부여 메시지]
+    end
+    
+    %% Career Consultation Branch
+    Step2 -.->|커리어 컨설팅 요청| CC1[📋 정보 수집]
+    CC1 --> CC2[🎯 커리어 포지셔닝]
+    CC2 --> CC3[🛤️ 경로 선택]
+    CC3 --> CC4[📚 학습 로드맵]
+    CC4 --> CC5[🔍 경로 심화]
+    CC5 --> CC6[📝 상담 요약]
+    CC6 -.-> Step4
+    
     Check --> Step0A
     Check --> Step0B
     Check --> Step0C
@@ -328,7 +373,27 @@ flowchart TD
     Step6C --> Step6D
     Step6B -->|불필요시| FinalEnd
     Step6D --> FinalEnd
+    
+    CC1 --> CC1A
+    CC2 --> CC2A
+    CC3 --> CC3A
+    CC4 --> CC4A
+    CC5 --> CC5A
+    CC6 --> CC6A
 ```
+
+### 🎯 커리어 컨설팅 워크플로우
+
+G.Navi는 구조화된 6단계 커리어 컨설팅 워크플로우를 제공합니다:
+
+| 단계 | 노드 | 주요 기능 | 목표 |
+|------|------|-----------|------|
+| **1단계** | 📋 UserInfoCollection | 사용자 정보 수집 | 경력, 스킬, 도메인 등 부족 정보 AI 맞춤형 질문 |
+| **2단계** | 🎯 CareerPositioning | 커리어 포지셔닝 | 현재 위치 분석, 시장 트렌드 매핑, 강점 발굴 |
+| **3단계** | 🛤️ PathSelection | 경로 선택 | 가능한 커리어 경로 제시, 장단점 분석 |
+| **4단계** | 📚 LearningRoadmap | 학습 로드맵 | 맞춤형 학습 계획, 사내 교육과정 연계 |
+| **5단계** | 🔍 PathDeepening | 경로 심화 | 구체적 액션 플랜, 멘토 추천, 실행 전략 |
+| **6단계** | 📝 ConsultationSummary | 상담 요약 | 종합 요약, 동기부여 메시지, 지속 지원 |
 
 ### 📊 각 단계별 상세 설명
 
@@ -341,6 +406,22 @@ flowchart TD
 | **4단계** | ResponseFormattingNode | 질문 유형별 적응적 응답 생성 | `formatted_response` |
 | **5단계** | DiagramGenerationNode | Mermaid 다이어그램 생성 및 검증 + 📨 **bot_message 설정** | `mermaid_diagram`, `diagram_generated` |
 | **6단계** | ReportGenerationNode | 다이어그램 통합 + HTML 보고서 생성 (🔒 관리자 기능) | `final_response`, `report_path` |
+
+#### 🎯 커리어 컨설팅 특화 기능
+
+**체계적 상담 프로세스**:
+- 🔍 **정보 수집**: 부족한 정보 AI 맞춤형 질문 생성
+- 📊 **포지셔닝 분석**: 현재 위치 분석 및 시장 트렌드 매핑
+- 🛤️ **경로 탐색**: 가능한 커리어 경로 제시 및 장단점 분석
+- 📚 **학습 설계**: 맞춤형 학습 계획 및 사내 교육과정 연계
+- 🎯 **실행 전략**: 구체적 액션 플랜 및 멘토 추천
+- 📝 **종합 요약**: 상담 요약 및 동기부여 메시지
+
+**AI 기반 개인화**:
+- 사용자 프로필 기반 맞춤형 질문 생성
+- 현재 스킬셋과 목표 간 Gap 분석
+- 사내 데이터 활용 실용적 조언 제공
+- 학습 로드맵 자동 생성 및 교육과정 추천
 
 ### 🔄 데이터 변환 과정
 
@@ -788,7 +869,52 @@ Authorization: Bearer <admin_token>
     "session_summary": {
         "total_messages": 5,
         "topics_discussed": ["career_transition", "skill_development"],
-        "diagrams_generated": 2
+        "diagrams_generated": 2,
+        "consultation_type": "career_consultation",
+        "consultation_steps": [
+            "user_info_collection",
+            "career_positioning", 
+            "path_selection",
+            "learning_roadmap",
+            "path_deepening",
+            "consultation_summary"
+        ]
+    }
+}
+```
+
+#### 🎯 커리어 컨설팅 요청
+
+```http
+POST /api/v1/chatroom/{chatroom_id}/messages
+Content-Type: application/json
+
+{
+    "message": "커리어 컨설팅을 받고 싶습니다",
+    "user_data": {
+        "username": "김개발",
+        "current_position": "백엔드 개발자",
+        "experience_years": 3,
+        "technical_skills": ["Python", "Java", "SQL"],
+        "career_goals": "데이터 분석 전문가로 성장"
+    }
+}
+```
+
+**응답 예시 (정보 수집 단계):**
+
+```json
+{
+    "success": true,
+    "data": {
+        "message": "안녕하세요, 김개발님! 전문적인 커리어 컨설팅을 도와드리겠습니다.\n\n현재 3년차 백엔드 개발자로서 데이터 분석 전문가로의 전환을 고려하고 계시는군요. 맞춤형 상담을 위해 몇 가지 질문을 드려도 될까요?\n\n**현재 보유하신 기술 스택에 대해 좀 더 자세히 말씀해 주시겠어요?**\n- Python으로 어떤 프로젝트를 수행해보셨나요?\n- 데이터 관련 라이브러리 사용 경험이 있으신가요?\n- SQL을 활용한 데이터 분석 경험은 어느 정도인가요?",
+        "consultation_step": "user_info_collection",
+        "step_description": "사용자 정보 수집 단계",
+        "metadata": {
+            "session_id": "session_12345",
+            "consultation_type": "career_consultation",
+            "processing_time": 1.23
+        }
     }
 }
 ```
@@ -877,7 +1003,16 @@ g-navi-ai-api/
 │   │   │   ├── 📄 data_retrieval.py        # 3️⃣ 데이터 검색
 │   │   │   ├── 📄 response_formatting.py   # 4️⃣ 응답 포맷팅
 │   │   │   ├── 📄 diagram_generation.py    # 5️⃣ 다이어그램 생성
-│   │   │   └── 📄 report_generation.py     # 6️⃣ 🔒 보고서 생성
+│   │   │   ├── 📄 report_generation.py     # 6️⃣ 🔒 보고서 생성
+│   │   │   │
+│   │   │   └── 📁 career_consultation/     # 🎯 커리어 컨설팅 워크플로우
+│   │   │       ├── 📄 __init__.py
+│   │   │       ├── 📄 user_info_collection.py    # 📋 사용자 정보 수집
+│   │   │       ├── 📄 career_positioning.py      # 🎯 커리어 포지셔닝
+│   │   │       ├── 📄 path_selection.py          # 🛤️ 경로 선택
+│   │   │       ├── 📄 learning_roadmap.py        # 📚 학습 로드맵
+│   │   │       ├── 📄 path_deepening.py          # 🔍 경로 심화
+│   │   │       └── 📄 consultation_summary.py    # 📝 상담 요약
 │   │   │
 │   │   └── 📁 agents/ 🤖            # AI 에이전트
 │   │       ├── 📄 __init__.py
@@ -1267,6 +1402,21 @@ python test_previous_messages.py
   - 아름다운 CSS 스타일링
   - 타임스탬프 자동 추가
 
+### 🎯 커리어 컨설팅 보고서 특화
+
+**체계적 상담 내용 저장**:
+- 6단계 상담 과정 완전 기록
+- 사용자 정보 수집 결과 정리
+- 커리어 포지셔닝 분석 보고서
+- 선택된 경로와 학습 로드맵 문서화
+- 액션 플랜 및 멘토 추천 내용 포함
+
+**시각적 표현 강화**:
+- 커리어 경로 다이어그램 자동 삽입
+- 학습 로드맵 시각화
+- 스킬 Gap 분석 차트 (향후 예정)
+- 진행률 추적 대시보드 (향후 예정)
+
 ### 🔧 관리자 설정
 
 ```python
@@ -1476,6 +1626,19 @@ G.Navi AI Agent 개발에 기여해 주신 모든 분들께 감사드립니다.
 ---
 
 ## 🔄 최근 업데이트
+
+### v2.2.0 (2025-07-04)
+- 🎯 **커리어 컨설팅 워크플로우 추가**: 6단계 체계적 상담 프로세스 구현
+  - 📋 사용자 정보 수집 (UserInfoCollection)
+  - 🎯 커리어 포지셔닝 분석 (CareerPositioning)
+  - 🛤️ 경로 선택 및 탐색 (PathSelection)
+  - 📚 맞춤형 학습 로드맵 (LearningRoadmap)
+  - 🔍 경로 심화 및 액션 플랜 (PathDeepening)
+  - 📝 상담 요약 및 마무리 (ConsultationSummary)
+- 🤖 AI 기반 개인화 질문 생성 시스템
+- 📊 사내 교육과정 연계 추천 시스템
+- 📋 체계적 상담 보고서 생성 기능
+- 🔄 기존 AgentRAG 워크플로우와 통합
 
 ### v2.1.1 (2025-06-23)
 - 🗑️ 레거시 노드 정리: `openai_response_node.py`, `wait_node.py` 삭제

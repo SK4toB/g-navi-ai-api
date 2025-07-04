@@ -63,79 +63,80 @@ class ChromaService:
     
     def _init_client(self):
         """ChromaDB v2 연결 설정 초기화"""
-        try:
+        try:  # 연결 초기화 시작
             print(f"ChromaDB v2 Multi-tenant 접속 시도: {self.collections_url}")
             
             # 연결 테스트
-            heartbeat_result = self._test_heartbeat()
-            if heartbeat_result:
+            heartbeat_result = self._test_heartbeat()  # 하트비트 테스트 호출
+            if heartbeat_result:  # 하트비트 성공인 경우
                 print(f"ChromaDB 연결 성공: {heartbeat_result}")
                 self.available = True
                 
                 # 컬렉션 ID 조회
-                self._load_collection_ids()
-            else:
+                self._load_collection_ids()  # 컬렉션 ID 로드 호출
+            else:  # 하트비트 실패인 경우
                 print("ChromaDB heartbeat 실패")
                 self.available = False
             
-        except Exception as e:
+        except Exception as e:  # 예외 처리
             print(f"ChromaDB 연결 실패: {e}")
             self.available = False
     
     def _test_heartbeat(self) -> Optional[Dict]:
         """Heartbeat 테스트"""
-        try:
-            response = requests.get(
+        try:  # 하트비트 테스트 시작
+            response = requests.get(  # HTTP GET 요청 실행
                 f"{self.base_url}/heartbeat", 
                 headers=self.headers,
                 timeout=10
             )
             
-            if response.status_code == 200:
-                return response.json()
-            else:
+            if response.status_code == 200:  # 성공 응답인 경우
+                return response.json()  # JSON 응답 반환
+            else:  # 실패 응답인 경우
                 print(f"Heartbeat 실패: {response.status_code} - {response.text}")
                 return None
                 
-        except Exception as e:
+        except Exception as e:  # 예외 처리
             print(f"Heartbeat 오류: {e}")
             return None
     
     def _load_collection_ids(self):
         """컬렉션 ID들을 조회하여 저장"""
-        try:
-            collections = self._get_collections_list()
-            if collections:
-                for collection in collections:
-                    name = collection.get('name')
-                    collection_id = collection.get('id')
+        try:  # 컬렉션 ID 로드 시작
+            collections = self._get_collections_list()  # 컬렉션 목록 조회 호출
+            if collections:  # 컬렉션 목록이 존재하는 경우
+                for collection in collections:  # 컬렉션 목록 순회
+                    name = collection.get('name')  # 컬렉션 이름 추출
+                    collection_id = collection.get('id')  # 컬렉션 ID 추출
                     
-                    if name == self.career_collection_name:
+                    if name == self.career_collection_name:  # 경력 컬렉션인 경우
                         self.career_collection_id = collection_id
                         print(f"경력 컬렉션 ID 로드: {collection_id}")
-                    elif name == self.education_collection_name:
+                    elif name == self.education_collection_name:  # 교육과정 컬렉션인 경우
                         self.education_collection_id = collection_id
                         print(f"교육과정 컬렉션 ID 로드: {collection_id}")
+                # end for (컬렉션 목록 순회)
                         
-        except Exception as e:
+        except Exception as e:  # 예외 처리
             print(f"컬렉션 ID 로드 실패: {e}")
     
     def _get_collections_list(self) -> Optional[List[Dict]]:
         """컬렉션 목록 조회"""
-        try:
-            response = requests.get(
+        try:  # 컬렉션 목록 조회 시작
+            response = requests.get(  # HTTP GET 요청 실행
                 self.collections_url,
                 headers=self.headers,
                 timeout=10
             )
             
-            if response.status_code == 200:
-                return response.json()
-            else:
+            if response.status_code == 200:  # 성공 응답인 경우
+                return response.json()  # JSON 응답 반환
+            else:  # 실패 응답인 경우
                 print(f"컬렉션 목록 조회 실패: {response.status_code}")
                 return None
                 
-        except Exception as e:
+        except Exception as e:  # 예외 처리
             print(f"컬렉션 목록 조회 오류: {e}")
             return None
     

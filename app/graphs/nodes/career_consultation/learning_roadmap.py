@@ -45,16 +45,34 @@ class LearningRoadmapNode:
             
             education_context = ""
             if mysuni_courses or college_courses:
-                # 교육과정 정보를 더 구조화하여 제공
+                # 교육과정 정보를 하이퍼링크 포함하여 구조화
                 mysuni_info = ""
                 if mysuni_courses:
                     mysuni_sample = mysuni_courses[:5]  # 처음 5개만 샘플로 표시
-                    mysuni_info = f"mySUNI 과정 ({len(mysuni_courses)}개 검색됨): " + str(mysuni_sample)
+                    # URL이 있는 경우 마크다운 링크 형식으로 생성
+                    mysuni_formatted = []
+                    for course in mysuni_sample:
+                        course_name = course.get('title', course.get('name', '과정명 없음'))
+                        course_url = course.get('url', course.get('link', ''))
+                        if course_url:
+                            mysuni_formatted.append(f"[{course_name}]({course_url})")
+                        else:
+                            mysuni_formatted.append(course_name)
+                    mysuni_info = f"mySUNI 과정 ({len(mysuni_courses)}개 검색됨): " + ", ".join(mysuni_formatted)
                 
                 college_info = ""
                 if college_courses:
                     college_sample = college_courses[:5]  # 처음 5개만 샘플로 표시
-                    college_info = f"College 과정 ({len(college_courses)}개 검색됨): " + str(college_sample)
+                    # URL이 있는 경우 마크다운 링크 형식으로 생성
+                    college_formatted = []
+                    for course in college_sample:
+                        course_name = course.get('title', course.get('name', '과정명 없음'))
+                        course_url = course.get('url', course.get('link', ''))
+                        if course_url:
+                            college_formatted.append(f"[{course_name}]({course_url})")
+                        else:
+                            college_formatted.append(course_name)
+                    college_info = f"College 과정 ({len(college_courses)}개 검색됨): " + ", ".join(college_formatted)
                 
                 education_context = f"""
 **SKAX 사내 교육과정 정보 (총 15개씩 검색):**
@@ -67,6 +85,8 @@ class LearningRoadmapNode:
 - 총 mySUNI 과정: {len(mysuni_courses)}개
 - 총 College 과정: {len(college_courses)}개
 - 사용자 경로({path_name})에 적합한 과정들을 위 목록에서 선별하여 추천해주세요.
+
+**중요: 위에 제시된 교육과정 중 URL이 포함된 과정들은 반드시 [과정명](URL) 형식의 마크다운 하이퍼링크로 추천해주세요.**
 """
                 print(f"🔍 DEBUG - 생성된 education_context 길이: {len(education_context)}")
             else:
@@ -105,10 +125,10 @@ class LearningRoadmapNode:
 ### 사내 교육과정 추천
 
 **SKAX mySUNI 추천 과정:**
-- [검색된 mySUNI 과정 중에서 사용자에게 가장 적합한 과정 1-3개 구체적으로 추천 및 이유]
+- [검색된 mySUNI 과정 중에서 사용자에게 가장 적합한 과정 1-3개를 [과정명](URL) 형식의 하이퍼링크로 추천 및 이유]
 
 **SKAX College 추천 과정:**
-- [검색된 College 과정 중에서 사용자에게 가장 적합한 과정 1-3개 구체적으로 추천 및 이유]
+- [검색된 College 과정 중에서 사용자에게 가장 적합한 과정 1-3개를 [과정명](URL) 형식의 하이퍼링크로 추천 및 이유]
 
 ### 학습 실행 계획
 
@@ -118,11 +138,14 @@ class LearningRoadmapNode:
 **4-6개월 (실무 적용)**
 - [구체적인 학습 활동과 목표]
 
-### 🎯 커리어 상담 완료
+### 🎯 다음 단계
 
-**{merged_user_data.get('name', '고객')}님**의 커리어 상담이 완료되었습니다!
+**{merged_user_data.get('name', '고객')}님**의 맞춤형 학습 로드맵을 제시해드렸습니다!
 
-오늘 함께 설계한 학습 로드맵을 바탕으로 차근차근 실행해보시고, 궁금한 점이 있으시면 언제든 다시 상담받으세요.
+위의 학습 로드맵에 대해 어떻게 생각하시나요? 
+- 궁금한 점이 있으시다면 언제든 질문해주세요
+- 추가로 상담받고 싶은 내용이 있으시면 말씀해주세요
+- 오늘 상담을 마무리하고 싶으시다면 "상담 완료" 또는 "마무리"라고 말씀해주세요
 
 **성공적인 커리어 성장을 응원합니다! 🚀**
 
@@ -133,6 +156,8 @@ class LearningRoadmapNode:
 - 사내 교육과정을 구체적으로 활용한 추천 제공
 - 실무에 바로 적용 가능한 구체적인 내용으로 구성
 - 우선순위가 명확한 학습 순서 제시
+- **교육과정 추천 시 URL이 있는 경우 반드시 [과정명](URL) 형식의 마크다운 하이퍼링크로 작성**
+- 하이퍼링크가 클릭 가능하도록 정확한 마크다운 문법 사용
 - 마지막에 상담 정리를 위한 유도 질문 포함
 """
             
@@ -234,16 +259,20 @@ class LearningRoadmapNode:
             recommended_courses = education_courses_raw.get("recommended_courses", []) if isinstance(education_courses_raw, dict) else []
             
             # 교육과정을 소스별로 분류
-            mysuni_courses = []
-            college_courses = []
+            mysuni_courses = []  # mySUNI 과정 목록
+            college_courses = []  # College 과정 목록
             
-            for course in recommended_courses:
-                course_source = course.get("source", "").lower()
-                if "mysuni" in course_source:
-                    mysuni_courses.append(course)
-                elif "college" in course_source:
-                    college_courses.append(course)
+            # 과정별 소스 분류 작업
+            for course in recommended_courses:  # 추천 과정 목록 순회
+                course_source = course.get("source", "").lower()  # 소스 정보 추출
+                if "mysuni" in course_source:  # mySUNI 과정인지 확인
+                    mysuni_courses.append(course)  # mySUNI 목록에 추가
+                elif "college" in course_source:  # College 과정인지 확인
+                    college_courses.append(course)  # College 목록에 추가
+                # end if (소스 타입 확인)
+            # end for (추천 과정 목록 순회)
             
+            # 교육과정 데이터 구조 생성
             education_data = {
                 "mysuni_courses": mysuni_courses,
                 "college_courses": college_courses
@@ -254,75 +283,61 @@ class LearningRoadmapNode:
             print(f"🔍 DEBUG - 분류된 mySUNI 과정 개수: {len(education_data['mysuni_courses'])}")
             print(f"🔍 DEBUG - 분류된 College 과정 개수: {len(education_data['college_courses'])}")
             
-            if recommended_courses:
+            # 검색 결과 샘플 출력
+            if recommended_courses:  # 검색 결과가 존재하는지 확인
                 print(f"🔍 DEBUG - 첫 번째 과정 샘플: {recommended_courses[0]}")
                 print(f"🔍 DEBUG - mySUNI 샘플: {education_data['mysuni_courses'][:2] if education_data['mysuni_courses'] else 'None'}")
                 print(f"🔍 DEBUG - College 샘플: {education_data['college_courses'][:2] if education_data['college_courses'] else 'None'}")
+            # end if (검색 결과 존재 확인)
             
-            if not education_data['mysuni_courses'] and not education_data['college_courses']:
-                if not recommended_courses:
+            # 교육과정 데이터 검증
+            if not education_data['mysuni_courses'] and not education_data['college_courses']:  # 교육과정이 없는 경우 확인
+                if not recommended_courses:  # 전체 추천 과정이 없는 경우
                     print("❌ WARNING - 교육과정 데이터가 비어있음. 검색 과정에서 문제 발생 가능성")
-                else:
+                else:  # 추천 과정은 있지만 분류되지 않은 경우
                     print("❌ WARNING - 검색된 과정이 있지만 mySUNI/College로 분류되지 않음. source 필드 확인 필요")
-            else:
+                # end if (추천 과정 존재 여부 확인)
+            else:  # 교육과정 데이터가 있는 경우
                 print(f"✅ SUCCESS - 총 {len(education_data['mysuni_courses']) + len(education_data['college_courses'])}개의 교육과정 데이터 확보")
+            # end if (교육과정 데이터 검증)
             
-            # AI 기반 학습 로드맵 생성
+            # AI 기반 학습 로드맵 생성 호출
             roadmap_result = await self._generate_ai_learning_roadmap(
                 merged_user_data, selected_path, user_response, education_data
-            )
+            )  # AI 로드맵 생성 메서드 호출
             
+            # 학습 로드맵 응답 구성
             roadmap_response = {
                 "message": roadmap_result["message"],
                 "learning_resources": roadmap_result["learning_resources"]
             }
-        else:
-            # 학습 로드맵 생략 시 바로 상담 완료
+        else:  # 학습 로드맵을 원하지 않는 경우
+            # 학습 로드맵 생략 시 consultation_summary 단계로 이동
             roadmap_response = {
                 "message": f"""## 실행 중심 접근
 
-**{merged_user_data.get('name', '고객')}님**께서는 학습보다는 **즉시 실행**에 집중하기로 하셨습니다.
-
-### 즉시 실행 가능한 액션
-
-**이번 주 실행 목표:**
-- 관련 업무 기회 탐색 및 상사와 커리어 대화
-- **{selected_path.get('name', '선택된 경로')}** 관련 프로젝트 참여 기회 모색
-
-**다음 단계:**
-- **{selected_path.get('name', '선택된 경로')}** 목표를 향한 구체적인 실행 계획 수립
-
-### 🎯 커리어 상담 완료
-
-**{merged_user_data.get('name', '고객')}님**의 커리어 상담이 완료되었습니다! 
-
-오늘 함께 계획한 내용을 바탕으로 실행해보시고, 궁금한 점이 있으시면 언제든 다시 상담받으세요. 
-
-**성공적인 커리어 성장을 응원합니다! 🚀**""",
+**{merged_user_data.get('name', '고객')}님**께서는 즉시 실행에 집중하기로 하셨습니다. 이제 오늘 상담의 핵심 내용을 정리해드리겠습니다.""",
                 "learning_resources": {
-                    "focus": "execution_over_learning",
-                    "immediate_actions": [
-                        "관련 업무 기회 탐색",
-                        "프로젝트 참여 기회 찾기",
-                        "실무 경험 축적"
-                    ]
+                    "focus": "execution_over_learning"
                 }
             }
+        # end if (학습 로드맵 요청 여부)
         
-        # HTML 로그 저장
-        save_career_response_to_html("learning_roadmap", roadmap_response, state.get("session_id", "unknown"))
+        # HTML 로그 저장 수행
+        save_career_response_to_html("learning_roadmap", roadmap_response, state.get("session_id", "unknown"))  # HTML 로그 저장 함수 호출
         
-        # 학습 로드맵 처리 후 상담 완료 처리
-        if wants_roadmap:
-            # 학습 로드맵을 제공한 경우 - 상담 완료
-            next_stage = "completed"
-            awaiting_input = False
-            next_expected = "consultation_completed"
-        else:
-            # 학습 로드맵을 생략한 경우 - 바로 상담 완료
-            next_stage = "completed"
-            awaiting_input = False
-            next_expected = "consultation_completed"
+        # 학습 로드맵 처리 후 상담 단계 설정
+        if wants_roadmap:  # 학습 로드맵을 제공한 경우
+            # 학습 로드맵을 제공한 후 사용자 피드백 대기
+            next_stage = "summary_request"  # 상담 요약 요청 단계
+            awaiting_input = True  # 사용자 입력 대기 상태
+            next_expected = "summary_feedback"  # 요약 피드백 단계
+        else:  # 학습 로드맵을 생략한 경우
+            # 학습 로드맵을 생략한 경우 - consultation_summary 단계로 이동
+            next_stage = "summary_request"  # 상담 요약 요청 단계
+            awaiting_input = True  # 사용자 입력 대기 상태
+            next_expected = "summary_feedback"  # 요약 피드백 단계
+        # end if (학습 로드맵 제공 여부에 따른 단계 설정)
         
         return {
             **state,
@@ -331,6 +346,8 @@ class LearningRoadmapNode:
             "final_response": roadmap_response,
             "awaiting_user_input": awaiting_input,
             "next_expected_input": next_expected,
-            "career_consultation_completed": True,  # 커리어 상담 완료 플래그
-            "processing_log": state.get("processing_log", []) + ["커리어 상담 완료 - 플로우 종료"]
+            "career_consultation_completed": False,  # 아직 상담이 완료되지 않음
+            "processing_log": state.get("processing_log", []) + [
+                "학습 로드맵 제공 완료 - 사용자 피드백 대기" if wants_roadmap else "학습 로드맵 생략 - 상담 요약 단계로 이동"
+            ]
         }

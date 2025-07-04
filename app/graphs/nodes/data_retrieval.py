@@ -68,48 +68,49 @@ class DataRetrievalNode:
         import time
         start_time = time.perf_counter()
         
-        try:
+        try:  # 데이터 검색 처리 시작
             # 메시지 검증 실패 시 처리 건너뛰기
-            if state.get("workflow_status") == "validation_failed":
+            if state.get("workflow_status") == "validation_failed":  # 검증 실패 상태 확인
                 print(f"⚠️  [3단계] 메시지 검증 실패로 처리 건너뛰기")
                 return state
                 
             print(f"\n🔍 [3단계] 추가 데이터 검색 시작...")
             self.logger.info("=== 3단계: 추가 데이터 검색 (커리어 + 교육과정 + 뉴스 + 과거대화) ===")
             
-            intent_analysis = state.get("intent_analysis", {})
-            user_question = state.get("user_question", "")
+            intent_analysis = state.get("intent_analysis", {})  # 의도 분석 결과 조회
+            user_question = state.get("user_question", "")  # 사용자 질문 조회
             
             # 1. 과거 대화 내역 검색 (개인화)
-            past_conversations = self._search_past_conversations(state)
+            past_conversations = self._search_past_conversations(state)  # 과거 대화 검색 호출
             
             # 2. 커리어 사례 검색 (성공 사례)
-            career_keywords = intent_analysis.get("career_history", [])
-            if not career_keywords:
-                career_keywords = [user_question]
-            career_query = " ".join(career_keywords[:2])
+            career_keywords = intent_analysis.get("career_history", [])  # 커리어 키워드 추출
+            if not career_keywords:  # 키워드가 없는 경우
+                career_keywords = [user_question]  # 사용자 질문을 키워드로 사용
+            career_query = " ".join(career_keywords[:2])  # 상위 2개 키워드를 쿼리로 조합
             
             # 상태에서 요청된 검색 개수 확인 (기본값: 2)
-            career_search_count = state.get("career_search_count", 2)
+            career_search_count = state.get("career_search_count", 2)  # 검색 개수 확인
             print(f"🔍 DEBUG - 커리어 검색 요청: k={career_search_count}, query='{career_query}'")
-            career_cases = self.career_retriever_agent.retrieve(career_query, k=career_search_count)
+            career_cases = self.career_retriever_agent.retrieve(career_query, k=career_search_count)  # 커리어 검색 실행
             print(f"🔍 DEBUG - 커리어 검색 결과: 실제 반환된 개수={len(career_cases)}")
             
             # 각 검색 결과의 메타데이터 확인
-            for i, case in enumerate(career_cases):
-                metadata = getattr(case, 'metadata', {})
-                employee_id = metadata.get('employee_id', 'Unknown')
+            for i, case in enumerate(career_cases):  # 검색 결과 순회
+                metadata = getattr(case, 'metadata', {})  # 메타데이터 조회
+                employee_id = metadata.get('employee_id', 'Unknown')  # 직원 ID 조회
                 print(f"🔍 DEBUG - 결과 {i+1}: Employee {employee_id}")
+            # end for (검색 결과 순회)
             
-            if len(career_cases) < career_search_count:
+            if len(career_cases) < career_search_count:  # 검색 결과가 요청보다 적은 경우
                 print(f"⚠️ WARNING - 요청한 {career_search_count}개보다 적은 {len(career_cases)}개만 검색됨")
                 print(f"⚠️ WARNING - Vector Store에 저장된 데이터가 부족하거나 검색 쿼리와 유사도가 낮은 것으로 추정")
             
             # 3. 교육과정 검색 (학습 경로)
-            education_results = self._search_education_courses(state, intent_analysis)
+            education_results = self._search_education_courses(state, intent_analysis)  # 교육과정 검색 호출
             
             # 4. 뉴스 데이터 검색 (최신 동향)
-            news_results = self._get_news_results(state, intent_analysis)
+            news_results = self._get_news_results(state, intent_analysis)  # 뉴스 데이터 검색 호출
             
             # 상태 업데이트
             state["past_conversations"] = past_conversations
@@ -128,11 +129,11 @@ class DataRetrievalNode:
             end_time = time.perf_counter()
             step_time = end_time - start_time
             
-            if step_time < 0.001:
+            if step_time < 0.001:  # 마이크로초 단위인 경우
                 time_display = f"{step_time * 1000000:.0f}μs"
-            elif step_time < 0.01:
+            elif step_time < 0.01:  # 밀리초 단위인 경우
                 time_display = f"{step_time * 1000:.1f}ms"
-            else:
+            else:  # 초 단위인 경우
                 time_display = f"{step_time:.3f}초"
             
             processing_log = state.get("processing_log", [])

@@ -60,9 +60,9 @@ async def create_or_load_room(
         if len(request.messages) == 0:  # 메시지가 없으면 새 채팅방
             is_new_room = True  # 새 방 플래그 설정
             print("채팅방 생성")  # 새 방 생성 로그
-        else: 
+        else:  # 메시지가 있으면 기존 채팅방
             is_new_room = False
-            print("채팅방 로드")
+            print("채팅방 로드")  # 기존 방 로드 로그
 
         if is_new_room:
             # user_info에 member_id 추가 (VectorDB 구축을 위해 필요)

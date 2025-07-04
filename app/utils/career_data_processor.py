@@ -79,72 +79,74 @@ class VectorDBGroupingFixer:
     
     def _load_skillset_mapping(self):
         """스킬셋 매핑 로드"""
-        try:
-            if os.path.exists(self.skillset_csv_path):
-                skill_df = pd.read_csv(self.skillset_csv_path, encoding='utf-8')
+        try:  # 스킬셋 매핑 로드 시작
+            if os.path.exists(self.skillset_csv_path):  # 스킬셋 파일이 존재하는 경우
+                skill_df = pd.read_csv(self.skillset_csv_path, encoding='utf-8')  # CSV 파일 로드
                 mapping = {}
-                for _, row in skill_df.iterrows():
-                    if pd.notna(row.get('코드')):
-                        code = str(row['코드']).strip()
+                for _, row in skill_df.iterrows():  # 스킬셋 데이터 순회
+                    if pd.notna(row.get('코드')):  # 코드가 존재하는 경우
+                        code = str(row['코드']).strip()  # 코드 정리
                         mapping[code] = {
                             'skill_name': str(row.get('Skill set', '')).strip(),
                             'job_category': str(row.get('Skillset-직무연계', '')).strip(),
                             'description': str(row.get('Skill set', '')).strip()
                         }
+                # end for (스킬셋 데이터 순회)
                 self.skillset_mapping = mapping
                 self.logger.info(f"스킬셋 매핑 완료: {len(mapping)}개")
-        except Exception as e:
+        except Exception as e:  # 예외 처리
             self.logger.warning(f"스킬셋 매핑 로드 실패: {e}")
     
     def load_and_group_career_data(self) -> Dict[str, pd.DataFrame]:
         """경력 데이터를 로드하고 개인별로 올바르게 그룹핑"""
-        try:
+        try:  # 경력 데이터 로드 시작
             # CSV 로드
-            df = pd.read_csv(self.csv_path, encoding='utf-8')
+            df = pd.read_csv(self.csv_path, encoding='utf-8')  # CSV 파일 로드
             self.logger.info(f"경력 데이터 로드: {len(df)}행")
             
             # 데이터 정제
-            df = df.dropna(subset=['고유번호'])
-            df['고유번호'] = df['고유번호'].astype(str)
+            df = df.dropna(subset=['고유번호'])  # 고유번호 누락 데이터 제거
+            df['고유번호'] = df['고유번호'].astype(str)  # 고유번호 문자열 변환
             
             # 연도 및 연차 데이터 정제
-            if '연도' in df.columns:
-                df['연도_numeric'] = pd.to_numeric(df['연도'], errors='coerce')
-            if '연차' in df.columns:
-                df['연차_numeric'] = pd.to_numeric(df['연차'], errors='coerce')
+            if '연도' in df.columns:  # 연도 컬럼이 존재하는 경우
+                df['연도_numeric'] = pd.to_numeric(df['연도'], errors='coerce')  # 연도 숫자 변환
+            if '연차' in df.columns:  # 연차 컬럼이 존재하는 경우
+                df['연차_numeric'] = pd.to_numeric(df['연차'], errors='coerce')  # 연차 숫자 변환
             
             # 개인별 그룹핑 및 연도-연차순 정렬
-            grouped = df.groupby('고유번호')
+            grouped = df.groupby('고유번호')  # 고유번호별 그룹핑
             employee_groups = {}
             
-            for emp_id, group_df in grouped:
+            for emp_id, group_df in grouped:  # 직원별 그룹 순회
                 group_df = group_df.copy()
                 
                 # 연도와 연차를 기준으로 정렬 (연도 우선, 연차 보조)
-                if '연도_numeric' in group_df.columns and '연차_numeric' in group_df.columns:
-                    group_df = group_df.sort_values(['연도_numeric', '연차_numeric'], na_position='last')
-                elif '연차_numeric' in group_df.columns:
-                    group_df = group_df.sort_values('연차_numeric', na_position='last')
+                if '연도_numeric' in group_df.columns and '연차_numeric' in group_df.columns:  # 연도와 연차 모두 존재하는 경우
+                    group_df = group_df.sort_values(['연도_numeric', '연차_numeric'], na_position='last')  # 연도-연차 순 정렬
+                elif '연차_numeric' in group_df.columns:  # 연차만 존재하는 경우
+                    group_df = group_df.sort_values('연차_numeric', na_position='last')  # 연차순 정렬
                 
                 employee_groups[emp_id] = group_df.reset_index(drop=True)
                 
                 # 그룹핑 결과 로깅 (연도 범위 포함)
-                if '연도_numeric' in group_df.columns:
-                    years = group_df['연도_numeric'].dropna()
-                    career_years = group_df['연차_numeric'].dropna()
+                if '연도_numeric' in group_df.columns:  # 연도 컬럼이 존재하는 경우
+                    years = group_df['연도_numeric'].dropna()  # 연도 데이터 추출
+                    career_years = group_df['연차_numeric'].dropna()  # 연차 데이터 추출
                     
                     year_info = ""
-                    if len(years) > 0:
+                    if len(years) > 0:  # 연도 데이터가 있는 경우
                         year_info += f"{int(years.min())}-{int(years.max())}년"
-                    if len(career_years) > 0:
+                    if len(career_years) > 0:  # 연차 데이터가 있는 경우
                         year_info += f" ({int(career_years.min())}-{int(career_years.max())}년차)"
                     
                     self.logger.info(f"  {emp_id}: {len(group_df)}행, {year_info}")
+            # end for (직원별 그룹 순회)
             
             self.logger.info(f"개인별 그룹핑 완료: {len(employee_groups)}명")
             return employee_groups
             
-        except Exception as e:
+        except Exception as e:  # 예외 처리
             self.logger.error(f"경력 데이터 로딩 실패: {e}")
             raise
     

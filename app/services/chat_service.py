@@ -92,12 +92,12 @@ class ChatService:
         """새 채팅 세션 생성"""
         print(f"ChatService 새 채팅 세션 생성: {conversation_id}")
         
-        # 1. 새 세션 생성 (그래프 빌드 + 초기 메시지)
+        # 새 세션 생성 단계
         compiled_graph, thread_id, config, initial_message = await self.chat_session_service.create_new_session(
             conversation_id, user_info
-        )
+        )  # 채팅 세션 서비스의 새 세션 생성 호출
         
-        # 2. 세션 매니저에 등록
+        # 세션 매니저에 등록 수행
         self.session_manager.create_session(
             conversation_id=conversation_id,
             graph=compiled_graph,
@@ -172,15 +172,16 @@ class ChatService:
         """메시지 전송 및 처리"""
         print(f"ChatService 메시지 처리 요청: {conversation_id}")
         
-        # 1. 세션 존재 여부 확인
-        session = self.session_manager.get_session(conversation_id)
-        if not session:
+        # 세션 존재 여부 확인
+        session = self.session_manager.get_session(conversation_id)  # 세션 매니저에서 세션 조회
+        if not session:  # 세션이 존재하지 않는 경우
             raise ValueError(f"ChatService 활성화된 세션이 없습니다: {conversation_id}")
+        # end if (세션 존재 여부 확인)
         
-        # 2. 마지막 활동 시간 업데이트
-        self.session_manager.update_last_active(conversation_id)
+        # 마지막 활동 시간 업데이트 수행
+        self.session_manager.update_last_active(conversation_id)  # 세션 활동 시간 갱신 호출
         
-        # 3. 메시지 처리
+        # 메시지 처리 실행
         bot_message = await self.message_processor.process_message(
             graph=session["graph"],
             config=session["config"],
@@ -188,7 +189,7 @@ class ChatService:
             member_id=member_id,
             user_question=message_text,  # user_question으로 수정
             user_info=session.get("user_info", {})
-        )
+        )  # 메시지 처리기의 메시지 처리 호출
         
         print(f"ChatService 메시지 처리 완료: {conversation_id}")
         return bot_message
