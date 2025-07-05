@@ -58,10 +58,11 @@ class CareerPositioningNode:
             # 커리어 데이터 컨텍스트 생성
             career_context = ""
             if career_data:
-                career_context = f"사내 경력 데이터 (최대 15명): {str(career_data[:15])[:2000]}"
+                career_context = f"사내 경력 데이터 (최대 30명): {str(career_data)}"
+                print(f"🔍 DEBUG - 생성된 career_context 길이: {len(career_context)}")
             
             prompt = f"""
-당신은 G.Navi의 전문 커리어 상담사입니다. 사내 구성원 데이터(최대 15명)를 기반으로 {merged_user_data.get('name', '고객')}님의 커리어 포지셔닝을 분석하고 개인화된 방향성을 제안해주세요.
+당신은 G.Navi의 전문 커리어 상담사입니다. 사내 구성원 데이터(최대 30명)를 기반으로 {merged_user_data.get('name', '고객')}님의 커리어 포지셔닝을 분석하고 개인화된 방향성을 제안해주세요.
 
 {company_vision_context}
 
@@ -73,7 +74,7 @@ class CareerPositioningNode:
 - 보유 기술: {skills_str}
 - 도메인: {merged_user_data.get('domain', '정보 없음')}
 
-**사내 구성원 성장 경로 데이터 (최대 15명):**
+**사내 구성원 성장 경로 데이터 (최대 30명):**
 {career_context}
 
 **응답 형식 (반드시 마크다운 문법을 사용하여 이 구조를 정확히 따라주세요):**
@@ -278,7 +279,7 @@ AI 분석 결과 (커리어 방향성):
         try:
             search_results = self.retriever_agent.retrieve(
                 query=f"커리어 포지셔닝 {merged_user_data.get('domain', '')} {' '.join(merged_user_data.get('skills', []))}",
-                k=15
+                k=30
             )
             # retrieve 메서드는 Document 객체들을 반환하므로 메타데이터 추출
             structured_career_data = []
@@ -293,8 +294,6 @@ AI 분석 결과 (커리어 방향성):
                         "document_type": "career_data"
                     }
                     structured_career_data.append(career_info)
-                    if len(structured_career_data) >= 15:
-                        break
         except Exception as e:
             print(f"❌ 데이터 검색 실패: {e}")
             structured_career_data = []

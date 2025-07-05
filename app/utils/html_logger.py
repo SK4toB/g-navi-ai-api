@@ -76,8 +76,8 @@ def markdown_to_html(text: str) -> str:
 def save_career_response_to_html(stage: str, response_data: Dict[str, Any], session_id: str = "unknown"):
     """커리어 상담 응답을 HTML 파일로 저장 (Mermaid 다이어그램 포함)"""
     try:
-        # output 폴더 생성
-        output_dir = "/Users/ijaewon/4toB/g-navi-ai-api/output"
+        # output 폴더 생성 (작업 디렉토리 기준)
+        output_dir = os.path.join(os.getcwd(), "output")
         os.makedirs(output_dir, exist_ok=True)
         
         # 파일명 생성
@@ -220,7 +220,7 @@ def save_career_response_to_html(stage: str, response_data: Dict[str, Any], sess
             f.write(html_content)
         
         print(f"💾 커리어 상담 응답 HTML 저장: {filename}")
-        
+    
     except Exception as e:
         print(f"❌ HTML 저장 실패: {e}")
 
@@ -228,7 +228,7 @@ def save_career_response_to_html(stage: str, response_data: Dict[str, Any], sess
 def save_simple_log(stage: str, message: str, session_id: str = "unknown"):
     """간단한 텍스트 로그도 함께 저장 (백업용)"""
     try:
-        output_dir = "/Users/ijaewon/4toB/g-navi-ai-api/output"
+        output_dir = os.path.join(os.getcwd(), "output")
         os.makedirs(output_dir, exist_ok=True)
         
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

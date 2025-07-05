@@ -39,6 +39,21 @@ class IntentAnalysisNode:
         self.intent_analysis_agent = IntentAnalysisAgent()
         self.logger = logging.getLogger(__name__)
 
+    def _map_level_to_experience(self, level: str) -> str:
+        """
+        CL 레벨을 연차 정보로 매핑한다.
+        """
+        level_mapping = {
+            "CL1": "1~3년",
+            "CL2": "4~6년",
+            "CL3": "7~9년",
+            "CL4": "10~12년",
+            "CL5": "13년 이상"
+        }
+        if level and level.upper() in level_mapping:
+            return level_mapping[level.upper()]
+        return "정보 없음"
+
     def analyze_intent_node(self, state: ChatState) -> ChatState:
         """
         🔍 2단계: 사용자 의도 분석 및 상황 이해
@@ -66,6 +81,11 @@ class IntentAnalysisNode:
             
             # 세션 정보에서 사용자 데이터 가져오기
             user_data = self.graph_builder.get_user_info_from_session(state)  # 사용자 정보 조회 호출
+            # level → experience 변환 (user_info_collection과 동일하게)
+            if user_data and isinstance(user_data, dict):
+                level = user_data.get('level')
+                if level and 'experience' not in user_data:
+                    user_data['experience'] = self._map_level_to_experience(level)
             
             intent_analysis = self.intent_analysis_agent.analyze_intent_and_context(  # 의도 분석 에이전트 호출
                 user_question=state.get("user_question", ""),

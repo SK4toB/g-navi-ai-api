@@ -84,16 +84,34 @@ class DataRetrievalNode:
             past_conversations = self._search_past_conversations(state)  # 과거 대화 검색 호출
             
             # 2. 커리어 사례 검색 (성공 사례)
+            user_data = state.get("user_data", {})
+            user_experience = user_data.get("experience")
+            # '비슷한 연차' 관련 질의 감지
+            similar_exp_keywords = ["비슷한 연차", "동일 연차", "내 연차", "비슷한 경력", "비슷한 CL", "비슷한 경험자"]
+            is_similar_exp_query = any(kw in user_question for kw in similar_exp_keywords)
+            # 2. 커리어 사례 검색 (성공 사례)
             career_keywords = intent_analysis.get("career_history", [])  # 커리어 키워드 추출
             if not career_keywords:  # 키워드가 없는 경우
                 career_keywords = [user_question]  # 사용자 질문을 키워드로 사용
             career_query = " ".join(career_keywords[:2])  # 상위 2개 키워드를 쿼리로 조합
-            
-            # 상태에서 요청된 검색 개수 확인 (기본값: 2)
-            career_search_count = state.get("career_search_count", 2)  # 검색 개수 확인
+            career_search_count = state.get("career_search_count", 2)
             print(f"🔍 DEBUG - 커리어 검색 요청: k={career_search_count}, query='{career_query}'")
-            career_cases = self.career_retriever_agent.retrieve(career_query, k=career_search_count)  # 커리어 검색 실행
-            print(f"🔍 DEBUG - 커리어 검색 결과: 실제 반환된 개수={len(career_cases)}")
+            career_cases = self.career_retriever_agent.retrieve(career_query, k=career_search_count*2 if is_similar_exp_query else career_search_count)
+            # 연차 필터링: 비슷한 연차 질의일 때만
+            if is_similar_exp_query and user_experience:
+                filtered_cases = []
+                for case in career_cases:
+                    metadata = getattr(case, 'metadata', {})
+                    case_exp = metadata.get('experience')
+                    if case_exp and case_exp == user_experience:
+                        filtered_cases.append(case)
+                # 필터링된 결과가 있으면 우선 사용, 없으면 기존 방식 fallback
+                if filtered_cases:
+                    career_cases = filtered_cases[:career_search_count]
+                else:
+                    career_cases = career_cases[:career_search_count]
+            else:
+                career_cases = career_cases[:career_search_count]
             
             # 각 검색 결과의 메타데이터 확인
             for i, case in enumerate(career_cases):  # 검색 결과 순회
