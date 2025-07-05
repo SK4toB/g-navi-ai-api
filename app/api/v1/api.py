@@ -1,3 +1,4 @@
+# app/api/v1/api.py 업데이트
 # API 라우터 모음
 
 # app/api/v1/api.py
@@ -9,6 +10,7 @@ from app.api.v1.endpoints import (
     session_management, 
     conversation_history,
     chroma,
+    project_embedding,  # 새로 추가
 )
 
 api_router = APIRouter()
@@ -53,4 +55,11 @@ api_router.include_router(
     chroma.router,
     prefix="/chroma",
     tags=["vector-database"]
+)
+
+# 프로젝트 임베딩 엔드포인트 (새로 추가)
+api_router.include_router(
+    project_embedding.router,
+    prefix="/projects",
+    tags=["project-embedding"]
 )

@@ -6,6 +6,7 @@ from . import conversation_history
 from . import embedding
 from . import memory
 from . import chroma
+from . import project_embedding 
 
 __all__ = [
     "conversation",
@@ -16,4 +17,5 @@ __all__ = [
     "embedding",
     "memory",
     "chroma",
+    "project_embedding",
 ]
