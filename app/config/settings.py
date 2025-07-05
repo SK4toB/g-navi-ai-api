@@ -1,4 +1,24 @@
 # app/config/settings.py
+"""
+* @className : Settings
+* @description : 설정 관리 모듈
+*                애플리케이션 전체 설정을 관리하는 모듈입니다.
+*                환경변수와 설정값들을 중앙 관리합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see Pydantic, BaseSettings
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 from pydantic_settings import BaseSettings
 from typing import Optional
 
@@ -30,6 +50,9 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8001
     debug: bool = False
+    
+    # 메시지 검증 설정
+    message_check_enabled: bool = False  # 메시지 검증 활성화 여부 (True: 활성화, False: 비활성화)
     
     # CORS 설정
     cors_origins: list = ["*"]

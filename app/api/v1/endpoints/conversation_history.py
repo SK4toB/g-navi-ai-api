@@ -1,4 +1,24 @@
 # app/api/v1/endpoints/conversation_history.py
+"""
+* @className : Conversation History API Endpoints
+* @description : 대화 내역 API 엔드포인트 모듈
+*                사용자의 대화 내역을 관리하는 REST API를 제공합니다.
+*                대화 기록 조회, 삭제, 통계 기능을 담당합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see FastAPI, ConversationHistoryManager
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 from fastapi import APIRouter
 from datetime import datetime
 

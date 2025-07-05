@@ -1,18 +1,23 @@
 # app/graphs/nodes/chat_history.py
 """
-📝 1단계: 현재 세션 대화내역 통합 관리 노드
-
-이 노드는 AgentRAG 워크플로우의 첫 번째 단계로, 다음 작업을 수행합니다:
-1. SpringBoot에서 전달받은 이전 대화 내역을 current_session_messages에 통합
-2. LangGraph MemorySaver에서 복원된 기존 대화 내역과 병합
-3. 현재 사용자 질문을 대화 내역에 추가
-4. 모든 대화 내역을 통일된 형식으로 관리
-
-📋 주요 기능:
-- SpringBoot ↔ AgentRAG 간 대화 내역 동기화
-- 중복 방지 로직으로 안전한 메시지 통합
-- MemorySaver 상태 복원 지원
-- 세션 연속성 보장
+* @className : ChatHistoryNode
+* @description : 채팅 히스토리 노드 모듈
+*                대화 내역을 관리하는 워크플로우 노드입니다.
+*                이전 대화와 현재 세션의 메시지를 통합 관리합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ChatState, SessionManager
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging
@@ -108,6 +113,29 @@ class ChatHistoryNode:
             state["current_session_messages"].append(current_user_message)
             self.logger.info(f"현재 사용자 메시지 추가: {state['user_question'][:100]}...")
             self.logger.info(f"총 current_session_messages 개수: {len(state['current_session_messages'])}개")
+            
+            # 🔄 ConversationHistoryManager에도 사용자 질문 추가 (세션 종료 시 VectorDB 구축을 위해)
+            try:
+                from app.core.dependencies import get_service_container
+                container = get_service_container()
+                history_manager = container.history_manager
+                
+                session_id = state.get("session_id", "")
+                if session_id:
+                    history_manager.add_message(
+                        conversation_id=session_id,
+                        role="user",
+                        content=state["user_question"],
+                        metadata={
+                            "timestamp": datetime.now().isoformat(),
+                            "source": "chat_history_node"
+                        }
+                    )
+                    print(f"🔄 ConversationHistoryManager에 사용자 질문 추가: {session_id}")
+                else:
+                    print(f"⚠️ session_id가 없어 ConversationHistoryManager에 추가하지 못함")
+            except Exception as e:
+                print(f"❌ ConversationHistoryManager에 사용자 질문 추가 실패: {e}")
             
             state["processing_log"].append(f"현재 세션 대화 내역 관리 완료: {len(state['current_session_messages'])}개")
             

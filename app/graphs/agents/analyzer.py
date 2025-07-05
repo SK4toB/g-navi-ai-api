@@ -1,17 +1,23 @@
 # app/graphs/agents/analyzer.py
 """
-🎯 의도 분석 에이전트
-
-이 에이전트는 사용자 질문을 분석하여 다음 정보를 추출합니다:
-1. 질문의 주요 의도 파악
-2. 커리어 사례 검색에 필요한 핵심 키워드 추출 (최대 3개)
-3. 사용자 프로필과 대화 맥락을 종합한 상황 이해
-
-🔍 주요 기능:
-- GPT-4o-mini 기반 고속 의도 분석
-- JSON 형태의 구조화된 결과 출력
-- 커리어 검색 최적화를 위한 키워드 추출
-- 과거 대화 내역을 고려한 맥락적 분석
+* @className : IntentAnalysisAgent
+* @description : 의도 분석 에이전트 모듈
+*                사용자 질문의 의도를 분석하고 카테고리를 분류하는 에이전트입니다.
+*                GPT 모델을 활용하여 질문 유형과 목적을 파악합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see OpenAI, GPT
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any, List

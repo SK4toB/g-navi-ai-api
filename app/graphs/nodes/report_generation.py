@@ -1,24 +1,23 @@
 # app/graphs/nodes/report_generation.py
 """
-🔒 6단계: 관리자 전용 HTML 보고서 생성 노드
-
-이 노드는 AgentRAG 워크플로우의 마지막 단계로, 다음 작업을 수행합니다:
-1. 관리자용 HTML 보고서 생성 필요성 판단
-2. 사용자 상담 내역을 체계적으로 정리한 HTML 파일 생성
-3. 보고서 파일을 서버 로컬에 저장 (관리자 검토용)
-4. 사용자 응답과 완전히 분리된 백그라운드 작업
-
-⚠️ 중요 사항:
-- 이 노드는 순수하게 관리자용 보고서 생성만 담당
-- 사용자 응답(bot_message)은 5단계에서 이미 완성됨
-- 보고서 생성 실패해도 사용자 경험에 영향 없음
-- 관리자 설정으로 on/off 제어 가능
-
-📊 보고서 포함 내용:
-- 사용자 프로필 및 상담 요청 내용
-- 제공된 커리어 가이던스 상세 내역
-- 추천된 교육과정 및 학습 경로
-- 전체 상담 세션 요약 및 후속 조치 제안
+* @className : ReportGenerationNode
+* @description : 보고서 생성 노드 모듈
+*                관리자용 보고서를 생성하는 워크플로우 노드입니다.
+*                상담 내용과 AI 응답을 종합한 리포트를 작성합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ReportGeneratorAgent, ChatState
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging

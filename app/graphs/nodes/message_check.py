@@ -1,4 +1,24 @@
 # app/graphs/nodes/message_check.py
+"""
+* @className : MessageCheckNode
+* @description : 메시지 검증 노드 모듈
+*                사용자 입력 메시지를 검증하는 워크플로우 노드입니다.
+*                메시지 유효성 검사와 전처리를 담당합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ChatState, LangGraph
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 # 0️⃣ 메시지 검증 및 상태 초기화 노드
 
 import time
@@ -84,7 +104,6 @@ class MessageCheckNode:
             state.setdefault("processing_log", [])
             state.setdefault("error_messages", [])
             state.setdefault("total_processing_time", 0.0)
-            # 중복 제거: current_session_messages는 이미 위에서 초기화됨
             
             # 처리 시간 계산
             end_time = time.perf_counter()
