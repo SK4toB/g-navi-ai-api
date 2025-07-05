@@ -1,4 +1,24 @@
 # app/services/message_processor.py
+"""
+* @className : MessageProcessor
+* @description : 메시지 처리 서비스 모듈
+*                사용자 메시지를 처리하고 LangGraph 워크플로우를 실행하는 서비스입니다.
+*                메시지 전처리, 워크플로우 실행, 응답 후처리를 담당합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see LangGraph, ChatState
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 
 from typing import Dict, Any
 import traceback
@@ -27,11 +47,11 @@ class MessageProcessor:
         """
         LangGraph를 통한 메시지 처리
         """
-        try:
+        try:  # 메시지 처리 시작
             print(f"MessageProcessor 메시지 처리 시작: {conversation_id} - {user_question[:50]}...")
             
             # 입력 상태 구성
-            input_state = self._build_input_state(
+            input_state = self._build_input_state(  # 입력 상태 구성 호출
                 conversation_id=conversation_id,
                 member_id=member_id,
                 message_text=user_question,
@@ -41,20 +61,20 @@ class MessageProcessor:
             print(f"MessageProcessor LangGraph 실행 시작")
             
             # LangGraph 실행
-            result = await graph.ainvoke(input_state, config)
+            result = await graph.ainvoke(input_state, config)  # LangGraph 실행 호출
             
             print(f"MessageProcessor LangGraph 실행 완료")
             
             # 응답 추출 및 검증
-            bot_message = self._extract_bot_message(result)
+            bot_message = self._extract_bot_message(result)  # 봇 메시지 추출 호출
             
             print(f"MessageProcessor 최종 응답: {bot_message[:100]}...")
             return bot_message
             
-        except Exception as e:
+        except Exception as e:  # 예외 처리
             print(f"MessageProcessor 메시지 처리 실패: {e}")
             print(f"MessageProcessor 상세 에러: {traceback.format_exc()}")
-            return self._generate_error_message(str(e))
+            return self._generate_error_message(str(e))  # 에러 메시지 생성 호출
     
     def _build_input_state(
         self, 
@@ -86,31 +106,39 @@ class MessageProcessor:
     def _extract_bot_message(self, result: Dict[str, Any]) -> str:
         """LangGraph 결과에서 봇 메시지 추출"""
         # 1. final_response에서 formatted_content 추출 (최우선)
-        final_response = result.get("final_response", {})
-        if isinstance(final_response, dict) and final_response.get("formatted_content"):
-            return final_response["formatted_content"]
+        final_response = result.get("final_response", {})  # 최종 응답 확인
+        if isinstance(final_response, dict):  # 딕셔너리 타입인 경우
+            if final_response.get("formatted_content"):  # formatted_content가 있는 경우
+                return final_response["formatted_content"]
+            # 커리어 상담용 message 키도 확인
+            elif final_response.get("message"):  # message가 있는 경우
+                return final_response["message"]
         
         # 2. bot_message 필드 확인 (기존 호환성)
-        bot_message = result.get("bot_message")
-        if bot_message:
+        bot_message = result.get("bot_message")  # bot_message 필드 확인
+        if bot_message:  # bot_message가 있는 경우
             return bot_message
         
         # 3. formatted_response에서 추출 (폴백)
-        formatted_response = result.get("formatted_response", {})
-        if isinstance(formatted_response, dict) and formatted_response.get("formatted_content"):
-            return formatted_response["formatted_content"]
+        formatted_response = result.get("formatted_response", {})  # 포맷된 응답 확인
+        if isinstance(formatted_response, dict):  # 딕셔너리 타입인 경우
+            if formatted_response.get("formatted_content"):  # formatted_content가 있는 경우
+                return formatted_response["formatted_content"]
+            # 커리어 상담용 message 키도 확인
+            elif formatted_response.get("message"):  # message가 있는 경우
+                return formatted_response["message"]
         
         # 4. 모든 방법 실패 시 디버그 정보 출력
         print("MessageProcessor 응답 추출 실패 - 사용 가능한 필드들:")
-        available_fields = list(result.keys()) if isinstance(result, dict) else []
+        available_fields = list(result.keys()) if isinstance(result, dict) else []  # 사용 가능한 필드 목록 생성
         print(f"  사용 가능한 필드: {available_fields}")
         
-        if "final_response" in result:
+        if "final_response" in result:  # final_response가 있는 경우
             print(f"  final_response 타입: {type(result['final_response'])}")
-            if isinstance(result["final_response"], dict):
+            if isinstance(result["final_response"], dict):  # 딕셔너리 타입인 경우
                 print(f"  final_response 키들: {list(result['final_response'].keys())}")
         
-        return "죄송합니다. 응답을 생성할 수 없습니다."
+        return "죄송합니다. 응답을 생성할 수 없습니다."  # 기본 오류 메시지 반환
     
     def _generate_error_message(self, error_str: str) -> str:
         """에러 시 사용자에게 보여줄 메시지 생성"""

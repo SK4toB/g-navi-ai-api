@@ -1,10 +1,49 @@
 # app/graphs/agents/retriever.py
+"""
+* @className : CareerEnsembleRetrieverAgent
+* @description : 커리어 앙상블 리트리버 에이전트 모듈
+*                Vector Store에서 관련 정보를 검색하는 핵심 모듈입니다.
+*                BM25 + OpenAI 임베딩 앙상블 검색으로 정확도를 향상시키고,
+*                사용자 프로필 기반 개인화된 검색 결과를 제공합니다.
+*
+*                🔄 주요 기능:
+*                1. BM25 + OpenAI 임베딩 앙상블 검색으로 정확도 향상
+*                2. 커리어 사례와 교육과정 데이터 통합 검색
+*                3. 사용자 프로필 기반 개인화된 검색 결과 제공
+*                4. ChromaDB를 활용한 고성능 벡터 검색
+*
+*                📚 검색 대상:
+*                - 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
+*                - 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
+*                - 학습 경로: 단계별 성장 로드맵
+*
+*                🔧 주요 기술:
+*                - Ensemble Retriever (BM25 + Vector Search)
+*                - OpenAI Embeddings with Cache
+*                - ChromaDB Persistent Storage
+*                - Query Optimization & Filtering
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see ChromaDB, OpenAI, BM25
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 
 import os
 import json
 import re
 import requests
 import logging
+import chromadb
 from typing import Dict, List, Any
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
@@ -69,6 +108,7 @@ class PathConfig:
     # 📊 벡터 스토어 경로 (Chroma DB 저장소) - 기존 방식 유지
     CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"
     EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"
+    NEWS_VECTOR_STORE = "../../storage/vector_stores/news_data"
     
     # 🗄️ 캐시 경로 (임베딩 캐시) - 기존 방식 유지  
     CAREER_EMBEDDING_CACHE = "../../storage/cache/embedding_cache"
@@ -151,8 +191,8 @@ class CareerEnsembleRetrieverAgent:
     효과적으로 검색합니다. ChromaDB와 캐시를 활용한 고성능 검색을 제공합니다.
     
     📊 검색 결과:
-    - 커리어 사례: 최대 3개까지 검색
-    - 교육과정: 최대 3개까지 검색
+    - 커리어 사례: 최대 2개까지 검색
+    - 교육과정: 최대 2개까지 검색
     """
     def __init__(self, persist_directory: str = None, cache_directory: str = None):
         """
@@ -231,7 +271,6 @@ class CareerEnsembleRetrieverAgent:
         self.education_vectorstore = None
         self.skill_education_mapping = None
         self.course_deduplication_index = None
-        self.company_vision_data = None
         
         self._load_vectorstore_and_retriever()
 
@@ -294,10 +333,10 @@ class CareerEnsembleRetrieverAgent:
             embedding_function=self.career_cached_embeddings,
             collection_name="career_history"
         )
-        # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
+        # LLM 임베딩 리트리버 (검색 결과를 2개로 제한)
         embedding_retriever = self.vectorstore.as_retriever(
             search_type="similarity",
-            search_kwargs={"k": 3}
+            search_kwargs={"k": 2}
         )
         # BM25용 docs 로드
         docs_path = PathConfig.CAREER_DOCS
@@ -314,7 +353,7 @@ class CareerEnsembleRetrieverAgent:
         weights = [1.0]
         if all_docs:
             bm25_retriever = BM25Retriever.from_documents(all_docs)
-            bm25_retriever.k = 3  # BM25도 3개로 제한
+            bm25_retriever.k = 2  # BM25도 2개로 제한
             retrievers.append(bm25_retriever)
             weights = [0.3, 0.7]
         self.ensemble_retriever = EnsembleRetriever(
@@ -332,8 +371,46 @@ class CareerEnsembleRetrieverAgent:
             print(f"❌ [커리어 사례 검색] 앙상블 리트리버가 없음")
             return []
         
-        # 기본 검색 수행
-        all_docs = self.ensemble_retriever.invoke(query)
+        # 동적으로 k 값 설정 (각 리트리버가 더 많은 결과를 반환하도록)
+        search_k = max(k * 2, 10)  # 요청된 개수의 2배 또는 최소 10개
+        
+        # Chroma 벡터스토어에서 더 많은 결과 검색
+        embedding_docs = self.vectorstore.similarity_search(query, k=search_k)
+        print(f"🔍 DEBUG - 임베딩 검색 결과: {len(embedding_docs)}개")
+        
+        # BM25 검색도 더 많은 결과 반환
+        bm25_docs = []
+        if hasattr(self.ensemble_retriever, 'retrievers') and len(self.ensemble_retriever.retrievers) > 1:
+            try:
+                # BM25 리트리버의 k 값을 동적으로 설정
+                bm25_retriever = self.ensemble_retriever.retrievers[1]
+                original_k = bm25_retriever.k
+                bm25_retriever.k = search_k
+                bm25_docs = bm25_retriever.invoke(query)
+                bm25_retriever.k = original_k  # 원래 값으로 복원
+                print(f"🔍 DEBUG - BM25 검색 결과: {len(bm25_docs)}개")
+            except Exception as e:
+                print(f"⚠️ BM25 검색 실패: {e}")
+        
+        # 두 검색 결과를 가중치로 합치기 (수동으로)
+        all_docs = []
+        seen_contents = set()
+        
+        # 임베딩 결과 (가중치 0.3)
+        for doc in embedding_docs:
+            content_hash = hash(doc.page_content)
+            if content_hash not in seen_contents:
+                all_docs.append(doc)
+                seen_contents.add(content_hash)
+        
+        # BM25 결과 (가중치 0.7)
+        for doc in bm25_docs:
+            content_hash = hash(doc.page_content)
+            if content_hash not in seen_contents:
+                all_docs.append(doc)
+                seen_contents.add(content_hash)
+        
+        print(f"🔍 DEBUG - 중복 제거 후 전체 검색 결과: {len(all_docs)}개")
         
         # 최근 키워드 감지 및 연도 추출
         recent_keywords = ['최근', '최신', 'recent', '요즘', '지금', '현재', '새로운', '신규', '트렌드']
@@ -406,7 +483,7 @@ class CareerEnsembleRetrieverAgent:
                         self.logger.warning(f"문서 연도 추출 실패: {e}")
                         continue
             
-            self.logger.info(f"시간 필터링 완료: 전체 {len(all_docs)}개 → 필터링된 {len(filtered_docs)}개 문서")
+            print(f"🔍 DEBUG - 시간 필터링 완료: 전체 {len(all_docs)}개 → 필터링된 {len(filtered_docs)}개 문서")
             final_docs = filtered_docs[:k]
         else:
             final_docs = all_docs[:k]
@@ -414,16 +491,18 @@ class CareerEnsembleRetrieverAgent:
         # 회사 비전 정보를 결과에 추가 (커리어 관련 질문인 경우)
         career_keywords = ['커리어', '진로', '성장', '발전', '목표', '방향', '계획', '비전', '미래', '회사', '조직']
         if any(keyword in query.lower() for keyword in career_keywords):
-            company_vision = self._load_company_vision()
-            if company_vision:
-                # 회사 비전을 Document 형태로 추가
-                vision_content = self._format_company_vision_for_context(company_vision)
-                vision_doc = Document(
-                    page_content=vision_content,
-                    metadata={"type": "company_vision", "source": "company_vision.json"}
-                )
-                final_docs.append(vision_doc)
-                self.logger.info("회사 비전 정보가 검색 결과에 추가되었습니다.")
+            try:
+                company_vision_context = self.get_company_vision_context()
+                if company_vision_context:
+                    # 회사 비전을 Document 형태로 추가
+                    vision_doc = Document(
+                        page_content=company_vision_context,
+                        metadata={"type": "company_vision", "source": "company_vision.json"}
+                    )
+                    final_docs.append(vision_doc)
+                    self.logger.info("회사 비전 정보가 검색 결과에 추가되었습니다.")
+            except Exception as e:
+                self.logger.warning(f"회사 비전 정보 추가 실패: {e}")
         
         print(f"✅ [커리어 사례 검색] 완료: {len(final_docs)}개 결과 반환")
         return final_docs
@@ -644,82 +723,9 @@ class CareerEnsembleRetrieverAgent:
             self.logger.error(f"중복 제거 인덱스 로드 실패: {e}")
             self.course_deduplication_index = {}
     
-    def _load_company_vision(self):
-        """회사 비전 데이터 로드"""
-        if self.company_vision_data is not None:
-            return self.company_vision_data
-            
-        try:
-            if os.path.exists(self.company_vision_path):
-                with open(self.company_vision_path, "r", encoding="utf-8") as f:
-                    self.company_vision_data = json.load(f)
-                self.logger.info("회사 비전 데이터 로드 완료")
-            else:
-                self.company_vision_data = {}
-                self.logger.warning("회사 비전 파일이 없습니다.")
-        except Exception as e:
-            self.logger.error(f"회사 비전 데이터 로드 실패: {e}")
-            self.company_vision_data = {}
-        
-        return self.company_vision_data
-    
-    def _format_company_vision_for_context(self, vision_data: Dict) -> str:
-        """회사 비전 데이터를 컨텍스트용 텍스트로 포맷팅"""
-        if not vision_data:
-            return ""
-        
-        sections = []
-        
-        # 회사 기본 정보
-        if vision_data.get('company_name'):
-            sections.append(f"회사명: {vision_data['company_name']}")
-        
-        # 비전
-        if vision_data.get('vision'):
-            vision = vision_data['vision']
-            sections.append(f"비전: {vision.get('title', '')}")
-            if vision.get('description'):
-                sections.append(f"비전 설명: {vision['description']}")
-        
-        # 핵심 가치
-        if vision_data.get('core_values'):
-            values_text = []
-            for value in vision_data['core_values']:
-                values_text.append(f"- {value.get('name', '')}: {value.get('description', '')}")
-            if values_text:
-                sections.append("핵심 가치:\n" + "\n".join(values_text))
-        
-        # 전략 방향
-        if vision_data.get('strategic_directions'):
-            strategy_text = []
-            for direction in vision_data['strategic_directions']:
-                strategy_text.append(f"- {direction.get('category', '')}: {direction.get('description', '')}")
-            if strategy_text:
-                sections.append("전략 방향:\n" + "\n".join(strategy_text))
-        
-        # 인재 개발
-        if vision_data.get('talent_development'):
-            talent = vision_data['talent_development']
-            sections.append(f"인재 개발 철학: {talent.get('philosophy', '')}")
-            if talent.get('focus_areas'):
-                focus_text = []
-                for area in talent['focus_areas']:
-                    focus_text.append(f"- {area.get('area', '')}: {area.get('description', '')}")
-                if focus_text:
-                    sections.append("역량 개발 중점 영역:\n" + "\n".join(focus_text))
-        
-        # 커리어 가이드 원칙
-        if vision_data.get('career_guidance_principles'):
-            principles_text = []
-            for principle in vision_data['career_guidance_principles']:
-                principles_text.append(f"- {principle.get('principle', '')}: {principle.get('description', '')}")
-            if principles_text:
-                sections.append("커리어 가이드 원칙:\n" + "\n".join(principles_text))
-        
-        return "\n\n".join(sections)
-
-    def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict) -> Dict:
-        """교육과정 검색 메인 함수 - 최대 3개까지만 검색"""
+    def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict, max_results: int = 15) -> Dict:
+        """교육과정 검색 메인 함수 - 지정된 개수까지 검색"""
+        print(f"🔍 [교육과정 검색] 시작 - '{query}' (최대 {max_results}개)")
         print(f"🔍 [교육과정 검색] 시작 - '{query}'")
         self._load_education_resources()
         
@@ -731,7 +737,7 @@ class CareerEnsembleRetrieverAgent:
             skill_based_courses = self._skill_based_course_filter(user_profile, intent_analysis)
             
             # 2단계: VectorDB 의미적 검색 (VectorDB가 없으면 JSON 폴백)
-            semantic_matches = self._semantic_course_search(query, skill_based_courses)
+            semantic_matches = self._semantic_course_search(query, skill_based_courses, max_results)
             
             # 3단계: 선호도에 따른 소스 필터링
             if preferred_source:
@@ -740,8 +746,8 @@ class CareerEnsembleRetrieverAgent:
             # 4단계: 중복 제거 및 정렬
             deduplicated_courses = self._deduplicate_courses(semantic_matches)
             
-            # 최종적으로 3개까지만 제한
-            deduplicated_courses = deduplicated_courses[:3]
+            # 지정된 개수까지만 제한
+            deduplicated_courses = deduplicated_courses[:max_results]
             
             # 5단계: 결과 분석 및 학습 경로 생성
             course_analysis = self._analyze_course_recommendations(deduplicated_courses)
@@ -820,23 +826,23 @@ class CareerEnsembleRetrieverAgent:
         
         return list(set(skills))
     
-    def _semantic_course_search(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
-        """VectorDB를 활용한 의미적 검색 (VectorDB가 없으면 JSON에서 검색) - 3개까지만 검색"""
+    def _semantic_course_search(self, query: str, filtered_courses: List[Dict], max_results: int = 15) -> List[Dict]:
+        """VectorDB를 활용한 의미적 검색 (VectorDB가 없으면 JSON에서 검색) - 지정된 개수까지 검색"""
         if not self.education_vectorstore:
             # VectorDB가 없으면 JSON 파일에서 직접 검색
             self.logger.info("VectorDB 없음 - JSON 파일에서 검색")
-            return self._search_from_json_documents(query, filtered_courses)
+            return self._search_from_json_documents(query, filtered_courses, max_results)
             
         if not filtered_courses:
-            # 필터링된 과정이 없으면 전체 VectorDB에서 검색 (3개로 제한)
-            docs = self.education_vectorstore.similarity_search(query, k=3)
+            # 필터링된 과정이 없으면 전체 VectorDB에서 검색
+            docs = self.education_vectorstore.similarity_search(query, k=max_results)
             courses = [self._doc_to_course_dict(doc) for doc in docs]
             # 원본 데이터로 상세 정보 보강
             courses = [self._enrich_course_with_original_data(course) for course in courses]
         else:
             # 필터링된 과정들의 course_id로 VectorDB에서 상세 검색
             course_ids = [course.get("course_id") for course in filtered_courses if course.get("course_id")]
-            courses = self._search_by_course_ids(course_ids, query)
+            courses = self._search_by_course_ids(course_ids, query, max_results)
             
             # 필터링 정보를 VectorDB 결과에 병합
             for course in courses:
@@ -848,20 +854,20 @@ class CareerEnsembleRetrieverAgent:
             # 원본 데이터로 상세 정보 보강
             courses = [self._enrich_course_with_original_data(course) for course in courses]
         
-        # 결과를 3개로 제한
-        courses = courses[:3]
-        self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정 (3개로 제한)")
+        # 결과를 지정된 개수로 제한
+        courses = courses[:max_results]
+        self.logger.info(f"의미적 검색 결과: {len(courses)}개 과정 (최대 {max_results}개)")
         return courses
     
-    def _search_from_json_documents(self, query: str, filtered_courses: List[Dict]) -> List[Dict]:
-        """JSON 문서에서 직접 검색 (VectorDB 대안) - 3개까지만 검색"""
+    def _search_from_json_documents(self, query: str, filtered_courses: List[Dict], max_results: int = 15) -> List[Dict]:
+        """JSON 문서에서 직접 검색 (VectorDB 대안) - 지정된 개수까지 검색"""
         try:
             with open(self.education_docs_path, "r", encoding="utf-8") as f:
                 all_docs = json.load(f)
         except FileNotFoundError:
             self.logger.warning("교육과정 문서 파일이 없습니다.")
-            # 필터링된 과정이라도 반환하자 (3개로 제한)
-            return filtered_courses[:3] if filtered_courses else []
+            # 필터링된 과정이라도 반환하자
+            return filtered_courses[:max_results] if filtered_courses else []
         
         # 필터링된 과정이 있으면 우선적으로 활용
         if filtered_courses:
@@ -883,9 +889,9 @@ class CareerEnsembleRetrieverAgent:
                     matching_docs.append(course_dict)
             
             if matching_docs:
-                # 3개로 제한
-                matching_docs = matching_docs[:3]
-                self.logger.info(f"필터링된 과정 기반 검색 결과: {len(matching_docs)}개 (3개로 제한)")
+                # 지정된 개수로 제한
+                matching_docs = matching_docs[:max_results]
+                self.logger.info(f"필터링된 과정 기반 검색 결과: {len(matching_docs)}개 (최대 {max_results}개)")
                 return matching_docs
         
         # 키워드 기반 검색
@@ -910,9 +916,9 @@ class CareerEnsembleRetrieverAgent:
         # 점수순으로 정렬
         matching_docs.sort(key=lambda x: x.get("match_score", 0), reverse=True)
         
-        # 3개로 제한
-        matching_docs = matching_docs[:3]
-        self.logger.info(f"키워드 기반 검색 결과: {len(matching_docs)}개 (3개로 제한)")
+        # 지정된 개수로 제한
+        matching_docs = matching_docs[:max_results]
+        self.logger.info(f"키워드 기반 검색 결과: {len(matching_docs)}개 (최대 {max_results}개)")
         return matching_docs
     
     def _doc_to_course_dict_from_json(self, doc_data: Dict) -> Dict:
@@ -937,8 +943,8 @@ class CareerEnsembleRetrieverAgent:
             "url": metadata.get("url")  # URL 필드 추가
         }
     
-    def _search_by_course_ids(self, course_ids: List[str], query: str) -> List[Dict]:
-        """특정 과정 ID들에 대한 VectorDB 검색 - 3개까지만 검색"""
+    def _search_by_course_ids(self, course_ids: List[str], query: str, max_results: int = 15) -> List[Dict]:
+        """특정 과정 ID들에 대한 VectorDB 검색 - 2개까지만 검색"""
         if not course_ids:
             return []
         
@@ -953,18 +959,18 @@ class CareerEnsembleRetrieverAgent:
                     filter={"course_id": course_id}
                 )
                 all_docs.extend(docs)
-                # 이미 3개가 되면 중단
-                if len(all_docs) >= 3:
+                # 이미 2개가 되면 중단
+                if len(all_docs) >= 2:
                     break
             except Exception as e:
                 self.logger.warning(f"Course ID {course_id} 검색 실패: {e}")
         
-        # 일반 검색도 수행 (백업) - 3개로 제한
+        # 일반 검색도 수행 (백업) - 2개로 제한
         if not all_docs:
-            all_docs = self.education_vectorstore.similarity_search(query, k=3)
+            all_docs = self.education_vectorstore.similarity_search(query, k=2)
         
-        # 결과를 3개로 제한
-        all_docs = all_docs[:3]
+        # 결과를 2개로 제한
+        all_docs = all_docs[:2]
         return [self._doc_to_course_dict(doc) for doc in all_docs]
     
     def _doc_to_course_dict(self, doc: Document) -> Dict:
@@ -1300,14 +1306,441 @@ class CareerEnsembleRetrieverAgent:
         # 선호 소스의 과정들 먼저 추출
         preferred_courses = [course for course in courses if course.get('source') == preferred_source]
         
-        # 선호 소스의 과정이 충분히 있으면 그것만 반환 (최소 3개)
-        if len(preferred_courses) >= 3:
+        # 선호 소스의 과정이 충분히 있으면 그것만 반환 (최소 2개)
+        if len(preferred_courses) >= 2:
             self.logger.info(f"{preferred_source} 과정 {len(preferred_courses)}개로 필터링")
-            return preferred_courses
+            return preferred_courses[:2]  # 2개로 제한
         
         # 선호 소스의 과정이 부족하면 다른 소스도 포함하되 선호 소스 우선 정렬
         other_courses = [course for course in courses if course.get('source') != preferred_source]
-        result = preferred_courses + other_courses[:7-len(preferred_courses)]  # 최대 7개까지
+        result = preferred_courses + other_courses[:2-len(preferred_courses)]  # 최대 2개까지
         
         self.logger.info(f"{preferred_source} 우선 필터링: {len(preferred_courses)}개 + 기타 {len(result)-len(preferred_courses)}개")
-        return result
+        return result[:2]  # 최종적으로 2개 제한
+
+    def get_company_vision_context(self) -> str:
+        """회사 비전 정보를 LLM 컨텍스트용으로 포맷팅"""
+        try:
+            import os
+            import json
+            
+            # 회사 비전 파일 경로
+            vision_path = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), 
+                "../../storage/docs/company_vision.json"
+            ))
+            
+            if not os.path.exists(vision_path):
+                return ""
+            
+            with open(vision_path, "r", encoding="utf-8") as f:
+                vision_data = json.load(f)
+            
+            if not vision_data:
+                return ""
+            
+            sections = []
+            sections.append("🏢 **회사 비전 및 가치 (커리어 가이드에 반영)**:")
+            sections.append("")
+            
+            # 회사 기본 정보
+            if vision_data.get('company_name'):
+                sections.append(f"**회사명**: {vision_data['company_name']}")
+            
+            # 비전
+            if vision_data.get('vision'):
+                vision = vision_data['vision']
+                sections.append(f"**비전**: {vision.get('title', '')}")
+                if vision.get('description'):
+                    sections.append(f"*{vision['description']}*")
+            
+            sections.append("")
+            
+            # 핵심 가치
+            if vision_data.get('core_values'):
+                sections.append("**핵심 가치**:")
+                for value in vision_data['core_values']:
+                    sections.append(f"- **{value.get('name', '')}**: {value.get('description', '')}")
+                sections.append("")
+            
+            # 전략 방향
+            if vision_data.get('strategic_directions'):
+                sections.append("**전략 방향**:")
+                for direction in vision_data['strategic_directions']:
+                    sections.append(f"- **{direction.get('category', '')}**: {direction.get('description', '')}")
+                sections.append("")
+            
+            # 인재 개발
+            if vision_data.get('talent_development'):
+                talent = vision_data['talent_development']
+                sections.append(f"**인재 개발 철학**: {talent.get('philosophy', '')}")
+                if talent.get('focus_areas'):
+                    sections.append("**역량 개발 중점 영역**:")
+                    for area in talent['focus_areas']:
+                        sections.append(f"- **{area.get('area', '')}**: {area.get('description', '')}")
+                sections.append("")
+            
+            # 커리어 가이드 원칙
+            if vision_data.get('career_guidance_principles'):
+                sections.append("**커리어 가이드 원칙**:")
+                for principle in vision_data['career_guidance_principles']:
+                    sections.append(f"- **{principle.get('principle', '')}**: {principle.get('description', '')}")
+                sections.append("")
+            
+            # 적용 가이드라인
+            sections.append("**⚠️ 중요: 회사 비전 활용 지침**")
+            sections.append("- 커리어 상담 시 개인의 목표와 AI Powered ITS 비전을 연결하여 조언")
+            sections.append("- 핵심 가치(사람 중심, Digital 혁신, Identity 자율화, Business 혁신, 최고의 Delivery)와 일치하는 방향 제시")
+            sections.append("- Multi-Skill Set을 통한 글로벌 수준의 전문가 육성 강조")
+            sections.append("- IT → Digital → AI로의 기술 진화에 능동적 적응과 자기주도적 성장 강조")
+            sections.append("- Process 혁신과 업무 자동화/지능화를 반영한 커리어 방향 제안")
+            sections.append("- Offshoring 대응을 위한 글로벌 경쟁력 확보 방안 제시")
+            
+            return "\n".join(sections)
+            
+        except Exception as e:
+            self.logger.error(f"회사 비전 컨텍스트 생성 실패: {e}")
+            return ""
+
+
+class NewsRetrieverAgent:
+    """
+    📰 뉴스 검색 에이전트
+    
+    AI, 금융, 반도체, 제조 도메인별 최신 뉴스 정보를 검색하여
+    업계 트렌드와 채용 정보를 제공하는 전문 에이전트입니다.
+    
+    🔄 주요 기능:
+    - 도메인별 뉴스 분류 및 검색
+    - 의도 분석 기반 맞춤형 뉴스 추천
+    - 유사도 기반 관련 뉴스 필터링
+    - 최신 업계 트렌드 및 채용 정보 제공
+    - 런타임에서 직접 ChromaDB 접근 (NewsDataProcessor 비의존)
+    
+    📊 검색 대상:
+    - AI 도메인: AI 개발자 채용, 생성형 AI, 의료 AI 등
+    - 금융 도메인: 핀테크, 블록체인, 디지털 금융 등
+    - 반도체 도메인: 반도체 설계, 차세대 메모리 등
+    - 제조 도메인: 스마트팩토리, IoT, 배터리 관리 등
+    """
+    
+    def __init__(self):
+        """
+        NewsRetrieverAgent 초기화
+        - 런타임에서 직접 ChromaDB에 접근
+        - NewsDataProcessor에 의존하지 않음
+        """
+        self.logger = logging.getLogger(__name__)
+        
+        # 뉴스 벡터 스토어 경로 설정
+        self.news_vector_store_path = PathConfig.get_abs_path(PathConfig.NEWS_VECTOR_STORE)
+        
+        # ChromaDB 클라이언트 직접 초기화 (지연 로딩)
+        self.chroma_client = None
+        self.news_collection = None
+        
+        # 뉴스 검색 관련 키워드 매핑
+        self.domain_keywords = {
+            "AI": ["AI", "인공지능", "머신러닝", "딥러닝", "생성형", "ChatGPT", "LLM", "자연어처리", "NLP", "데이터사이언티스트"],
+            "금융": ["핀테크", "블록체인", "디지털금융", "DeFi", "스마트컨트랙트", "암호화폐", "토스", "카카오페이"],
+            "반도체": ["반도체", "메모리", "DRAM", "NAND", "삼성전자", "SK하이닉스", "설계", "엔지니어", "칩"],
+            "제조": ["제조", "스마트팩토리", "IoT", "자동차", "배터리", "전기차", "BMS", "현대자동차", "LG"]
+        }
+    
+    def _initialize_vectorstore(self) -> bool:
+        """
+        뉴스 벡터 스토어를 초기화합니다.
+        NewsDataProcessor와 동일한 방식으로 ChromaDB 클라이언트에 직접 접근합니다.
+        
+        Returns:
+            bool: 초기화 성공 여부
+        """
+        if self.chroma_client is None or self.news_collection is None:
+            try:
+                import chromadb
+                from chromadb.config import Settings
+                
+                # ChromaDB 클라이언트 직접 초기화 (NewsDataProcessor와 동일한 방식)
+                self.chroma_client = chromadb.PersistentClient(
+                    path=self.news_vector_store_path,
+                    settings=Settings(
+                        allow_reset=True,
+                        anonymized_telemetry=False
+                    )
+                )
+                
+                # 뉴스 컬렉션 가져오기
+                self.news_collection = self.chroma_client.get_collection("news_articles")
+                
+                self.logger.info(f"뉴스 컬렉션 초기화 완료: {self.news_vector_store_path}")
+                return True
+                
+            except Exception as e:
+                self.logger.error(f"뉴스 벡터 스토어 초기화 실패: {e}")
+                return False
+        return True
+    
+    def search_relevant_news(self, query: str, intent_analysis: dict = None, n_results: int = 2) -> list:
+        """
+        의도 분석 결과를 바탕으로 관련 뉴스를 검색합니다.
+        ChromaDB 클라이언트에 직접 접근하여 검색을 수행합니다.
+        
+        Args:
+            query: 검색 질의
+            intent_analysis: 의도 분석 결과 딕셔너리
+            n_results: 반환할 결과 수 (기본값: 2)
+            
+        Returns:
+            list: 검색된 뉴스 데이터 리스트
+                [
+                    {
+                        "title": "뉴스 제목",
+                        "domain": "도메인 (AI/금융/반도체/제조)",
+                        "category": "카테고리",
+                        "content": "뉴스 내용 (300자 제한)",
+                        "published_date": "발행일",
+                        "source": "출처",
+                        "similarity_score": "유사도 점수"
+                    }
+                ]
+        """
+        try:
+            # 뉴스 벡터 스토어 초기화
+            if not self._initialize_vectorstore():
+                return []
+            
+            # 검색 쿼리 최적화
+            search_query = self._optimize_search_query(query, intent_analysis)
+            
+            # 🔍 ChromaDB 컬렉션에서 직접 검색 수행
+            results = self.news_collection.query(
+                query_texts=[search_query],
+                n_results=n_results,
+                include=['documents', 'metadatas', 'distances']
+            )
+            
+            # 검색 결과 가공
+            processed_news = self._process_chromadb_results(results)
+            
+            self.logger.info(f"뉴스 검색 완료: {len(processed_news)}개 (쿼리: {search_query[:50]}...)")
+            return processed_news
+            
+        except Exception as e:
+            self.logger.error(f"뉴스 검색 중 오류: {e}")
+            return []
+    
+    def _optimize_search_query(self, query: str, intent_analysis: dict = None) -> str:
+        """
+        의도 분석 결과를 활용하여 검색 쿼리를 최적화합니다.
+        
+        Args:
+            query: 원본 질의
+            intent_analysis: 의도 분석 결과
+            
+        Returns:
+            str: 최적화된 검색 쿼리
+        """
+        search_query = query
+        
+        if intent_analysis:
+            # 키워드 추출 및 추가
+            keywords = []
+            
+            # 커리어 관련 키워드 추가
+            if intent_analysis.get("career_history"):
+                keywords.extend(intent_analysis["career_history"][:2])
+            
+            # 관심사 키워드 추가
+            if intent_analysis.get("interests"):
+                keywords.extend(intent_analysis["interests"][:2])
+            
+            # 도메인 관련 키워드 강화
+            detected_domain = self._detect_domain_from_query(query)
+            if detected_domain and detected_domain in self.domain_keywords:
+                domain_keywords = self.domain_keywords[detected_domain][:2]
+                keywords.extend(domain_keywords)
+            
+            # 최종 쿼리 구성
+            if keywords:
+                search_query = f"{query} {' '.join(keywords)}"
+        
+        return search_query
+    
+    def _detect_domain_from_query(self, query: str) -> str:
+        """
+        쿼리에서 도메인을 감지합니다.
+        
+        Args:
+            query: 검색 질의
+            
+        Returns:
+            str: 감지된 도메인 (AI/금융/반도체/제조) 또는 빈 문자열
+        """
+        query_lower = query.lower()
+        
+        for domain, keywords in self.domain_keywords.items():
+            for keyword in keywords:
+                if keyword.lower() in query_lower:
+                    return domain
+        
+        return ""
+    
+    def _process_chromadb_results(self, results: dict) -> list:
+        """
+        ChromaDB 검색 결과를 가공하고 필터링합니다.
+        
+        Args:
+            results: ChromaDB query 결과
+            
+        Returns:
+            list: 가공된 뉴스 데이터 리스트
+        """
+        processed_news = []
+        
+        if results['documents'] and results['documents'][0]:
+            for i in range(len(results['documents'][0])):
+                try:
+                    metadata = results['metadatas'][0][i]
+                    distance = results['distances'][0][i]
+                    
+                    # 유사도 계산 (거리를 유사도로 변환)
+                    similarity_score = max(0, 1 - distance) if distance <= 1 else 0
+                    
+                    # 뉴스 정보 재구성
+                    news_info = {
+                        "title": metadata.get('title', ''),
+                        "domain": metadata.get('domain', ''),
+                        "category": metadata.get('category', ''),
+                        "content": self._extract_content_from_document(results['documents'][0][i]),
+                        "published_date": metadata.get('published_date', ''),
+                        "source": metadata.get('source', ''),
+                        "similarity_score": round(similarity_score, 3)
+                    }
+                    
+                    # 기본 품질 필터링 (제목이 있는 뉴스만)
+                    if news_info["title"]:
+                        processed_news.append(news_info)
+                        
+                except Exception as e:
+                    self.logger.warning(f"뉴스 결과 처리 중 오류: {e}")
+                    continue
+        
+        return processed_news
+    
+    def _extract_content_from_document(self, document: str) -> str:
+        """
+        임베딩된 문서에서 실제 뉴스 내용을 추출합니다.
+        
+        Args:
+            document: 임베딩된 전체 문서 텍스트
+            
+        Returns:
+            str: 추출된 뉴스 내용 (300자 제한)
+        """
+        # "내용:" 이후의 텍스트 추출
+        if "내용:" in document:
+            content = document.split("내용:")[-1].strip()
+        else:
+            content = document
+        
+        # 길이 제한 (300자)
+        if len(content) > 300:
+            content = content[:300] + "..."
+        
+        return content
+    
+    def get_news_by_domain(self, domain: str, n_results: int = 2) -> list:
+        """
+        특정 도메인의 뉴스를 검색합니다.
+        ChromaDB 클라이언트에 직접 접근하여 도메인 필터링된 검색을 수행합니다.
+        
+        Args:
+            domain: 도메인 (AI/금융/반도체/제조)
+            n_results: 반환할 결과 수
+            
+        Returns:
+            list: 해당 도메인의 뉴스 리스트
+        """
+        if domain not in self.domain_keywords:
+            self.logger.warning(f"지원하지 않는 도메인: {domain}")
+            return []
+        
+        try:
+            # 뉴스 벡터 스토어 초기화
+            if not self._initialize_vectorstore():
+                return []
+            
+            # 도메인별 키워드로 검색 쿼리 구성
+            domain_query = " ".join(self.domain_keywords[domain][:3])
+            
+            # ChromaDB에서 도메인 필터링 검색
+            results = self.news_collection.query(
+                query_texts=[domain_query],
+                n_results=n_results * 2,  # 필터링을 위해 더 많이 가져옴
+                where={"domain": domain},  # 도메인 메타데이터 필터링
+                include=['documents', 'metadatas', 'distances']
+            )
+            
+            # 검색 결과 가공
+            processed_news = self._process_chromadb_results(results)
+            
+            # 결과 수 제한
+            return processed_news[:n_results]
+            
+        except Exception as e:
+            self.logger.error(f"도메인별 뉴스 검색 중 오류: {e}")
+            # 필터링 실패 시 일반 검색으로 폴백
+            domain_query = " ".join(self.domain_keywords[domain][:3])
+            return self.search_relevant_news(domain_query, n_results=n_results)
+    
+    def get_latest_industry_trends(self, user_profile: dict = None) -> dict:
+        """
+        사용자 프로필을 기반으로 최신 업계 트렌드를 제공합니다.
+        
+        Args:
+            user_profile: 사용자 프로필 정보
+            
+        Returns:
+            dict: 도메인별 최신 트렌드 뉴스
+        """
+        trends = {}
+        
+        # 사용자 관심 도메인 파악
+        interested_domains = self._extract_interested_domains(user_profile)
+        
+        # 각 도메인별 최신 뉴스 수집
+        for domain in interested_domains:
+            domain_news = self.get_news_by_domain(domain, n_results=2)
+            if domain_news:
+                trends[domain] = domain_news
+        
+        return trends
+    
+    def _extract_interested_domains(self, user_profile: dict = None) -> list:
+        """
+        사용자 프로필에서 관심 도메인을 추출합니다.
+        
+        Args:
+            user_profile: 사용자 프로필 정보
+            
+        Returns:
+            list: 관심 도메인 리스트
+        """
+        if not user_profile:
+            return ["AI", "금융", "반도체", "제조"]  # 기본 모든 도메인
+        
+        interested_domains = []
+        
+        # 사용자 관심사나 경력에서 도메인 추출
+        interests = user_profile.get("interests", [])
+        career = user_profile.get("career", "")
+        
+        combined_text = " ".join(interests) + " " + career
+        
+        for domain in self.domain_keywords.keys():
+            domain_keywords = self.domain_keywords[domain]
+            if any(keyword.lower() in combined_text.lower() for keyword in domain_keywords):
+                interested_domains.append(domain)
+        
+        # 관심 도메인이 없으면 모든 도메인 반환
+        return interested_domains if interested_domains else ["AI", "금융", "반도체", "제조"]

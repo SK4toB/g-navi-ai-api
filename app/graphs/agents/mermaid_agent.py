@@ -1,24 +1,41 @@
 # app/graphs/agents/mermaid_agent.py
 """
-🎨 Mermaid.js 다이어그램 생성 전문 에이전트
-
-이 에이전트는 커리어 상담 내용을 분석하여 적절한 시각화를 제공합니다:
-1. 텍스트 응답 내용을 분석하여 다이어그램 유형 결정
-2. 커리어 경로, 학습 로드맵, 프로세스 등을 Mermaid로 시각화
-3. 사용자 이해도를 높이는 구조화된 다이어그램 생성
-4. 반응형 웹에 최적화된 Mermaid 코드 출력
-
-🎯 지원 다이어그램 유형:
-- flowchart: 단계별 프로세스, 의사결정 흐름
-- mindmap: 역량 분석, 관련 개념 정리  
-- journey: 커리어 전환 과정, 학습 여정
-- timeline: 시간 순서가 있는 계획
-- graph: 관계형 구조, 연관성 표현
-
-🔧 주요 특징:
-- GPT 기반 지능형 다이어그램 유형 선택
-- 한국어 커리어 상담에 최적화된 템플릿
-- 웹 친화적 색상과 스타일 적용
+* @className : MermaidDiagramAgent
+* @description : Mermaid.js 다이어그램 생성 전문 에이전트 모듈
+*                커리어 상담 내용을 분석하여 적절한 시각화를 제공하는 에이전트입니다.
+*                GPT 기반 지능형 다이어그램 유형 선택과 한국어 커리어 상담에 최적화된 템플릿을 제공합니다.
+*
+*                🎯 주요 기능:
+*                1. 텍스트 응답 내용을 분석하여 다이어그램 유형 결정
+*                2. 커리어 경로, 학습 로드맵, 프로세스 등을 Mermaid로 시각화
+*                3. 사용자 이해도를 높이는 구조화된 다이어그램 생성
+*                4. 반응형 웹에 최적화된 Mermaid 코드 출력
+*
+*                🎯 지원 다이어그램 유형:
+*                - flowchart: 단계별 프로세스, 의사결정 흐름
+*                - mindmap: 역량 분석, 관련 개념 정리  
+*                - journey: 커리어 전환 과정, 학습 여정
+*                - timeline: 시간 순서가 있는 계획
+*                - graph: 관계형 구조, 연관성 표현
+*
+*                🔧 주요 특징:
+*                - GPT 기반 지능형 다이어그램 유형 선택
+*                - 한국어 커리어 상담에 최적화된 템플릿
+*                - 웹 친화적 색상과 스타일 적용
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see OpenAI, Mermaid.js
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any, Optional
@@ -30,15 +47,31 @@ import re
 
 class MermaidDiagramAgent:
     """
-    🎨 Mermaid.js 다이어그램 생성 전문 에이전트
-    
-    포맷된 응답 내용을 분석하여 사용자 이해를 돕는 
-    시각적 다이어그램을 생성합니다. 커리어 상담에 특화된
-    템플릿과 스타일을 사용하여 전문적인 시각화를 제공합니다.
+    * @className : MermaidDiagramAgent
+    * @description : Mermaid.js 다이어그램 생성 전문 에이전트 클래스
+    *                포맷된 응답 내용을 분석하여 사용자 이해를 돕는 시각적 다이어그램을 생성합니다.
+    *                커리어 상담에 특화된 템플릿과 스타일을 사용하여 전문적인 시각화를 제공합니다.
+    *
+    * @modification : 2025.07.01(이재원) 최초생성
+    *
+    * @author 이재원
+    * @Date 2025.07.01
+    * @version 1.0
+    * @see OpenAI, Mermaid.js
+    *  == 개정이력(Modification Information) ==
+    *  
+    *   수정일        수정자        수정내용
+    *   ----------   --------     ---------------------------
+    *   2025.07.01   이재원       최초 생성
+    *  
+    * Copyright (C) by G-Navi AI System All right reserved.
     """
     
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
+        """
+        MermaidDiagramAgent 생성자 - 초기화를 수행한다.
+        """
+        self.logger = logging.getLogger(__name__)  # 로거 생성
         self.client = None  # OpenAI 클라이언트 지연 초기화
         
         # Mermaid 다이어그램 생성 시스템 프롬프트

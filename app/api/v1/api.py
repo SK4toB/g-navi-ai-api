@@ -1,5 +1,24 @@
-# app/api/v1/api.py 업데이트
-# API 라우터 모음
+# app/api/v1/api.py
+"""
+* @className : API Router
+* @description : API 라우터 모듈
+*                모든 API 엔드포인트를 통합하는 메인 라우터입니다.
+*                버전별 API 라우팅과 엔드포인트 등록을 관리합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see FastAPI, APIRouter
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
+"""
 
 # app/api/v1/api.py
 from fastapi import APIRouter

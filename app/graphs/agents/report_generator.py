@@ -1,24 +1,23 @@
 # app/graphs/agents/report_generator.py
 """
-🔒 관리자 전용 HTML 보고서 생성 에이전트
-
-이 에이전트는 상담 내용을 체계적으로 정리한 HTML 보고서를 생성합니다:
-1. 상담 품질 관리를 위한 관리자용 보고서 생성
-2. 사용자 프로필, 질문, 제공 가이던스를 종합 정리
-3. HTML 형태로 서버에 저장 (관리자 검토용)
-4. 보고서 생성 여부를 관리자가 제어 가능
-
-📊 보고서 구성:
-- 사용자 프로필 요약
-- 질문 및 상담 요청 내용
-- 제공된 커리어 가이던스
-- 추천 교육과정 및 학습 경로
-- 전체 세션 요약 및 후속 조치
-
-⚠️ 중요:
-- 순수 관리자 전용 기능 (사용자 응답과 분리)
-- 보고서 생성 실패해도 사용자 경험에 영향 없음
-- 개인정보 보호를 위한 안전한 로컬 저장
+* @className : ReportGeneratorAgent
+* @description : 보고서 생성 에이전트 모듈
+*                관리자용 상세 보고서를 생성하는 에이전트입니다.
+*                사용자 상담 내용과 AI 응답을 종합하여 분석 리포트를 작성합니다.
+*
+* @modification : 2025.07.01(이재원) 최초생성
+*
+* @author 이재원
+* @Date 2025.07.01
+* @version 1.0
+* @see HTML, Report
+*  == 개정이력(Modification Information) ==
+*  
+*   수정일        수정자        수정내용
+*   ----------   --------     ---------------------------
+*   2025.07.01   이재원       최초 생성
+*  
+* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os
@@ -87,6 +86,16 @@ class ReportGeneratorAgent:
             
             # 마크다운 내용을 HTML로 변환
             markdown_content = final_response.get("formatted_content", "")
+            
+            # 커리어 상담인 경우 message 키 사용
+            if not markdown_content and final_response.get("message"):
+                markdown_content = final_response.get("message", "")
+            
+            # 빈 내용인 경우 보고서 생성하지 않음
+            if not markdown_content or len(markdown_content.strip()) < 10:
+                self.logger.warning("보고서 내용이 너무 짧아 생성을 건너뜁니다.")
+                return None
+                
             html_content = self._convert_markdown_to_html(markdown_content)
             
             # 파일명 생성
