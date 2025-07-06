@@ -434,6 +434,7 @@ class PathDeepeningNode:
             "analysis_timestamp": "2025-07-02"
         }
         
+        # path_deepening 단계 결과를 별도 state에 저장
         # 응답 구성
         strategy_response = {
             "message": ai_response,
@@ -442,16 +443,17 @@ class PathDeepeningNode:
                 "data_sources": ["career_data", "news_data", "networking_opportunities"]
             }
         }
-        
         # HTML 로그 저장
         save_career_response_to_html("path_deepening", strategy_response, state.get("session_id", "unknown"))
-        
+
+        # path_deepening_info에 결과 저장 (반환 딕셔너리에도 명시적으로 포함)
         return {
             **state,
             "consultation_stage": "learning_decision",
             "consultation_context": consultation_context,
             "formatted_response": strategy_response,
             "final_response": strategy_response,
+            "path_deepening_info": strategy_response,  # 명시적으로 포함
             "awaiting_user_input": True,
             "next_expected_input": "learning_roadmap_decision",
             "processing_log": state.get("processing_log", []) + ["실행 전략 수립 완료"]

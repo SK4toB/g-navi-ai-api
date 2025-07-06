@@ -8,6 +8,7 @@ import os
 from typing import Dict, Any
 from app.graphs.state import ChatState
 from app.utils.html_logger import save_career_response_to_html
+from app.graphs.agents.mermaid_agent import MermaidDiagramAgent
 
 
 class ConsultationSummaryNode:
@@ -17,6 +18,7 @@ class ConsultationSummaryNode:
     
     def __init__(self, graph_builder):
         self.graph_builder = graph_builder
+        self.mermaid_agent = MermaidDiagramAgent()
     
     async def _generate_consultation_summary(self, merged_user_data: dict, selected_path: dict, consultation_context: dict, processing_log: list, state: ChatState) -> str:
         """AI 기반 상담 요약 및 격려 메시지 생성 (맞춤형 전략, 학습 로드맵 포함)"""
@@ -30,7 +32,7 @@ class ConsultationSummaryNode:
 {merged_user_data.get('name', '고객')}님의 커리어 상담이 완료되었습니다.
 
 **선택된 경로**: {selected_path.get('name', '목표 경로')}
-**목표**: {consultation_context.get('user_goals', '설정된 목표')[:200]}
+**목표**: {consultation_context.get('user_goals', '설정된 목표')}
 
 체계적인 계획을 바탕으로 꾸준히 실행해나가시면 반드시 목표를 달성하실 수 있습니다. 응원합니다!"""
             
@@ -42,21 +44,41 @@ class ConsultationSummaryNode:
             
             # 상담 단계별 정보 수집
             path_selection_info = state.get("path_selection_info", {})
-            learning_resources = state.get("learning_resources", {})
-            action_plan_info = state.get("action_plan", {})
+            path_deepening_info = state.get("path_deepening_info", {})
+            learning_roadmap_info = state.get("learning_roadmap_info", {})
+            print(f"🔍 DEBUG - path_deepening_info: {path_deepening_info}")
+            print(f"🔍 DEBUG - learning_roadmap_info: {learning_roadmap_info}")
             
             # 학습 로드맵 정보 추출
-            learning_roadmap_provided = "learning_roadmap" in " ".join(processing_log).lower()
+            learning_roadmap_provided = False
             learning_courses_info = ""
-            if learning_resources:
+            learning_roadmap_content = ""
+            
+            # 학습 로드맵 제공 여부 확인 (processing_log 또는 learning_roadmap_info 데이터 확인)
+            if "learning_roadmap" in " ".join(processing_log).lower() or learning_roadmap_info:
+                learning_roadmap_provided = True
+                learning_resources = learning_roadmap_info.get("learning_resources", {}) if learning_roadmap_info else {}
+                learning_roadmap_content = learning_roadmap_info.get("message", "") if learning_roadmap_info else ""
+                
                 mysuni_courses = learning_resources.get("mysuni_courses", [])
                 college_courses = learning_resources.get("college_courses", [])
                 if mysuni_courses or college_courses:
                     learning_courses_info = f"mySUNI {len(mysuni_courses)}개 과정, College {len(college_courses)}개 과정 추천"
             
             # 맞춤형 전략 정보 추출
-            strategy_provided = "path_deepening" in " ".join(processing_log).lower() or "action_plan" in str(action_plan_info).lower()
-            mentor_recommendations = "멘토" in str(action_plan_info).lower() or "선배" in str(action_plan_info).lower()
+            strategy_provided = False
+            mentor_recommendations = False
+            strategy_content = ""
+            
+            # 전략 제공 여부 확인 (processing_log 또는 path_deepening_info 데이터 확인)
+            if "path_deepening" in " ".join(processing_log).lower() or path_deepening_info:
+                strategy_provided = True
+                action_plan_info = path_deepening_info.get("action_plan", {}) if path_deepening_info else {}
+                strategy_content = path_deepening_info.get("message", "") if path_deepening_info else ""
+                
+                # 멘토 추천 여부 확인 (message 또는 action_plan에서 키워드 검색)
+                mentor_content = str(action_plan_info) + strategy_content
+                mentor_recommendations = "멘토" in mentor_content.lower() or "선배" in mentor_content.lower()
             
             # 디버깅: AI 메서드에 전달된 데이터 확인
             print(f"🔍 DEBUG - consultation_summary AI 메서드에 전달된 데이터")
@@ -65,7 +87,81 @@ class ConsultationSummaryNode:
             print(f"   - user_goals: {user_goals[:100]}...")
             print(f"   - learning_roadmap_provided: {learning_roadmap_provided}")
             print(f"   - strategy_provided: {strategy_provided}")
+            print(f"   - mentor_recommendations: {mentor_recommendations}")
             print(f"   - processing_log: {processing_log}")
+            
+            # 맞춤형 전략 컨텍스트 추출 (경로 심화 논의)
+            strategy_context = ""
+            if strategy_content:
+                # 전략 컨텍스트 중 핵심 섹션 추출 (멘토 및 액션 플랜 부분)
+                strategy_lines = strategy_content.split('\n')
+                
+                # 맞춤형 전략 정보 추출
+                strategy_sections = []
+                mentor_sections = []
+                action_plan_sections = []
+                
+                in_strategy_section = False
+                in_mentor_section = False
+                
+                for line in strategy_lines:
+                    if "맞춤 액션 플랜" in line or "맞춤형 전략" in line or "액션 플랜" in line:
+                        in_strategy_section = True
+                        strategy_sections.append(line)
+                    elif "추천 멘토" in line or "선배" in line:
+                        in_strategy_section = False
+                        in_mentor_section = True
+                        mentor_sections.append(line)
+                    elif in_strategy_section and line.strip():
+                        strategy_sections.append(line)
+                    elif in_mentor_section and line.strip():
+                        mentor_sections.append(line)
+                
+                # 최대 15줄만 사용 (너무 길지 않게)
+                strategy_context = "\n".join(strategy_sections[:15])
+                mentor_context = "\n".join(mentor_sections[:10])
+                
+                if strategy_context:
+                    strategy_context = f"**맞춤형 성장 전략:**\n{strategy_context}"
+                
+                if mentor_context:
+                    strategy_context += f"\n\n**멘토 추천:**\n{mentor_context}"
+            
+            # 학습 로드맵 컨텍스트 추출
+            learning_context = ""
+            if learning_roadmap_content:
+                # 학습 로드맵 컨텍스트 중 핵심 섹션 추출 (우선순위 및 추천 과정)
+                learning_lines = learning_roadmap_content.split('\n')
+                
+                priority_sections = []
+                courses_sections = []
+                
+                in_priority_section = False
+                in_courses_section = False
+                
+                for line in learning_lines:
+                    if "학습 우선순위" in line or "핵심 학습 영역" in line:
+                        in_priority_section = True
+                        in_courses_section = False
+                        priority_sections.append(line)
+                    elif "추천 과정" in line or "교육과정" in line:
+                        in_priority_section = False
+                        in_courses_section = True
+                        courses_sections.append(line)
+                    elif in_priority_section and line.strip():
+                        priority_sections.append(line)
+                    elif in_courses_section and line.strip():
+                        courses_sections.append(line)
+                
+                # 최대 10줄만 사용 (너무 길지 않게)
+                priority_context = "\n".join(priority_sections[:10])
+                courses_context = "\n".join(courses_sections[:10])
+                
+                if priority_context:
+                    learning_context = f"**학습 우선순위:**\n{priority_context}"
+                
+                if courses_context:
+                    learning_context += f"\n\n**추천 교육과정:**\n{courses_context}"
             
             prompt = f"""
 당신은 G.Navi의 전문 커리어 상담사입니다. {merged_user_data.get('name', '고객')}님과의 종합적인 커리어 상담이 완료되었습니다. 
@@ -81,14 +177,22 @@ class ConsultationSummaryNode:
 **제공된 상담 서비스:**
 - 커리어 포지셔닝 분석: ✅ 완료
 - 경로 선택 및 심화 논의: ✅ 완료
-- 맞춤형 전략 수립: {'✅ 완료 (사내 멘토 추천 포함)' if strategy_provided else '기본 가이드 제공'}
+- 맞춤형 전략 수립: {'✅ 완료 (사내 멘토 추천 포함)' if mentor_recommendations else '✅ 완료' if strategy_provided else '기본 가이드 제공'}
 - 학습 로드맵 설계: {'✅ 완료 (' + learning_courses_info + ')' if learning_roadmap_provided else '요청 시 제공 가능'}
 
 **상담 진행 과정:**
 {', '.join(processing_log)}
 
+**상담 내용 요약:**
+{f'''
+{strategy_context}
+''' if strategy_provided else ''}
+{f'''
+{learning_context}
+''' if learning_roadmap_provided else ''}
+
 **요청사항:**
-종합적인 상담 내용을 요약하고 개인 맞춤형 격려 메시지를 작성해주세요.
+위의 상담 내용을 바탕으로 종합적인 상담 내용을 요약하고 개인 맞춤형 격려 메시지를 작성해주세요.
 
 **응답 형식 (반드시 마크다운 문법을 사용하여 작성해주세요):**
 
@@ -104,14 +208,14 @@ class ConsultationSummaryNode:
 - [향후 성장을 위한 핵심 전략 방향]
 
 **맞춤형 성장 전략**:
-{'- [사내 데이터 기반 구체적인 성장 전략 요약]' if strategy_provided else '- [기본 성장 가이드라인 제시]'}
-{'- [추천된 사내 멘토 및 네트워킹 방향]' if mentor_recommendations else '- [멘토링 기회 탐색 권장]'}
-- [단계별 실행 계획 및 우선순위]
+{'- [제공된 상담 내용에서 도출된 사내 데이터 기반 구체적인 성장 전략 요약]' if strategy_provided else '- [기본 성장 가이드라인 제시]'}
+{'- [제공된 상담 내용에서 도출된 사내 멘토 및 네트워킹 방향]' if mentor_recommendations else '- [멘토링 기회 탐색 권장]'}
+- [제공된 상담 내용에서 도출된 단계별 실행 계획 및 우선순위]
 
 **학습 로드맵**:
-{f'- [제공된 학습 과정: {learning_courses_info}]' if learning_roadmap_provided else '- [향후 필요시 맞춤형 학습 로드맵 제공 가능]'}
-{f'- [우선순위 기반 학습 순서 및 일정]' if learning_roadmap_provided else '- [기본 학습 방향성 가이드 제공]'}
-- [실무 적용 및 성과 창출 방안]
+{f'- [제공된 상담 내용에서 도출된 학습 과정 요약: {learning_courses_info}]' if learning_roadmap_provided else '- [향후 필요시 맞춤형 학습 로드맵 제공 가능]'}
+{f'- [제공된 상담 내용에서 도출된 우선순위 기반 학습 순서 및 일정]' if learning_roadmap_provided else '- [기본 학습 방향성 가이드 제공]'}
+- [제공된 상담 내용에서 도출된 실무 적용 및 성과 창출 방안]
 
 ### 💪 {merged_user_data.get('name', '고객')}님을 위한 격려 메시지
 
@@ -165,6 +269,26 @@ class ConsultationSummaryNode:
 
 **G.Navi와 함께한 커리어 상담이 성공적인 성장 여정의 시작점이 되기를 바랍니다!**"""
     
+    def _generate_summary_diagram(self, summary_message: str, merged_user_data: dict, selected_path: dict) -> str:
+        """
+        상담 요약 내용을 기반으로 Mermaid 다이어그램 생성 (간단한 flowchart)
+        """
+        diagram_context = f"""
+상담 요약 다이어그램 요청:
+
+- 사용자: {merged_user_data.get('name', '고객')}
+- 선택 경로: {selected_path.get('name', '경로')}
+- 주요 요약: {summary_message}
+
+요약 내용을 한눈에 보여주는 간단한 flowchart로 시각화
+"""
+        return self.mermaid_agent.generate_diagram(
+            formatted_content=diagram_context,
+            user_question="상담 요약 다이어그램 생성",
+            intent_analysis={"diagram_type": "summary_flow"},
+            user_data=merged_user_data
+        )
+    
     async def create_consultation_summary_node(self, state: ChatState) -> Dict[str, Any]:
         """
         상담 내용을 요약하고 격려 메시지로 마무리한다.
@@ -187,7 +311,12 @@ class ConsultationSummaryNode:
         summary_message = await self._generate_consultation_summary(
             merged_user_data, selected_path, consultation_context, processing_log, state
         )
-        
+
+        # Mermaid 다이어그램 생성
+        summary_diagram = self._generate_summary_diagram(
+            summary_message, merged_user_data, selected_path
+        )
+
         # 간결한 요약 응답 구성
         summary_response = {
             "message": summary_message,
@@ -196,7 +325,8 @@ class ConsultationSummaryNode:
                 "selected_path": selected_path.get('name', '선택된 경로'),
                 "user_goals": consultation_context.get('user_goals', '설정된 목표'),
                 "completed_stages": processing_log
-            }
+            },
+            "mermaid_diagram": summary_diagram
         }
     
         # HTML 로그 저장

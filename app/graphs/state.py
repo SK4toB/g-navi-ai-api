@@ -94,6 +94,8 @@ class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허�
     # === 커리어 데이터 관련 ===
     retrieved_career_data: List[Dict[str, Any]]     # career_positioning에서 검색된 사내 구성원 데이터 (15명까지)
     path_selection_info: Dict[str, Any]             # path_selection 단계에서 수집된 정보
+    path_deepening_info: Dict[str, Any]             # path_deepening 단계에서 수집된 액션 플랜 정보
+    learning_roadmap_info: Dict[str, Any]           # learning_roadmap 단계에서 수집된 학습 로드맵 정보
     
     # === 상태 추적용 디버깅 필드 ===
     state_trace: List[str]                          # state 전달 추적용
