@@ -210,9 +210,9 @@ class LearningRoadmapNode:
 """
             
             response = await client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-4o",
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=800,
+                max_tokens=10000,
                 temperature=0.4
             )
             
@@ -246,10 +246,39 @@ class LearningRoadmapNode:
         collected_info = state.get("collected_user_info", {})
         merged_user_data = {**user_data, **collected_info}
         
+        # path_deepening_info에서 정보 추출
+        path_deepening_info = state.get("path_deepening_info", {})
+        path_deepening_message = path_deepening_info.get("message", "")
+        action_plan_info = path_deepening_info.get("action_plan", {})
+        consultation_context = action_plan_info.get("context", {})
+        user_goals = consultation_context.get("user_goals", "")
+        
         # 디버깅: 데이터 확인
         print(f"🔍 DEBUG - learning_roadmap user_data from session: {user_data}")
         print(f"🔍 DEBUG - learning_roadmap collected_info: {collected_info}")
         print(f"🔍 DEBUG - learning_roadmap merged_user_data: {merged_user_data}")
+        print(f"🔍 DEBUG - path_deepening_info 내용 확인: {path_deepening_info.keys() if path_deepening_info else 'None'}")
+        
+        # path_deepening 정보를 활용한 검색 쿼리 생성
+        search_query = ""
+        if path_deepening_message:
+            # 메시지에서 핵심 키워드 추출 (최대 100자)
+            search_query += path_deepening_message[:100]
+        
+        if user_goals:
+            # 사용자 목표 정보 추가
+            search_query += " " + user_goals[:100]
+        
+        if selected_path:
+            # 선택한 경로 정보 추가
+            path_name = selected_path.get("name", "")
+            search_query += " " + path_name
+        
+        # 검색 쿼리가 비어있으면 사용자 응답을 폴백으로 사용
+        if not search_query.strip():
+            search_query = user_response
+        
+        print(f"🔍 DEBUG - 생성된 교육과정 검색 쿼리: '{search_query[:100]}...'")
         
         # 학습 로드맵 요청 여부 확인 (더 포괄적으로 개선)
         roadmap_keywords = [
@@ -293,10 +322,19 @@ class LearningRoadmapNode:
             state["education_search_count"] = 15
             print(f"🔍 DEBUG - education_search_count 설정: {state['education_search_count']}")
             
+            # 원래 쿼리 저장
+            original_question = state.get("user_question", "")
+            
+            # path_deepening 기반 검색 쿼리로 임시 대체
+            state["user_question"] = search_query
+            
             # 데이터 검색 노드 호출
             print("🔍 DEBUG - data_retrieval_node.retrieve_additional_data_node 호출 중...")
             state = self.data_retrieval_node.retrieve_additional_data_node(state)
             print("🔍 DEBUG - data_retrieval_node 호출 완료")
+            
+            # 원래 쿼리 복원
+            state["user_question"] = original_question
             
             # 교육과정 데이터 추출
             education_courses_raw = state.get("education_courses", {})
@@ -351,8 +389,8 @@ class LearningRoadmapNode:
             
             # AI 기반 학습 로드맵 생성 호출
             roadmap_result = await self._generate_ai_learning_roadmap(
-                merged_user_data, selected_path, user_response, education_data
-            )  # AI 로드맵 생성 메서드 호출
+                merged_user_data, selected_path, search_query, education_data
+            )  # AI 로드맵 생성 메서드 호출에 search_query 전달
             
             # 학습 로드맵 응답 구성
             roadmap_response = {
@@ -373,7 +411,7 @@ class LearningRoadmapNode:
         
         # HTML 로그 저장 수행
         save_career_response_to_html("learning_roadmap", roadmap_response, state.get("session_id", "unknown"))  # HTML 로그 저장 함수 호출
-        
+
         # 학습 로드맵 처리 후 상담 단계 설정
         if wants_roadmap:  # 학습 로드맵을 제공한 경우
             # 학습 로드맵을 제공한 후 사용자 피드백 대기
@@ -386,15 +424,17 @@ class LearningRoadmapNode:
             awaiting_input = True  # 사용자 입력 대기 상태
             next_expected = "summary_feedback"  # 요약 피드백 단계
         # end if (학습 로드맵 제공 여부에 따른 단계 설정)
-        
+ 
+        # learning_roadmap_info에 결과 저장 (반환 딕셔너리에도 명시적으로 포함)
         return {
             **state,
             "consultation_stage": next_stage,
             "formatted_response": roadmap_response,
             "final_response": roadmap_response,
+            "learning_roadmap_info": roadmap_response,  # 명시적으로 포함
             "awaiting_user_input": awaiting_input,
             "next_expected_input": next_expected,
-            "career_consultation_completed": False,  # 아직 상담이 완료되지 않음
+            "career_consultation_completed": False,
             "processing_log": state.get("processing_log", []) + [
                 "학습 로드맵 제공 완료 - 사용자 피드백 대기" if wants_roadmap else "학습 로드맵 생략 - 상담 요약 단계로 이동"
             ]

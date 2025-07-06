@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     debug: bool = False
     
     # 메시지 검증 설정
-    message_check_enabled: bool = False  # 메시지 검증 활성화 여부 (True: 활성화, False: 비활성화)
+    message_check_enabled: bool = True  # 메시지 검증 활성화 여부 (True: 활성화, False: 비활성화)
     
     # CORS 설정
     cors_origins: list = ["*"]
