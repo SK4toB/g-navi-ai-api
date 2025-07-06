@@ -127,7 +127,7 @@ class CareerPositioningNode:
 """
             
             response = await client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-4o",
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=2000,
                 temperature=0.4
@@ -279,7 +279,7 @@ AI 분석 결과 (커리어 방향성):
         try:
             search_results = self.retriever_agent.retrieve(
                 query=f"커리어 포지셔닝 {merged_user_data.get('domain', '')} {' '.join(merged_user_data.get('skills', []))}",
-                k=30
+                k=20
             )
             # retrieve 메서드는 Document 객체들을 반환하므로 메타데이터 추출
             structured_career_data = []
@@ -300,31 +300,72 @@ AI 분석 결과 (커리어 방향성):
         
         # 4. AI 기반 커리어 분석
         ai_result = await self._generate_ai_career_analysis(merged_user_data, {"career_data": structured_career_data})
+        message_content = ai_result["message"]
         
         # 5. Mermaid 다이어그램 생성
+        mermaid_diagram = ""
         try:
             mermaid_diagram = await self._generate_career_path_diagram(ai_result, merged_user_data, state)
         except Exception as e:
             print(f"❌ Mermaid 다이어그램 생성 실패: {e}")
-            mermaid_diagram = None
+            mermaid_diagram = ""
+            
+        # 6. 다이어그램을 마크다운 응답에 통합
+        if mermaid_diagram and mermaid_diagram.strip():
+            # 다이어그램 섹션 생성
+            diagram_section = f"""
+
+---
+
+```mermaid
+{mermaid_diagram.strip()}
+```
+
+*위 다이어그램은 경로 전환 과정을 구조적으로 시각화한 것입니다.*
+
+---
+"""
+            # 적절한 위치 찾기
+            lines = message_content.split('\n')
+            insert_index = len(lines)
+            
+            # "선택 안내" 섹션 전에 다이어그램 삽입
+            for i, line in enumerate(lines):
+                if "## 선택 안내" in line or "어떤 경로를 선택하시겠습니까" in line:
+                    insert_index = i
+                    break
+            
+            # 다이어그램 삽입
+            if insert_index < len(lines):
+                lines.insert(insert_index, diagram_section)
+            else:
+                # 적당한 위치가 없으면 마지막에 추가
+                lines.append(diagram_section)
+                
+            # "선택 안내" 섹션이 다이어그램 다음에 오도록 재배치
+            message_content = '\n'.join(lines)
+            print(f"✅ 다이어그램이 응답에 통합되었습니다. ({len(mermaid_diagram)}자)")
         
-        # 6. 응답 구성
+        # 7. 응답 구성
         positioning_response = {
-            "message": ai_result["message"],
+            "message": message_content,
             "career_paths": ai_result["career_paths"],
-            "mermaid_diagram": mermaid_diagram
         }
         
-        # HTML 로그 저장
-        save_career_response_to_html("career_positioning", positioning_response, state.get("session_id", "unknown"))
+        # HTML 로그 저장 - 여기서만 mermaid_diagram 포함
+        save_career_response_to_html("career_positioning", {
+            "message": message_content,
+            "career_paths": ai_result["career_paths"],
+            "mermaid_diagram": mermaid_diagram
+        }, state.get("session_id", "unknown"))
         
-        # State 업데이트
         return {
             **state,
             "consultation_stage": "path_selection",
             "career_paths_suggested": positioning_response["career_paths"],
             "formatted_response": positioning_response,
             "final_response": positioning_response,
+            "bot_message": message_content,  # 다이어그램이 통합된 메시지를 botMessage로 설정
             "awaiting_user_input": True,
             "next_expected_input": "career_path_choice",
             "collected_user_info": collected_info,
