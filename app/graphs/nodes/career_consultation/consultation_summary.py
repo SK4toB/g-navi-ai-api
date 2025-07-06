@@ -317,6 +317,43 @@ class ConsultationSummaryNode:
             summary_message, merged_user_data, selected_path
         )
 
+        # 다이어그램을 마크다운 응답에 통합
+        if summary_diagram:
+            # 다이어그램 섹션 생성
+            diagram_section = f"""
+
+---
+
+```mermaid
+{summary_diagram.strip()}
+```
+
+*위 다이어그램은 상담 내용을 구조적으로 시각화한 것입니다.*
+
+---
+"""
+            # 마무리 부분 찾기
+            lines = summary_message.split('\n')
+            insert_index = len(lines)
+            
+            # 역순으로 검색하여 마무리 부분 찾기
+            for i in range(len(lines) - 1, -1, -1):
+                line = lines[i].strip()
+                if (line.startswith('*G.Navi') or line.startswith('---') or 
+                    '응원합니다' in line or '궁금한' in line):
+                    insert_index = i
+                    break
+            
+            # 다이어그램 삽입
+            if insert_index < len(lines):
+                lines.insert(insert_index, diagram_section)
+            else:
+                lines.append(diagram_section)
+            
+            # 통합된 콘텐츠로 업데이트
+            summary_message = '\n'.join(lines)
+            print(f"✅ 다이어그램이 응답에 통합되었습니다. ({len(summary_diagram)}자)")
+
         # 간결한 요약 응답 구성
         summary_response = {
             "message": summary_message,
@@ -325,18 +362,23 @@ class ConsultationSummaryNode:
                 "selected_path": selected_path.get('name', '선택된 경로'),
                 "user_goals": consultation_context.get('user_goals', '설정된 목표'),
                 "completed_stages": processing_log
-            },
-            "mermaid_diagram": summary_diagram
+            }
+            # mermaid_diagram 필드를 제거하고, 이미 메시지에 통합되었으므로 중복 출력 방지
         }
     
-        # HTML 로그 저장
-        save_career_response_to_html("consultation_summary", summary_response, state.get("session_id", "unknown"))
+        # HTML 로그 저장 - 여기서만 mermaid_diagram 포함
+        save_career_response_to_html("consultation_summary", {
+            "message": summary_message,
+            "summary": summary_response["summary"],
+            "mermaid_diagram": summary_diagram
+        }, state.get("session_id", "unknown"))
     
         return {
             **state,
             "consultation_stage": "completed",
             "formatted_response": summary_response,
             "final_response": summary_response,
+            "bot_message": summary_message,  # 다이어그램이 통합된 메시지를 botMessage로 설정
             "awaiting_user_input": False,
             "processing_log": processing_log + ["커리어 상담 완료"]
         }

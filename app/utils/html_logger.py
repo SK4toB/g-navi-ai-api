@@ -14,8 +14,130 @@ def markdown_to_html(text: str) -> str:
     if not text:
         return ""
     
-    # 먼저 기본 마크다운 요소 처리
+    # 최우선 특수 케이스: 사용자가 제시한 정확한 형식
+    exact_pattern = r'(위 다이어그램은 경로 전환 과정을 구조적으로 시각화한 것입니다\.)\s*## (선택 안내) (위 방향성.+?번호를 명시하여 답변해 주시기 바랍니다\.)'
+    match = re.search(exact_pattern, text, re.DOTALL)
+    if match:
+        diagram_desc = match.group(1)
+        title = match.group(2)
+        content = match.group(3)
+        
+        # 리스트 항목 추출 및 처리
+        list_items_html = '<ul>'
+        for item in re.findall(r'-\s*"([^"]+)"', content):
+            list_items_html += f'<li>"{item}"</li>'
+        list_items_html += '</ul>'
+        
+        # 남은 텍스트에서 리스트 항목 제거
+        remaining_text = re.sub(r'-\s*"[^"]+"', '', content).strip()
+        
+        # 처리된 HTML 생성
+        replacement = f'<p>{diagram_desc}</p>\n<h2>{title}</h2>\n<p>{remaining_text}</p>\n{list_items_html}'
+        
+        # 원래 텍스트를 HTML로 교체
+        text = text.replace(match.group(0), replacement)
+    
+    # 특수 케이스: '위 다이어그램은 경로 전환 과정을 구조적으로 시각화한 것입니다.' 뒤에 제목이 오는 경우
+    special_case = r'(위 다이어그램은 경로 전환 과정을 구조적으로 시각화한 것입니다\.)\s*##\s+(선택 안내)\s+(.*?)(-\s*".*?".*?-\s*".*?")'
+    match = re.search(special_case, text, re.DOTALL)
+    if match:
+        diagram_desc = match.group(1)
+        title = match.group(2)
+        middle_text = match.group(3).strip()
+        list_items = match.group(4)
+        
+        # 처리된 HTML 생성
+        diagram_html = f'<p>{diagram_desc}</p>'
+        title_html = f'<h2>{title}</h2>'
+        middle_html = f'<p>{middle_text}</p>'
+        
+        # 리스트 항목 처리
+        list_items_html = '<ul>'
+        for item in re.findall(r'-\s*"([^"]+)"', list_items):
+            list_items_html += f'<li>"{item}"</li>'
+        list_items_html += '</ul>'
+        
+        # 원래 텍스트를 HTML로 교체
+        text = text.replace(match.group(0), f"{diagram_html}\n{title_html}\n{middle_html}\n{list_items_html}")
+    
+    # 마크다운 제목과 바로 이어지는 텍스트 패턴
+    inline_heading_pattern = r'(#{1,3})\s+([^\n]+?)(\s+\S+.*)'
+    for m in re.finditer(inline_heading_pattern, text):
+        hashes = m.group(1)
+        heading_text = m.group(2).strip()
+        content = m.group(3)
+        level = len(hashes)
+        
+        replacement = f'<h{level}>{heading_text}</h{level}><p>{content}'
+        text = text.replace(m.group(0), replacement)
+    
+    # 이후 기본 마크다운 처리는 그대로 진행
     html = text
+    
+    # 1. ```mermaid ... ``` 형식 - 비탐욕적(non-greedy) 매칭으로 수정
+    mermaid_pattern = r'```mermaid\s+(.*?)\s*```'
+    mermaid_blocks = re.findall(mermaid_pattern, html, re.DOTALL)
+    for i, mermaid_content in enumerate(mermaid_blocks):
+        mermaid_html = f'''
+<div class="mermaid-container">
+    <div class="mermaid">
+{mermaid_content}
+    </div>
+</div>
+'''
+        # 정확한 형태를 찾기 위해 여러 패턴 시도
+        original_block = f"```mermaid\n{mermaid_content}```"
+        if original_block in html:
+            html = html.replace(original_block, mermaid_html, 1)
+        else:
+            # 줄바꿈이나 공백이 다를 수 있으므로 다른 패턴도 시도
+            original_block_alt = f"```mermaid\r\n{mermaid_content}```"
+            if original_block_alt in html:
+                html = html.replace(original_block_alt, mermaid_html, 1)
+            else:
+                # 정규식으로 패턴 찾기 - 비탐욕적 매칭 사용
+                pattern = re.compile(r'```mermaid\s+(.*?)\s*```', re.DOTALL)
+                html = pattern.sub(mermaid_html, html, 1)
+    
+    # 2. `mermaid ... ` 형식 (백틱 하나만 사용) - 비탐욕적(non-greedy) 매칭으로 수정
+    single_backtick_pattern = r'`mermaid\s+(.*?)\s*`'
+    single_backtick_blocks = re.findall(single_backtick_pattern, html, re.DOTALL)
+    for i, mermaid_content in enumerate(single_backtick_blocks):
+        mermaid_html = f'''
+<div class="mermaid-container">
+    <div class="mermaid">
+{mermaid_content}
+    </div>
+</div>
+'''
+        # 정확한 형태를 찾기 위해 여러 패턴 시도
+        original_block = f"`mermaid\n{mermaid_content}`"
+        if original_block in html:
+            html = html.replace(original_block, mermaid_html, 1)
+        else:
+            # 줄바꿈이나 공백이 다를 수 있으므로 다른 패턴도 시도
+            original_block_alt = f"`mermaid\r\n{mermaid_content}`"
+            if original_block_alt in html:
+                html = html.replace(original_block_alt, mermaid_html, 1)
+            else:
+                # 정규식으로 패턴 찾기 - 비탐욕적 매칭 사용
+                pattern = re.compile(r'`mermaid\s+(.*?)\s*`', re.DOTALL)
+                html = pattern.sub(mermaid_html, html, 1)
+    
+    # 구분선 처리 (---, ___, ***) - 다이어그램 뒤에 오는 구분선 처리
+    # 패턴 개선: "--- ## 제목" 형태도 처리할 수 있도록
+    # 우선 일반 구분선 패턴 처리
+    html = re.sub(r'(?m)^\s*---\s*$', '<hr>', html)
+    html = re.sub(r'(?m)^\s*___\s*$', '<hr>', html)
+    html = re.sub(r'(?m)^\s*\*\*\*\s*$', '<hr>', html)
+    
+    # 특별 패턴: "--- ## 제목" 같은 형식 처리
+    special_pattern = r'---\s+##\s+([^\n]+)'
+    for match in re.finditer(special_pattern, html):
+        full_match = match.group(0)
+        title = match.group(1)
+        replacement = f'<hr>\n<h2>{title}</h2>'
+        html = html.replace(full_match, replacement)
     
     # **굵은 글씨** 처리
     html = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html)
@@ -28,48 +150,93 @@ def markdown_to_html(text: str) -> str:
     lines = html.split('\n')
     html_lines = []
     in_list = False
+    in_mermaid_container = False
     
-    for line in lines:
-        line = line.strip()
+    i = 0
+    while i < len(lines):
+        line = lines[i]
         
-        # 빈 줄 건너뛰기 (불필요한 간격 제거)
-        if not line:
+        # mermaid 컨테이너 내부인 경우 그대로 추가
+        if in_mermaid_container:
+            html_lines.append(line)
+            if "</div>" in line and "mermaid-container" in line:
+                in_mermaid_container = False
+            i += 1
+            continue
+        
+        # mermaid 컨테이너 시작 확인
+        if '<div class="mermaid-container">' in line:
+            in_mermaid_container = True
+            html_lines.append(line)
+            i += 1
+            continue
+        
+        # 이미 HTML로 변환된 요소는 그대로 추가
+        if line.startswith('<h') or line.startswith('<p>') or line.startswith('<ul>') or line.startswith('<li>') or line.startswith('<hr>'):
+            html_lines.append(line)
+            i += 1
+            continue
+        
+        line_stripped = line.strip()
+        
+        # 빈 줄 처리
+        if not line_stripped:
+            # 빈 줄이 리스트 중간에 있으면 리스트 종료로 처리
+            if in_list:
+                html_lines.append('</ul>')
+                in_list = False
+            i += 1
             continue
         
         # 제목 처리
-        if line.startswith('### '):
+        if re.match(r'^#{1,3}\s+.+', line_stripped) and not '<h' in line:
+            match = re.match(r'^(#{1,3})\s+(.+)', line_stripped)
+            if match:
+                level = len(match.group(1))
+                title_content = match.group(2)
+                if in_list:
+                    html_lines.append('</ul>')
+                    in_list = False
+                html_lines.append(f'<h{level}>{title_content}</h{level}>')
+                i += 1
+                continue
+                
+        # 구분선 처리
+        if line_stripped == '---' or line_stripped == '___' or line_stripped == '***':
             if in_list:
                 html_lines.append('</ul>')
                 in_list = False
-            html_lines.append(f'<h3>{line[4:]}</h3>')
-        elif line.startswith('## '):
-            if in_list:
-                html_lines.append('</ul>')
-                in_list = False
-            html_lines.append(f'<h2>{line[3:]}</h2>')
-        elif line.startswith('# '):
-            if in_list:
-                html_lines.append('</ul>')
-                in_list = False
-            html_lines.append(f'<h1>{line[2:]}</h1>')
+            html_lines.append('<hr>')
+            i += 1
+            continue
+        
         # 리스트 처리
-        elif line.startswith('- '):
+        if line_stripped.startswith('- ') and not '<li>' in line:
             if not in_list:
                 html_lines.append('<ul>')
                 in_list = True
-            content = line[2:]
+            content = line_stripped[2:]
             html_lines.append(f'<li>{content}</li>')
-        # 일반 텍스트 처리
-        else:
+            i += 1
+            continue
+            
+        # 일반 텍스트 처리 (이미 HTML 태그가 없는 경우만)
+        if not re.search(r'<[^>]+>', line):
             if in_list:
                 html_lines.append('</ul>')
                 in_list = False
             html_lines.append(f'<p>{line}</p>')
+            i += 1
+            continue
+            
+        # 이외의 경우는 그대로 추가
+        html_lines.append(line)
+        i += 1
     
     # 리스트가 열려있으면 닫기
     if in_list:
         html_lines.append('</ul>')
-    
+
     return '\n'.join(html_lines)
 
 
@@ -89,11 +256,14 @@ def save_career_response_to_html(stage: str, response_data: Dict[str, Any], sess
         message = response_data.get("message", "메시지 없음")
         html_message = markdown_to_html(message)
         
-        # Mermaid 다이어그램 처리
+        # 메시지에 이미 Mermaid 다이어그램이 포함되어 있는지 확인
+        mermaid_already_included = "```mermaid" in message or "`mermaid" in message or '<div class="mermaid">' in html_message
+        
+        # Mermaid 다이어그램 처리 - 메시지에 이미 포함되어 있지 않은 경우에만 추가
         mermaid_diagram = response_data.get("mermaid_diagram", "")
         mermaid_section = ""
         
-        if mermaid_diagram:
+        if mermaid_diagram and not mermaid_already_included:
             mermaid_section = f"""
     <div class="mermaid-container">
         <h3>🎯 커리어 경로 시각화</h3>
