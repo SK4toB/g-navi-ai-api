@@ -28,7 +28,8 @@ class K8sChromaRetriever(BaseRetriever):
     collection_mapping: Dict[str, str] = Field(
         default_factory=lambda: {
             "career_history": "gnavi4_career_history_prod",
-            "education_courses": "gnavi4_education_prod"
+            "education_courses": "gnavi4_education_prod",
+            "news_data":"gnavi4_news_prod",
         },
         description="컬렉션명 매핑"
     )
@@ -37,7 +38,8 @@ class K8sChromaRetriever(BaseRetriever):
         # pod_collection_name 계산 (collection_mapping 사용)
         pod_collection_name = {
             "career_history": "gnavi4_career_history_prod",
-            "education_courses": "gnavi4_education_prod"
+            "education_courses": "gnavi4_education_prod",
+            "news_data":"gnavi4_news_prod"
         }.get(collection_name, collection_name)
         
         # 먼저 Pydantic 초기화 (모든 필드를 명시적으로 전달)
