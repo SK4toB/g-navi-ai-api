@@ -5,19 +5,6 @@
 *                검색된 정보를 사용자 친화적인 형태로 포맷팅하는 에이전트입니다.
 *                마크다운 형식으로 구조화된 응답을 생성합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see Markdown, GPT
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any, Optional, List, Union

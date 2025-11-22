@@ -23,19 +23,6 @@
 *                - 한국어 커리어 상담에 최적화된 템플릿
 *                - 웹 친화적 색상과 스타일 적용
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see OpenAI, Mermaid.js
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any, Optional
@@ -52,19 +39,6 @@ class MermaidDiagramAgent:
     *                포맷된 응답 내용을 분석하여 사용자 이해를 돕는 시각적 다이어그램을 생성합니다.
     *                커리어 상담에 특화된 템플릿과 스타일을 사용하여 전문적인 시각화를 제공합니다.
     *
-    * @modification : 2025.07.01(이재원) 최초생성
-    *
-    * @author 이재원
-    * @Date 2025.07.01
-    * @version 1.0
-    * @see OpenAI, Mermaid.js
-    *  == 개정이력(Modification Information) ==
-    *  
-    *   수정일        수정자        수정내용
-    *   ----------   --------     ---------------------------
-    *   2025.07.01   이재원       최초 생성
-    *  
-    * Copyright (C) by G-Navi AI System All right reserved.
     """
     
     def __init__(self):

@@ -5,19 +5,6 @@
 *                관리자용 상세 보고서를 생성하는 에이전트입니다.
 *                사용자 상담 내용과 AI 응답을 종합하여 분석 리포트를 작성합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see HTML, Report
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os

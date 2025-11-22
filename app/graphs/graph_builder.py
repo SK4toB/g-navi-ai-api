@@ -48,21 +48,6 @@
 *                - 세션별 사용자 정보 및 메타데이터 관리
 *                - 대화형 상담을 위한 순환 구조 지원
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*                 2025.07.02(이재원) 커리어 상담 플로우 추가
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.1
-* @see
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*   2025.07.02   이재원       커리어 상담 대화형 플로우 추가
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging
@@ -108,20 +93,6 @@ class ChatGraphBuilder:
     *                - 세션별 사용자 정보 관리
     *                - MemorySaver를 통한 대화 상태 지속성 보장
     *                - 각 노드 간의 데이터 흐름 조율
-    *
-    * @modification : 2025.07.01(이재원) 최초생성
-    *
-    * @author 이재원
-    * @Date 2025.07.01
-    * @version 1.0
-    * @see StateGraph, MemorySaver, ChatState
-    *  == 개정이력(Modification Information) ==
-    *  
-    *   수정일        수정자        수정내용
-    *   ----------   --------     ---------------------------
-    *   2025.07.01   이재원       최초 생성
-    *  
-    * Copyright (C) by G-Navi AI System All right reserved.
     """
     
     def __init__(self):

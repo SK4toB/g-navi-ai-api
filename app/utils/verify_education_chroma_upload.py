@@ -5,19 +5,6 @@
 *                업로드된 교육과정 데이터의 정합성을 검증하는 유틸리티입니다.
 *                ChromaDB에 저장된 교육 데이터의 품질과 완성도를 확인합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see ChromaDB, 데이터 검증
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os

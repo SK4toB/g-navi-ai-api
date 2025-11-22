@@ -5,19 +5,6 @@
 *                사용자 입력 메시지를 검증하는 워크플로우 노드입니다.
 *                메시지 유효성 검사와 전처리를 담당합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see ChatState, LangGraph
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 # 0️⃣ 메시지 검증 및 상태 초기화 노드
 

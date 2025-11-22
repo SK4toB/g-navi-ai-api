@@ -13,19 +13,6 @@
 *                - 각 서비스 간의 데이터 흐름 조율
 *                - VectorDB를 활용한 세션 정보 구축
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see SessionManager, MessageProcessor, ChatSessionService
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any
@@ -43,19 +30,6 @@ class ChatService:
     *                각 책임별로 분리된 서비스들(SessionManager, MessageProcessor, ChatSessionService)을
     *                조율하여 통합된 채팅 기능을 제공합니다.
     *
-    * @modification : 2025.07.01(이재원) 최초생성
-    *
-    * @author 이재원
-    * @Date 2025.07.01
-    * @version 1.0
-    * @see SessionManager, MessageProcessor, ChatSessionService
-    *  == 개정이력(Modification Information) ==
-    *  
-    *   수정일        수정자        수정내용
-    *   ----------   --------     ---------------------------
-    *   2025.07.01   이재원       최초 생성
-    *  
-    * Copyright (C) by G-Navi AI System All right reserved.
     """
     
     def __init__(self, session_timeout_hours: int = 1):

@@ -24,19 +24,6 @@
 *                - 이중 삭제 방지 (세션이 이미 삭제된 경우 처리)
 *                - 백그라운드 정리 작업 예외 처리
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see VectorDB, ChromaService, asyncio
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import asyncio

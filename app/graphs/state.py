@@ -12,19 +12,6 @@
 *                - G.Navi 7단계 처리 결과: 각 단계별 처리 결과
 *                - 메타데이터 및 로깅: 처리 로그 및 오류 추적
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see TypedDict, G.Navi AgentRAG 워크플로우
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import TypedDict, List, Dict, Any, Optional
@@ -36,19 +23,6 @@ class ChatState(TypedDict, total=False):  # total=False로 선택적 필드 허�
     *                7단계 워크플로우에서 사용되는 모든 데이터를 관리합니다.
     *                각 단계별 처리 결과와 메타데이터를 포함합니다.
     *
-    * @modification : 2025.07.01(이재원) 최초생성
-    *
-    * @author 이재원
-    * @Date 2025.07.01
-    * @version 1.0
-    * @see TypedDict
-    *  == 개정이력(Modification Information) ==
-    *  
-    *   수정일        수정자        수정내용
-    *   ----------   --------     ---------------------------
-    *   2025.07.01   이재원       최초 생성
-    *  
-    * Copyright (C) by G-Navi AI System All right reserved.
     """
     
     # === 입력 데이터 (필수) ===

@@ -5,19 +5,6 @@
 *                대화 내역을 관리하는 워크플로우 노드입니다.
 *                이전 대화와 현재 세션의 메시지를 통합 관리합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see ChatState, SessionManager
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging

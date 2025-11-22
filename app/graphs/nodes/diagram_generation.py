@@ -5,19 +5,6 @@
 *                Mermaid 다이어그램을 생성하는 워크플로우 노드입니다.
 *                시각적 다이어그램으로 정보를 표현합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see MermaidDiagramAgent, ChatState
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any

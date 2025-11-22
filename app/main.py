@@ -13,19 +13,6 @@
 *                - API 라우터 등록 및 관리
 *                - 세션 자동 정리 기능
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see FastAPI, CORSMiddleware, asynccontextmanager
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

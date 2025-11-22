@@ -4,20 +4,6 @@
 * @description : 의도 분석 에이전트 모듈
 *                사용자 질문의 의도를 분석하고 카테고리를 분류하는 에이전트입니다.
 *                GPT 모델을 활용하여 질문 유형과 목적을 파악합니다.
-*
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see OpenAI, GPT
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any, List

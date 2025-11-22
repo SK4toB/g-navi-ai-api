@@ -5,19 +5,6 @@
 *                채팅 세션의 생성과 관리를 담당하는 서비스입니다.
 *                LangGraph 빌드, 세션 초기화, 메시지 관리를 처리합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see ChatGraphBuilder, SessionManager
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 from typing import Dict, Any, List

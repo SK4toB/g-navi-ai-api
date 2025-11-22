@@ -5,19 +5,6 @@
 *                사용자 질문의 의도를 분석하는 워크플로우 노드입니다.
 *                질문 유형과 카테고리를 분류합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see IntentAnalysisAgent, ChatState
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging

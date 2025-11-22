@@ -5,19 +5,6 @@
 *                채팅 세션 종료 시 대화 내역을 벡터화하여 ChromaDB에 저장하는 유틸리티입니다.
 *                대화 내용을 임베딩하고 검색 가능한 형태로 구축합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see ChromaDB, OpenAI Embeddings
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os

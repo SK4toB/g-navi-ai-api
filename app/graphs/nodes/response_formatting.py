@@ -5,19 +5,6 @@
 *                검색 결과를 포맷팅하는 워크플로우 노드입니다.
 *                사용자 친화적인 응답 형태로 변환합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see ResponseFormattingAgent, ChatState
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging

@@ -5,19 +5,6 @@
 *                채팅 API에서 사용되는 Pydantic 모델들을 정의합니다.
 *                요청/응답 스키마와 데이터 검증을 담당합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see Pydantic, BaseModel
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any

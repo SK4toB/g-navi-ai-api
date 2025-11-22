@@ -5,20 +5,6 @@
 *                관련 데이터를 검색하는 워크플로우 노드입니다.
 *                커리어 사례, 교육과정, 뉴스 데이터, 과거 대화를 검색합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.1
-* @see CareerEnsembleRetrieverAgent, NewsRetrieverAgent, ChatState
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*   2025.07.01   이재원       뉴스 데이터 검색 기능 추가, Agent 직접 호출 패턴 적용
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import logging

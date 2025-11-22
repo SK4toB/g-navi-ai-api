@@ -4,20 +4,6 @@
 * @description : API 의존성 모듈
 *                FastAPI 의존성 주입을 관리하는 모듈입니다.
 *                서비스 인스턴스와 공통 의존성을 제공합니다.
-*
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see FastAPI, Depends
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 # app/api/deps.py

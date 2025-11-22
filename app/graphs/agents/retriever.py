@@ -22,20 +22,6 @@
 *                - OpenAI Embeddings with Cache
 *                - ChromaDB Persistent Storage
 *                - Query Optimization & Filtering
-*
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see ChromaDB, OpenAI, BM25
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import os

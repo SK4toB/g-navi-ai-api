@@ -4,19 +4,6 @@
 * @description : 뉴스 데이터를 처리하고 벡터 데이터베이스에 저장하는 유틸리티 클래스
 *                뉴스 데이터를 임베딩하여 ChromaDB에 저장하고 검색할 수 있도록 지원합니다.
 *
-* @modification : 2025.07.01(이재원) 최초생성
-*
-* @author 이재원
-* @Date 2025.07.01
-* @version 1.0
-* @see
-*  == 개정이력(Modification Information) ==
-*  
-*   수정일        수정자        수정내용
-*   ----------   --------     ---------------------------
-*   2025.07.01   이재원       최초 생성
-*  
-* Copyright (C) by G-Navi AI System All right reserved.
 """
 
 import json
@@ -39,10 +26,6 @@ class NewsDataProcessor:
     *                JSON 형태의 뉴스 데이터를 읽어와서 임베딩하고
     *                ChromaDB에 저장하는 유틸리티 클래스입니다.
     *                ⚠️ 검색 로직은 포함하지 않음 - retriever.py의 Agent가 담당
-    *
-    * @author 이재원
-    * @Date 2025.07.01
-    * @version 1.0
     """
     
     def __init__(self):
