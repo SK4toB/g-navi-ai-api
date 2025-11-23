@@ -46,8 +46,8 @@ class ConsultationSummaryNode:
             path_selection_info = state.get("path_selection_info", {})
             path_deepening_info = state.get("path_deepening_info", {})
             learning_roadmap_info = state.get("learning_roadmap_info", {})
-            print(f"🔍 DEBUG - path_deepening_info: {path_deepening_info}")
-            print(f"🔍 DEBUG - learning_roadmap_info: {learning_roadmap_info}")
+            print(f" DEBUG - path_deepening_info: {path_deepening_info}")
+            print(f" DEBUG - learning_roadmap_info: {learning_roadmap_info}")
             
             # 학습 로드맵 정보 추출
             learning_roadmap_provided = False
@@ -81,7 +81,7 @@ class ConsultationSummaryNode:
                 mentor_recommendations = "멘토" in mentor_content.lower() or "선배" in mentor_content.lower()
             
             # 디버깅: AI 메서드에 전달된 데이터 확인
-            print(f"🔍 DEBUG - consultation_summary AI 메서드에 전달된 데이터")
+            print(f" DEBUG - consultation_summary AI 메서드에 전달된 데이터")
             print(f"   - name: {merged_user_data.get('name')}")
             print(f"   - path_name: {path_name}")
             print(f"   - user_goals: {user_goals[:100]}...")
@@ -175,10 +175,10 @@ class ConsultationSummaryNode:
 - 설정한 목표: {user_goals}
 
 **제공된 상담 서비스:**
-- 커리어 포지셔닝 분석: ✅ 완료
-- 경로 선택 및 심화 논의: ✅ 완료
-- 맞춤형 전략 수립: {'✅ 완료 (사내 멘토 추천 포함)' if mentor_recommendations else '✅ 완료' if strategy_provided else '기본 가이드 제공'}
-- 학습 로드맵 설계: {'✅ 완료 (' + learning_courses_info + ')' if learning_roadmap_provided else '요청 시 제공 가능'}
+- 커리어 포지셔닝 분석:  완료
+- 경로 선택 및 심화 논의:  완료
+- 맞춤형 전략 수립: {' 완료 (사내 멘토 추천 포함)' if mentor_recommendations else ' 완료' if strategy_provided else '기본 가이드 제공'}
+- 학습 로드맵 설계: {' 완료 (' + learning_courses_info + ')' if learning_roadmap_provided else '요청 시 제공 가능'}
 
 **상담 진행 과정:**
 {', '.join(processing_log)}
@@ -198,7 +198,7 @@ class ConsultationSummaryNode:
 
 ## 상담 요약 완료
 
-### 📋 상담 핵심 내용
+###  상담 핵심 내용
 
 **선택된 성장 경로**: {path_name}
 
@@ -217,7 +217,7 @@ class ConsultationSummaryNode:
 {f'- [제공된 상담 내용에서 도출된 우선순위 기반 학습 순서 및 일정]' if learning_roadmap_provided else '- [기본 학습 방향성 가이드 제공]'}
 - [제공된 상담 내용에서 도출된 실무 적용 및 성과 창출 방안]
 
-### 💪 {merged_user_data.get('name', '고객')}님을 위한 격려 메시지
+###  {merged_user_data.get('name', '고객')}님을 위한 격려 메시지
 
 [{merged_user_data.get('name', '고객')}님의 현재 상황과 목표를 고려한 개인 맞춤형 격려와 응원 메시지. 구체적인 강점과 성장 가능성을 언급하며 동기부여하는 내용]
 
@@ -252,14 +252,14 @@ class ConsultationSummaryNode:
 
 **{merged_user_data.get('name', '고객')}님**의 종합적인 커리어 상담이 성공적으로 완료되었습니다.
 
-### 📋 상담 핵심 내용
+###  상담 핵심 내용
 
 **선택된 성장 경로**: {selected_path.get('name', '목표 경로')}
 **핵심 결정사항**: 개인 강점 분석 및 성장 방향 설정
 **맞춤형 전략**: 사내 데이터 기반 실행 계획 수립
 **학습 로드맵**: 단계별 학습 과정 및 우선순위 제시
 
-### 💪 격려 메시지
+###  격려 메시지
 
 **{merged_user_data.get('name', '고객')}님**의 명확한 목표 설정과 체계적인 계획을 바탕으로, 꾸준히 실행해나가시면 반드시 원하는 성과를 달성하실 수 있습니다. 
 
@@ -293,7 +293,7 @@ class ConsultationSummaryNode:
         """
         상담 내용을 요약하고 격려 메시지로 마무리한다.
         """
-        print("📝 상담 요약 및 마무리...")
+        print(" 상담 요약 및 마무리...")
         
         selected_path = state.get("selected_career_path", {})
         consultation_context = state.get("consultation_context", {})
@@ -303,9 +303,9 @@ class ConsultationSummaryNode:
         processing_log = state.get("processing_log", [])
         
         # 디버깅: 데이터 확인
-        print(f"🔍 DEBUG - consultation_summary user_data from session: {user_data}")
-        print(f"🔍 DEBUG - consultation_summary collected_info: {collected_info}")
-        print(f"🔍 DEBUG - consultation_summary merged_user_data: {merged_user_data}")
+        print(f" DEBUG - consultation_summary user_data from session: {user_data}")
+        print(f" DEBUG - consultation_summary collected_info: {collected_info}")
+        print(f" DEBUG - consultation_summary merged_user_data: {merged_user_data}")
         
         # AI 기반 상담 요약 생성 (state 정보 포함)
         summary_message = await self._generate_consultation_summary(
@@ -352,7 +352,7 @@ class ConsultationSummaryNode:
             
             # 통합된 콘텐츠로 업데이트
             summary_message = '\n'.join(lines)
-            print(f"✅ 다이어그램이 응답에 통합되었습니다. ({len(summary_diagram)}자)")
+            print(f" 다이어그램이 응답에 통합되었습니다. ({len(summary_diagram)}자)")
 
         # 간결한 요약 응답 구성
         summary_response = {

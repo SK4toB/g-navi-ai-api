@@ -105,17 +105,16 @@ class VectorDBGroupingFixer:
             self.logger.info(f"경력 데이터 로드: {len(df)}행")
             
             # 데이터 정제
-            df = df.dropna(subset=['고유번호'])  # 고유번호 누락 데이터 제거
-            df['고유번호'] = df['고유번호'].astype(str)  # 고유번호 문자열 변환
+            df = df.dropna(subset=['고유번호']) 
+            df['고유번호'] = df['고유번호'].astype(str)
             
             # 연도 및 연차 데이터 정제
             if '연도' in df.columns:  # 연도 컬럼이 존재하는 경우
-                df['연도_numeric'] = pd.to_numeric(df['연도'], errors='coerce')  # 연도 숫자 변환
+                df['연도_numeric'] = pd.to_numeric(df['연도'], errors='coerce')
             if '연차' in df.columns:  # 연차 컬럼이 존재하는 경우
-                df['연차_numeric'] = pd.to_numeric(df['연차'], errors='coerce')  # 연차 숫자 변환
-            
+                df['연차_numeric'] = pd.to_numeric(df['연차'], errors='coerce')
             # 개인별 그룹핑 및 연도-연차순 정렬
-            grouped = df.groupby('고유번호')  # 고유번호별 그룹핑
+            grouped = df.groupby('고유번호')
             employee_groups = {}
             
             for emp_id, group_df in grouped:  # 직원별 그룹 순회
@@ -163,16 +162,16 @@ class VectorDBGroupingFixer:
         """개인의 모든 경력을 통합한 연속적인 타임라인 생성 (연도 정보 포함)"""
         
         # 헤더 생성
-        timeline_text = f"■ 고유번호: {emp_id}\n"
-        timeline_text += f"■ 총 경력 기록: {len(emp_df)}개\n"
+        timeline_text = f"고유번호: {emp_id}\n"
+        timeline_text += f"총 경력 기록: {len(emp_df)}개\n"
         
-        # 연도 및 경력 기간 정보 (강화된 로직)
+        # 연도 및 경력 기간 정보
         year_info = self._extract_year_career_info(emp_df)
         if year_info:
-            timeline_text += f"■ 활동 연도: {year_info['year_range']}\n"
-            timeline_text += f"■ 경력 기간: {year_info['career_range']}\n"
-            timeline_text += f"■ 총 활동 기간: {year_info['total_active_years']}년\n"
-            timeline_text += f"■ 경력 발전: {year_info['career_progression']}\n"
+            timeline_text += f"활동 연도: {year_info['year_range']}\n"
+            timeline_text += f"경력 기간: {year_info['career_range']}\n"
+            timeline_text += f"총 활동 기간: {year_info['total_active_years']}년\n"
+            timeline_text += f"경력 발전: {year_info['career_progression']}\n"
         
         # 컬럼명 동적 찾기
         project_col = self._find_column_by_keyword(emp_df, ['주요 업무', '프로젝트'])
@@ -184,18 +183,18 @@ class VectorDBGroupingFixer:
         if domain_col and domain_col in emp_df.columns:
             domains = emp_df[domain_col].dropna().unique()
             if len(domains) > 0:
-                timeline_text += f"■ 주요 도메인: {', '.join(domains)}\n"
+                timeline_text += f"주요 도메인: {', '.join(domains)}\n"
         
         # 주요 역할 요약
         if role_col and role_col in emp_df.columns:
             roles = emp_df[role_col].dropna().unique()
             if len(roles) > 0:
-                timeline_text += f"■ 주요 역할: {', '.join(roles)}\n"
+                timeline_text += f"주요 역할: {', '.join(roles)}\n"
         
         timeline_text += "\n"
         
         # 연도-연차별 상세 정보 (시간순)
-        timeline_text += "=== 연도별 경력 상세 ===\n\n"
+        timeline_text += "연도별 경력 상세\n\n"
         
         for idx, (_, row) in enumerate(emp_df.iterrows(), 1):
             # 연도 및 연차 정보 통합 표시
@@ -204,32 +203,32 @@ class VectorDBGroupingFixer:
             
             # 프로젝트/업무 정보
             if project_col and pd.notna(row.get(project_col)):
-                timeline_text += f"  📋 업무: {row[project_col]}\n"
+                timeline_text += f" 업무: {row[project_col]}\n"
             
             # 역할 정보
             if role_col and pd.notna(row.get(role_col)):
-                timeline_text += f"  👤 역할: {row[role_col]}\n"
+                timeline_text += f"역할: {row[role_col]}\n"
             
             # 도메인 정보
             if domain_col and pd.notna(row.get(domain_col)):
-                timeline_text += f"  🏢 도메인: {row[domain_col]}\n"
+                timeline_text += f"도메인: {row[domain_col]}\n"
             
             # 프로젝트 규모
             if scale_col and pd.notna(row.get(scale_col)):
-                timeline_text += f"  📊 규모: {row[scale_col]}\n"
+                timeline_text += f"규모: {row[scale_col]}\n"
             
             # 스킬셋 정보
             skills = self._extract_skills_from_row(row)
             if skills:
                 resolved_skills = self._resolve_skill_codes(skills)
                 if resolved_skills['skill_names']:
-                    timeline_text += f"  🔧 활용 기술: {', '.join(resolved_skills['skill_names'][:5])}\n"
+                    timeline_text += f" 활용 기술: {', '.join(resolved_skills['skill_names'][:5])}\n"
             
             # 중요 경력 포인트
             if self._is_important_career_point(row):
                 impact_desc = row.get('큰 영향을 받은 업무/시기에 대한 설명')
                 if pd.notna(impact_desc):
-                    timeline_text += f"  ⭐ 핵심 경력: {impact_desc}\n"
+                    timeline_text += f"핵심 경력: {impact_desc}\n"
             
             timeline_text += "\n"
         
@@ -314,8 +313,7 @@ class VectorDBGroupingFixer:
                 skill_code = str(row[col]).strip()
                 if skill_code:
                     skills.append(skill_code)
-        
-        # 기존 형식도 지원 (하위 호환성)
+                    
         for col in row.index:
             if 'Skill set' in col and col not in skill_columns and pd.notna(row[col]):
                 skill_code = str(row[col]).strip()
@@ -368,7 +366,7 @@ class VectorDBGroupingFixer:
         return pd.notna(row.get(impact_col_v1)) and str(row.get(impact_col_v1)).upper() == 'TRUE'
     
     def create_comprehensive_metadata(self, emp_id: str, emp_df: pd.DataFrame) -> Dict[str, Any]:
-        """포괄적이고 정확한 메타데이터 생성 (연도 정보 포함)"""
+        """메타데이터 생성 (연도 정보 포함)"""
         metadata = {
             'employee_id': emp_id,
             'total_career_records': len(emp_df),
@@ -377,9 +375,9 @@ class VectorDBGroupingFixer:
             'processing_method': 'integrated_career_timeline_with_year_data'
         }
         
-        # 연도 정보 추가 (신규)
+        # 연도 정보 추가
         if '연도' in emp_df.columns:
-            years = pd.to_numeric(emp_df['연도'], errors='coerce').dropna()
+            years = pd.to_numeric(emp_df['연도']).dropna()
             if not years.empty:
                 min_year = int(years.min())
                 max_year = int(years.max())
@@ -391,9 +389,9 @@ class VectorDBGroupingFixer:
                     'activity_decade': f"{min_year//10*10}s-{max_year//10*10}s"
                 })
         
-        # 연차 정보 (기존 로직 개선)
+        # 연차 정보
         if '연차' in emp_df.columns:
-            career_years = pd.to_numeric(emp_df['연차'], errors='coerce').dropna()
+            career_years = pd.to_numeric(emp_df['연차']).dropna()
             if not career_years.empty:
                 min_career = int(career_years.min())
                 max_career = int(career_years.max())
@@ -405,19 +403,6 @@ class VectorDBGroupingFixer:
                     'career_years_list': sorted(career_years.astype(int).tolist()),
                     'career_progression_span': max_career - min_career + 1
                 })
-        
-        # 연도-연차 일관성 분석 (신규)
-        if 'activity_years_list' in metadata and 'career_years_list' in metadata:
-            activity_span = metadata['total_activity_years']
-            career_span = metadata['career_progression_span']
-            
-            metadata.update({
-                'year_career_consistency': career_span / activity_span if activity_span > 0 else 0,
-                'career_continuity': self._analyze_career_continuity(
-                    metadata['activity_years_list'], 
-                    metadata['career_years_list']
-                )
-            })
         
         # 도메인 분석 (컬럼명 업데이트)
         domain_columns = ['Industry/Domain', 'Domain 경험']
@@ -433,7 +418,7 @@ class VectorDBGroupingFixer:
                     })
                 break
         
-        # 역할 분석 (컬럼명 업데이트)
+        # 역할 분석
         role_columns = ['수행역할', '역할']
         for col in role_columns:
             if col in emp_df.columns:
@@ -619,7 +604,7 @@ class VectorDBGroupingFixer:
         return documents
     
     def rebuild_vectorstore_with_fixed_grouping(self) -> Dict[str, Any]:
-        """수정된 그룹핑으로 VectorStore 재구축"""
+        """VectorStore 구축"""
         result = {
             "steps_completed": [],
             "errors": [],
@@ -628,30 +613,17 @@ class VectorDBGroupingFixer:
         }
         
         try:
-            # 1. 기존 VectorStore 및 캐시 삭제
-            self.logger.info("기존 VectorStore 삭제 중...")
-            if os.path.exists(self.persist_directory):
-                shutil.rmtree(self.persist_directory)
-            if os.path.exists(self.cache_directory):
-                shutil.rmtree(self.cache_directory)
-            result["steps_completed"].append("기존 데이터 삭제")
-            
-            # 2. 디렉토리 재생성
-            os.makedirs(self.persist_directory, exist_ok=True)
-            os.makedirs(self.cache_directory, exist_ok=True)
-            os.makedirs(os.path.dirname(self.docs_json_path), exist_ok=True)
-            
-            # 3. 수정된 그룹핑으로 데이터 로드
-            self.logger.info("수정된 그룹핑으로 데이터 처리 중...")
+            # 수정된 그룹핑으로 데이터 로드
+            self.logger.info("데이터 처리")
             employee_groups = self.load_and_group_career_data()
             result["steps_completed"].append("개인별 데이터 그룹핑")
             
-            # 4. 수정된 Document 생성
+            # 수정된 Document 생성
             self.logger.info("통합 Document 생성 중...")
             documents = self.create_fixed_documents(employee_groups)
             result["steps_completed"].append("통합 Document 생성")
             
-            # 5. JSON 파일 저장
+            # JSON 파일 저장
             self.logger.info("docs JSON 파일 저장 중...")
             with open(self.docs_json_path, 'w', encoding='utf-8') as f:
                 json_docs = [
@@ -661,30 +633,12 @@ class VectorDBGroupingFixer:
                 json.dump(json_docs, f, ensure_ascii=False, indent=2)
             result["steps_completed"].append("docs JSON 저장")
             
-            # 6. ChromaDB 구축
-            self.logger.info("ChromaDB 구축 중...")
-            
-            # 메타데이터 정제 (ChromaDB 호환성)
-            filtered_documents = []
-            for doc in documents:
-                clean_metadata = {}
-                for key, value in doc.metadata.items():
-                    if isinstance(value, (str, int, float, bool)):
-                        clean_metadata[key] = value
-                    elif isinstance(value, list) and all(isinstance(item, str) for item in value):
-                        clean_metadata[key] = ", ".join(value[:5])
-                    elif value is not None:
-                        clean_metadata[key] = str(value)
-                
-                filtered_doc = Document(
-                    page_content=doc.page_content,
-                    metadata=clean_metadata
-                )
-                filtered_documents.append(filtered_doc)
+            # ChromaDB
+            self.logger.info("ChromaDB")
             
             # VectorStore 생성
             vector_store = Chroma.from_documents(
-                documents=filtered_documents,
+                documents=documents,
                 embedding=self.cached_embeddings,
                 persist_directory=self.persist_directory,
                 collection_name="career_history"
@@ -693,14 +647,14 @@ class VectorDBGroupingFixer:
             vector_store.persist()
             result["steps_completed"].append("ChromaDB 구축")
             
-            # 7. 구축 정보 요약
+            # 구축 정보 요약
             result["build_summary"] = {
                 'total_employees': len(employee_groups),
-                'total_documents': len(filtered_documents),
+                'total_documents': len(documents),
                 'persist_directory': self.persist_directory,
                 'build_timestamp': datetime.now().isoformat(),
                 'grouping_fixed': True,
-                'employee_sample': {
+                'employee': {
                     emp_id: {
                         'rows': len(group),
                         'years': f"{int(group['연차'].min())}-{int(group['연차'].max())}" if '연차' in group.columns and not group['연차'].isna().all() else "N/A"
@@ -709,16 +663,16 @@ class VectorDBGroupingFixer:
             }
             
             result["success"] = True
-            self.logger.info("VectorStore 재구축 완료!")
+            self.logger.info("VectorStore 구축 완료")
             
         except Exception as e:
-            error_msg = f"VectorStore 재구축 실패: {str(e)}"
+            error_msg = f"VectorStore 구축 실패: {str(e)}"
             result["errors"].append(error_msg)
             self.logger.error(error_msg)
         
         return result
     
-    def verify_fix(self, target_user: str = "EMP-525170") -> Dict[str, Any]:
+    def verify_fix(self, target_user: str) -> Dict[str, Any]:
         """수정 결과 검증 (연도 정보 포함)"""
         verification = {
             "target_user": target_user,
@@ -806,55 +760,31 @@ class VectorDBGroupingFixer:
 
 def main():
     """메인 실행 함수"""
-    print("🔧 VectorDB 그룹핑 문제 자동 수정을 시작합니다... (v2 - 연도 분석 포함)")
     
     fixer = VectorDBGroupingFixer()
     
-    # 1. 현재 상태 확인
-    print("\n1️⃣ 현재 VectorDB 상태 확인...")
+    # 현재 상태 확인
     current_verification = fixer.verify_fix()
     
     if current_verification.get("fix_success"):
-        print("✅ VectorDB가 이미 올바르게 구성되어 있습니다!")
         # 연도 분석 결과 출력
         if "year_analysis_verification" in current_verification:
             year_analysis = current_verification["year_analysis_verification"]
-            print("📅 연도 분석 상태:")
+            print("연도 분석 상태:")
             for key, value in year_analysis.items():
-                status = "✅" if value else "❌"
+                status = "o" if value else "x"
                 print(f"  {status} {key}: {value}")
         return
     
-    # 2. VectorStore 재구축
-    print("\n2️⃣ 수정된 그룹핑으로 VectorStore 재구축 중... (연도 정보 포함)")
+    # VectorStore 재구축
     rebuild_result = fixer.rebuild_vectorstore_with_fixed_grouping()
-    
-    # 3. 결과 출력
-    print(f"\n📊 재구축 결과:")
-    print(f"   - 성공 여부: {'✅' if rebuild_result['success'] else '❌'}")
-    print(f"   - 완료된 단계: {len(rebuild_result['steps_completed'])}개")
-    
-    for step in rebuild_result['steps_completed']:
-        print(f"     ✓ {step}")
-    
-    if rebuild_result['errors']:
-        print(f"   - 오류: {len(rebuild_result['errors'])}개")
-        for error in rebuild_result['errors']:
-            print(f"     ❌ {error}")
+
     
     if rebuild_result['success']:
         build_summary = rebuild_result['build_summary']
-        print(f"\n📈 구축 요약:")
         print(f"   - 처리된 사용자: {build_summary['total_employees']}명")
         print(f"   - 생성된 문서: {build_summary['total_documents']}개")
         print(f"   - 그룹핑 수정: {'예' if build_summary['grouping_fixed'] else '아니오'}")
-        print(f"   - 연도 분석 포함: 예")
-        
-        # 샘플 사용자 정보
-        if build_summary['employee_sample']:
-            print(f"   - 샘플 사용자:")
-            for emp_id, info in build_summary['employee_sample'].items():
-                print(f"     • {emp_id}: {info['rows']}행 → {info['years']}")
 
 if __name__ == "__main__":
     main()

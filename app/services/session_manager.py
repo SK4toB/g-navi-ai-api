@@ -5,13 +5,13 @@
 *                G-Navi AI 시스템의 채팅 세션 관리를 담당하는 핵심 서비스입니다.
 *                세션 생성/조회/삭제, 자동 정리, VectorDB 구축 등을 관리합니다.
 *
-*                📋 핵심 기능:
+*                 핵심 기능:
 *                1. 채팅 세션 생성/조회/삭제 관리
 *                2. 세션 만료 시간 추적 및 자동 정리
 *                3. 세션 종료 시 VectorDB 자동 구축 트리거
 *                4. 백그라운드 정리 작업으로 리소스 최적화
 *
-*                🔄 VectorDB 통합 플로우:
+*                 VectorDB 통합 플로우:
 *                세션 활성화 → 대화 진행 → 세션 종료/만료 → current_session_messages 수집 → VectorDB 구축 → 세션 삭제
 *
 *                ⚡ 핵심 시점:
@@ -37,7 +37,7 @@ from app.utils.session_vectordb_builder import session_vectordb_builder
 
 class SessionManager:
     """
-    🗂️ 채팅 세션 생명주기 관리자
+     채팅 세션 생명주기 관리자
     
     주요 책임:
     - 세션 생성, 조회, 삭제 관리
@@ -45,11 +45,11 @@ class SessionManager:
     - 세션 종료 시 VectorDB 구축 트리거 (핵심 기능)
     - 메모리 및 리소스 최적화
     
-    🔄 VectorDB 통합 시점:
+     VectorDB 통합 시점:
     1. close_session() 호출 시: 수동 세션 종료 → VectorDB 구축
     2. cleanup_expired_sessions() 실행 시: 자동 만료 → VectorDB 구축
     
-    💾 저장되는 데이터:
+     저장되는 데이터:
     - 세션 메타데이터: 생성시간, 사용자 정보, 마지막 활동 시간
     - 대화 내용: current_session_messages → VectorDB
     """
@@ -123,26 +123,26 @@ class SessionManager:
         Returns:
             Dict: 종료 결과 (VectorDB 구축 성공 여부 포함)
             
-        🔄 처리 순서:
+         처리 순서:
         1. 세션 존재 여부 확인
         2. 세션 메타데이터 수집 (사용자 정보, 세션 지속시간 등)
-        3. ⭐ VectorDB 구축 실행 (current_session_messages 사용)
+        3.  VectorDB 구축 실행 (current_session_messages 사용)
         4. 세션 메타데이터 삭제
         5. 결과 반환 (VectorDB 구축 성공/실패 여부 포함)
         
-        ⚠️ 중요: VectorDB 구축 실패 시에도 세션은 정상 삭제됨 (리소스 누수 방지)
+         중요: VectorDB 구축 실패 시에도 세션은 정상 삭제됨 (리소스 누수 방지)
         """
         print(f"🔚 close_session 시작: {conversation_id}")
-        print(f"📊 전달받은 current_session_messages: {len(current_session_messages) if current_session_messages else 0}개")
+        print(f" 전달받은 current_session_messages: {len(current_session_messages) if current_session_messages else 0}개")
         
         if current_session_messages:
-            print(f"📋 current_session_messages 내용 확인:")
+            print(f" current_session_messages 내용 확인:")
             for i, msg in enumerate(current_session_messages):
                 role = msg.get('role', 'unknown')
                 content = msg.get('content', '')[:50]
                 print(f"     #{i+1} {role}: {content}{'...' if len(msg.get('content', '')) > 50 else ''}")
         else:
-            print(f"⚠️ current_session_messages가 비어있거나 None입니다")
+            print(f" current_session_messages가 비어있거나 None입니다")
         
         if conversation_id not in self.active_sessions:
             return {
@@ -152,11 +152,11 @@ class SessionManager:
                 "timestamp": datetime.utcnow().isoformat()
             }
         
-        # 📊 세션 기본 정보 수집
+        #  세션 기본 정보 수집
         session = self.active_sessions[conversation_id]
         user_name = session.get("user_info", {}).get("name", "Unknown")
         
-        # 🔍 member_id 추출 (여러 필드에서 시도)
+        #  member_id 추출 (여러 필드에서 시도)
         user_info = session.get("user_info", {})
         member_id = (
             user_info.get("member_id") or           # API에서 추가한 member_id
@@ -166,7 +166,7 @@ class SessionManager:
             "unknown"                               # 최후 폴백
         )
         
-        print(f"🔍 VectorDB용 member_id 추출: {member_id} (user_info: {user_info})")
+        print(f" VectorDB용 member_id 추출: {member_id} (user_info: {user_info})")
         
         created_at = session.get("created_at")
         now = datetime.utcnow()
@@ -177,8 +177,8 @@ class SessionManager:
         if current_session_messages:
             try:
                 print(f"🗃️ VectorDB 구축 시작...")
-                print(f"   📊 메시지 수: {len(current_session_messages)}개")
-                print(f"   👤 사용자: {user_name} (member_id: {member_id})")
+                print(f"    메시지 수: {len(current_session_messages)}개")
+                print(f"    사용자: {user_name} (member_id: {member_id})")
                 
                 # VectorDB 구축에 필요한 세션 메타데이터 준비
                 session_metadata = {
@@ -197,17 +197,17 @@ class SessionManager:
                 )
                 
                 if vectordb_success:
-                    print(f"✅ VectorDB 구축 성공: {conversation_id}")
+                    print(f" VectorDB 구축 성공: {conversation_id}")
                 else:
-                    print(f"❌ VectorDB 구축 실패: {conversation_id}")
+                    print(f"- VectorDB 구축 실패: {conversation_id}")
                     
             except Exception as e:
-                print(f"❌ VectorDB 구축 중 예외 발생: {conversation_id} - {e}")
+                print(f"- VectorDB 구축 중 예외 발생: {conversation_id} - {e}")
                 import traceback
                 traceback.print_exc()
                 vectordb_success = False                
         else:
-            print(f"⚠️ current_session_messages가 없어서 VectorDB 구축 생략: {conversation_id}")
+            print(f" current_session_messages가 없어서 VectorDB 구축 생략: {conversation_id}")
         
         # ###################################
         # # 대화 히스토리도 함께 삭제
@@ -230,7 +230,7 @@ class SessionManager:
                 del self.active_sessions[conversation_id]
                 print(f"세션 메타데이터 삭제: {conversation_id}")
             else:
-                print(f"⚠️ 세션이 이미 삭제됨: {conversation_id}")
+                print(f" 세션이 이미 삭제됨: {conversation_id}")
         except Exception as e:
             print(f"세션 정리 실패: {e}")
         # ###################################
@@ -445,7 +445,7 @@ class SessionManager:
             if inactive_duration > self.session_timeout:
                 user_name = session.get("user_info", {}).get("name", "Unknown")
                 
-                # 🔍 member_id 추출 (여러 필드에서 시도) - close_session과 동일한 로직
+                #  member_id 추출 (여러 필드에서 시도) - close_session과 동일한 로직
                 user_info = session.get("user_info", {})
                 member_id = (
                     user_info.get("member_id") or           # API에서 추가한 member_id
@@ -455,7 +455,7 @@ class SessionManager:
                     "unknown"                               # 최후 폴백
                 )
                 
-                print(f"🔍 자동정리 VectorDB용 member_id 추출: {member_id} (user_info: {user_info})")
+                print(f" 자동정리 VectorDB용 member_id 추출: {member_id} (user_info: {user_info})")
                 
                 inactive_minutes = int(inactive_duration.total_seconds() / 60)
                 session_age_minutes = int((now - session.get("created_at")).total_seconds() / 60)
@@ -484,7 +484,7 @@ class SessionManager:
                             )
                             
                     except Exception as e:
-                        print(f"❌ 자동 정리 중 VectorDB 구축 실패: {conv_id} - {e}")
+                        print(f"- 자동 정리 중 VectorDB 구축 실패: {conv_id} - {e}")
                         vectordb_success = False
                 
                 expired_sessions.append({
@@ -503,7 +503,7 @@ class SessionManager:
                 
                 # 만료된 세션 제거
                 del self.active_sessions[conv_id]
-                vectordb_status = "📚" if vectordb_success else "⚠️"
+                vectordb_status = "" if vectordb_success else ""
                 print(f"🧹 만료 세션 정리: {conv_id} (사용자: {user_name}, 비활성: {inactive_minutes}분) {vectordb_status}")
         
         return {
@@ -523,14 +523,14 @@ class SessionManager:
     async def start_auto_cleanup(self, get_session_messages_func=None):
         """자동 세션 정리 시작"""
         if self.cleanup_task and not self.cleanup_task.done():
-            print("⚠️ 자동 세션 정리가 이미 실행 중입니다")
+            print(" 자동 세션 정리가 이미 실행 중입니다")
             return
         
         if not self.auto_cleanup_enabled:
-            print("⚠️ 자동 세션 정리가 비활성화되어 있습니다")
+            print(" 자동 세션 정리가 비활성화되어 있습니다")
             return
         
-        print(f"🚀 자동 세션 정리 시작 (주기: {self.cleanup_interval_minutes}분)")
+        print(f" 자동 세션 정리 시작 (주기: {self.cleanup_interval_minutes}분)")
         self.cleanup_task = asyncio.create_task(self._auto_cleanup_loop(get_session_messages_func))
     
     async def stop_auto_cleanup(self):
@@ -572,30 +572,30 @@ class SessionManager:
                             inactive_minutes = session.get("inactive_minutes", 0)
                             message_count = session.get("message_count", 0)
                             vectordb_built = session.get("vectordb_built", False)
-                            vectordb_icon = "📚" if vectordb_built else "⚠️"
+                            vectordb_icon = "" if vectordb_built else ""
                             print(f"   └─ {conv_id} (사용자: {user_name}, 비활성: {inactive_minutes}분, 메시지: {message_count}개) {vectordb_icon}")
                     else:
                         # 조용한 로그 (정리할 세션이 없을 때는 간단히)
                         if self.cleanup_count % 12 == 1:  # 1시간마다 한 번씩만 로그 출력 (5분 주기)
-                            print(f"✅ [{current_time}] 세션 정리 체크: 만료된 세션 없음 ({remaining_count}개 활성)")
+                            print(f" [{current_time}] 세션 정리 체크: 만료된 세션 없음 ({remaining_count}개 활성)")
                     
                     # 다음 정리까지 대기
                     await asyncio.sleep(self.cleanup_interval_minutes * 60)
                     
                 except Exception as e:
                     self.logger.error(f"자동 세션 정리 중 오류: {e}")
-                    print(f"❌ 자동 세션 정리 오류: {e}")
+                    print(f"- 자동 세션 정리 오류: {e}")
                     # 오류 발생 시 1분 후 재시도
                     await asyncio.sleep(60)
                     
         except asyncio.CancelledError:
-            print("🔄 자동 세션 정리 태스크가 취소되었습니다")
+            print(" 자동 세션 정리 태스크가 취소되었습니다")
             raise
     
     async def manual_cleanup(self, get_session_messages_func=None) -> Dict[str, Any]:
         """수동 세션 정리 (즉시 실행, VectorDB 구축 포함)"""
         try:
-            print("🔧 수동 세션 정리 실행...")
+            print(" 수동 세션 정리 실행...")
             result = await self.cleanup_expired_sessions(get_session_messages_func)
             
             return {
@@ -631,7 +631,7 @@ class SessionManager:
         """자동 정리 활성화/비활성화"""
         self.auto_cleanup_enabled = enabled
         status = "활성화" if enabled else "비활성화"
-        print(f"🔧 자동 세션 정리 {status}")
+        print(f" 자동 세션 정리 {status}")
     
     def set_cleanup_interval(self, minutes: int):
         """정리 주기 변경 (분 단위)"""
@@ -641,4 +641,4 @@ class SessionManager:
             minutes = 180  # 최대 3시간
         
         self.cleanup_interval_minutes = minutes
-        print(f"🔧 자동 정리 주기 변경: {minutes}분")
+        print(f" 자동 정리 주기 변경: {minutes}분")

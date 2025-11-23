@@ -1,11 +1,3 @@
-# app/graphs/agents/analyzer.py
-"""
-* @className : IntentAnalysisAgent
-* @description : 의도 분석 에이전트 모듈
-*                사용자 질문의 의도를 분석하고 카테고리를 분류하는 에이전트입니다.
-*                GPT 모델을 활용하여 질문 유형과 목적을 파악합니다.
-"""
-
 from typing import Dict, Any, List
 from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
@@ -14,7 +6,7 @@ import logging
 
 class IntentAnalysisAgent:
     """
-    🎯 의도 분석 에이전트 - 커리어 검색 키워드 추출에 집중
+     의도 분석 에이전트 - 커리어 검색 키워드 추출에 집중
     
     사용자 질문을 분석하여 의도를 파악하고, 다음 단계의 
     커리어 사례 검색에 필요한 핵심 키워드를 추출합니다.
@@ -29,7 +21,7 @@ class IntentAnalysisAgent:
                                  user_data: Dict[str, Any], 
                                  chat_history: List[Dict[str, str]]) -> Dict[str, Any]:
         """
-        🔍 사용자 의도 종합 분석
+         사용자 의도 종합 분석
         
         사용자 질문, 프로필 정보, 대화 히스토리를 종합하여
         의도를 파악하고 커리어 검색에 필요한 키워드를 추출합니다.
@@ -50,7 +42,7 @@ class IntentAnalysisAgent:
     
     def _perform_unified_analysis(self, user_question: str, user_data: Dict[str, Any], chat_history: List[Dict[str, str]]) -> Dict[str, Any]:
         """
-        🎯 통합 의도 분석 수행
+         통합 의도 분석 수행
         
         GPT-4o-mini를 사용하여 사용자 질문을 분석하고
         커리어 검색에 최적화된 키워드를 추출합니다.
@@ -147,7 +139,7 @@ class IntentAnalysisAgent:
     
     def _summarize_chat_history(self, chat_history: List[Dict[str, str]]) -> str:
         """
-        📋 과거 대화내역 간단 요약
+         과거 대화내역 간단 요약
         
         최근 대화 내역을 분석하여 맥락 파악에 필요한
         핵심 정보만 추출합니다.

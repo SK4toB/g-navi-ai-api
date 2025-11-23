@@ -18,7 +18,7 @@ from app.graphs.agents.report_generator import ReportGeneratorAgent
 
 class ReportGenerationNode:
     """
-    🔒 관리자 전용 HTML 보고서 생성 노드
+    관리자 전용 HTML 보고서 생성 노드
     
     **핵심 역할:**
     - HTML 보고서 파일 생성 및 저장 (관리자용)
@@ -37,7 +37,7 @@ class ReportGenerationNode:
     
     def generate_report_node(self, state: ChatState) -> ChatState:
         """
-        🔒 6단계: 관리자 전용 HTML 보고서 생성
+        6단계: 관리자 전용 HTML 보고서 생성
         
         상담 내용을 체계적으로 정리한 HTML 보고서를 생성하여
         관리자가 상담 품질을 검토할 수 있도록 지원합니다.
@@ -62,14 +62,14 @@ class ReportGenerationNode:
         try:
             # 메시지 검증 실패 시 처리 건너뛰기
             if state.get("workflow_status") == "validation_failed":
-                print(f"⚠️  [6단계] 메시지 검증 실패로 처리 건너뛰기")
+                print(f"[6단계] 메시지 검증 실패로 처리 건너뛰기")
                 return state
                 
-            print(f"\n🔧 [6단계] HTML 보고서 생성 시작... (시작시간: {start_time})")
+            print(f"\n[6단계] HTML 보고서 생성 시작... (시작시간: {start_time})")
             
             # 기본 정보 추출
             user_question = state.get("user_question", "")
-            final_response = state.get("final_response", {})  # 이미 완성된 FE용 최종 답변
+            final_response = state.get("final_response", {})
             user_data = state.get("user_data", {})
             
             self.logger.info(f"HTML 보고서 생성 검토: {user_question[:50]}...")
@@ -80,10 +80,10 @@ class ReportGenerationNode:
                 user_question, user_data
             )
             analysis_time = time.perf_counter() - analysis_start
-            print(f"🔍 [관리자 기능] 보고서 필요성 판단 시간: {analysis_time * 1000:.1f}ms")
+            print(f"[관리자 기능] 보고서 필요성 판단 시간: {analysis_time * 1000:.1f}ms")
             
             if should_generate:
-                print("📊 [관리자 기능] 보고서 생성 필요 → HTML 파일 생성 중...")
+                print("[관리자 기능] 보고서 생성 필요 → HTML 파일 생성 중...")
                 
                 # HTML 보고서 생성 시간 측정
                 generation_start = time.perf_counter()
@@ -91,10 +91,10 @@ class ReportGenerationNode:
                     final_response, user_data, state
                 )
                 generation_time = time.perf_counter() - generation_start
-                print(f"📝 [관리자 기능] HTML 보고서 생성 시간: {generation_time * 1000:.1f}ms")
+                print(f"[관리자 기능] HTML 보고서 생성 시간: {generation_time * 1000:.1f}ms")
                 
                 if report_path:
-                    print(f"✅ [관리자 기능] 보고서 생성 완료: {report_path}")
+                    print(f"[관리자 기능] 보고서 생성 완료: {report_path}")
                     
                     # 상태에 보고서 정보 추가
                     state["report_generated"] = True
@@ -102,20 +102,18 @@ class ReportGenerationNode:
                     
                     # FE용 최종 응답은 수정하지 않음 (이미 완성된 상태)
                     # 보고서 정보는 별도 필드로만 제공
-                    print("ℹ️  FE용 최종 응답은 이미 완성됨 → 보고서 정보만 추가")
+                    print("FE용 최종 응답은 이미 완성됨 → 보고서 정보만 추가")
                 else:
-                    print("❌ [관리자 기능] 보고서 생성 실패")
+                    print("[관리자 기능] 보고서 생성 실패")
                     state["report_generated"] = False
                     state["report_error"] = "보고서 생성 중 오류가 발생했습니다."
             else:
-                print("ℹ️  [관리자 기능] 보고서 생성 불필요 → 건너뛰기")
+                print("[관리자 기능] 보고서 생성 불필요 → 건너뛰기")
                 state["report_generated"] = False
                 state["report_skip_reason"] = "사용자 요청에 보고서 생성 의도 없음"
             
-            # 최종 응답은 수정하지 않음 (이미 이전 단계에서 완성됨)
-            # state["final_response"] = final_response  # 제거됨
             
-            # 6단계 처리 시간 계산 및 로그 추가 (정밀도 향상)
+            # 6단계 처리 시간 계산 및 로그 추가
             end_time = time.perf_counter()
             step_time = end_time - start_time
             processing_log = state.get("processing_log", [])
@@ -131,9 +129,9 @@ class ReportGenerationNode:
             processing_log.append(f"6단계 처리 시간: {time_display}")
             state["processing_log"] = processing_log
             
-            print(f"⏱️  [6단계] 관리자용 HTML 보고서 처리 완료: {time_display}")
+            print(f"[6단계] 관리자용 HTML 보고서 처리 완료: {time_display}")
             self.logger.info(f"6단계 관리자용 HTML 보고서 완료: {time_display}")
-            print("🔒 [관리자 모드] 보고서 생성은 관리자 전용 기능입니다")
+            print("[관리자 모드] 보고서 생성은 관리자 전용 기능입니다")
             
             return state
             
@@ -156,8 +154,8 @@ class ReportGenerationNode:
             processing_log.append(f"6단계 처리 시간 (오류): {time_display}")
             state["processing_log"] = processing_log
             
-            print(f"❌ [6단계] 관리자용 HTML 보고서 오류: {time_display} (오류: {e})")
-            print("🔒 [관리자 모드] 보고서 오류는 사용자 응답에 영향 없음")
+            print(f"[6단계] 관리자용 HTML 보고서 오류: {time_display} (오류: {e})")
+            print("[관리자 모드] 보고서 오류는 사용자 응답에 영향 없음")
             
             state["report_generated"] = False
             state["report_error"] = str(e)

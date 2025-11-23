@@ -56,7 +56,7 @@ class PathSelectionNode:
 
 ### 맞춤형 전략 수립을 위한 질문
 
-**💡 참고사항**
+** 참고사항**
 아래 질문들에 답변해 주시면 더욱 정확한 맞춤형 전략을 제안드릴 수 있지만, **답변하지 않으셔도 됩니다**. 현재까지 수집된 고객님의 정보(경력, 기술스택, 도메인)와 사내 데이터를 기반으로도 충분히 실무적인 성공 전략을 제안드릴 수 있습니다!
 
 
@@ -102,7 +102,7 @@ class PathSelectionNode:
         """
         사용자가 선택한 경로를 처리하고 심화 질문을 진행한다.
         """
-        print("🛤️ 경로 선택 처리 시작...")
+        print(" 경로 선택 처리 시작...")
         
         user_question = state.get("user_question", "").strip()
         career_paths = state.get("career_paths_suggested", [])

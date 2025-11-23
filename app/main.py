@@ -6,7 +6,7 @@
 *                FastAPI 프레임워크를 사용하여 RESTful API를 제공하고,
 *                CORS 미들웨어와 라이프사이클 관리를 포함합니다.
 *
-*                🔄 주요 기능:
+*                 주요 기능:
 *                - FastAPI 애플리케이션 설정 및 구성
 *                - CORS 미들웨어 설정
 *                - 애플리케이션 라이프사이클 관리
@@ -38,16 +38,16 @@ async def lifespan(app: FastAPI):
     @param app: FastAPI - FastAPI 애플리케이션 인스턴스
     """
     # 시작 시
-    print("🚀 Career Path Chat API 시작...")  # 애플리케이션 시작 로그 출력
+    print(" Career Path Chat API 시작...")  # 애플리케이션 시작 로그 출력
     
     # 세션 자동 정리 시작
     try:  # 예외 처리 시작
         container = get_service_container()  # 서비스 컨테이너 조회
         chat_service = container.chat_service  # 채팅 서비스 조회
         await chat_service.start_auto_cleanup()  # 자동 정리 시작
-        print("✅ 세션 자동 정리 활성화됨")  # 성공 로그 출력
+        print(" 세션 자동 정리 활성화됨")  # 성공 로그 출력
     except Exception as e:  # 예외 발생 시
-        print(f"⚠️ 세션 자동 정리 시작 실패: {e}")  # 실패 로그 출력
+        print(f" 세션 자동 정리 시작 실패: {e}")  # 실패 로그 출력
     
     yield  # 애플리케이션 실행 중
     
@@ -59,9 +59,9 @@ async def lifespan(app: FastAPI):
         container = get_service_container()  # 서비스 컨테이너 조회
         chat_service = container.chat_service  # 채팅 서비스 조회
         await chat_service.stop_auto_cleanup()  # 자동 정리 중지
-        print("✅ 세션 자동 정리 중지됨")  # 성공 로그 출력
+        print(" 세션 자동 정리 중지됨")  # 성공 로그 출력
     except Exception as e:  # 예외 발생 시
-        print(f"⚠️ 세션 자동 정리 중지 실패: {e}")  # 실패 로그 출력
+        print(f" 세션 자동 정리 중지 실패: {e}")  # 실패 로그 출력
 
 
 # FastAPI 애플리케이션 생성

@@ -15,7 +15,7 @@ from app.graphs.state import ChatState
 
 class MessageCheckNode:
     """
-    0️⃣ 메시지 검증 및 상태 초기화 노드
+    메시지 검증 및 상태 초기화 노드
     
     역할:
     - 사용자 메시지의 유효성 검증 (빈값, 길이, 부적절한 내용)
@@ -31,7 +31,7 @@ class MessageCheckNode:
         async def message_check_node(state: ChatState) -> ChatState:
             start_time = time.perf_counter()
             
-            print("\n📝 [0단계] 메시지 검증 및 상태 초기화 시작...")
+            print("\n [0단계] 메시지 검증 및 상태 초기화 시작...")
             
             # 1. 메시지 검증
             user_question = state.get("user_question", "")
@@ -49,8 +49,8 @@ class MessageCheckNode:
                 else:
                     time_display = f"{step_time:.3f}초"
                 
-                print(f"❌ [0단계] 메시지 검증 실패: {validation_result['error']}")
-                print(f"⏱️  [0단계] 처리 시간: {time_display}")
+                print(f"[0단계] 메시지 검증 실패: {validation_result['error']}")
+                print(f"[0단계] 처리 시간: {time_display}")
                 
                 # 최소한의 상태 초기화 (오류 응답용)
                 state.setdefault("processing_log", [])
@@ -76,7 +76,7 @@ class MessageCheckNode:
                 
                 return state
             
-            print(f"✅ [0단계] 메시지 검증 성공: {len(user_question)}자")
+            print(f"[0단계] 메시지 검증 성공: {len(user_question)}자")
             
             # 상태 초기화 (MemorySaver 복원 데이터 보존 - current_session_messages 제외)
             # Note: current_session_messages는 MemorySaver에서 복원되므로 초기화하지 않음
@@ -107,8 +107,8 @@ class MessageCheckNode:
             processing_log.append(f"0단계 처리 시간: {time_display}")
             state["processing_log"] = processing_log
             
-            print(f"📊 상태 초기화 완료: {len(state.keys())}개 필드")
-            print(f"⏱️  [0단계] 처리 시간: {time_display}")
+            print(f"상태 초기화 완료: {len(state.keys())}개 필드")
+            print(f"[0단계] 처리 시간: {time_display}")
             
             return state
         

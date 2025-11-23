@@ -64,13 +64,13 @@ class K8sChromaRetriever(BaseRetriever):
                     if collection.get('name') == self.pod_collection_name:
                         # Pydantic 모델의 필드 업데이트 방법
                         object.__setattr__(self, 'collection_id', collection.get('id'))
-                        print(f"✅ [K8sChromaRetriever] 컬렉션 연결: {self.pod_collection_name} (ID: {self.collection_id})")
+                        print(f" [K8sChromaRetriever] 컬렉션 연결: {self.pod_collection_name} (ID: {self.collection_id})")
                         return
-                print(f"❌ [K8sChromaRetriever] 컬렉션을 찾을 수 없습니다: {self.pod_collection_name}")
+                print(f"- [K8sChromaRetriever] 컬렉션을 찾을 수 없습니다: {self.pod_collection_name}")
             else:
-                print(f"❌ [K8sChromaRetriever] 컬렉션 목록 조회 실패: {response.status_code}")
+                print(f"- [K8sChromaRetriever] 컬렉션 목록 조회 실패: {response.status_code}")
         except Exception as e:
-            print(f"❌ [K8sChromaRetriever] 컬렉션 ID 조회 실패: {e}")
+            print(f"- [K8sChromaRetriever] 컬렉션 ID 조회 실패: {e}")
 
     @property
     def collections_url(self) -> str:
@@ -80,7 +80,7 @@ class K8sChromaRetriever(BaseRetriever):
     def similarity_search(self, query: str, k: int = None) -> List[Document]:
         """유사도 검색 수행"""
         if not self.collection_id:
-            print(f"❌ [K8sChromaRetriever] 컬렉션 ID가 없어서 검색할 수 없습니다")
+            print(f"[K8sChromaRetriever] 컬렉션 ID가 없어서 검색할 수 없습니다")
             return []
         
         try:
@@ -105,14 +105,14 @@ class K8sChromaRetriever(BaseRetriever):
                         metadata = metadatas[0][i] if metadatas and len(metadatas[0]) > i else {}
                         docs.append(Document(page_content=doc_text, metadata=metadata))
                 
-                print(f"✅ [K8sChromaRetriever] 검색 완료: {len(docs)}개 문서 반환")
+                print(f" [K8sChromaRetriever] 검색 완료: {len(docs)}개 문서 반환")
                 return docs
             else:
-                print(f"❌ [K8sChromaRetriever] 검색 실패: {response.status_code} - {response.text}")
+                print(f"- [K8sChromaRetriever] 검색 실패: {response.status_code} - {response.text}")
                 return []
                 
         except Exception as e:
-            print(f"❌ [K8sChromaRetriever] 검색 중 예외: {e}")
+            print(f"- [K8sChromaRetriever] 검색 중 예외: {e}")
             return []
 
     def get_collection_info(self) -> Dict:

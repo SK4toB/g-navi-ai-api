@@ -207,37 +207,37 @@ class EducationChromaPodUploader:
                     
                     if response.status_code in [200, 201]:
                         success_count += 1
-                        print(f"    ✅ 배치 {batch_num} 업로드 완료 (시도 {retry + 1}) - HTTP {response.status_code}")
+                        print(f"     배치 {batch_num} 업로드 완료 (시도 {retry + 1}) - HTTP {response.status_code}")
                         break
                     else:
-                        print(f"    ❌ 배치 {batch_num} 업로드 실패: {response.status_code}")
+                        print(f"     배치 {batch_num} 업로드 실패: {response.status_code}")
                         print(f"    응답 내용: {response.text}")
                         if retry < max_retries - 1:
-                            print(f"    🔄 재시도 {retry + 2}/{max_retries}")
+                            print(f"재시도 {retry + 2}/{max_retries}")
                             continue
                         else:
-                            print(f"    💥 최대 재시도 초과. 오류: {response.text}")
+                            print(f"최대 재시도 초과. 오류: {response.text}")
                             return False
                             
                 except requests.exceptions.Timeout:
-                    print(f"    ⏰ 배치 {batch_num} 타임아웃 (시도 {retry + 1})")
+                    print(f"배치 {batch_num} 타임아웃 (시도 {retry + 1})")
                     if retry < max_retries - 1:
-                        print(f"    🔄 재시도 {retry + 2}/{max_retries}")
+                        print(f"     재시도 {retry + 2}/{max_retries}")
                         continue
                     else:
-                        print(f"    💥 최대 재시도 초과 (타임아웃)")
+                        print(f"     최대 재시도 초과 (타임아웃)")
                         return False
                         
                 except Exception as e:
-                    print(f"    ❌ 배치 {batch_num} 예외 발생: {str(e)}")
+                    print(f"     배치 {batch_num} 예외 발생: {str(e)}")
                     if retry < max_retries - 1:
-                        print(f"    🔄 재시도 {retry + 2}/{max_retries}")
+                        print(f"     재시도 {retry + 2}/{max_retries}")
                         continue
                     else:
-                        print(f"    💥 최대 재시도 초과")
+                        print(f"     최대 재시도 초과")
                         return False
         
-        print(f"\n🎉 모든 교육과정 문서 업로드 완료!")
+        print(f"\n 모든 교육과정 문서 업로드 완료!")
         print(f"   성공한 배치: {success_count}/{(total_docs + batch_size - 1) // batch_size}")
         return True
     
@@ -257,26 +257,26 @@ class EducationChromaPodUploader:
             if not self.upload_documents_batch(collection_data):
                 raise Exception("교육과정 문서 업로드 실패")
             
-            print("\n🎉 교육과정 ChromaDB 컬렉션 업로드가 완료되었습니다!")
+            print("\n 교육과정 ChromaDB 컬렉션 업로드가 완료되었습니다!")
             print(f"   로컬: {self.local_collection_name}")
             print(f"   Pod: {self.pod_collection_name}")
-            print("\n💡 업로드 결과를 검증하려면 다음 명령어를 실행하세요:")
+            print("\n 업로드 결과를 검증하려면 다음 명령어를 실행하세요:")
             print("   python app/utils/verify_education_chroma_upload.py")
             
         except Exception as e:
-            print(f"\n❌ 교육과정 업로드 실패: {str(e)}")
+            print(f"\n 교육과정 업로드 실패: {str(e)}")
             raise
 
 def main():
     """메인 실행 함수"""
-    print("🚀 교육과정 ChromaDB 컬렉션 Pod 업로드를 시작합니다...")
+    print(" 교육과정 ChromaDB 컬렉션 Pod 업로드를 시작합니다...")
     
     # 환경변수 확인
     required_env = ["OPENAI_API_KEY", "CHROMA_AUTH_CREDENTIALS"]
     missing_env = [env for env in required_env if not os.getenv(env)]
     
     if missing_env:
-        print(f"❌ 필수 환경변수가 없습니다: {missing_env}")
+        print(f" 필수 환경변수가 없습니다: {missing_env}")
         print("   .env 파일에 다음을 추가하세요:")
         for env in missing_env:
             print(f"   {env}=your_value_here")

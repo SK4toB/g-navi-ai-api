@@ -4,7 +4,7 @@
 * @description : G.Navi AgentRAG 시스템의 LangGraph 빌더 모듈
 *                범용 대화와 커리어 상담을 지원하는 이중 플로우 시스템입니다.
 *                
-*                📋 범용 대화 플로우 (7단계):
+*                 범용 대화 플로우 (7단계):
 *                0. 메시지 검증 (message_check)
 *                1. 세션 대화내역 관리 (manage_session_history) 
 *                2. 의도 분석 (analyze_intent)
@@ -34,14 +34,14 @@
 *                5. 다이어그램 생성 (generate_diagram)
 *                6. 관리자용 보고서 생성 (generate_report)
 *
-*                🎯 커리어 상담 플로우 (대화형 6단계):
+*                 커리어 상담 플로우 (대화형 6단계):
 *                0-2. 공통: 메시지 검증 → 세션 관리 → 의도 분석
 *                3. 커리어 포지셔닝 분석 (career_positioning)
 *                4. 경로 선택 및 심화 논의 (path_selection/deepening)
 *                5. 실행 전략 및 학습 로드맵 (action_planning/learning)
 *                6. 동기부여 및 요약 (consultation_summary)
 *
-*                🔄 주요 기능:
+*                 주요 기능:
 *                - 의도 분석 기반 플로우 자동 분기
 *                - 상태 기반 워크플로우 관리 (StateGraph)
 *                - MemorySaver를 통한 대화 연속성 보장
@@ -88,7 +88,7 @@ class ChatGraphBuilder:
     *                메시지 검증 → 히스토리 관리 → 의도 분석 → 데이터 검색 → 
     *                응답 포맷팅 → 다이어그램 생성 → 보고서 생성
     * 
-    *                🔄 주요 역할:
+    *                 주요 역할:
     *                - LangGraph 워크플로우 구성 및 컴파일
     *                - 세션별 사용자 정보 관리
     *                - MemorySaver를 통한 대화 상태 지속성 보장
@@ -140,7 +140,7 @@ class ChatGraphBuilder:
         
         # 상담 완료 상태 확인
         if consultation_stage == "completed":
-            print("✅ 커리어 상담 완료 - 새로운 대화로 진행")
+            print("커리어 상담 완료 - 새로운 대화로 진행")
             return "analyze_intent"
         
         # 상담이 진행 중인 단계들
@@ -150,10 +150,10 @@ class ChatGraphBuilder:
         ]
         
         if consultation_stage in active_consultation_stages:
-            print(f"🔄 커리어 상담 진행 중 (단계: {consultation_stage}) - 의도 분석 건너뛰기")
+            print(f"커리어 상담 진행 중 (단계: {consultation_stage}) - 의도 분석 건너뛰기")
             return "career_consultation_direct"
         else:
-            print("🆕 새로운 대화 시작 - 의도 분석 수행")
+            print("새로운 대화 시작 - 의도 분석 수행")
             return "analyze_intent"
     
     def _determine_conversation_flow(self, state: ChatState) -> str:
@@ -168,7 +168,7 @@ class ChatGraphBuilder:
         consultation_stage = state.get("consultation_stage", "")
         # 상담 완료 상태는 제외하고, 진행 중인 단계만 상담 플로우 유지
         if consultation_stage and consultation_stage not in ["initial", "", "completed"]:
-            print(f"🔄 커리어 상담 진행 중 - 현재 단계: {consultation_stage}")
+            print(f"커리어 상담 진행 중 - 현재 단계: {consultation_stage}")
             return "career_consultation"
         
         # 의도 분석 결과 확인
@@ -231,10 +231,10 @@ class ChatGraphBuilder:
         is_career_consultation = is_career_consultation and not has_non_career_phrases  # 커리어 상담 최종 판단
         
         if is_career_consultation or intent_type == "career_consultation":  # 커리어 상담 조건 확인
-            print("🎯 커리어 상담 플로우로 진행")  # 커리어 상담 플로우 선택 로그
+            print("커리어 상담 플로우로 진행")  # 커리어 상담 플로우 선택 로그
             return "career_consultation"
         else:  # 일반 대화인 경우
-            print("💬 범용 대화 플로우로 진행")  # 일반 대화 플로우 선택 로그
+            print("범용 대화 플로우로 진행")  # 일반 대화 플로우 선택 로그
             return "general_flow"
     
     def _should_continue_or_wait(self, state: ChatState) -> str:
@@ -248,17 +248,17 @@ class ChatGraphBuilder:
         consultation_stage = state.get("consultation_stage", "")  # 현재 상담 단계 확인
         
         # State 전달 디버깅
-        print(f"🔍 DEBUG - _should_continue_or_wait에서 state 확인:")
-        print(f"🔍 DEBUG - consultation_stage: {consultation_stage}")
-        print(f"🔍 DEBUG - awaiting_user_input: {awaiting_input}")
-        print(f"🔍 DEBUG - state_trace: {state.get('state_trace', 'None')}")
-        print(f"🔍 DEBUG - retrieved_career_data: {len(state.get('retrieved_career_data', []))}개")
+        print(f" DEBUG - _should_continue_or_wait에서 state 확인:")
+        print(f" DEBUG - consultation_stage: {consultation_stage}")
+        print(f" DEBUG - awaiting_user_input: {awaiting_input}")
+        print(f" DEBUG - state_trace: {state.get('state_trace', 'None')}")
+        print(f" DEBUG - retrieved_career_data: {len(state.get('retrieved_career_data', []))}개")
         
         if awaiting_input:  # 사용자 입력 대기 중인 경우
-            print(f"⏸️ 사용자 입력 대기 중: {consultation_stage}")  # 대기 상태 로그
+            print(f"사용자 입력 대기 중: {consultation_stage}")  # 대기 상태 로그
             return "wait"
         else:  # 다음 단계로 진행할 경우
-            print(f"▶️ 다음 단계로 진행: {consultation_stage}")  # 진행 상태 로그
+            print(f"다음 단계로 진행: {consultation_stage}")  # 진행 상태 로그
             return "continue"
 
     def _determine_career_consultation_stage(self, state: ChatState) -> str:
@@ -272,12 +272,12 @@ class ChatGraphBuilder:
         consultation_stage = state.get("consultation_stage", "initial")  # 현재 상담 단계 확인
         awaiting_input = state.get("awaiting_user_input", False)  # 사용자 입력 대기 상태 확인
         
-        print(f"🔍 상담 단계 결정: stage={consultation_stage}, awaiting_input={awaiting_input}")
+        print(f" 상담 단계 결정: stage={consultation_stage}, awaiting_input={awaiting_input}")
         
         # 사용자 입력을 기다리는 중이라면, 해당 단계를 그대로 진행
         # (사용자가 응답했으므로 다음 단계로 진행)
         if awaiting_input:
-            print(f"📨 사용자 응답 처리: {consultation_stage} 단계에서 사용자 입력 받음")
+            print(f"사용자 응답 처리: {consultation_stage} 단계에서 사용자 입력 받음")
         
         # 각 단계별 처리
         if consultation_stage == "collecting_info":
@@ -308,10 +308,10 @@ class ChatGraphBuilder:
                 missing_fields.append('domain')
             
             if missing_fields:
-                print(f"📋 부족한 정보 감지: {missing_fields}")
+                print(f"부족한 정보 감지: {missing_fields}")
                 return "collect_user_info"  # 정보 수집 필요
             else:
-                print("✅ 사용자 정보 충분 - 바로 포지셔닝 분석")
+                print("사용자 정보 충분 - 바로 포지셔닝 분석")
                 return "career_positioning"  # 바로 포지셔닝 분석
         else:
             return "collect_user_info"  # 기본값
@@ -321,7 +321,7 @@ class ChatGraphBuilder:
         커리어 상담 라우터 노드 - 현재 상담 단계를 확인만 하고 상태를 그대로 반환
         """
         consultation_stage = state.get("consultation_stage", "")
-        print(f"🔄 커리어 상담 라우터: 현재 단계 = {consultation_stage}")
+        print(f"커리어 상담 라우터: 현재 단계 = {consultation_stage}")
         return state
     
     def get_session_info(self, conversation_id: str) -> Dict[str, Any]:
@@ -382,7 +382,7 @@ class ChatGraphBuilder:
         """
         if conversation_id in self.session_store:  # 세션이 존재하면
             del self.session_store[conversation_id]  # 세션 정보 삭제
-            print(f"📝 GraphBuilder 세션 정보 삭제: {conversation_id}")  # 삭제 완료 로그 출력
+            print(f"GraphBuilder 세션 정보 삭제: {conversation_id}")  # 삭제 완료 로그 출력
     
     def get_all_sessions(self) -> Dict[str, Dict[str, Any]]:
         """
@@ -403,7 +403,7 @@ class ChatGraphBuilder:
         @param previous_messages: list - SpringBoot에서 전달받은 이전 메시지들
         @return CompiledGraph - 컴파일된 LangGraph 워크플로우
         """
-        print(f"🔧 G.Navi AgentRAG LangGraph 빌드 시작: {conversation_id}")  # 빌드 시작 로그 출력
+        print(f" G.Navi AgentRAG LangGraph 빌드 시작: {conversation_id}")  # 빌드 시작 로그 출력
         
         # 세션 정보 저장 (previous_messages도 포함)
         self.session_store[conversation_id] = {  # 세션 저장소에 정보 저장
@@ -414,7 +414,7 @@ class ChatGraphBuilder:
         }
         
         message_count = len(previous_messages) if previous_messages else 0  # 이전 메시지 개수 계산
-        print(f"📝 세션 정보 저장 완료: {user_info.get('name', 'Unknown')} (대화방: {conversation_id}, 이전 메시지: {message_count}개)")  # 세션 저장 완료 로그
+        print(f"세션 정보 저장 완료: {user_info.get('name', 'Unknown')} (대화방: {conversation_id}, 이전 메시지: {message_count}개)")  # 세션 저장 완료 로그
         
         # StateGraph 생성
         workflow = StateGraph(ChatState)  # 상태 그래프 생성
@@ -558,5 +558,5 @@ class ChatGraphBuilder:
             checkpointer=self.memory_saver  # 메모리 세이버 설정
         )
         
-        print(f"✅ G.Navi AgentRAG LangGraph 컴파일 완료 (7단계): {conversation_id}")  # 컴파일 완료 로그 출력
+        print(f"G.Navi AgentRAG LangGraph 컴파일 완료 (7단계): {conversation_id}")  # 컴파일 완료 로그 출력
         return compiled_graph  # 컴파일된 그래프 반환

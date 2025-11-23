@@ -15,7 +15,7 @@ from app.graphs.state import ChatState
 
 class ChatHistoryNode:
     """
-    📝 현재 세션 대화내역 통합 관리 노드
+    현재 세션 대화내역 통합 관리 노드
     
     AgentRAG 워크플로우의 1단계로, 다양한 소스의 대화 내역을 
     통일된 current_session_messages 형식으로 관리합니다.
@@ -27,7 +27,7 @@ class ChatHistoryNode:
 
     def retrieve_chat_history_node(self, state: ChatState) -> ChatState:
         """
-        🔄 1단계: 현재 세션 대화내역 통합 관리
+         1단계: 현재 세션 대화내역 통합 관리
         
         SpringBoot 이전 메시지와 MemorySaver 복원 메시지를 통합하여
         current_session_messages로 일원화하고, 현재 사용자 질문을 추가합니다.
@@ -44,10 +44,10 @@ class ChatHistoryNode:
         try:
             # 메시지 검증 실패 시 처리 건너뛰기
             if state.get("workflow_status") == "validation_failed":
-                print(f"⚠️  [1단계] 메시지 검증 실패로 처리 건너뛰기")
+                print(f"[1단계] 메시지 검증 실패로 처리 건너뛰기")
                 return state
                 
-            print(f"\n💬 [1단계] 현재 세션 대화내역 관리 시작...")
+            print(f"\n[1단계] 현재 세션 대화내역 관리 시작...")
             self.logger.info("=== 1단계: 현재 세션 대화내역 관리 ===")
             
             # SpringBoot에서 전달받은 이전 메시지를 current_session_messages에 통합
@@ -101,7 +101,7 @@ class ChatHistoryNode:
             self.logger.info(f"현재 사용자 메시지 추가: {state['user_question'][:100]}...")
             self.logger.info(f"총 current_session_messages 개수: {len(state['current_session_messages'])}개")
             
-            # 🔄 ConversationHistoryManager에도 사용자 질문 추가 (세션 종료 시 VectorDB 구축을 위해)
+            #  ConversationHistoryManager에도 사용자 질문 추가 (세션 종료 시 VectorDB 구축을 위해)
             try:
                 from app.core.dependencies import get_service_container
                 container = get_service_container()
@@ -118,11 +118,11 @@ class ChatHistoryNode:
                             "source": "chat_history_node"
                         }
                     )
-                    print(f"🔄 ConversationHistoryManager에 사용자 질문 추가: {session_id}")
+                    print(f"ConversationHistoryManager에 사용자 질문 추가: {session_id}")
                 else:
-                    print(f"⚠️ session_id가 없어 ConversationHistoryManager에 추가하지 못함")
+                    print(f"session_id가 없어 ConversationHistoryManager에 추가하지 못함")
             except Exception as e:
-                print(f"❌ ConversationHistoryManager에 사용자 질문 추가 실패: {e}")
+                print(f"ConversationHistoryManager에 사용자 질문 추가 실패: {e}")
             
             state["processing_log"].append(f"현재 세션 대화 내역 관리 완료: {len(state['current_session_messages'])}개")
             
@@ -141,9 +141,9 @@ class ChatHistoryNode:
             processing_log.append(f"1단계 처리 시간: {time_display}")
             state["processing_log"] = processing_log
             
-            print(f"✅ [1단계] 현재 세션 대화내역 관리 완료")
-            print(f"📊 복원된 메시지: {len(state['current_session_messages'])-1}개, 현재 추가: 1개")
-            print(f"⏱️  [1단계] 처리 시간: {time_display}")
+            print(f"[1단계] 현재 세션 대화내역 관리 완료")
+            print(f"복원된 메시지: {len(state['current_session_messages'])-1}개, 현재 추가: 1개")
+            print(f"[1단계] 처리 시간: {time_display}")
             
             self.logger.info(f"현재 세션 대화 내역 관리 완료")
             
@@ -167,7 +167,7 @@ class ChatHistoryNode:
             self.logger.error(error_msg)
             state["error_messages"].append(error_msg)
             
-            print(f"❌ [1단계] 대화내역 관리 오류: {time_display} (오류: {e})")
+            print(f"[1단계] 대화내역 관리 오류: {time_display} (오류: {e})")
             
             # 오류가 있어도 현재 대화는 유지
             if "current_session_messages" not in state:
@@ -177,7 +177,7 @@ class ChatHistoryNode:
 
     def _convert_previous_messages_to_session_format(self, previous_messages: List, state: ChatState) -> List[Dict[str, str]]:
         """
-        🔄 SpringBoot 메시지 → current_session_messages 형식 변환
+        SpringBoot 메시지 → current_session_messages 형식 변환
         
         SpringBoot에서 전달받은 이전 메시지들을 current_session_messages 
         표준 형식으로 변환하여 일관된 대화 내역 관리를 지원합니다.

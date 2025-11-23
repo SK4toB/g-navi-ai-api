@@ -6,18 +6,18 @@
 *                BM25 + OpenAI 임베딩 앙상블 검색으로 정확도를 향상시키고,
 *                사용자 프로필 기반 개인화된 검색 결과를 제공합니다.
 *
-*                🔄 주요 기능:
+*                주요 기능:
 *                1. BM25 + OpenAI 임베딩 앙상블 검색으로 정확도 향상
 *                2. 커리어 사례와 교육과정 데이터 통합 검색
 *                3. 사용자 프로필 기반 개인화된 검색 결과 제공
 *                4. ChromaDB를 활용한 고성능 벡터 검색
 *
-*                📚 검색 대상:
+*                검색 대상:
 *                - 커리어 사례: 경력 전환, 성장 스토리, 직무 경험담
 *                - 교육과정: AI/데이터 분야 강의, 실무 교육 프로그램
 *                - 학습 경로: 단계별 성장 로드맵
 *
-*                🔧 주요 기술:
+*                주요 기술:
 *                - Ensemble Retriever (BM25 + Vector Search)
 *                - OpenAI Embeddings with Cache
 *                - ChromaDB Persistent Storage
@@ -45,7 +45,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# ==================== 📂 경로 설정 (수정 필요시 여기만 변경) ====================
+# ==================== 경로 설정 (수정 필요시 여기만 변경) ====================
 class PathConfig:
     """
     모든 경로 설정을 한 곳에서 관리하는 클래스
@@ -91,16 +91,16 @@ class PathConfig:
             # 로컬 환경: app/storage/docs/filename  
             return os.path.join(cls._get_app_root_dir(), 'storage', 'docs', filename)
     
-    # 📊 벡터 스토어 경로 (Chroma DB 저장소) - 기존 방식 유지
+    # 벡터 스토어 경로 (Chroma DB 저장소) - 기존 방식 유지
     CAREER_VECTOR_STORE = "../../storage/vector_stores/career_data"
     EDUCATION_VECTOR_STORE = "../../storage/vector_stores/education_courses"
     NEWS_VECTOR_STORE = "../../storage/vector_stores/news_data"
     
-    # 🗄️ 캐시 경로 (임베딩 캐시) - 기존 방식 유지  
+    # 캐시 경로 (임베딩 캐시) - 기존 방식 유지  
     CAREER_EMBEDDING_CACHE = "../../storage/cache/embedding_cache"
     EDUCATION_EMBEDDING_CACHE = "../../storage/cache/education_embedding_cache"
     
-    # 📄 문서 경로 (JSON 데이터 파일들) - 스마트 경로 적용 (기존 속성명 유지)
+    # 문서 경로 (JSON 데이터 파일들) - 스마트 경로 적용 (기존 속성명 유지)
     @classmethod
     def _init_paths(cls):
         """경로 초기화 - 모듈 로드 시 한 번만 실행"""
@@ -121,15 +121,15 @@ class PathConfig:
     def log_current_environment(cls):
         """현재 환경 정보 로그 출력"""
         env_type = "K8s PVC" if cls._is_k8s_environment() else "로컬"
-        print(f"🔍 [PathConfig] 환경 감지: {env_type}")
+        print(f" [PathConfig] 환경 감지: {env_type}")
         print(f"📁 [PathConfig] App 루트 디렉토리: {cls._get_app_root_dir()}")
         if cls._is_k8s_environment():
             print(f"📁 [PathConfig] PVC 경로: {cls._get_k8s_pvc_path()}")
-        print(f"📄 [PathConfig] 커리어 문서: {cls.CAREER_DOCS}")
-        print(f"📚 [PathConfig] 교육과정 문서: {cls.EDUCATION_DOCS}")
-        print(f"🔗 [PathConfig] 스킬 매핑: {cls.SKILL_MAPPING}")
-        print(f"🔄 [PathConfig] 중복제거 인덱스: {cls.COURSE_DEDUPLICATION}")
-        print(f"🏢 [PathConfig] 회사 비전: {cls.COMPANY_VISION}")
+        print(f" [PathConfig] 커리어 문서: {cls.CAREER_DOCS}")
+        print(f" [PathConfig] 교육과정 문서: {cls.EDUCATION_DOCS}")
+        print(f" [PathConfig] 스킬 매핑: {cls.SKILL_MAPPING}")
+        print(f" [PathConfig] 중복제거 인덱스: {cls.COURSE_DEDUPLICATION}")
+        print(f" [PathConfig] 회사 비전: {cls.COMPANY_VISION}")
         print(f"🎓 [PathConfig] mySUNI 상세: {cls.MYSUNI_DETAILED}")
         print(f"🏫 [PathConfig] College 상세: {cls.COLLEGE_DETAILED}")
         return env_type
@@ -152,11 +152,11 @@ class PathConfig:
         
         for name, path in files_to_check.items():
             if os.path.exists(path):
-                existing_files.append(f"✅ {name}: {path}")
+                existing_files.append(f"{name}: {path}")
             else:
-                missing_files.append(f"❌ {name}: {path}")
+                missing_files.append(f"{name}: {path}")
         
-        print("📋 [PathConfig] 파일 존재 여부 확인:")
+        print(" [PathConfig] 파일 존재 여부 확인:")
         for file_info in existing_files:
             print(f"  {file_info}")
         for file_info in missing_files:
@@ -171,12 +171,11 @@ PathConfig._init_paths()
 
 class CareerEnsembleRetrieverAgent:
     """
-    🔍 커리어 앙상블 리트리버 에이전트
+    커리어 앙상블 리트리버 에이전트
     
-    BM25 + LLM 임베딩 앙상블을 활용하여 커리어 사례와 교육과정을
-    효과적으로 검색합니다. ChromaDB와 캐시를 활용한 고성능 검색을 제공합니다.
+    BM25 + LLM 임베딩 앙상블을 활용하여 커리어 사례와 교육과정
     
-    📊 검색 결과:
+     검색 결과:
     - 커리어 사례: 최대 2개까지 검색
     - 교육과정: 최대 2개까지 검색
     """
@@ -194,7 +193,7 @@ class CareerEnsembleRetrieverAgent:
         # 환경 정보 및 파일 존재 여부 확인
         env_type = PathConfig.log_current_environment()
         self.is_k8s = PathConfig._is_k8s_environment()
-        print(f"🔍 [CareerRetrieverAgent] 환경: {env_type}, K8s: {self.is_k8s}")
+        print(f"[CareerRetrieverAgent] 환경: {env_type}, K8s: {self.is_k8s}")
         
         # 경로 설정 (기존 속성 방식 사용)
         self.persist_directory = PathConfig.get_abs_path(
@@ -269,16 +268,16 @@ class CareerEnsembleRetrieverAgent:
 
     def _load_k8s_vectorstore_and_retriever(self):
         """K8s 환경: 외부 ChromaDB 사용"""
-        print("🔗 [K8s ChromaDB] 외부 ChromaDB 연결 중...")
+        print(" [K8s ChromaDB] 외부 ChromaDB 연결 중...")
         
         # 통합 K8sChromaRetriever 사용
         self.vectorstore = K8sChromaRetriever("career_history", self.career_cached_embeddings, k=3)
         # 컬렉션 정보 확인
         collection_info = self.vectorstore.get_collection_info()
         if collection_info.get("status") == "success":
-            print(f"✅ [K8s ChromaDB] 연결 성공: {collection_info.get('document_count')}개 문서")
+            print(f"[K8s ChromaDB] 연결 성공: {collection_info.get('document_count')}개 문서")
         else:
-            print(f"❌ [K8s ChromaDB] 연결 실패: {collection_info.get('message')}")
+            print(f"K8s ChromaDB] 연결 실패: {collection_info.get('message')}")
         # LLM 임베딩 리트리버 (검색 결과를 3개로 제한)
         embedding_retriever = self.vectorstore
         
@@ -307,11 +306,11 @@ class CareerEnsembleRetrieverAgent:
             weights=weights
         )
         self.logger.info(f"K8s Career 앙상블 리트리버 준비 완료 (JSON 문서 수: {len(all_docs)})")
-        print(f"✅ [K8s 커리어 사례 VectorDB] 초기화 완료")
+        print(f" [K8s 커리어 사례 VectorDB] 초기화 완료")
     
     def _load_local_vectorstore_and_retriever(self):
         """로컬 환경: 기존 로컬 ChromaDB 사용"""
-        print("💾 [로컬 ChromaDB] 로컬 ChromaDB 로드 중...")
+        print("[로컬 ChromaDB] 로컬 ChromaDB 로드 중...")
         
         # Chroma 벡터스토어 로드
         self.vectorstore = Chroma(
@@ -347,14 +346,14 @@ class CareerEnsembleRetrieverAgent:
             weights=weights
         )
         self.logger.info(f"로컬 Career 앙상블 리트리버 준비 완료 (문서 수: {len(all_docs)})")
-        print(f"✅ [로컬 커리어 사례 VectorDB] 초기화 완료")
+        print(f"[로컬 커리어 사례 VectorDB] 초기화 완료")
 
     def retrieve(self, query: str, k: int = 3):
         """앙상블 리트리버로 검색 (기본 3개 결과) + 시간 기반 필터링"""
-        print(f"🔍 [커리어 사례 검색] 시작 - '{query}'")
+        print(f" [커리어 사례 검색] 시작 - '{query}'")
         
         if not self.ensemble_retriever:
-            print(f"❌ [커리어 사례 검색] 앙상블 리트리버가 없음")
+            print(f"[커리어 사례 검색] 앙상블 리트리버가 없음")
             return []
         
         # 동적으로 k 값 설정 (각 리트리버가 더 많은 결과를 반환하도록)
@@ -362,7 +361,7 @@ class CareerEnsembleRetrieverAgent:
         
         # Chroma 벡터스토어에서 더 많은 결과 검색
         embedding_docs = self.vectorstore.similarity_search(query, k=search_k)
-        print(f"🔍 DEBUG - 임베딩 검색 결과: {len(embedding_docs)}개")
+        print(f"DEBUG - 임베딩 검색 결과: {len(embedding_docs)}개")
         
         # BM25 검색도 더 많은 결과 반환
         bm25_docs = []
@@ -374,11 +373,11 @@ class CareerEnsembleRetrieverAgent:
                 bm25_retriever.k = search_k
                 bm25_docs = bm25_retriever.invoke(query)
                 bm25_retriever.k = original_k  # 원래 값으로 복원
-                print(f"🔍 DEBUG - BM25 검색 결과: {len(bm25_docs)}개")
+                print(f"DEBUG - BM25 검색 결과: {len(bm25_docs)}개")
             except Exception as e:
-                print(f"⚠️ BM25 검색 실패: {e}")
+                print(f"BM25 검색 실패: {e}")
         
-        # 두 검색 결과를 가중치로 합치기 (수동으로)
+        # 두 검색 결과를 가중치로 합치기
         all_docs = []
         seen_contents = set()
         
@@ -395,8 +394,6 @@ class CareerEnsembleRetrieverAgent:
             if content_hash not in seen_contents:
                 all_docs.append(doc)
                 seen_contents.add(content_hash)
-        
-        print(f"🔍 DEBUG - 중복 제거 후 전체 검색 결과: {len(all_docs)}개")
         
         # 최근 키워드 감지 및 연도 추출
         recent_keywords = ['최근', '최신', 'recent', '요즘', '지금', '현재', '새로운', '신규', '트렌드']
@@ -469,7 +466,6 @@ class CareerEnsembleRetrieverAgent:
                         self.logger.warning(f"문서 연도 추출 실패: {e}")
                         continue
             
-            print(f"🔍 DEBUG - 시간 필터링 완료: 전체 {len(all_docs)}개 → 필터링된 {len(filtered_docs)}개 문서")
             final_docs = filtered_docs[:k]
         else:
             final_docs = all_docs[:k]
@@ -490,7 +486,6 @@ class CareerEnsembleRetrieverAgent:
             except Exception as e:
                 self.logger.warning(f"회사 비전 정보 추가 실패: {e}")
         
-        print(f"✅ [커리어 사례 검색] 완료: {len(final_docs)}개 결과 반환")
         return final_docs
     
     def _extract_years_from_query(self, query: str) -> dict:
@@ -649,17 +644,17 @@ class CareerEnsembleRetrieverAgent:
     def _initialize_k8s_education_vectorstore(self):
         """K8s 환경: 외부 교육과정 ChromaDB 초기화"""
         try:
-            print("🔗 [K8s 교육과정 ChromaDB] 외부 ChromaDB 연결 중...")
+            print(" [K8s 교육과정 ChromaDB] 외부 ChromaDB 연결 중...")
             self.education_vectorstore = K8sChromaRetriever("education_courses", self.education_cached_embeddings, k=3)
             # 컬렉션 정보 확인
             collection_info = self.education_vectorstore.get_collection_info()
             if collection_info.get("status") == "success":
-                print(f"✅ [K8s 교육과정 ChromaDB] 연결 성공: {collection_info.get('document_count')}개 문서")
+                print(f" [K8s 교육과정 ChromaDB] 연결 성공: {collection_info.get('document_count')}개 문서")
             else:
-                print(f"❌ [K8s 교육과정 ChromaDB] 연결 실패: {collection_info.get('message')}")
+                print(f" [K8s 교육과정 ChromaDB] 연결 실패: {collection_info.get('message')}")
         except Exception as e:
             self.logger.error(f"K8s 교육과정 VectorDB 로드 실패: {e}")
-            print(f"❌ [K8s 교육과정 ChromaDB] 로드 실패: {e}")
+            print(f" [K8s 교육과정 ChromaDB] 로드 실패: {e}")
             self.education_vectorstore = None
     
     def _initialize_local_education_vectorstore(self):
@@ -672,13 +667,13 @@ class CareerEnsembleRetrieverAgent:
                     collection_name="education_courses"
                 )
                 self.logger.info("로컬 교육과정 VectorDB 로드 완료")
-                print(f"✅ [로컬 교육과정 VectorDB] 초기화 완료")
+                print(f" [로컬 교육과정 VectorDB] 초기화 완료")
             else:
                 self.logger.warning("로컬 교육과정 VectorDB가 존재하지 않습니다.")
-                print(f"⚠️  [로컬 교육과정 VectorDB] 없음 - JSON 파일로 폴백 검색 진행")
+                print(f"  [로컬 교육과정 VectorDB] 없음 - JSON 파일로 폴백 검색 진행")
         except Exception as e:
             self.logger.error(f"로컬 교육과정 VectorDB 로드 실패: {e}")
-            print(f"❌ [로컬 교육과정 VectorDB] 로드 실패: {e}")
+            print(f" [로컬 교육과정 VectorDB] 로드 실패: {e}")
             self.education_vectorstore = None
     
     def _load_skill_education_mapping(self):
@@ -711,8 +706,8 @@ class CareerEnsembleRetrieverAgent:
     
     def search_education_courses(self, query: str, user_profile: Dict, intent_analysis: Dict, max_results: int = 15) -> Dict:
         """교육과정 검색 메인 함수 - 지정된 개수까지 검색"""
-        print(f"🔍 [교육과정 검색] 시작 - '{query}' (최대 {max_results}개)")
-        print(f"🔍 [교육과정 검색] 시작 - '{query}'")
+        print(f" [교육과정 검색] 시작 - '{query}' (최대 {max_results}개)")
+        print(f" [교육과정 검색] 시작 - '{query}'")
         self._load_education_resources()
         
         try:
@@ -740,7 +735,7 @@ class CareerEnsembleRetrieverAgent:
             learning_path = self._generate_learning_path(deduplicated_courses)
             
             self.logger.info(f"교육과정 검색 완료: 최종 {len(deduplicated_courses)}개 과정 반환")
-            print(f"✅ [교육과정 검색] 완료: {len(deduplicated_courses)}개 과정 반환")
+            print(f" [교육과정 검색] 완료: {len(deduplicated_courses)}개 과정 반환")
             
             return {
                 "recommended_courses": deduplicated_courses,
@@ -749,7 +744,7 @@ class CareerEnsembleRetrieverAgent:
             }
         except Exception as e:
             self.logger.error(f"교육과정 검색 중 오류: {e}")
-            print(f"❌ [교육과정 검색] 오류 발생: {e}")
+            print(f" [교육과정 검색] 오류 발생: {e}")
             return {
                 "recommended_courses": [],
                 "course_analysis": {"message": f"교육과정 검색 중 오류가 발생했습니다: {e}"},
@@ -1326,7 +1321,7 @@ class CareerEnsembleRetrieverAgent:
                 return ""
             
             sections = []
-            sections.append("🏢 **회사 비전 및 가치 (커리어 가이드에 반영)**:")
+            sections.append(" **회사 비전 및 가치 (커리어 가이드에 반영)**:")
             sections.append("")
             
             # 회사 기본 정보
@@ -1374,7 +1369,7 @@ class CareerEnsembleRetrieverAgent:
                 sections.append("")
             
             # 적용 가이드라인
-            sections.append("**⚠️ 중요: 회사 비전 활용 지침**")
+            sections.append("** 중요: 회사 비전 활용 지침**")
             sections.append("- 커리어 상담 시 개인의 목표와 AI Powered ITS 비전을 연결하여 조언")
             sections.append("- 핵심 가치(사람 중심, Digital 혁신, Identity 자율화, Business 혁신, 최고의 Delivery)와 일치하는 방향 제시")
             sections.append("- Multi-Skill Set을 통한 글로벌 수준의 전문가 육성 강조")
@@ -1391,19 +1386,19 @@ class CareerEnsembleRetrieverAgent:
 
 class NewsRetrieverAgent:
     """
-    📰 뉴스 검색 에이전트
+    뉴스 검색 에이전트
     
     AI, 금융, 반도체, 제조 도메인별 최신 뉴스 정보를 검색하여
     업계 트렌드와 채용 정보를 제공하는 전문 에이전트입니다.
     
-    🔄 주요 기능:
+    주요 기능:
     - 도메인별 뉴스 분류 및 검색
     - 의도 분석 기반 맞춤형 뉴스 추천
     - 유사도 기반 관련 뉴스 필터링
     - 최신 업계 트렌드 및 채용 정보 제공
     - 런타임에서 직접 ChromaDB 접근 (NewsDataProcessor 비의존)
     
-    📊 검색 대상:
+    검색 대상:
     - AI 도메인: AI 개발자 채용, 생성형 AI, 의료 AI 등
     - 금융 도메인: 핀테크, 블록체인, 디지털 금융 등
     - 반도체 도메인: 반도체 설계, 차세대 메모리 등
@@ -1498,7 +1493,7 @@ class NewsRetrieverAgent:
             # 검색 쿼리 최적화
             search_query = self._optimize_search_query(query, intent_analysis)
             
-            # 🔍 ChromaDB 컬렉션에서 직접 검색 수행
+            #  ChromaDB 컬렉션에서 직접 검색 수행
             results = self.news_collection.query(
                 query_texts=[search_query],
                 n_results=n_results,

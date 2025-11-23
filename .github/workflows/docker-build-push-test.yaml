@@ -36,11 +36,11 @@ jobs:
       # 베이스 이미지 존재 확인
       - name: Check base image exists
         run: |
-          echo "🔍 베이스 이미지 확인 중..."
+          echo " 베이스 이미지 확인 중..."
           if docker manifest inspect ${{ env.IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ env.BASE_VERSION }} >/dev/null 2>&1; then
-            echo "✅ 베이스 이미지 존재: ${{ env.BASE_VERSION }}"
+            echo " 베이스 이미지 존재: ${{ env.BASE_VERSION }}"
           else
-            echo "❌ 베이스 이미지가 없습니다!"
+            echo "- 베이스 이미지가 없습니다!"
             echo "::error::베이스 이미지를 먼저 빌드하고 푸시해주세요"
             echo "실행: chmod +x base-build.sh base-push.sh && ./base-build.sh && ./base-push.sh"
             exit 1
@@ -49,9 +49,9 @@ jobs:
       # 베이스 이미지 사전 Pull (캐싱 최적화)
       - name: Pre-pull base image for caching
         run: |
-          echo "📦 베이스 이미지 사전 다운로드 중..."
+          echo " 베이스 이미지 사전 다운로드 중..."
           docker pull ${{ env.IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ env.BASE_VERSION }}
-          echo "✅ 베이스 이미지 캐시 완료"
+          echo " 베이스 이미지 캐시 완료"
 
       - name: Generate image tags
         id: generate_tag
@@ -90,7 +90,7 @@ jobs:
 
       - name: Build success
         run: |
-          echo "✅ 빌드 및 푸시 완료!"
+          echo " 빌드 및 푸시 완료!"
           echo "베이스 이미지: ${{ env.IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_NAME }}:${{ env.BASE_VERSION }}"
           echo "앱 이미지: ${{ env.IMAGE_REGISTRY }}/${{ env.APP_IMAGE_NAME }}:${{ env.FINAL_IMAGE_TAG }}"
           echo "Harbor에서 확인바람"
@@ -98,11 +98,11 @@ jobs:
       # Harbor 업로드 확인
       - name: Verify image upload
         run: |
-          echo "🔍 Harbor에서 이미지 업로드 확인 중..."
+          echo " Harbor에서 이미지 업로드 확인 중..."
           sleep 5  # Harbor 처리 대기
           
           if docker manifest inspect ${{ env.IMAGE_REGISTRY }}/${{ env.APP_IMAGE_NAME }}:${{ env.FINAL_IMAGE_TAG }} >/dev/null 2>&1; then
-            echo "✅ 이미지 업로드 확인됨: ${{ env.FINAL_IMAGE_TAG }}"
+            echo " 이미지 업로드 확인됨: ${{ env.FINAL_IMAGE_TAG }}"
           else
-            echo "⚠️ 이미지 확인 실패 - Harbor UI에서 직접 확인하세요"
+            echo " 이미지 확인 실패 - Harbor UI에서 직접 확인하세요"
           fi

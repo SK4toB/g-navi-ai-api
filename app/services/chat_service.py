@@ -6,7 +6,7 @@
 *                채팅 세션 생성/로드, 메시지 처리, 세션 관리를 담당하며,
 *                각 책임별로 분리된 서비스들을 조율합니다.
 *
-*                🔄 주요 기능:
+*                 주요 기능:
 *                - 채팅 세션 생성 및 로드
 *                - 메시지 처리 및 응답 생성
 *                - 세션 자동 정리 및 관리
@@ -179,9 +179,9 @@ class ChatService:
         # 세션 종료 전에 current_session_messages 가져오기
         current_messages = self.get_session_messages(conversation_id)
         
-        print(f"📊 세션 종료 시 current_session_messages 개수: {len(current_messages) if current_messages else 0}개")
+        print(f" 세션 종료 시 current_session_messages 개수: {len(current_messages) if current_messages else 0}개")
         if current_messages:
-            print(f"📋 current_session_messages 상세:")
+            print(f" current_session_messages 상세:")
             for i, msg in enumerate(current_messages):
                 role = msg.get('role', 'unknown')
                 content = msg.get('content', '')[:50]
@@ -239,20 +239,20 @@ class ChatService:
             
             session = self.session_manager.get_session(conversation_id)
             if not session:
-                print(f"❌ 세션이 존재하지 않음: {conversation_id}")
+                print(f"- 세션이 존재하지 않음: {conversation_id}")
                 return []
             
-            print(f"✅ 세션 정보 확인됨: {conversation_id}")
+            print(f" 세션 정보 확인됨: {conversation_id}")
             
             # ChatSessionService에서 현재 메시지 가져오기
             messages = self.chat_session_service.get_current_session_messages(conversation_id)
             
-            print(f"📊 get_session_messages 결과: {len(messages) if messages else 0}개 메시지")
+            print(f" get_session_messages 결과: {len(messages) if messages else 0}개 메시지")
             
             return messages
             
         except Exception as e:
-            print(f"❌ 세션 메시지 조회 실패: {conversation_id} - {e}")
+            print(f"- 세션 메시지 조회 실패: {conversation_id} - {e}")
             import traceback
             traceback.print_exc()
             return []

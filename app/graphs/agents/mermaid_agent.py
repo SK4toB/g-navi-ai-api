@@ -5,20 +5,20 @@
 *                커리어 상담 내용을 분석하여 적절한 시각화를 제공하는 에이전트입니다.
 *                GPT 기반 지능형 다이어그램 유형 선택과 한국어 커리어 상담에 최적화된 템플릿을 제공합니다.
 *
-*                🎯 주요 기능:
+*                주요 기능:
 *                1. 텍스트 응답 내용을 분석하여 다이어그램 유형 결정
 *                2. 커리어 경로, 학습 로드맵, 프로세스 등을 Mermaid로 시각화
 *                3. 사용자 이해도를 높이는 구조화된 다이어그램 생성
 *                4. 반응형 웹에 최적화된 Mermaid 코드 출력
 *
-*                🎯 지원 다이어그램 유형:
+*                지원 다이어그램 유형:
 *                - flowchart: 단계별 프로세스, 의사결정 흐름
 *                - mindmap: 역량 분석, 관련 개념 정리  
 *                - journey: 커리어 전환 과정, 학습 여정
 *                - timeline: 시간 순서가 있는 계획
 *                - graph: 관계형 구조, 연관성 표현
 *
-*                🔧 주요 특징:
+*                주요 특징:
 *                - GPT 기반 지능형 다이어그램 유형 선택
 *                - 한국어 커리어 상담에 최적화된 템플릿
 *                - 웹 친화적 색상과 스타일 적용
@@ -125,7 +125,7 @@ class MermaidDiagramAgent:
         """
         
         try:
-            print("🎨 Mermaid 다이어그램 생성 시작...")
+            print(" Mermaid 다이어그램 생성 시작...")
             
             # OpenAI 클라이언트 초기화
             self._initialize_openai_client()
@@ -142,17 +142,17 @@ class MermaidDiagramAgent:
             cleaned_code = self._clean_and_validate_mermaid(mermaid_code)
             
             if cleaned_code:
-                print(f"✅ Mermaid 다이어그램 생성 완료 ({len(cleaned_code)}자)")
+                print(f"Mermaid 다이어그램 생성 완료 ({len(cleaned_code)}자)")
                 self.logger.info("Mermaid 다이어그램 생성 성공")
             else:
-                print("⚠️ Mermaid 다이어그램 생성 실패")
+                print("Mermaid 다이어그램 생성 실패")
                 self.logger.warning("Mermaid 다이어그램 생성 실패")
             
             return cleaned_code
             
         except Exception as e:
             self.logger.error(f"Mermaid 다이어그램 생성 중 오류: {e}")
-            print(f"❌ 다이어그램 생성 오류: {e}")
+            print(f"다이어그램 생성 오류: {e}")
             return ""
 
     def _prepare_context(self, 

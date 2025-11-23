@@ -40,8 +40,8 @@ class LearningRoadmapNode:
             mysuni_courses = education_data.get('mysuni_courses', [])
             college_courses = education_data.get('college_courses', [])
             
-            print(f"🔍 DEBUG - AI 프롬프트용 mySUNI 과정: {len(mysuni_courses)}개")
-            print(f"🔍 DEBUG - AI 프롬프트용 College 과정: {len(college_courses)}개")
+            print(f" DEBUG - AI 프롬프트용 mySUNI 과정: {len(mysuni_courses)}개")
+            print(f" DEBUG - AI 프롬프트용 College 과정: {len(college_courses)}개")
             
             education_context = ""
             if mysuni_courses or college_courses:
@@ -51,8 +51,8 @@ class LearningRoadmapNode:
                     mysuni_sample = mysuni_courses[:5]  # 처음 5개만 샘플로 표시
                     # 첫 번째 과정의 데이터 구조 확인을 위한 디버깅
                     if mysuni_sample:
-                        print(f"🔍 DEBUG - mySUNI 첫 번째 과정 데이터 구조: {mysuni_sample[0].keys()}")
-                        print(f"🔍 DEBUG - mySUNI 첫 번째 과정 샘플: {mysuni_sample[0]}")
+                        print(f" DEBUG - mySUNI 첫 번째 과정 데이터 구조: {mysuni_sample[0].keys()}")
+                        print(f" DEBUG - mySUNI 첫 번째 과정 샘플: {mysuni_sample[0]}")
                     
                     # URL이 있는 경우 마크다운 링크 형식으로 생성
                     mysuni_formatted = []
@@ -74,7 +74,7 @@ class LearningRoadmapNode:
                             course_name = '과정명 미확인'
                         
                         # 디버깅: 과정명 추출 결과 확인
-                        print(f"🔍 DEBUG - mySUNI 과정명 추출 결과: '{course_name}' (URL: {course_url})")
+                        print(f" DEBUG - mySUNI 과정명 추출 결과: '{course_name}' (URL: {course_url})")
                         
                         if course_url:
                             mysuni_formatted.append(f"[{course_name}]({course_url})")
@@ -87,8 +87,8 @@ class LearningRoadmapNode:
                     college_sample = college_courses[:5]  # 처음 5개만 샘플로 표시
                     # 첫 번째 과정의 데이터 구조 확인을 위한 디버깅
                     if college_sample:
-                        print(f"🔍 DEBUG - College 첫 번째 과정 데이터 구조: {college_sample[0].keys()}")
-                        print(f"🔍 DEBUG - College 첫 번째 과정 샘플: {college_sample[0]}")
+                        print(f" DEBUG - College 첫 번째 과정 데이터 구조: {college_sample[0].keys()}")
+                        print(f" DEBUG - College 첫 번째 과정 샘플: {college_sample[0]}")
                     
                     # URL이 있는 경우 마크다운 링크 형식으로 생성
                     college_formatted = []
@@ -110,7 +110,7 @@ class LearningRoadmapNode:
                             course_name = '과정명 미확인'
                         
                         # 디버깅: 과정명 추출 결과 확인
-                        print(f"🔍 DEBUG - College 과정명 추출 결과: '{course_name}' (URL: {course_url})")
+                        print(f" DEBUG - College 과정명 추출 결과: '{course_name}' (URL: {course_url})")
                         
                         if course_url:
                             college_formatted.append(f"[{course_name}]({course_url})")
@@ -132,13 +132,13 @@ class LearningRoadmapNode:
 
 **중요: 위에 제시된 교육과정 중 URL이 포함된 과정들은 반드시 [과정명](URL) 형식의 마크다운 하이퍼링크로 추천해주세요.**
 """
-                print(f"🔍 DEBUG - 생성된 education_context 길이: {len(education_context)}")
+                print(f" DEBUG - 생성된 education_context 길이: {len(education_context)}")
             else:
                 education_context = "사내 교육과정 검색 결과: 현재 이용 가능한 과정이 없습니다."
-                print("❌ WARNING - 교육과정 데이터가 없어 기본 메시지 사용")
+                print("- WARNING - 교육과정 데이터가 없어 기본 메시지 사용")
             
-            print(f"🔍 DEBUG - learning_roadmap AI 메서드에 전달된 merged_user_data: {merged_user_data}")
-            print(f"🔍 DEBUG - education_context 미리보기: {education_context[:300]}...")
+            print(f" DEBUG - learning_roadmap AI 메서드에 전달된 merged_user_data: {merged_user_data}")
+            print(f" DEBUG - education_context 미리보기: {education_context[:300]}...")
             
             prompt = f"""
 당신은 G.Navi의 전문 학습 설계사입니다. {merged_user_data.get('name', '고객')}님의 **{path_name}** 경로 달성을 위한 맞춤형 학습 로드맵을 설계해주세요.
@@ -188,7 +188,7 @@ class LearningRoadmapNode:
 **{merged_user_data.get('name', '고객')}님**의 맞춤형 학습 로드맵을 제시해드렸습니다!
 오늘 상담을 마무리하시려면 "네" 라고 말씀해주세요!
 
-**성공적인 커리어 성장을 응원합니다! 🚀**
+**성공적인 커리어 성장을 응원합니다! **
 
 **작성 지침:**
 - 반드시 마크다운 문법 사용 (## 제목, ### 소제목, **굵은글씨**, - 리스트)
@@ -238,7 +238,7 @@ class LearningRoadmapNode:
         """
         사용자 맞춤형 학습 로드맵을 설계한다.
         """
-        print("📚 학습 로드맵 설계 시작...")
+        print(" 학습 로드맵 설계 시작...")
         
         user_response = state.get("user_question", "").lower()
         selected_path = state.get("selected_career_path", {})
@@ -254,10 +254,10 @@ class LearningRoadmapNode:
         user_goals = consultation_context.get("user_goals", "")
         
         # 디버깅: 데이터 확인
-        print(f"🔍 DEBUG - learning_roadmap user_data from session: {user_data}")
-        print(f"🔍 DEBUG - learning_roadmap collected_info: {collected_info}")
-        print(f"🔍 DEBUG - learning_roadmap merged_user_data: {merged_user_data}")
-        print(f"🔍 DEBUG - path_deepening_info 내용 확인: {path_deepening_info.keys() if path_deepening_info else 'None'}")
+        print(f" DEBUG - learning_roadmap user_data from session: {user_data}")
+        print(f" DEBUG - learning_roadmap collected_info: {collected_info}")
+        print(f" DEBUG - learning_roadmap merged_user_data: {merged_user_data}")
+        print(f" DEBUG - path_deepening_info 내용 확인: {path_deepening_info.keys() if path_deepening_info else 'None'}")
         
         # path_deepening 정보를 활용한 검색 쿼리 생성
         search_query = ""
@@ -278,7 +278,7 @@ class LearningRoadmapNode:
         if not search_query.strip():
             search_query = user_response
         
-        print(f"🔍 DEBUG - 생성된 교육과정 검색 쿼리: '{search_query[:100]}...'")
+        print(f" DEBUG - 생성된 교육과정 검색 쿼리: '{search_query[:100]}...'")
         
         # 학습 로드맵 요청 여부 확인 (더 포괄적으로 개선)
         roadmap_keywords = [
@@ -293,34 +293,34 @@ class LearningRoadmapNode:
         wants_roadmap = any(keyword in user_response for keyword in roadmap_keywords)
         rejects_roadmap = any(keyword in user_response for keyword in rejection_keywords)
         
-        print(f"🔍 DEBUG - 사용자 응답: '{user_response}'")
-        print(f"🔍 DEBUG - 학습 로드맵 요청 감지: {wants_roadmap}")
-        print(f"🔍 DEBUG - 학습 로드맵 거부 감지: {rejects_roadmap}")
+        print(f" DEBUG - 사용자 응답: '{user_response}'")
+        print(f" DEBUG - 학습 로드맵 요청 감지: {wants_roadmap}")
+        print(f" DEBUG - 학습 로드맵 거부 감지: {rejects_roadmap}")
         
         # 로드맵 요청 키워드 매칭 상세 디버깅
         matched_keywords = [keyword for keyword in roadmap_keywords if keyword in user_response]
         rejected_keywords = [keyword for keyword in rejection_keywords if keyword in user_response]
-        print(f"🔍 DEBUG - 매칭된 요청 키워드: {matched_keywords}")
-        print(f"🔍 DEBUG - 매칭된 거부 키워드: {rejected_keywords}")
+        print(f" DEBUG - 매칭된 요청 키워드: {matched_keywords}")
+        print(f" DEBUG - 매칭된 거부 키워드: {rejected_keywords}")
         
         # 기본적으로 path_deepening 이후에는 학습 로드맵을 제공하도록 설정
         consultation_stage = state.get("consultation_stage", "")
         if consultation_stage == "learning_decision":
             if rejects_roadmap:
-                print("🔍 DEBUG - 사용자가 명시적으로 학습 로드맵을 거부함")
+                print(" DEBUG - 사용자가 명시적으로 학습 로드맵을 거부함")
                 wants_roadmap = False
             elif not wants_roadmap:
-                print("🔍 DEBUG - consultation_stage가 learning_decision이므로 기본적으로 학습 로드맵 제공")
+                print(" DEBUG - consultation_stage가 learning_decision이므로 기본적으로 학습 로드맵 제공")
                 wants_roadmap = True
         
         if wants_roadmap:
             # 사내 교육과정 데이터 검색 (mySUNI, College 각각 15개씩)
-            print("🔍 DEBUG - 교육과정 검색 시작...")
-            print(f"🔍 DEBUG - 현재 state의 키들: {list(state.keys())}")
+            print(" DEBUG - 교육과정 검색 시작...")
+            print(f" DEBUG - 현재 state의 키들: {list(state.keys())}")
             
             # 교육과정 검색 개수를 15로 설정
             state["education_search_count"] = 15
-            print(f"🔍 DEBUG - education_search_count 설정: {state['education_search_count']}")
+            print(f" DEBUG - education_search_count 설정: {state['education_search_count']}")
             
             # 원래 쿼리 저장
             original_question = state.get("user_question", "")
@@ -329,17 +329,17 @@ class LearningRoadmapNode:
             state["user_question"] = search_query
             
             # 데이터 검색 노드 호출
-            print("🔍 DEBUG - data_retrieval_node.retrieve_additional_data_node 호출 중...")
+            print(" DEBUG - data_retrieval_node.retrieve_additional_data_node 호출 중...")
             state = self.data_retrieval_node.retrieve_additional_data_node(state)
-            print("🔍 DEBUG - data_retrieval_node 호출 완료")
+            print(" DEBUG - data_retrieval_node 호출 완료")
             
             # 원래 쿼리 복원
             state["user_question"] = original_question
             
             # 교육과정 데이터 추출
             education_courses_raw = state.get("education_courses", {})
-            print(f"🔍 DEBUG - state에서 가져온 education_courses: {type(education_courses_raw)}")
-            print(f"🔍 DEBUG - education_courses 키들: {list(education_courses_raw.keys()) if isinstance(education_courses_raw, dict) else 'dict가 아님'}")
+            print(f" DEBUG - state에서 가져온 education_courses: {type(education_courses_raw)}")
+            print(f" DEBUG - education_courses 키들: {list(education_courses_raw.keys()) if isinstance(education_courses_raw, dict) else 'dict가 아님'}")
             
             # CareerEnsembleRetrieverAgent에서 반환하는 구조: {"recommended_courses": [], "course_analysis": {}, "learning_path": []}
             recommended_courses = education_courses_raw.get("recommended_courses", []) if isinstance(education_courses_raw, dict) else []
@@ -365,26 +365,26 @@ class LearningRoadmapNode:
             }
             
             # 디버깅: 검색된 교육과정 개수 및 샘플 확인
-            print(f"🔍 DEBUG - 전체 검색된 과정 개수: {len(recommended_courses)}")
-            print(f"🔍 DEBUG - 분류된 mySUNI 과정 개수: {len(education_data['mysuni_courses'])}")
-            print(f"🔍 DEBUG - 분류된 College 과정 개수: {len(education_data['college_courses'])}")
+            print(f" DEBUG - 전체 검색된 과정 개수: {len(recommended_courses)}")
+            print(f" DEBUG - 분류된 mySUNI 과정 개수: {len(education_data['mysuni_courses'])}")
+            print(f" DEBUG - 분류된 College 과정 개수: {len(education_data['college_courses'])}")
             
             # 검색 결과 샘플 출력
             if recommended_courses:  # 검색 결과가 존재하는지 확인
-                print(f"🔍 DEBUG - 첫 번째 과정 샘플: {recommended_courses[0]}")
-                print(f"🔍 DEBUG - mySUNI 샘플: {education_data['mysuni_courses'][:2] if education_data['mysuni_courses'] else 'None'}")
-                print(f"🔍 DEBUG - College 샘플: {education_data['college_courses'][:2] if education_data['college_courses'] else 'None'}")
+                print(f" DEBUG - 첫 번째 과정 샘플: {recommended_courses[0]}")
+                print(f" DEBUG - mySUNI 샘플: {education_data['mysuni_courses'][:2] if education_data['mysuni_courses'] else 'None'}")
+                print(f" DEBUG - College 샘플: {education_data['college_courses'][:2] if education_data['college_courses'] else 'None'}")
             # end if (검색 결과 존재 확인)
             
             # 교육과정 데이터 검증
             if not education_data['mysuni_courses'] and not education_data['college_courses']:  # 교육과정이 없는 경우 확인
                 if not recommended_courses:  # 전체 추천 과정이 없는 경우
-                    print("❌ WARNING - 교육과정 데이터가 비어있음. 검색 과정에서 문제 발생 가능성")
+                    print("- WARNING - 교육과정 데이터가 비어있음. 검색 과정에서 문제 발생 가능성")
                 else:  # 추천 과정은 있지만 분류되지 않은 경우
-                    print("❌ WARNING - 검색된 과정이 있지만 mySUNI/College로 분류되지 않음. source 필드 확인 필요")
+                    print("- WARNING - 검색된 과정이 있지만 mySUNI/College로 분류되지 않음. source 필드 확인 필요")
                 # end if (추천 과정 존재 여부 확인)
             else:  # 교육과정 데이터가 있는 경우
-                print(f"✅ SUCCESS - 총 {len(education_data['mysuni_courses']) + len(education_data['college_courses'])}개의 교육과정 데이터 확보")
+                print(f" SUCCESS - 총 {len(education_data['mysuni_courses']) + len(education_data['college_courses'])}개의 교육과정 데이터 확보")
             # end if (교육과정 데이터 검증)
             
             # AI 기반 학습 로드맵 생성 호출

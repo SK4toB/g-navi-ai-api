@@ -50,14 +50,14 @@ class ProjectEmbeddingService:
                 for collection in collections:
                     if collection.get('name') == self.collection_name:
                         self.collection_id = collection.get('id')
-                        print(f"✅ [ProjectEmbeddingService] 컬렉션 연결: {self.collection_name} (ID: {self.collection_id})")
+                        print(f" [ProjectEmbeddingService] 컬렉션 연결: {self.collection_name} (ID: {self.collection_id})")
                         return
-                print(f"❌ [ProjectEmbeddingService] 컬렉션을 찾을 수 없습니다: {self.collection_name}")
+                print(f"- [ProjectEmbeddingService] 컬렉션을 찾을 수 없습니다: {self.collection_name}")
             else:
-                print(f"❌ [ProjectEmbeddingService] 컬렉션 목록 조회 실패: {response.status_code}")
+                print(f"- [ProjectEmbeddingService] 컬렉션 목록 조회 실패: {response.status_code}")
                 
         except Exception as e:
-            print(f"❌ [ProjectEmbeddingService] 컬렉션 ID 조회 실패: {e}")
+            print(f"- [ProjectEmbeddingService] 컬렉션 ID 조회 실패: {e}")
     
     def search_projects_by_query(self, query: str, n_results: int = 5) -> Dict[str, Any]:
         """쿼리로 프로젝트 검색"""
@@ -116,7 +116,7 @@ class ProjectEmbeddingService:
                 }
                 
         except Exception as e:
-            print(f"❌ [ProjectEmbeddingService] 검색 중 오류: {str(e)}")
+            print(f"- [ProjectEmbeddingService] 검색 중 오류: {str(e)}")
             return {
                 "success": False,
                 "message": f"검색 오류: {str(e)}"
@@ -219,7 +219,7 @@ class ProjectEmbeddingService:
         
         # 활용 기술/스킬
         if hasattr(project_data, 'skills') and project_data.skills:
-            content_parts.append(f"🔧 활용 기술:")
+            content_parts.append(f" 활용 기술:")
             content_parts.append(f"  {', '.join(project_data.skills)}")
             content_parts.append("")
         
@@ -357,13 +357,13 @@ class ProjectEmbeddingService:
             )
             
             if response.status_code in [200, 201]:
-                print(f"✅ [ProjectEmbeddingService] ChromaDB 저장 성공: {document_id}")
+                print(f" [ProjectEmbeddingService] ChromaDB 저장 성공: {document_id}")
                 return {
                     "success": True,
                     "message": "ChromaDB에 성공적으로 저장됨"
                 }
             else:
-                print(f"❌ [ProjectEmbeddingService] ChromaDB 저장 실패: {response.status_code}")
+                print(f"- [ProjectEmbeddingService] ChromaDB 저장 실패: {response.status_code}")
                 print(f"응답: {response.text}")
                 return {
                     "success": False,
@@ -371,7 +371,7 @@ class ProjectEmbeddingService:
                 }
                 
         except Exception as e:
-            print(f"❌ [ProjectEmbeddingService] ChromaDB 저장 중 오류: {str(e)}")
+            print(f"- [ProjectEmbeddingService] ChromaDB 저장 중 오류: {str(e)}")
             return {
                 "success": False,
                 "message": f"ChromaDB 저장 오류: {str(e)}"
@@ -400,13 +400,13 @@ class ProjectEmbeddingService:
             )
             
             if response.status_code in [200, 201]:
-                print(f"✅ [ProjectEmbeddingService] 문서 삭제 성공: {document_id}")
+                print(f" [ProjectEmbeddingService] 문서 삭제 성공: {document_id}")
                 return {
                     "success": True,
                     "message": "문서가 성공적으로 삭제됨"
                 }
             else:
-                print(f"❌ [ProjectEmbeddingService] 문서 삭제 실패: {response.status_code}")
+                print(f"- [ProjectEmbeddingService] 문서 삭제 실패: {response.status_code}")
                 print(f"응답: {response.text}")
                 return {
                     "success": False,
@@ -414,7 +414,7 @@ class ProjectEmbeddingService:
                 }
                 
         except Exception as e:
-            print(f"❌ [ProjectEmbeddingService] 문서 삭제 중 오류: {str(e)}")
+            print(f"- [ProjectEmbeddingService] 문서 삭제 중 오류: {str(e)}")
             return {
                 "success": False,
                 "message": f"문서 삭제 오류: {str(e)}"
@@ -427,7 +427,7 @@ class ProjectEmbeddingService:
             delete_result = await self.remove_project_embedding(document_id)
             
             if not delete_result["success"]:
-                print(f"⚠️ [ProjectEmbeddingService] 기존 문서 삭제 실패, 새로 추가 진행: {delete_result['message']}")
+                print(f" [ProjectEmbeddingService] 기존 문서 삭제 실패, 새로 추가 진행: {delete_result['message']}")
             
             # 새로운 임베딩으로 저장
             store_result = await self.process_and_store_project(project_data)
@@ -440,7 +440,7 @@ class ProjectEmbeddingService:
             }
             
         except Exception as e:
-            print(f"❌ [ProjectEmbeddingService] 프로젝트 업데이트 중 오류: {str(e)}")
+            print(f"- [ProjectEmbeddingService] 프로젝트 업데이트 중 오류: {str(e)}")
             return {
                 "success": False,
                 "message": f"프로젝트 업데이트 오류: {str(e)}"

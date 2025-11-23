@@ -79,11 +79,11 @@ class UserInfoCollectionNode:
         # 먼저 중첩된 필드에서 정보를 추출
         if 'projects' in user_data:
             user_data = self._extract_nested_fields(user_data)
-            print(f"🔍 중첩 필드 추출 후 user_data: {user_data}")
+            print(f" 중첩 필드 추출 후 user_data: {user_data}")
         
         # 레벨 확인 - CL1~CL5 레벨 정보인지 검증
         level = user_data.get('level')
-        print(f"🔍 레벨 체크: level = {level}, type = {type(level)}")
+        print(f" 레벨 체크: level = {level}, type = {type(level)}")
         
         # 레벨 정보가 유효한지 검증 (CL1~CL5 형태)
         is_valid_level = False
@@ -94,55 +94,55 @@ class UserInfoCollectionNode:
                 # CL1~CL5 패턴 확인
                 valid_levels = ['CL1', 'CL2', 'CL3', 'CL4', 'CL5']
                 is_valid_level = level_upper in valid_levels
-                print(f"🔍 레벨 검증: {level} → {level_upper}, 유효: {is_valid_level}")
+                print(f" 레벨 검증: {level} → {level_upper}, 유효: {is_valid_level}")
             
         if not is_valid_level:
             missing_fields.append('level')
-            print(f"❌ 레벨 부족 (유효하지 않은 정보: {level})")
+            print(f"- 레벨 부족 (유효하지 않은 정보: {level})")
         else:
-            print(f"✅ 레벨 있음: {level}")
+            print(f" 레벨 있음: {level}")
             # 레벨을 연차로 매핑하여 experience 필드에 저장
             user_data['experience'] = self._map_level_to_experience(level)
-            print(f"🔍 매핑된 연차: {user_data['experience']}")
+            print(f" 매핑된 연차: {user_data['experience']}")
         
         # 기술스택 확인  
         skills = user_data.get('skills', [])
-        print(f"🔍 스킬 체크: skills = {skills}, type = {type(skills)}, len = {len(skills) if skills else 0}")
+        print(f" 스킬 체크: skills = {skills}, type = {type(skills)}, len = {len(skills) if skills else 0}")
         
         # 스킬 데이터가 문자열인 경우 리스트로 변환
         if isinstance(skills, str) and skills.strip():
             skills_list = [skill.strip() for skill in skills.split(',') if skill.strip()]
-            print(f"🔍 문자열 스킬을 리스트로 변환: {skills_list}")
+            print(f" 문자열 스킬을 리스트로 변환: {skills_list}")
             skills = skills_list
         
         if not skills or len(skills) == 0:
             missing_fields.append('skills')
-            print(f"❌ 스킬 부족")
+            print(f"- 스킬 부족")
         else:
-            print(f"✅ 스킬 있음: {skills}")
+            print(f" 스킬 있음: {skills}")
         
         # 도메인 확인
         domain = user_data.get('domain')
-        print(f"🔍 도메인 체크: domain = {domain}, type = {type(domain)}")
+        print(f" 도메인 체크: domain = {domain}, type = {type(domain)}")
         
         # 도메인이 리스트인 경우 첫 번째 값 사용
         if isinstance(domain, list) and len(domain) > 0:
             domain = domain[0]
-            print(f"🔍 리스트 도메인의 첫 번째 값 사용: {domain}")
+            print(f" 리스트 도메인의 첫 번째 값 사용: {domain}")
         
         if not domain or (isinstance(domain, str) and domain.strip() == ''):
             missing_fields.append('domain')
-            print(f"❌ 도메인 부족")
+            print(f"- 도메인 부족")
         else:
-            print(f"✅ 도메인 있음: {domain}")
+            print(f" 도메인 있음: {domain}")
             
-        print(f"🔍 최종 부족한 필드: {missing_fields}")
+        print(f" 최종 부족한 필드: {missing_fields}")
         return missing_fields
     
     def _extract_nested_fields(self, user_data: dict) -> dict:
         """간단한 중첩 필드 추출 (projects의 첫 번째 항목에서만)"""
         if 'projects' not in user_data or not user_data['projects'] or len(user_data['projects']) == 0:
-            print(f"🔍 projects가 없거나 비어있음: {user_data.get('projects', 'None')}")
+            print(f" projects가 없거나 비어있음: {user_data.get('projects', 'None')}")
             return user_data
             
         # 첫 번째 프로젝트에서만 정보 추출
@@ -150,21 +150,21 @@ class UserInfoCollectionNode:
             project = user_data['projects'][0] if isinstance(user_data['projects'], list) else user_data['projects']
             
             if not isinstance(project, dict):
-                print(f"🔍 첫 번째 project가 dict가 아님: {type(project)}")
+                print(f" 첫 번째 project가 dict가 아님: {type(project)}")
                 return user_data
                 
             # skills 추출 (최상위에 없을 때만)
             if not user_data.get('skills') and 'skills' in project:
                 user_data['skills'] = project['skills']
-                print(f"🔍 projects에서 skills 추출: {project['skills']}")
+                print(f" projects에서 skills 추출: {project['skills']}")
                 
             # domain 추출 (최상위에 없을 때만)  
             if not user_data.get('domain') and 'domain' in project:
                 user_data['domain'] = project['domain']
-                print(f"🔍 projects에서 domain 추출: {project['domain']}")
+                print(f" projects에서 domain 추출: {project['domain']}")
                 
         except (IndexError, KeyError, TypeError) as e:
-            print(f"🔍 projects 필드 추출 중 오류 (무시하고 진행): {e}")
+            print(f" projects 필드 추출 중 오류 (무시하고 진행): {e}")
             
         return user_data
     
@@ -276,7 +276,7 @@ class UserInfoCollectionNode:
                 
                 # 레벨을 연차로 매핑하여 experience 필드 생성
                 normalized_data['experience'] = self._map_level_to_experience(normalized_level)
-                print(f"🔍 레벨 정규화: {level} → {normalized_level}, 연차: {normalized_data['experience']}")
+                print(f" 레벨 정규화: {level} → {normalized_level}, 연차: {normalized_data['experience']}")
         
         return normalized_data
 
@@ -284,7 +284,7 @@ class UserInfoCollectionNode:
         """
         부족한 사용자 정보를 수집한다. (간단화된 버전)
         """
-        print("📋 사용자 정보 수집 시작...")
+        print(" 사용자 정보 수집 시작...")
         
         # state에서 기본 사용자 데이터 가져오기
         user_data = state.get("user_data", {})
@@ -296,15 +296,15 @@ class UserInfoCollectionNode:
         # 사용자 데이터 정규화 (특히 experience 필드)
         user_data = self._normalize_user_data(user_data)
         
-        print(f"🔍 정규화된 사용자 데이터: {user_data}")
+        print(f" 정규화된 사용자 데이터: {user_data}")
         
         # 부족한 정보 확인 (_check_missing_info에서 중첩 필드 추출도 함께 처리)
         missing_fields = self._check_missing_info(user_data)
-        print(f"🔍 부족한 필드: {missing_fields}")
+        print(f" 부족한 필드: {missing_fields}")
         
         if not missing_fields:
             # 모든 정보가 수집되었으면 커리어 포지셔닝으로 진행
-            print("✅ 모든 정보 수집 완료 - 포지셔닝 단계로 진행")
+            print(" 모든 정보 수집 완료 - 포지셔닝 단계로 진행")
             return {
                 **state,
                 "consultation_stage": "positioning_ready",
@@ -340,7 +340,7 @@ class UserInfoCollectionNode:
         """
         사용자가 제공한 정보를 처리한다. (간단화된 버전)
         """
-        print("📝 사용자 정보 처리 중...")
+        print(" 사용자 정보 처리 중...")
         
         user_response = state.get("user_question", "").strip()
         current_field = state.get("info_collection_stage", "")
@@ -388,7 +388,7 @@ class UserInfoCollectionNode:
         
         if not missing_fields:
             # 모든 정보가 수집되었으면 포지셔닝 분석으로 진행
-            print("✅ 모든 필수 정보 수집 완료 - 포지셔닝 분석 준비")
+            print(" 모든 필수 정보 수집 완료 - 포지셔닝 분석 준비")
             return {
                 **state,
                 "user_data": user_data,  # 업데이트된 사용자 데이터
@@ -403,7 +403,7 @@ class UserInfoCollectionNode:
             }
         else:
             # 아직 부족한 정보가 있으면 계속 수집
-            print(f"📋 추가 정보 수집 필요: {missing_fields}")
+            print(f" 추가 정보 수집 필요: {missing_fields}")
             
             # 다음 정보 요청 메시지 생성
             next_field = missing_fields[0]
@@ -448,8 +448,8 @@ class UserInfoCollectionNode:
         
         if level and level.upper() in level_mapping:
             mapped_experience = level_mapping[level.upper()]
-            print(f"🔍 레벨 매핑: {level} → {mapped_experience}")
+            print(f" 레벨 매핑: {level} → {mapped_experience}")
             return mapped_experience
         else:
-            print(f"🔍 알 수 없는 레벨: {level}")
+            print(f" 알 수 없는 레벨: {level}")
             return level if level else "레벨 정보 없음"

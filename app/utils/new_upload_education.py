@@ -34,7 +34,7 @@ class EducationChromaPodUploaderV2Fixed:
         self.local_persist_dir = project_root / "app" / "storage" / "vector_stores" / "education_courses"
         self.local_cache_dir = project_root / "app" / "storage" / "cache" / "education_embedding_cache"
         
-        print(f"🔍 교육과정 경로 정보:")
+        print(f" 교육과정 경로 정보:")
         print(f"   스크립트 위치: {script_dir}")
         print(f"   프로젝트 루트: {project_root}")
         print(f"   교육과정 ChromaDB 경로: {self.local_persist_dir}")
@@ -68,7 +68,7 @@ class EducationChromaPodUploaderV2Fixed:
         
         # 교육과정 ChromaDB 디렉토리 확인
         if not self.local_persist_dir.exists():
-            print(f"❌ 교육과정 ChromaDB 디렉토리가 없습니다: {self.local_persist_dir}")
+            print(f" 교육과정 ChromaDB 디렉토리가 없습니다: {self.local_persist_dir}")
             
             # 가능한 다른 경로들 확인
             possible_paths = [
@@ -85,7 +85,7 @@ class EducationChromaPodUploaderV2Fixed:
                 print(f"   {path} -> {abs_path} (존재: {exists})")
                 
                 if exists:
-                    print(f"✅ 발견된 교육과정 경로 사용: {abs_path}")
+                    print(f" 발견된 교육과정 경로 사용: {abs_path}")
                     self.local_persist_dir = abs_path
                     break
             else:
@@ -93,24 +93,24 @@ class EducationChromaPodUploaderV2Fixed:
         
         # 교육과정 캐시 디렉토리 확인 및 생성
         if not self.local_cache_dir.exists():
-            print(f"⚠️ 교육과정 캐시 디렉토리가 없습니다: {self.local_cache_dir}")
+            print(f" 교육과정 캐시 디렉토리가 없습니다: {self.local_cache_dir}")
             
             # 일반 embedding_cache 경로도 확인
             alt_cache_dir = self.local_cache_dir.parent / "embedding_cache"
             if alt_cache_dir.exists():
-                print(f"✅ 대체 캐시 디렉토리 사용: {alt_cache_dir}")
+                print(f" 대체 캐시 디렉토리 사용: {alt_cache_dir}")
                 self.local_cache_dir = alt_cache_dir
             else:
                 print(f"📂 교육과정 캐시 디렉토리 생성: {self.local_cache_dir}")
                 self.local_cache_dir.mkdir(parents=True, exist_ok=True)
         
-        print(f"✅ 최종 사용 교육과정 경로:")
+        print(f" 최종 사용 교육과정 경로:")
         print(f"   ChromaDB: {self.local_persist_dir}")
         print(f"   캐시: {self.local_cache_dir}")
         
     def load_local_collection(self):
         """로컬 교육과정 ChromaDB 컬렉션 로드"""
-        print("📚 로컬 교육과정 ChromaDB 컬렉션 로드 중...")
+        print(" 로컬 교육과정 ChromaDB 컬렉션 로드 중...")
         
         # 디렉토리 확인
         self.check_local_directories()
@@ -134,8 +134,8 @@ class EducationChromaPodUploaderV2Fixed:
             collection = vectorstore.get(include=['documents', 'metadatas', 'embeddings'])
             
         except Exception as e:
-            print(f"❌ 교육과정 ChromaDB 로드 실패: {str(e)}")
-            print("📋 사용 가능한 교육과정 컬렉션 확인 중...")
+            print(f" 교육과정 ChromaDB 로드 실패: {str(e)}")
+            print(" 사용 가능한 교육과정 컬렉션 확인 중...")
             
             # 디렉토리 내용 확인
             if self.local_persist_dir.exists():
@@ -146,13 +146,13 @@ class EducationChromaPodUploaderV2Fixed:
                 # chroma.sqlite3 파일 확인
                 db_file = self.local_persist_dir / "chroma.sqlite3"
                 if db_file.exists():
-                    print(f"✅ 교육과정 ChromaDB 파일 발견: {db_file}")
+                    print(f" 교육과정 ChromaDB 파일 발견: {db_file}")
                     
                     # 다른 교육과정 컬렉션 이름들 시도
                     possible_collections = ["education_courses", "education", "courses", "default"]
                     for collection_name in possible_collections:
                         try:
-                            print(f"🔍 교육과정 컬렉션 '{collection_name}' 시도 중...")
+                            print(f" 교육과정 컬렉션 '{collection_name}' 시도 중...")
                             vectorstore = Chroma(
                                 persist_directory=str(self.local_persist_dir),
                                 embedding_function=cached_embeddings,
@@ -160,11 +160,11 @@ class EducationChromaPodUploaderV2Fixed:
                             )
                             collection = vectorstore.get(include=['documents', 'metadatas', 'embeddings'])
                             if collection['documents']:
-                                print(f"✅ 교육과정 컬렉션 '{collection_name}' 로드 성공!")
+                                print(f" 교육과정 컬렉션 '{collection_name}' 로드 성공!")
                                 self.local_collection_name = collection_name
                                 break
                         except Exception as inner_e:
-                            print(f"   ❌ '{collection_name}' 실패: {str(inner_e)}")
+                            print(f"    '{collection_name}' 실패: {str(inner_e)}")
                     else:
                         raise Exception("사용 가능한 교육과정 컬렉션을 찾을 수 없습니다.")
                 else:
@@ -181,7 +181,7 @@ class EducationChromaPodUploaderV2Fixed:
             if first_embedding is not None and len(first_embedding) > 0:
                 embeddings_info = len(first_embedding)
         
-        print(f"📊 로컬 교육과정 컬렉션 로드 완료:")
+        print(f" 로컬 교육과정 컬렉션 로드 완료:")
         print(f"   컬렉션 이름: {self.local_collection_name}")
         print(f"   문서 수: {len(collection['documents'])}")
         print(f"   벡터 차원: {embeddings_info}")
@@ -196,7 +196,7 @@ class EducationChromaPodUploaderV2Fixed:
     
     def create_pod_collection(self):
         """Pod ChromaDB v2 Multi-tenant에 새 교육과정 컬렉션 생성"""
-        print(f"🔧 Pod ChromaDB v2 Multi-tenant에 교육과정 컬렉션 생성 중: {self.pod_collection_name}")
+        print(f" Pod ChromaDB v2 Multi-tenant에 교육과정 컬렉션 생성 중: {self.pod_collection_name}")
         print(f"   사용할 URL: {self.collections_url}")
         
         # 기존 컬렉션 목록 조회
@@ -218,10 +218,10 @@ class EducationChromaPodUploaderV2Fixed:
                         delete_response = requests.delete(delete_url, headers=self.headers, timeout=30)
                         print(f"   삭제 결과: {delete_response.status_code}")
             else:
-                print(f"   ⚠️ 컬렉션 목록 조회 실패: {list_response.status_code} - {list_response.text}")
+                print(f"    컬렉션 목록 조회 실패: {list_response.status_code} - {list_response.text}")
                 
         except Exception as e:
-            print(f"   ⚠️ 컬렉션 목록 조회 중 예외: {str(e)}")
+            print(f"    컬렉션 목록 조회 중 예외: {str(e)}")
         
         # 새 교육과정 컬렉션 생성
         create_data = {
@@ -234,7 +234,7 @@ class EducationChromaPodUploaderV2Fixed:
             "get_or_create": True
         }
         
-        print(f"   📝 교육과정 컬렉션 생성 데이터: {create_data}")
+        print(f"    교육과정 컬렉션 생성 데이터: {create_data}")
         
         try:
             response = requests.post(
@@ -245,16 +245,16 @@ class EducationChromaPodUploaderV2Fixed:
             )
             
             print(f"   📡 교육과정 컬렉션 생성 응답: {response.status_code}")
-            print(f"   📄 응답 내용: {response.text}")
+            print(f"    응답 내용: {response.text}")
             
             if response.status_code in [200, 201]:
                 collection_info = response.json()
                 self.pod_collection_id = collection_info.get('id')  # 컬렉션 ID 저장
-                print(f"   ✅ 교육과정 컬렉션 생성 성공: {self.pod_collection_name}")
-                print(f"   📋 컬렉션 ID: {self.pod_collection_id}")
+                print(f"    교육과정 컬렉션 생성 성공: {self.pod_collection_name}")
+                print(f"    컬렉션 ID: {self.pod_collection_id}")
                 return True
             elif response.status_code == 409:
-                print(f"   ⚠️ 교육과정 컬렉션이 이미 존재함: {self.pod_collection_name}")
+                print(f"    교육과정 컬렉션이 이미 존재함: {self.pod_collection_name}")
                 # 기존 컬렉션의 ID를 가져와야 함
                 try:
                     list_response = requests.get(self.collections_url, headers=self.headers, timeout=30)
@@ -263,17 +263,17 @@ class EducationChromaPodUploaderV2Fixed:
                         for collection in collections:
                             if collection.get('name') == self.pod_collection_name:
                                 self.pod_collection_id = collection.get('id')
-                                print(f"   📋 기존 교육과정 컬렉션 ID: {self.pod_collection_id}")
+                                print(f"    기존 교육과정 컬렉션 ID: {self.pod_collection_id}")
                                 return True
                 except:
                     pass
                 return True
             else:
-                print(f"   ❌ 교육과정 컬렉션 생성 실패: {response.status_code}")
+                print(f"    교육과정 컬렉션 생성 실패: {response.status_code}")
                 return False
                 
         except Exception as e:
-            print(f"   ❌ 교육과정 컬렉션 생성 중 예외: {str(e)}")
+            print(f"    교육과정 컬렉션 생성 중 예외: {str(e)}")
             return False
     
     def upload_documents_batch(self, collection_data: Dict, batch_size: int = 25):
@@ -321,9 +321,9 @@ class EducationChromaPodUploaderV2Fixed:
             # 배치 크기 로깅
             try:
                 batch_size_mb = len(str(batch_data).encode('utf-8')) / 1024 / 1024
-                print(f"   📦 배치 {batch_num}: {i+1}-{batch_end}/{total_docs} ({batch_size_mb:.2f}MB)")
+                print(f"    배치 {batch_num}: {i+1}-{batch_end}/{total_docs} ({batch_size_mb:.2f}MB)")
             except:
-                print(f"   📦 배치 {batch_num}: {i+1}-{batch_end}/{total_docs}")
+                print(f"    배치 {batch_num}: {i+1}-{batch_end}/{total_docs}")
             
             # 업로드 URL - 컬렉션 ID 사용
             upload_url = f"{self.collections_url}/{self.pod_collection_id}/add"
@@ -344,41 +344,41 @@ class EducationChromaPodUploaderV2Fixed:
                     if response.status_code in [200, 201]:
                         success_count += 1
                         batch_success = True
-                        print(f"      ✅ 배치 {batch_num} 업로드 완료 (시도 {retry + 1}) - HTTP {response.status_code}")
+                        print(f"       배치 {batch_num} 업로드 완료 (시도 {retry + 1}) - HTTP {response.status_code}")
                         break
                     else:
-                        print(f"      ❌ 배치 {batch_num} 업로드 실패 (시도 {retry + 1}): {response.status_code}")
-                        print(f"      📄 응답 내용: {response.text}")
+                        print(f"       배치 {batch_num} 업로드 실패 (시도 {retry + 1}): {response.status_code}")
+                        print(f"       응답 내용: {response.text}")
                         if retry < max_retries - 1:
-                            print(f"      🔄 재시도 {retry + 2}/{max_retries}")
+                            print(f"       재시도 {retry + 2}/{max_retries}")
                             continue
                         
                 except requests.exceptions.Timeout:
                     print(f"      ⏰ 배치 {batch_num} 타임아웃 (시도 {retry + 1})")
                     if retry < max_retries - 1:
-                        print(f"      🔄 재시도 {retry + 2}/{max_retries}")
+                        print(f"       재시도 {retry + 2}/{max_retries}")
                         continue
                         
                 except Exception as e:
-                    print(f"      ❌ 배치 {batch_num} 예외 발생 (시도 {retry + 1}): {str(e)}")
+                    print(f"       배치 {batch_num} 예외 발생 (시도 {retry + 1}): {str(e)}")
                     if retry < max_retries - 1:
-                        print(f"      🔄 재시도 {retry + 2}/{max_retries}")
+                        print(f"       재시도 {retry + 2}/{max_retries}")
                         continue
             
             if not batch_success:
-                print(f"      💥 배치 {batch_num} 최종 실패")
+                print(f"       배치 {batch_num} 최종 실패")
                 return False
         
-        print(f"\n🎉 모든 교육과정 문서 업로드 완료!")
+        print(f"\n 모든 교육과정 문서 업로드 완료!")
         print(f"   성공한 배치: {success_count}/{(total_docs + batch_size - 1) // batch_size}")
         return True
     
     def verify_upload(self):
         """교육과정 업로드 결과 검증"""
-        print("🔍 교육과정 업로드 결과 검증 중...")
+        print(" 교육과정 업로드 결과 검증 중...")
         
         if not self.pod_collection_id:
-            print("❌ 컬렉션 ID가 없어서 검증할 수 없습니다.")
+            print(" 컬렉션 ID가 없어서 검증할 수 없습니다.")
             return False
         
         try:
@@ -388,9 +388,9 @@ class EducationChromaPodUploaderV2Fixed:
             
             if count_response.status_code == 200:
                 doc_count = count_response.json()
-                print(f"   ✅ 교육과정 문서 개수 확인: {doc_count}개")
+                print(f"    교육과정 문서 개수 확인: {doc_count}개")
             else:
-                print(f"   ⚠️ 교육과정 문서 개수 확인 실패: {count_response.status_code}")
+                print(f"    교육과정 문서 개수 확인 실패: {count_response.status_code}")
             
             # 2. 검색 테스트 (임베딩 직접 제공)
             test_query = "교육"
@@ -410,25 +410,25 @@ class EducationChromaPodUploaderV2Fixed:
                 documents = search_results.get('documents', [[]])
                 result_count = len(documents[0]) if documents and len(documents) > 0 else 0
                 
-                print(f"   ✅ 교육과정 검색 테스트 성공: {result_count}개 결과 반환")
+                print(f"    교육과정 검색 테스트 성공: {result_count}개 결과 반환")
                 
                 if result_count > 0:
                     first_doc = documents[0][0] if documents[0] else ""
                     preview = first_doc[:100] + "..." if len(first_doc) > 100 else first_doc
-                    print(f"   📄 첫 번째 결과 미리보기: {preview}")
+                    print(f"    첫 번째 결과 미리보기: {preview}")
                     
-                    print("✅ 교육과정 업로드 및 검증 성공!")
+                    print(" 교육과정 업로드 및 검증 성공!")
                     return True
                 else:
-                    print("❌ 교육과정 검색 결과가 없습니다")
+                    print(" 교육과정 검색 결과가 없습니다")
                     return False
             else:
-                print(f"❌ 교육과정 검색 테스트 실패: {search_response.status_code}")
+                print(f" 교육과정 검색 테스트 실패: {search_response.status_code}")
                 print(f"   응답: {search_response.text}")
                 return False
                 
         except Exception as e:
-            print(f"❌ 교육과정 검증 중 예외 발생: {str(e)}")
+            print(f" 교육과정 검증 중 예외 발생: {str(e)}")
             return False
     
     def get_collection_count(self):
@@ -454,7 +454,7 @@ class EducationChromaPodUploaderV2Fixed:
     def run_upload(self):
         """전체 교육과정 업로드 프로세스 실행"""
         try:
-            print(f"🚀 교육과정 ChromaDB v2 Multi-tenant 업로드 시작")
+            print(f" 교육과정 ChromaDB v2 Multi-tenant 업로드 시작")
             print(f"   API 엔드포인트: {self.collections_url}")
             
             # 1. 로컬 교육과정 컬렉션 로드
@@ -477,32 +477,32 @@ class EducationChromaPodUploaderV2Fixed:
             if count_result:
                 print(f"   최종 교육과정 문서 수: {count_result}")
             
-            print(f"\n🎉 교육과정 ChromaDB v2 Multi-tenant 컬렉션 업로드가 완료되었습니다!")
+            print(f"\n 교육과정 ChromaDB v2 Multi-tenant 컬렉션 업로드가 완료되었습니다!")
             print(f"   로컬 컬렉션: {self.local_collection_name}")
             print(f"   Pod 컬렉션: {self.pod_collection_name}")
             print(f"   API 엔드포인트: {self.collections_url}")
             
         except Exception as e:
-            print(f"\n❌ 교육과정 업로드 실패: {str(e)}")
+            print(f"\n 교육과정 업로드 실패: {str(e)}")
             import traceback
-            print("🔍 상세 오류 정보:")
+            print(" 상세 오류 정보:")
             traceback.print_exc()
             raise
 
 def main():
     """메인 실행 함수"""
-    print("🚀 교육과정 ChromaDB v2 Multi-tenant 컬렉션 Pod 업로드를 시작합니다...")
+    print(" 교육과정 ChromaDB v2 Multi-tenant 컬렉션 Pod 업로드를 시작합니다...")
     
     # 현재 작업 디렉토리 출력
     print(f"📂 현재 작업 디렉토리: {os.getcwd()}")
-    print(f"📄 스크립트 위치: {__file__}")
+    print(f" 스크립트 위치: {__file__}")
     
     # 환경변수 확인
     required_env = ["OPENAI_API_KEY"]
     missing_env = [env for env in required_env if not os.getenv(env)]
     
     if missing_env:
-        print(f"❌ 필수 환경변수가 없습니다: {missing_env}")
+        print(f" 필수 환경변수가 없습니다: {missing_env}")
         print("   .env 파일에 다음을 추가하세요:")
         for env in missing_env:
             print(f"   {env}=your_value_here")

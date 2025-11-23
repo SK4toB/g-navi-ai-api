@@ -266,7 +266,7 @@ def save_career_response_to_html(stage: str, response_data: Dict[str, Any], sess
         if mermaid_diagram and not mermaid_already_included:
             mermaid_section = f"""
     <div class="mermaid-container">
-        <h3>🎯 커리어 경로 시각화</h3>
+        <h3> 커리어 경로 시각화</h3>
         <div class="mermaid">
 {mermaid_diagram}
         </div>
@@ -389,10 +389,10 @@ def save_career_response_to_html(stage: str, response_data: Dict[str, Any], sess
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(html_content)
         
-        print(f"💾 커리어 상담 응답 HTML 저장: {filename}")
+        print(f" 커리어 상담 응답 HTML 저장: {filename}")
     
     except Exception as e:
-        print(f"❌ HTML 저장 실패: {e}")
+        print(f" HTML 저장 실패: {e}")
 
 
 def save_simple_log(stage: str, message: str, session_id: str = "unknown"):
@@ -413,4 +413,4 @@ def save_simple_log(stage: str, message: str, session_id: str = "unknown"):
             f.write(f"{message[:200]}...\n")
             
     except Exception as e:
-        print(f"❌ 텍스트 로그 저장 실패: {e}")
+        print(f" 텍스트 로그 저장 실패: {e}")

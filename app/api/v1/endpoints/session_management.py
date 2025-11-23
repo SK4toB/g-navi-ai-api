@@ -192,7 +192,7 @@ async def get_user_vectordb_stats(
     chat_service: ChatService = Depends(get_chat_service)
 ):
     """
-    📊 사용자별 VectorDB 통계 조회
+     사용자별 VectorDB 통계 조회
     
     특정 사용자(member_id)의 저장된 채팅 세션 통계를 조회합니다.
     
@@ -208,7 +208,7 @@ async def get_user_vectordb_stats(
             "sessions": "각 세션별 상세 정보"
         }
         
-    🔒 개인정보 보호: 해당 사용자의 데이터만 접근 가능
+     개인정보 보호: 해당 사용자의 데이터만 접근 가능
     """
     try:
         from app.utils.session_vectordb_builder import session_vectordb_builder
@@ -234,7 +234,7 @@ async def search_user_sessions(
     chat_service: ChatService = Depends(get_chat_service)
 ):
     """
-    🔍 사용자별 과거 세션 VectorDB 검색
+     사용자별 과거 세션 VectorDB 검색
     
     특정 사용자의 과거 채팅 세션에서 질문과 관련된 대화 내용을
     의미 기반으로 검색합니다.
@@ -249,12 +249,12 @@ async def search_user_sessions(
     Returns:
         관련 과거 대화 내용 목록 (관련도 점수 포함)
         
-    💡 사용 예시:
+     사용 예시:
     - "이전에 데이터 사이언티스트에 대해 물어봤는데..."
     - "Python 학습 관련해서 상담받은 내용 찾기"
     - "커리어 전환 관련 이전 대화 검색"
     
-    🔒 개인정보 보호: 해당 사용자의 VectorDB에서만 검색
+     개인정보 보호: 해당 사용자의 VectorDB에서만 검색
     """
     try:
         query = request_body.get("query", "")

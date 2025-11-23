@@ -18,7 +18,7 @@ from app.graphs.agents.formatter import ResponseFormattingAgent
 
 class ResponseFormattingNode:
     """
-    📝 적응적 응답 포맷팅 노드
+    적응적 응답 포맷팅 노드
     
     AgentRAG 워크플로우의 4단계로, 검색된 데이터를 바탕으로
     사용자에게 최적화된 개인화 응답을 생성합니다.
@@ -44,7 +44,7 @@ class ResponseFormattingNode:
                            state: Annotated[ChatState, "현재 워크플로우 상태 (검색 결과 포함)"]
                            ) -> Annotated[ChatState, "포맷팅된 응답이 포함된 상태"]:
         """
-        ✨ 4단계: 적응적 응답 포맷팅
+        4단계: 적응적 응답 포맷팅
         
         검색된 커리어 사례와 교육과정 데이터를 활용하여
         사용자 질문에 대한 개인화된 응답을 생성합니다.
@@ -65,10 +65,10 @@ class ResponseFormattingNode:
             # 메시지 검증 실패 시 처리 건너뛰기
             workflow_status: Optional[str] = state.get("workflow_status")
             if workflow_status == "validation_failed":  # 검증 실패 상태 확인
-                print(f"⚠️  [4단계] 메시지 검증 실패로 처리 건너뛰기")
+                print(f"[4단계] 메시지 검증 실패로 처리 건너뛰기")
                 return state
                 
-            print(f"\n📝 [4단계] 적응적 응답 포맷팅 시작...")
+            print(f"\n[4단계] 적응적 응답 포맷팅 시작...")
             self.logger.info("=== 4단계: 적응적 응답 포맷팅 ===")
             
             # 성장 방향 상담인지 확인 (다이어그램은 5단계에서 별도 처리)
@@ -105,7 +105,7 @@ class ResponseFormattingNode:
             current_session_messages.append(assistant_message)
             self.logger.info(f"AI 응답을 current_session_messages에 추가 (총 {len(current_session_messages)}개 메시지)")
             
-            # 🔄 ConversationHistoryManager에도 AI 응답 추가 (세션 종료 시 VectorDB 구축을 위해)
+            #  ConversationHistoryManager에도 AI 응답 추가 (세션 종료 시 VectorDB 구축을 위해)
             try:
                 if hasattr(self.graph_builder, 'conversation_history_manager'):
                     self.graph_builder.conversation_history_manager.add_ai_response(
@@ -129,9 +129,9 @@ class ResponseFormattingNode:
             processing_log.append(f"4단계 처리 시간: {time_display}")
             state["processing_log"] = processing_log
             
-            print(f"✅ [4단계] 적응적 응답 포맷팅 완료")
-            print(f"📊 응답 유형: {format_type}, 길이: {content_length}자")
-            print(f"⏱️  [4단계] 처리 시간: {time_display}")
+            print(f"[4단계] 적응적 응답 포맷팅 완료")
+            print(f"응답 유형: {format_type}, 길이: {content_length}자")
+            print(f"[4단계] 처리 시간: {time_display}")
             
             self.logger.info("적응적 응답 포맷팅 완료")
             
@@ -153,7 +153,7 @@ class ResponseFormattingNode:
             state["error_messages"] = error_messages
             state["final_response"] = {"error": str(e)}
             
-            print(f"❌ [4단계] 적응적 응답 포맷팅 오류: {time_display} (오류: {e})")
+            print(f"[4단계] 적응적 응답 포맷팅 오류: {time_display} (오류: {e})")
         
         # 총 처리 시간 계산
         try:
@@ -166,7 +166,7 @@ class ResponseFormattingNode:
                 processing_log.append(f"전체 워크플로우 처리 시간: {total_time_display}")
                 state["processing_log"] = processing_log
                 
-                print(f"⏱️  전체 워크플로우 처리 시간: {total_time_display}")
+                print(f"⏱전체 워크플로우 처리 시간: {total_time_display}")
                 self.logger.info(f"전체 워크플로우 처리 시간: {total_time_display}")
         except Exception as e:
             self.logger.warning(f"전체 처리 시간 계산 실패: {e}")

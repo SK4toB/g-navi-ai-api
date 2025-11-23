@@ -25,7 +25,7 @@ class NewsDataProcessor:
     * @description : 뉴스 데이터 처리 및 벡터화 클래스
     *                JSON 형태의 뉴스 데이터를 읽어와서 임베딩하고
     *                ChromaDB에 저장하는 유틸리티 클래스입니다.
-    *                ⚠️ 검색 로직은 포함하지 않음 - retriever.py의 Agent가 담당
+    *                 검색 로직은 포함하지 않음 - retriever.py의 Agent가 담당
     """
     
     def __init__(self):
@@ -137,7 +137,7 @@ class NewsDataProcessor:
                 })
                 ids.append(news_item.get("id", f"news_{len(ids)}"))
                 
-                print(f"✅ 뉴스 처리 완료: {news_item.get('title', 'Unknown')[:50]}...")
+                print(f" 뉴스 처리 완료: {news_item.get('title', 'Unknown')[:50]}...")
             
             # ChromaDB에 저장 (자동으로 임베딩 생성됨)
             if documents:
@@ -147,10 +147,10 @@ class NewsDataProcessor:
                     ids=ids
                 )
                 
-                print(f"🎉 뉴스 데이터 저장 완료: {len(documents)}개 아티클")
+                print(f" 뉴스 데이터 저장 완료: {len(documents)}개 아티클")
                 return True
             else:
-                print("❌ 저장할 뉴스 데이터가 없습니다.")
+                print(" 저장할 뉴스 데이터가 없습니다.")
                 return False
         
         except Exception as e:
@@ -189,14 +189,14 @@ def main():
     """
     뉴스 데이터 처리 메인 함수 (초기 VectorDB 구축용)
     CLI에서 직접 실행하거나 스크립트로 호출할 수 있습니다.
-    ⚠️ 검색 테스트는 retriever.py의 Agent에서 수행
+     검색 테스트는 retriever.py의 Agent에서 수행
     """
     print("� G-Navi 뉴스 데이터 VectorDB 업로드 시작...")
     
     try:
         # 환경 변수 확인
         if not os.getenv("OPENAI_API_KEY"):
-            print("❌ OPENAI_API_KEY 환경변수가 설정되지 않았습니다.")
+            print(" OPENAI_API_KEY 환경변수가 설정되지 않았습니다.")
             return False
         
         # 뉴스 데이터 처리기 인스턴스 생성
@@ -206,7 +206,7 @@ def main():
         news_file_path = Path("./app/data/json/news_dummy_data.json")
         
         if not news_file_path.exists():
-            print(f"❌ 뉴스 데이터 파일을 찾을 수 없습니다: {news_file_path}")
+            print(f" 뉴스 데이터 파일을 찾을 수 없습니다: {news_file_path}")
             return False
         
         print(f"📂 뉴스 데이터 파일: {news_file_path}")
@@ -215,7 +215,7 @@ def main():
         news_data = processor.load_news_data(str(news_file_path))
         
         if not news_data:
-            print("❌ 뉴스 데이터를 로드할 수 없습니다.")
+            print(" 뉴스 데이터를 로드할 수 없습니다.")
             return False
         
         print(f"📰 총 {len(news_data)}개의 뉴스 데이터 로드 완료")
@@ -226,28 +226,28 @@ def main():
         if success:
             # 통계 정보 출력
             stats = processor.get_collection_stats()
-            print(f"\n📊 VectorDB 저장 완료!")
+            print(f"\n VectorDB 저장 완료!")
             print(f"   - 총 아티클 수: {stats.get('total_articles', 0)}개")
             print(f"   - 컬렉션 이름: {stats.get('collection_name', 'N/A')}")
             print(f"   - 저장 경로: {stats.get('storage_path', 'N/A')}")
             print(f"   - 마지막 업데이트: {stats.get('last_updated', 'N/A')}")
             
-            print("\n✅ 뉴스 데이터 VectorDB 구축 완료!")
-            print("💡 검색 테스트는 NewsRetrieverAgent에서 수행하세요.")
+            print("\n 뉴스 데이터 VectorDB 구축 완료!")
+            print(" 검색 테스트는 NewsRetrieverAgent에서 수행하세요.")
             return True
         else:
-            print("❌ VectorDB 저장 실패")
+            print(" VectorDB 저장 실패")
             return False
             
     except ImportError as e:
-        print(f"❌ 필요한 모듈을 임포트할 수 없습니다: {e}")
-        print("💡 다음 패키지들이 설치되어 있는지 확인해주세요:")
+        print(f" 필요한 모듈을 임포트할 수 없습니다: {e}")
+        print(" 다음 패키지들이 설치되어 있는지 확인해주세요:")
         print("   - chromadb")
         print("   - langchain-openai")
         print("   - openai")
         return False
     except Exception as e:
-        print(f"❌ 뉴스 데이터 업로드 중 오류 발생: {e}")
+        print(f" 뉴스 데이터 업로드 중 오류 발생: {e}")
         return False
 
 

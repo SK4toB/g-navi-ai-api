@@ -16,7 +16,7 @@ from typing import Dict, Any, Optional
 
 class ReportGeneratorAgent:
     """
-    🔒 관리자 전용 HTML 보고서 생성 에이전트
+     관리자 전용 HTML 보고서 생성 에이전트
     
     상담 품질 관리를 위해 상담 내용을 체계적으로 정리한
     HTML 보고서를 생성하는 관리자 전용 에이전트입니다.
@@ -27,7 +27,7 @@ class ReportGeneratorAgent:
     
     def should_generate_report(self, user_question: str, user_data: Dict[str, Any]) -> bool:
         """
-        🔒 관리자 설정: 보고서 생성 필요 여부 판단
+         관리자 설정: 보고서 생성 필요 여부 판단
         
         관리자가 설정한 조건에 따라 HTML 보고서 생성 여부를 결정합니다.
         현재는 모든 상담에 대해 보고서를 생성하도록 설정되어 있습니다.
@@ -39,9 +39,9 @@ class ReportGeneratorAgent:
         Returns:
             bool: 보고서 생성 필요 여부
         """
-        return True # 🔒 관리자 설정: 현재 모든 상담에 대해 보고서 생성 (관리자용)
+        return True #  관리자 설정: 현재 모든 상담에 대해 보고서 생성 (관리자용)
 
-        # 🔒 관리자 설정 예시 (현재 비활성화됨):
+        #  관리자 설정 예시 (현재 비활성화됨):
         # 보고서 생성 키워드들
         report_keywords = [
             "보고서", "report", "리포트", "문서", "저장", "다운로드", 
@@ -67,7 +67,7 @@ class ReportGeneratorAgent:
                            final_response: Dict[str, Any], 
                            user_data: Dict[str, Any],
                            state: Dict[str, Any]) -> Optional[str]:
-        """🔒 관리자 전용: HTML 보고서 파일 생성"""
+        """ 관리자 전용: HTML 보고서 파일 생성"""
         try:
             self.logger.info("HTML 보고서 생성 시작")
             

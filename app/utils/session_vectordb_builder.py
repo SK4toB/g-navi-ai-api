@@ -51,7 +51,7 @@ class SessionVectorDBBuilder:
         self.storage_path = Path(__file__).parent.parent / "storage" / "vector_stores"
         self.storage_path.mkdir(parents=True, exist_ok=True)
         
-        # 🤖 OpenAI 임베딩 모델 초기화 (환경변수 OPENAI_API_KEY 필요)
+        #  OpenAI 임베딩 모델 초기화 (환경변수 OPENAI_API_KEY 필요)
         self.embeddings = OpenAIEmbeddings(
             model="text-embedding-3-small"  # 비용 효율적이면서 성능 좋은 모델
         )
@@ -67,7 +67,7 @@ class SessionVectorDBBuilder:
     
     async def summarize_session_content(self, messages: List[Dict[str, Any]], user_name: str) -> str:
         """
-        📝 세션 대화 내용을 요약하여 검색 가능한 메타데이터 생성
+         세션 대화 내용을 요약하여 검색 가능한 메타데이터 생성
         
         Args:
             messages: 세션의 모든 대화 메시지 [{"role": "user/assistant", "content": "..."}]
@@ -76,7 +76,7 @@ class SessionVectorDBBuilder:
         Returns:
             str: "사용자 {이름}의 {세션유형} - N개 질문, M개 응답 | 주제: 키워드들"
             
-        💡 기능:
+         기능:
             - 세션 유형 자동 분류 (커리어상담, 기술학습, 창업상담 등)
             - 실제 메시지 개수 정확 계산
             - 도메인별 스마트 키워드 추출
@@ -133,15 +133,15 @@ class SessionVectorDBBuilder:
         Returns:
             str: 구조화된 세션 요약
             
-        💡 처리 과정:
+         처리 과정:
             1. 실제 메시지 개수 정확 계산 (user vs assistant)
             2. 대화 주제 및 세션 유형 자동 분석
             3. 도메인별 특화 키워드 추출
             4. 세션 길이에 따른 적응형 요약 생성
         """
         try:
-            # 🔍 디버깅: 메시지 분석 상세 로그
-            print(f"   📊 메시지 분석 시작:")
+            #  디버깅: 메시지 분석 상세 로그
+            print(f"    메시지 분석 시작:")
             print(f"     전체 메시지 수: {len(messages)}개")
             
             # 메시지 유형별 카운팅 및 상세 분석
@@ -167,7 +167,7 @@ class SessionVectorDBBuilder:
             user_count = len(user_messages)
             assistant_count = len(assistant_messages)
             
-            print(f"     📈 카운팅 결과:")
+            print(f"      카운팅 결과:")
             print(f"       사용자 메시지: {user_count}개")
             print(f"       AI 응답: {assistant_count}개")
             print(f"       시스템 메시지: {len(system_messages)}개")
@@ -195,7 +195,7 @@ class SessionVectorDBBuilder:
                 if topic_analysis['main_topics']:
                     summary += f" | 주제: {', '.join(topic_analysis['main_topics'][:2])}"
             
-            print(f"   ✅ 생성된 요약: {summary}")
+            print(f"    생성된 요약: {summary}")
             return summary
             
         except Exception as e:
@@ -207,7 +207,7 @@ class SessionVectorDBBuilder:
     
     def _analyze_conversation_topics(self, conversation_text: str, messages: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        🔍 개선된 대화 내용 분석 - 맥락과 주제 전환을 더 정확히 파악
+         개선된 대화 내용 분석 - 맥락과 주제 전환을 더 정확히 파악
         
         Args:
             conversation_text: 전체 대화 텍스트
@@ -222,7 +222,7 @@ class SessionVectorDBBuilder:
                 'complexity_indicators': ['복잡성 지표']
             }
             
-        💡 개선된 분석 과정:
+         개선된 분석 과정:
             1. 주제 전환 패턴 감지
             2. 부정적 표현과 긍정적 표현 구분
             3. 시간 흐름에 따른 주제 변화 추적
@@ -238,19 +238,19 @@ class SessionVectorDBBuilder:
                 '일반상담': []  # 기본값
             }
             
-            # 🔄 주제 전환 감지 (개선됨)
+            #  주제 전환 감지 (개선됨)
             topic_progression = self._track_topic_progression(messages, session_types)
             
-            # 📊 주요 세션 유형 결정 (가중치 기반)
+            #  주요 세션 유형 결정 (가중치 기반)
             session_type = self._determine_primary_session_type(topic_progression, conversation_text)
             
-            # 🔑 컨텍스트 인식 키워드 추출
+            # 컨텍스트 인식 키워드 추출
             keywords = self._extract_contextual_keywords(conversation_text, session_type)
             
-            # 🎯 도메인별 특화 주제 식별 (기존 로직 개선)
+            #  도메인별 특화 주제 식별 (기존 로직 개선)
             main_topics = self._identify_specialized_topics(session_type, keywords, conversation_text)
             
-            # ⚠️ 복잡성 지표 식별
+            #  복잡성 지표 식별
             complexity_indicators = self._identify_complexity_indicators(conversation_text, messages)
             
             return {
@@ -274,7 +274,7 @@ class SessionVectorDBBuilder:
             }
     
     def _track_topic_progression(self, messages: List[Dict[str, Any]], session_types: Dict[str, List[str]]) -> List[str]:
-        """🔄 시간 순서에 따른 주제 변화 추적"""
+        """ 시간 순서에 따른 주제 변화 추적"""
         progression = []
         
         for msg in messages:
@@ -299,7 +299,7 @@ class SessionVectorDBBuilder:
         return progression
     
     def _determine_primary_session_type(self, topic_progression: List[str], conversation_text: str) -> str:
-        """📊 주제 진행을 바탕으로 주요 세션 유형 결정"""
+        """ 주제 진행을 바탕으로 주요 세션 유형 결정"""
         if not topic_progression:
             return '일반상담'
         
@@ -328,7 +328,7 @@ class SessionVectorDBBuilder:
             return topic_progression[0]
     
     def _extract_contextual_keywords(self, conversation_text: str, session_type: str) -> List[str]:
-        """🔑 세션 유형에 맞는 컨텍스트 인식 키워드 추출"""
+        """세션 유형에 맞는 컨텍스트 인식 키워드 추출"""
         # 기본 키워드 추출
         basic_keywords = self._extract_keywords(conversation_text)
         
@@ -348,7 +348,7 @@ class SessionVectorDBBuilder:
         return context_keywords[:5] if len(context_keywords) >= 3 else basic_keywords[:5]
     
     def _identify_specialized_topics(self, session_type: str, keywords: List[str], conversation_text: str) -> List[str]:
-        """🎯 개선된 도메인별 특화 주제 식별"""
+        """ 개선된 도메인별 특화 주제 식별"""
         main_topics = []
         
         if session_type == '커리어상담' or '커리어' in session_type:
@@ -407,7 +407,7 @@ class SessionVectorDBBuilder:
         return matched_topics
     
     def _identify_complexity_indicators(self, conversation_text: str, messages: List[Dict[str, Any]]) -> List[str]:
-        """⚠️ 대화 복잡성 지표 식별"""
+        """ 대화 복잡성 지표 식별"""
         indicators = []
         
         # 부정적 감정 표현
@@ -433,7 +433,7 @@ class SessionVectorDBBuilder:
     
     def _extract_keywords(self, text: str) -> List[str]:
         """
-        🔑 스마트 키워드 추출 - 대화에서 의미있는 핵심 키워드만 선별
+        스마트 키워드 추출 - 대화에서 의미있는 핵심 키워드만 선별
         
         Args:
             text: 전체 대화 텍스트
@@ -441,13 +441,13 @@ class SessionVectorDBBuilder:
         Returns:
             List[str]: 중요도 순으로 정렬된 키워드 리스트 (최대 5개)
             
-        💡 추출 전략:
+         추출 전략:
             1. 포괄적인 불용어 필터링 (조사, 일반적 표현 등)
             2. 기술/커리어 관련 키워드 우선순위 부여
             3. 중복 제거 및 길이 제한 (2글자 이상)
             4. 최종 5개 키워드 선별
         """
-        # 🚫 포괄적인 불용어 리스트 - 한국어 조사, 일반적 표현, 시스템 메시지 등
+        #  포괄적인 불용어 리스트 - 한국어 조사, 일반적 표현, 시스템 메시지 등
         common_words = {
             # 한국어 조사/어미
             '은', '는', '이', '가', '을', '를', '에', '의', '와', '과', '로', '으로', '에서', '부터', '까지',
@@ -460,7 +460,7 @@ class SessionVectorDBBuilder:
             '개발자가', '싶어요.', '안녕하세요!'
         }
         
-        # 📝 단어 추출 및 기본 필터링
+        #  단어 추출 및 기본 필터링
         import re
         words = re.findall(r'\b\w+\b', text)
         
@@ -475,7 +475,7 @@ class SessionVectorDBBuilder:
                 if len(filtered_keywords) >= 15:     # 충분한 후보 수집
                     break
         
-        # 🎯 중요도 기반 우선순위 키워드 선별
+        #  중요도 기반 우선순위 키워드 선별
         priority_keywords = []
         
         # 기술 관련 고중요도 키워드
@@ -493,15 +493,15 @@ class SessionVectorDBBuilder:
             elif any(career_word in keyword for career_word in career_keywords):
                 priority_keywords.append(keyword)
         
-        # 🔧 최종 키워드 결정: 우선순위 → 일반 키워드 순
+        #  최종 키워드 결정: 우선순위 → 일반 키워드 순
         final_keywords = priority_keywords[:5] if priority_keywords else filtered_keywords[:5]
         
-        # 🐛 디버깅 정보 출력
-        print(f"   🔑 키워드 추출 상세:")
-        print(f"     📊 전체 단어: {len(words)}개")
-        print(f"     ✅ 필터링 후: {len(filtered_keywords)}개")
-        print(f"     ⭐ 우선순위: {priority_keywords}")
-        print(f"     🎯 최종 선택: {final_keywords}")
+        #  디버깅 정보 출력
+        print(f"   키워드 추출 상세:")
+        print(f"      전체 단어: {len(words)}개")
+        print(f"      필터링 후: {len(filtered_keywords)}개")
+        print(f"      우선순위: {priority_keywords}")
+        print(f"      최종 선택: {final_keywords}")
         
         return final_keywords
     
@@ -524,7 +524,7 @@ class SessionVectorDBBuilder:
         Returns:
             bool: VectorDB 구축 성공 여부
             
-        🔄 처리 과정:
+         처리 과정:
         1. 대화 내용 요약 생성 (검색 품질 향상)
         2. 사용자별 VectorDB 폴더 생성/접근
         3. 대화 텍스트를 적절한 크기로 청킹
@@ -532,26 +532,26 @@ class SessionVectorDBBuilder:
         5. ChromaDB에 저장 + 메타데이터 첨부
         6. 세션 인덱스 파일 업데이트
         
-        💾 저장 위치: storage/vector_stores/user_{member_id}_sessions/
+         저장 위치: storage/vector_stores/user_{member_id}_sessions/
         """
         try:
             print(f"🗃️ build_vector_db 시작: {conversation_id}")
-            print(f"📊 전달받은 messages 개수: {len(messages) if messages else 0}개")
-            print(f"👤 사용자: {user_name} (member_id: {member_id})")
+            print(f" 전달받은 messages 개수: {len(messages) if messages else 0}개")
+            print(f" 사용자: {user_name} (member_id: {member_id})")
             
             if messages:
-                print(f"📋 전달받은 messages 상세:")
+                print(f" 전달받은 messages 상세:")
                 for i, msg in enumerate(messages):
                     role = msg.get('role', 'unknown')
                     content = msg.get('content', '')[:50]
                     print(f"     #{i+1} {role}: {content}{'...' if len(msg.get('content', '')) > 50 else ''}")
             
-            # ✅ 1단계: 빈 세션 검증
+            #  1단계: 빈 세션 검증
             if not messages:
                 print(f"빈 메시지 세션 - VectorDB 구축 생략: {conversation_id}")
                 return False
             
-            # 📝 2단계: 대화 내용 요약 생성 (검색 품질 향상을 위해)
+            #  2단계: 대화 내용 요약 생성 (검색 품질 향상을 위해)
             summary = await self.summarize_session_content(messages, user_name)
             print(f"세션 요약 생성 완료: {conversation_id} - {summary}")
             
@@ -589,7 +589,7 @@ class SessionVectorDBBuilder:
                 persist_directory=str(user_db_path)            # 저장 경로
             )
             
-            # 📦 8단계: 각 청크에 고유 메타데이터 추가하여 VectorDB에 저장
+            #  8단계: 각 청크에 고유 메타데이터 추가하여 VectorDB에 저장
             metadatas = []
             for i, chunk in enumerate(chunks):
                 chunk_metadata = metadata.copy()                    # 기본 메타데이터 복사
@@ -597,7 +597,7 @@ class SessionVectorDBBuilder:
                 chunk_metadata["chunk_content"] = chunk[:100] + "..." if len(chunk) > 100 else chunk  # 미리보기
                 metadatas.append(chunk_metadata)
             
-            # 💾 VectorDB에 텍스트 청크들 저장
+            #  VectorDB에 텍스트 청크들 저장
             vectorstore.add_texts(
                 texts=chunks,
                 metadatas=metadatas,
@@ -605,33 +605,33 @@ class SessionVectorDBBuilder:
             )
             
             # 📁 영속화 처리
-            print(f"   💾 VectorDB 저장 완료: {len(chunks)}개 청크")
+            print(f"    VectorDB 저장 완료: {len(chunks)}개 청크")
             
-            # 📋 9단계: 세션 인덱스 파일 업데이트 (빠른 세션 탐색용)
+            #  9단계: 세션 인덱스 파일 업데이트 (빠른 세션 탐색용)
             await self._update_session_index(user_db_path, conversation_id, metadata)
             
-            print(f"✅ VectorDB 구축 성공: {conversation_id}")
-            print(f"   👤 사용자: {user_name} (ID: {member_id})")
-            print(f"   📝 요약: {summary}")
-            print(f"   📊 청크 수: {len(chunks)}개")
-            print(f"   💾 저장 위치: {user_db_path}")
+            print(f" VectorDB 구축 성공: {conversation_id}")
+            print(f"    사용자: {user_name} (ID: {member_id})")
+            print(f"    요약: {summary}")
+            print(f"    청크 수: {len(chunks)}개")
+            print(f"    저장 위치: {user_db_path}")
             
             return True
             
         except Exception as e:
-            print(f"❌ VectorDB 구축 실패: {conversation_id} - {e}")
+            print(f" VectorDB 구축 실패: {conversation_id} - {e}")
             return False
     
     async def _update_session_index(self, user_db_path: Path, conversation_id: str, metadata: Dict[str, Any]):
         """
-        📋 사용자별 세션 인덱스 파일 업데이트
+         사용자별 세션 인덱스 파일 업데이트
         
         Args:
             user_db_path: 사용자 VectorDB 저장 경로
             conversation_id: 대화 세션 ID
             metadata: 세션 메타데이터
             
-        💡 기능:
+         기능:
             - 빠른 세션 탐색을 위한 인덱스 파일 생성/업데이트
             - 세션별 요약, 생성시간, 메시지 수 등 정보 저장
             - JSON 형태로 구조화된 인덱스 유지
@@ -666,10 +666,10 @@ class SessionVectorDBBuilder:
             with open(index_file, 'w', encoding='utf-8') as f:
                 json.dump(index_data, f, ensure_ascii=False, indent=2)
             
-            print(f"   📋 세션 인덱스 업데이트 완료: {metadata['member_id']} - 총 {len(index_data['sessions'])}개 세션")
+            print(f"    세션 인덱스 업데이트 완료: {metadata['member_id']} - 총 {len(index_data['sessions'])}개 세션")
             
         except Exception as e:
-            print(f"❌ 세션 인덱스 업데이트 실패: {e}")
+            print(f" 세션 인덱스 업데이트 실패: {e}")
     
     def get_user_vectorstore(self, member_id: str) -> Optional[Chroma]:
         """
@@ -681,7 +681,7 @@ class SessionVectorDBBuilder:
         Returns:
             Optional[Chroma]: 사용자의 VectorStore 인스턴스 (없으면 None)
             
-        💡 용도:
+         용도:
             - 과거 세션 검색 시 사용
             - 개인화된 대화 내역 조회
             - 사용자별 완전 분리된 VectorDB 접근
@@ -690,8 +690,7 @@ class SessionVectorDBBuilder:
             user_db_path = self.storage_path / f"user_{member_id}_sessions"
             
             if not user_db_path.exists():
-                print(f"ℹ️  [과거 대화 VectorDB] 사용자 {member_id}의 과거 대화 히스토리가 없습니다")
-                print(f"   📝 이는 첫 대화 시 정상적인 상황입니다")
+                print(f"  [과거 대화 VectorDB] 사용자 {member_id}의 과거 대화 히스토리가 없습니다")
                 return None
             
             vectorstore = Chroma(
@@ -700,16 +699,16 @@ class SessionVectorDBBuilder:
                 persist_directory=str(user_db_path)
             )
             
-            print(f"✅ [과거 대화 VectorDB] 사용자 {member_id}의 과거 대화 히스토리 로드 성공")
+            print(f" [과거 대화 VectorDB] 사용자 {member_id}의 과거 대화 히스토리 로드 성공")
             return vectorstore
             
         except Exception as e:
-            print(f"❌ [과거 대화 VectorDB] 사용자 {member_id} 로드 실패: {e}")
+            print(f" [과거 대화 VectorDB] 사용자 {member_id} 로드 실패: {e}")
             return None
     
     def search_user_sessions(self, member_id: str, query: str, k: int = 5) -> List[Dict[str, Any]]:
         """
-        🔍 사용자의 과거 세션에서 관련 내용 검색
+         사용자의 과거 세션에서 관련 내용 검색
         
         Args:
             member_id: 사용자 고유 ID
@@ -719,27 +718,27 @@ class SessionVectorDBBuilder:
         Returns:
             List[Dict[str, Any]]: 검색 결과 리스트 (관련도 점수 포함)
             
-        💡 기능:
+         기능:
             - 개인화된 과거 대화 내역 검색
             - 의미 기반 유사도 검색 (벡터 유사도)
             - 관련도 점수 기반 품질 필터링
         """
         try:
-            print(f"🔍 [과거 대화 검색] 사용자 {member_id}의 과거 대화 히스토리 검색 시작...")
+            print(f" [과거 대화 검색] 사용자 {member_id}의 과거 대화 히스토리 검색 시작...")
             vectorstore = self.get_user_vectorstore(member_id)
             
             if not vectorstore:
-                print(f"ℹ️  [과거 대화 검색] 사용자 {member_id}의 과거 대화가 없어 검색 결과 없음 (첫 대화 시 정상)")
-                print(f"✅ [과거 대화 검색] 완료")
+                print(f"  [과거 대화 검색] 사용자 {member_id}의 과거 대화가 없어 검색 결과 없음 (첫 대화 시 정상)")
+                print(f" [과거 대화 검색] 완료")
                 return []
             
-            # 🔍 의미 기반 유사도 검색 수행
+            #  의미 기반 유사도 검색 수행
             results = vectorstore.similarity_search_with_relevance_scores(
                 query=query,
                 k=k
             )
             
-            # 📊 검색 결과 구조화
+            #  검색 결과 구조화
             search_results = []
             for doc, score in results:
                 search_results.append({
@@ -750,16 +749,16 @@ class SessionVectorDBBuilder:
                     "session_summary": doc.metadata.get("summary", "요약 없음")
                 })
             
-            print(f"✅ [과거 대화 검색] 사용자 {member_id} 검색 완료: {len(search_results)}개 결과")
+            print(f" [과거 대화 검색] 사용자 {member_id} 검색 완료: {len(search_results)}개 결과")
             return search_results
             
         except Exception as e:
-            print(f"❌ [과거 대화 검색] 사용자 {member_id} 검색 실패: {e}")
+            print(f" [과거 대화 검색] 사용자 {member_id} 검색 실패: {e}")
             return []
     
     def get_user_session_stats(self, member_id: str) -> Dict[str, Any]:
         """
-        📊 사용자별 세션 통계 정보 반환
+         사용자별 세션 통계 정보 반환
         
         Args:
             member_id: 사용자 고유 ID
@@ -774,7 +773,7 @@ class SessionVectorDBBuilder:
                 'last_activity': 마지막 활동 시간
             }
             
-        💡 용도:
+         용도:
             - 사용자 대화 활동 분석
             - 개인화 서비스 개선 데이터
             - 사용 패턴 파악
@@ -794,7 +793,7 @@ class SessionVectorDBBuilder:
             with open(index_file, 'r', encoding='utf-8') as f:
                 index_data = json.load(f)
             
-            # 📊 통계 계산 및 최근 세션 정보 추출
+            #  통계 계산 및 최근 세션 정보 추출
             sessions = index_data.get("sessions", {})
             total_messages = sum(session.get("message_count", 0) for session in sessions.values())
             
@@ -824,7 +823,7 @@ class SessionVectorDBBuilder:
             }
             
         except Exception as e:
-            print(f"❌ 사용자 세션 통계 조회 실패: {member_id} - {e}")
+            print(f" 사용자 세션 통계 조회 실패: {member_id} - {e}")
             return {
                 "member_id": member_id,
                 "error": str(e)

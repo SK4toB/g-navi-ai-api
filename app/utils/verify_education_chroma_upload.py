@@ -46,7 +46,7 @@ class EducationChromaUploadVerifier:
     def _get_embeddings(self, texts: List[str]) -> List[List[float]]:
         """OpenAI API로 임베딩 생성"""
         if not self.openai_api_key:
-            print("⚠️ OPENAI_API_KEY가 없어서 임베딩 검색을 건너뜁니다")
+            print(" OPENAI_API_KEY가 없어서 임베딩 검색을 건너뜁니다")
             return []
         
         try:
@@ -66,12 +66,12 @@ class EducationChromaUploadVerifier:
             return embeddings
             
         except Exception as e:
-            print(f"⚠️ 임베딩 생성 실패: {str(e)}")
+            print(f" 임베딩 생성 실패: {str(e)}")
             return []
     
     def verify_collection_exists(self):
         """교육과정 컬렉션 존재 여부 확인"""
-        print(f"📋 교육과정 컬렉션 존재 여부 확인: {self.pod_collection_name}")
+        print(f" 교육과정 컬렉션 존재 여부 확인: {self.pod_collection_name}")
         
         try:
             # 모든 컬렉션 목록 조회
@@ -85,11 +85,11 @@ class EducationChromaUploadVerifier:
                 collections = response.json()
                 collection_names = [col.get('name', '') for col in collections]
                 
-                print(f"  📝 전체 컬렉션 수: {len(collections)}")
-                print(f"  📝 컬렉션 목록: {collection_names}")
+                print(f"   전체 컬렉션 수: {len(collections)}")
+                print(f"   컬렉션 목록: {collection_names}")
                 
                 if self.pod_collection_name in collection_names:
-                    print(f"  ✅ 교육과정 컬렉션 발견: {self.pod_collection_name}")
+                    print(f"   교육과정 컬렉션 발견: {self.pod_collection_name}")
                     
                     # 해당 컬렉션 정보 찾기
                     target_collection = next(
@@ -98,24 +98,24 @@ class EducationChromaUploadVerifier:
                     )
                     
                     if target_collection:
-                        print(f"  📊 컬렉션 ID: {target_collection.get('id')}")
-                        print(f"  📊 메타데이터: {target_collection.get('metadata', {})}")
+                        print(f"   컬렉션 ID: {target_collection.get('id')}")
+                        print(f"   메타데이터: {target_collection.get('metadata', {})}")
                         return target_collection.get('id')
                 else:
-                    print(f"  ❌ 교육과정 컬렉션이 없습니다: {self.pod_collection_name}")
+                    print(f"   교육과정 컬렉션이 없습니다: {self.pod_collection_name}")
                     return None
             else:
-                print(f"  ❌ 컬렉션 목록 조회 실패: {response.status_code}")
+                print(f"   컬렉션 목록 조회 실패: {response.status_code}")
                 print(f"  응답: {response.text}")
                 return None
                 
         except Exception as e:
-            print(f"  ❌ 교육과정 컬렉션 확인 중 오류: {str(e)}")
+            print(f"   교육과정 컬렉션 확인 중 오류: {str(e)}")
             return None
     
     def test_search_functionality(self, collection_id=None):
         """교육과정 검색 기능 테스트 (임베딩 기반)"""
-        print(f"\n🔍 교육과정 검색 기능 테스트")
+        print(f"\n 교육과정 검색 기능 테스트")
         
         collection_identifier = collection_id if collection_id else self.pod_collection_name
         
@@ -131,7 +131,7 @@ class EducationChromaUploadVerifier:
         embeddings = self._get_embeddings(test_queries)
         
         if not embeddings:
-            print("  ⚠️ 임베딩 생성 실패, 대안 검색 방법 시도...")
+            print("   임베딩 생성 실패, 대안 검색 방법 시도...")
             return self._test_simple_data_retrieval(collection_identifier)
         
         successful_tests = 0
@@ -159,7 +159,7 @@ class EducationChromaUploadVerifier:
                     documents = search_results.get('documents', [[]])
                     result_count = len(documents[0]) if documents and len(documents) > 0 else 0
                     
-                    print(f"    ✅ 성공: {result_count}개 결과")
+                    print(f"     성공: {result_count}개 결과")
                     total_results += result_count
                     
                     # 첫 번째 테스트에서 상세 미리보기
@@ -167,18 +167,18 @@ class EducationChromaUploadVerifier:
                         first_doc = documents[0][0]
                         lines = first_doc.split('\n')[:3]  # 첫 3줄만
                         preview = '\n       '.join(lines)
-                        print(f"    📄 교육과정 결과 미리보기:")
+                        print(f"     교육과정 결과 미리보기:")
                         print(f"       {preview}")
                     
                     successful_tests += 1
                 else:
-                    print(f"    ❌ 실패: HTTP {response.status_code}")
+                    print(f"     실패: HTTP {response.status_code}")
                     print(f"       응답: {response.text[:200]}...")
                     
             except Exception as e:
-                print(f"    ❌ 오류: {str(e)}")
+                print(f"     오류: {str(e)}")
         
-        print(f"\n📊 교육과정 임베딩 검색 테스트 결과:")
+        print(f"\n 교육과정 임베딩 검색 테스트 결과:")
         print(f"   성공한 테스트: {successful_tests}/{len(test_queries)}")
         print(f"   총 검색 결과: {total_results}개")
         
@@ -186,7 +186,7 @@ class EducationChromaUploadVerifier:
     
     def _test_simple_data_retrieval(self, collection_identifier):
         """임베딩 없이 단순 교육과정 데이터 조회 테스트"""
-        print(f"  📋 단순 교육과정 데이터 조회 테스트 시도...")
+        print(f"   단순 교육과정 데이터 조회 테스트 시도...")
         
         try:
             # 처음 5개 교육과정 문서만 가져오기
@@ -203,26 +203,26 @@ class EducationChromaUploadVerifier:
             if response.status_code == 200:
                 data = response.json()
                 doc_count = len(data.get('documents', []))
-                print(f"    ✅ 교육과정 데이터 조회 성공: {doc_count}개 문서 확인")
+                print(f"     교육과정 데이터 조회 성공: {doc_count}개 문서 확인")
                 
                 if doc_count > 0:
                     first_doc = data['documents'][0]
                     preview = first_doc[:200] + "..." if len(first_doc) > 200 else first_doc
-                    print(f"    📄 첫 번째 교육과정 문서 미리보기:")
+                    print(f"     첫 번째 교육과정 문서 미리보기:")
                     print(f"       {preview}")
                 
                 return doc_count > 0
             else:
-                print(f"    ❌ 교육과정 데이터 조회 실패: {response.status_code}")
+                print(f"     교육과정 데이터 조회 실패: {response.status_code}")
                 return False
                 
         except Exception as e:
-            print(f"    ❌ 교육과정 데이터 조회 오류: {str(e)}")
+            print(f"     교육과정 데이터 조회 오류: {str(e)}")
             return False
     
     def get_collection_statistics(self, collection_id=None):
         """교육과정 컬렉션 통계 정보"""
-        print(f"\n📈 교육과정 컬렉션 통계 정보")
+        print(f"\n 교육과정 컬렉션 통계 정보")
         
         collection_identifier = collection_id if collection_id else self.pod_collection_name
         
@@ -238,13 +238,13 @@ class EducationChromaUploadVerifier:
             if response.status_code == 200:
                 data = response.json()
                 total_docs = len(data.get('ids', []))
-                print(f"  📊 총 교육과정 문서 수: {total_docs}")
+                print(f"   총 교육과정 문서 수: {total_docs}")
                 
                 # 메타데이터 샘플 분석
                 metadatas = data.get('metadatas', [])
                 if metadatas:
                     sample_metadata = metadatas[0]
-                    print(f"  📊 메타데이터 키: {list(sample_metadata.keys())}")
+                    print(f"   메타데이터 키: {list(sample_metadata.keys())}")
                     
                     # # 교육과정 카테고리 통계
                     # categories = set()
@@ -257,30 +257,30 @@ class EducationChromaUploadVerifier:
                     #     if level:
                     #         levels.add(level)
                     
-                    # print(f"  📚 교육 카테고리 (샘플): {list(categories)[:5]}")
-                    # print(f"  📊 난이도 레벨 (샘플): {list(levels)[:5]}")
+                    # print(f"   교육 카테고리 (샘플): {list(categories)[:5]}")
+                    # print(f"   난이도 레벨 (샘플): {list(levels)[:5]}")
                 
                 return total_docs
             else:
-                print(f"  ❌ 교육과정 통계 조회 실패: {response.status_code}")
+                print(f"   교육과정 통계 조회 실패: {response.status_code}")
                 return 0
                 
         except Exception as e:
-            print(f"  ❌ 교육과정 통계 조회 중 오류: {str(e)}")
+            print(f"   교육과정 통계 조회 중 오류: {str(e)}")
             return 0
     
     def run_full_verification(self):
         """전체 교육과정 검증 실행"""
-        print("🚀 교육과정 ChromaDB 업로드 검증을 시작합니다...")
-        print(f"🎯 타겟 컬렉션: {self.pod_collection_name}")
-        print(f"🌐 Pod URL: {self.pod_base_url}")
+        print(" 교육과정 ChromaDB 업로드 검증을 시작합니다...")
+        print(f" 타겟 컬렉션: {self.pod_collection_name}")
+        print(f" Pod URL: {self.pod_base_url}")
         print("-" * 60)
         
         # 1. 교육과정 컬렉션 존재 확인
         collection_id = self.verify_collection_exists()
         
         if not collection_id:
-            print("\n❌ 검증 실패: 교육과정 컬렉션이 존재하지 않습니다")
+            print("\n 검증 실패: 교육과정 컬렉션이 존재하지 않습니다")
             return False
         
         # 2. 교육과정 검색 기능 테스트
@@ -292,14 +292,14 @@ class EducationChromaUploadVerifier:
         # 4. 최종 결과
         print("\n" + "="*60)
         if search_success and doc_count > 0:
-            print("🎉 교육과정 검증 성공!")
-            print(f"   ✅ 컬렉션 존재: {self.pod_collection_name}")
-            print(f"   ✅ 교육과정 문서 수: {doc_count}")
-            print(f"   ✅ 검색 기능: 정상 작동")
-            print(f"   ✅ Pod ChromaDB 교육과정 업로드 완료 확인됨!")
+            print(" 교육과정 검증 성공!")
+            print(f"    컬렉션 존재: {self.pod_collection_name}")
+            print(f"    교육과정 문서 수: {doc_count}")
+            print(f"    검색 기능: 정상 작동")
+            print(f"    Pod ChromaDB 교육과정 업로드 완료 확인됨!")
             return True
         else:
-            print("❌ 교육과정 검증 실패!")
+            print(" 교육과정 검증 실패!")
             print("   컬렉션은 존재하지만 검색이나 데이터에 문제가 있을 수 있습니다.")
             return False
 
@@ -313,7 +313,7 @@ def main():
         missing_env.append("OPENAI_API_KEY")
     
     if missing_env:
-        print(f"❌ 필수 환경변수가 설정되지 않았습니다: {missing_env}")
+        print(f" 필수 환경변수가 설정되지 않았습니다: {missing_env}")
         print("   .env 파일에 다음을 추가하세요:")
         for env in missing_env:
             print(f"   {env}=your_value")
@@ -324,9 +324,9 @@ def main():
     success = verifier.run_full_verification()
     
     if success:
-        print("\n✨ 교육과정 ChromaDB Pod 업로드가 성공적으로 완료되었습니다!")
+        print("\n 교육과정 ChromaDB Pod 업로드가 성공적으로 완료되었습니다!")
     else:
-        print("\n⚠️ 교육과정 검증에서 문제가 발견되었습니다. 로그를 확인해주세요.")
+        print("\n 교육과정 검증에서 문제가 발견되었습니다. 로그를 확인해주세요.")
 
 if __name__ == "__main__":
     main()

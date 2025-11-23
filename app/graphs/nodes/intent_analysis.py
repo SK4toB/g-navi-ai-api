@@ -1,12 +1,3 @@
-# app/graphs/nodes/intent_analysis.py
-"""
-* @className : IntentAnalysisNode
-* @description : 의도 분석 노드 모듈
-*                사용자 질문의 의도를 분석하는 워크플로우 노드입니다.
-*                질문 유형과 카테고리를 분류합니다.
-*
-"""
-
 import logging
 from datetime import datetime
 from app.graphs.state import ChatState
@@ -15,7 +6,7 @@ from app.graphs.agents.analyzer import IntentAnalysisAgent
 
 class IntentAnalysisNode:
     """
-    🎯 사용자 의도 분석 및 상황 이해 노드
+    사용자 의도 분석 및 상황 이해 노드
     
     AgentRAG 워크플로우의 2단계로, 사용자 질문을 분석하여
     다음 단계에 필요한 검색 키워드와 의도 정보를 추출합니다.
@@ -43,7 +34,7 @@ class IntentAnalysisNode:
 
     def analyze_intent_node(self, state: ChatState) -> ChatState:
         """
-        🔍 2단계: 사용자 의도 분석 및 상황 이해
+         2단계: 사용자 의도 분석 및 상황 이해
         
         사용자 질문과 대화 맥락을 분석하여 의도를 파악하고,
         다음 단계의 데이터 검색에 필요한 키워드를 추출합니다.
@@ -60,10 +51,10 @@ class IntentAnalysisNode:
         try:  # 의도 분석 처리 시작
             # 메시지 검증 실패 시 처리 건너뛰기
             if state.get("workflow_status") == "validation_failed":  # 검증 실패 상태 확인
-                print(f"⚠️  [2단계] 메시지 검증 실패로 처리 건너뛰기")
+                print(f"[2단계] 메시지 검증 실패로 처리 건너뛰기")
                 return state
                 
-            print(f"\n🎯 [2단계] 의도 분석 및 상황 이해 시작...")
+            print(f"[2단계] 의도 분석 및 상황 이해 시작...")
             self.logger.info("=== 2단계: 의도 분석 및 상황 이해 ===")
             
             # 세션 정보에서 사용자 데이터 가져오기
@@ -102,10 +93,10 @@ class IntentAnalysisNode:
             intent_type = intent_analysis.get("intent", "일반 상담")  # 의도 타입 추출
             career_keywords = intent_analysis.get("career_history", [])  # 커리어 키워드 추출
             
-            print(f"✅ [2단계] 의도 분석 및 상황 이해 완료")
-            print(f"📊 분석된 의도: {intent_type}")
-            print(f"🔍 키워드 추출: {len(career_keywords)}개")
-            print(f"⏱️  [2단계] 처리 시간: {time_display}")
+            print(f"[2단계] 의도 분석 및 상황 이해 완료")
+            print(f"분석된 의도: {intent_type}")
+            print(f"키워드 추출: {len(career_keywords)}개")
+            print(f"[2단계] 처리 시간: {time_display}")
             
             self.logger.info("의도 분석 및 상황 이해 완료")
             
@@ -133,6 +124,6 @@ class IntentAnalysisNode:
                 "career_history": []
             }
             
-            print(f"❌ [2단계] 의도 분석 오류: {time_display} (오류: {e})")
+            print(f"[2단계] 의도 분석 오류: {time_display} (오류: {e})")
         
         return state

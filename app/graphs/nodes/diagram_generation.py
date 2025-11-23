@@ -14,7 +14,7 @@ from app.graphs.state import ChatState
 
 class DiagramGenerationNode:
     """
-    🎨 Mermaid 다이어그램 생성 및 FE용 응답 통합 노드
+    Mermaid 다이어그램 생성 및 FE용 응답 통합 노드
     
     AgentRAG 워크플로우의 5단계로, 포맷팅된 응답을 분석하여
     필요시 Mermaid 다이어그램을 생성하고 최종 응답을 통합합니다.
@@ -25,7 +25,7 @@ class DiagramGenerationNode:
     
     def generate_diagram_node(self, state: ChatState) -> ChatState:
         """
-        🎨 5단계: Mermaid 다이어그램 생성 및 FE용 최종 응답 통합
+        5단계: Mermaid 다이어그램 생성 및 FE용 최종 응답 통합
         
         포맷팅된 응답을 분석하여 시각화가 도움이 되는 경우
         Mermaid 다이어그램을 생성하고, FE에서 사용할 최종 응답을 완성합니다.
@@ -42,10 +42,10 @@ class DiagramGenerationNode:
         try:
             # 메시지 검증 실패 시 처리 건너뛰기
             if state.get("workflow_status") == "validation_failed":
-                print(f"⚠️  [5단계] 메시지 검증 실패로 처리 건너뛰기")
+                print(f"[5단계] 메시지 검증 실패로 처리 건너뛰기")
                 return state
                 
-            print(f"\n🎨 [5단계] 다이어그램 생성 및 통합 시작...")
+            print(f"\n[5단계] 다이어그램 생성 및 통합 시작...")
             
             # 필요한 데이터 추출
             formatted_response = state.get("formatted_response", {})
@@ -63,12 +63,12 @@ class DiagramGenerationNode:
             
             # 포맷된 콘텐츠가 없으면 다이어그램 생성 건너뛰기
             if not formatted_content or not formatted_content.strip():
-                print("⚠️ [다이어그램 생성] 포맷된 콘텐츠가 없어 생성 건너뛰기")
+                print("[다이어그램 생성] 포맷된 콘텐츠가 없어 생성 건너뛰기")
                 state["mermaid_diagram"] = ""
                 state["diagram_generated"] = False
                 # 다이어그램 없이 원본 응답을 FE용 최종 응답으로 설정
                 state["final_response"] = formatted_response
-                print("ℹ️ [다이어그램 생성] 원본 응답을 FE용 최종 응답으로 설정")
+                print("[다이어그램 생성] 원본 응답을 FE용 최종 응답으로 설정")
                 
                 # 처리 시간 기록
                 end_time = time.perf_counter()
@@ -85,17 +85,17 @@ class DiagramGenerationNode:
                 processing_log.append(f"5단계 처리 시간: {time_display}")
                 state["processing_log"] = processing_log
                 
-                print(f"⏱️  [5단계] 다이어그램 없음 처리 완료: {time_display}")
+                print(f"[5단계] 다이어그램 없음 처리 완료: {time_display}")
                 return state
             
             # 다이어그램 생성이 의미있는지 판단
             if not self._should_generate_diagram(formatted_content, user_question):
-                print("⚠️ [다이어그램 생성] 생성 필요하지 않은 내용으로 판단")
+                print("[다이어그램 생성] 생성 필요하지 않은 내용으로 판단")
                 state["mermaid_diagram"] = ""
                 state["diagram_generated"] = False
                 # 다이어그램 없이 원본 응답을 FE용 최종 응답으로 설정
                 state["final_response"] = formatted_response
-                print("ℹ️ [다이어그램 생성] 원본 응답을 FE용 최종 응답으로 설정")
+                print("[다이어그램 생성] 원본 응답을 FE용 최종 응답으로 설정")
                 
                 # 처리 시간 기록
                 end_time = time.perf_counter()
@@ -112,14 +112,14 @@ class DiagramGenerationNode:
                 processing_log.append(f"5단계 처리 시간: {time_display}")
                 state["processing_log"] = processing_log
                 
-                print(f"⏱️  [5단계] 다이어그램 생성 불필요 처리 완료: {time_display}")
+                print(f"[5단계] 다이어그램 생성 불필요 처리 완료: {time_display}")
                 return state
             
             # Mermaid 에이전트 import (순환 import 방지를 위해 지연 import)
             from app.graphs.agents.mermaid_agent import MermaidDiagramAgent
             
             # 다이어그램 생성
-            print("🎯 [다이어그램 생성] Mermaid 다이어그램 생성 중...")
+            print("[다이어그램 생성] Mermaid 다이어그램 생성 중...")
             mermaid_agent = MermaidDiagramAgent()
             mermaid_code = mermaid_agent.generate_diagram(
                 formatted_content=formatted_content,
@@ -133,7 +133,7 @@ class DiagramGenerationNode:
             state["diagram_generated"] = bool(mermaid_code and mermaid_code.strip())
             
             # 다이어그램 생성 여부와 관계없이 FE용 최종 응답 생성
-            print("🔧 [다이어그램 생성] FE용 최종 응답 통합 중...")
+            print("[다이어그램 생성] FE용 최종 응답 통합 중...")
             final_response = self._integrate_diagram_to_response(
                 formatted_response, mermaid_code, state["diagram_generated"]
             )
@@ -154,26 +154,26 @@ class DiagramGenerationNode:
             processing_log.append(f"5단계 처리 시간: {time_display}")
             state["processing_log"] = processing_log
             
-            # 💫 MessageProcessor를 위한 bot_message 설정 (5단계에서 최종 설정)
+            #  MessageProcessor를 위한 bot_message 설정 (5단계에서 최종 설정)
             final_response = state.get("final_response", {})
             if isinstance(final_response, dict) and final_response.get("formatted_content"):
                 state["bot_message"] = final_response["formatted_content"]
-                print("📨 [5단계] bot_message 설정 완료 (사용자 응답 준비)")
+                print("[5단계] bot_message 설정 완료 (사용자 응답 준비)")
             else:
                 # 폴백: 기본 메시지
                 state["bot_message"] = "응답 처리가 완료되었습니다."
-                print("⚠️  [5단계] bot_message 폴백 설정")
+                print("[5단계] bot_message 폴백 설정")
             
             if state["diagram_generated"]:
-                print(f"✅ [5단계] 다이어그램 생성 및 통합 완료")
-                print(f"📊 다이어그램 길이: {len(mermaid_code)}자")
-                print(f"🔧 FE 응답 통합: 완료")
-                print(f"⏱️  [5단계] 처리 시간: {time_display}")
+                print(f"[5단계] 다이어그램 생성 및 통합 완료")
+                print(f"다이어그램 길이: {len(mermaid_code)}자")
+                print(f"FE 응답 통합: 완료")
+                print(f"[5단계] 처리 시간: {time_display}")
                 self.logger.info("Mermaid 다이어그램 생성 및 FE용 최종 응답 통합 성공")
             else:
-                print(f"✅ [5단계] 다이어그램 없는 응답 완료")
-                print(f"🔧 FE 응답 통합: 원본 사용")
-                print(f"⏱️  [5단계] 처리 시간: {time_display}")
+                print(f"[5단계] 다이어그램 없는 응답 완료")
+                print(f"FE 응답 통합: 원본 사용")
+                print(f"[5단계] 처리 시간: {time_display}")
                 self.logger.info("다이어그램 없는 FE용 최종 응답 생성 완료")
                 
             return state
@@ -195,7 +195,7 @@ class DiagramGenerationNode:
             state["processing_log"] = processing_log
             
             self.logger.error(f"다이어그램 생성 노드 오류: {e}")
-            print(f"❌ [5단계] 다이어그램 생성 오류: {time_display} (오류: {e})")
+            print(f"[5단계] 다이어그램 생성 오류: {time_display} (오류: {e})")
             
             # 오류 시 빈 다이어그램으로 설정하지만 FE용 최종 응답은 생성
             state["mermaid_diagram"] = ""
@@ -208,19 +208,19 @@ class DiagramGenerationNode:
             # 💫 오류 시에도 bot_message 설정 (5단계에서 최종 설정)
             if isinstance(formatted_response, dict) and formatted_response.get("formatted_content"):
                 state["bot_message"] = formatted_response["formatted_content"]
-                print("📨 [5단계] 오류 시 bot_message 설정 완료")
+                print(" [5단계] 오류 시 bot_message 설정 완료")
             else:
                 # 완전 폴백: 오류 메시지
                 state["bot_message"] = f"죄송합니다. 다이어그램 생성 중 오류가 발생했지만 응답은 준비되었습니다."
-                print("⚠️  [5단계] 오류 시 bot_message 완전 폴백 설정")
+                print("  [5단계] 오류 시 bot_message 완전 폴백 설정")
             
-            print("⚠️ [다이어그램 생성] 오류로 인해 다이어그램 없는 응답 사용")
+            print(" [다이어그램 생성] 오류로 인해 다이어그램 없는 응답 사용")
             
             return state
     
     def _should_generate_diagram(self, content: str, question: str = "") -> bool:
         """
-        🔍 다이어그램 생성 필요성 지능형 판단
+         다이어그램 생성 필요성 지능형 판단
         
         콘텐츠와 질문을 분석하여 시각화가 도움이 될지 판단합니다.
         단순한 인사나 짧은 답변은 제외하고, 구조화된 정보나
@@ -302,13 +302,13 @@ class DiagramGenerationNode:
             
             # 다이어그램이 생성되지 않았으면 원본 응답 반환
             if not diagram_generated or not mermaid_diagram or not mermaid_diagram.strip():
-                print("ℹ️  다이어그램 없음 → 원본 응답 사용")
+                print("다이어그램 없음 → 원본 응답 사용")
                 return final_response
             
             # 포맷된 콘텐츠 추출
             formatted_content = final_response.get("formatted_content", "")
             if not formatted_content:
-                print("⚠️ 포맷된 콘텐츠가 없어 다이어그램 통합 불가")
+                print("포맷된 콘텐츠가 없어 다이어그램 통합 불가")
                 return final_response
             
             # 다이어그램 섹션 생성
@@ -348,13 +348,13 @@ class DiagramGenerationNode:
             final_response["has_diagram"] = True
             final_response["diagram_type"] = "mermaid"
             
-            print(f"✅ FE용 최종 응답에 다이어그램 통합 완료 ({len(mermaid_diagram)}자)")
+            print(f"FE용 최종 응답에 다이어그램 통합 완료 ({len(mermaid_diagram)}자)")
             self.logger.info("Mermaid 다이어그램이 FE용 최종 응답에 통합됨")
             
             return final_response
             
         except Exception as e:
             self.logger.warning(f"다이어그램 통합 실패: {e}")
-            print(f"⚠️ 다이어그램 통합 실패: {e}")
+            print(f"다이어그램 통합 실패: {e}")
             # 실패 시 원본 응답 반환
             return formatted_response if formatted_response else {}

@@ -205,43 +205,33 @@ class ChromaPodUploader:
                         f"{self.pod_base_url}/collections/{collection_identifier}/add",
                         headers=self.headers,
                         json=batch_data,
-                        timeout=180  # 71.7MB를 위해 타임아웃 증가
+                        timeout=180 
                     )
                     
                     if response.status_code in [200, 201]:  # 200 OK, 201 Created 모두 성공
                         success_count += 1
-                        print(f"    ✅ 배치 {batch_num} 업로드 완료 (시도 {retry + 1}) - HTTP {response.status_code}")
                         break
                     else:
-                        print(f"    ❌ 배치 {batch_num} 업로드 실패: {response.status_code}")
-                        print(f"    응답 내용: {response.text}")
                         if retry < max_retries - 1:
-                            print(f"    🔄 재시도 {retry + 2}/{max_retries}")
                             continue
                         else:
-                            print(f"    💥 최대 재시도 초과. 오류: {response.text}")
                             return False
                             
                 except requests.exceptions.Timeout:
-                    print(f"    ⏰ 배치 {batch_num} 타임아웃 (시도 {retry + 1})")
                     if retry < max_retries - 1:
-                        print(f"    🔄 재시도 {retry + 2}/{max_retries}")
                         continue
                     else:
-                        print(f"    💥 최대 재시도 초과 (타임아웃)")
+                        print(f"최대 재시도 초과 (타임아웃)")
                         return False
                         
                 except Exception as e:
-                    print(f"    ❌ 배치 {batch_num} 예외 발생: {str(e)}")
                     if retry < max_retries - 1:
-                        print(f"    🔄 재시도 {retry + 2}/{max_retries}")
                         continue
                     else:
-                        print(f"    💥 최대 재시도 초과")
                         return False
         
-        print(f"\n🎉 모든 문서 업로드 완료!")
-        print(f"   성공한 배치: {success_count}/{(total_docs + batch_size - 1) // batch_size}")
+        print(f"모든 문서 업로드 완료")
+        print(f"배치: {success_count}/{(total_docs + batch_size - 1) // batch_size}")
         return True
     
     def verify_upload(self):
@@ -261,55 +251,13 @@ class ChromaPodUploader:
             
             if response.status_code == 200:
                 collection_info = response.json()
-                print(f"  ✅ 컬렉션 조회 성공: {collection_info.get('name')}")
+                print(f"컬렉션 조회 성공: {collection_info.get('name')}")
             else:
-                print(f"  ⚠️ 컬렉션 직접 조회 실패 (HTTP {response.status_code}), 대안 방법 시도...")
-            
-            # 방법 2: 검색 테스트로 검증 (더 안정적)
-            search_data = {
-                "query_texts": ["경력"],  # 더 일반적인 검색어 사용
-                "n_results": 3
-            }
-            
-            print(f"  검색 테스트 시도 중...")
-            search_response = requests.post(
-                f"{self.pod_base_url}/collections/{collection_identifier}/query",
-                headers=self.headers,
-                json=search_data,
-                timeout=30
-            )
-            
-            if search_response.status_code == 200:
-                search_results = search_response.json()
-                documents = search_results.get('documents', [[]])
-                result_count = len(documents[0]) if documents and len(documents) > 0 else 0
-                
-                print(f"  ✅ 검색 테스트 성공: {result_count}개 결과 반환")
-                
-                if result_count > 0:
-                    # 첫 번째 결과의 일부 내용 표시
-                    first_doc = documents[0][0] if documents[0] else ""
-                    preview = first_doc[:100] + "..." if len(first_doc) > 100 else first_doc
-                    print(f"  📄 첫 번째 결과 미리보기: {preview}")
-                    
-                    print("✅ 업로드 및 검증 성공!")
-                    return True
-                else:
-                    print("❌ 검색 결과가 없습니다")
-                    return False
-            else:
-                print(f"❌ 검색 테스트 실패: {search_response.status_code}")
-                print(f"   응답: {search_response.text}")
-                
-                # 검색도 실패했지만, 업로드는 성공했으므로 경고만 표시
-                print("⚠️ 검증은 실패했지만 업로드는 완료되었습니다.")
-                print("   Pod ChromaDB에서 직접 확인해주세요.")
-                return True  # 업로드가 성공했으므로 True 반환
-                
+                print(f" 컬렉션 직접 조회 실패 (HTTP {response.status_code})")
         except Exception as e:
-            print(f"❌ 검증 중 예외 발생: {str(e)}")
-            print("⚠️ 검증은 실패했지만 업로드는 완료되었을 가능성이 높습니다.")
-            return True  # 업로드가 성공했으므로 True 반환
+            print(f"업로드 검증 중 오류 발생: {e}")
+        return False
+            
     
     def run_upload(self):
         """전체 업로드 프로세스 실행"""
@@ -329,25 +277,22 @@ class ChromaPodUploader:
             if not self.verify_upload():
                 raise Exception("업로드 검증 실패")
             
-            print("\n🎉 ChromaDB 컬렉션 업로드가 완료되었습니다!")
+            print("ChromaDB 컬렉션 업로드 완료")
             print(f"   로컬: {self.local_collection_name}")
             print(f"   Pod: {self.pod_collection_name}")
             
         except Exception as e:
-            print(f"\n❌ 업로드 실패: {str(e)}")
+            print(f"\n 업로드 실패: {str(e)}")
             raise
 
 def main():
-    """메인 실행 함수"""
-    print("🚀 ChromaDB 컬렉션 Pod 업로드를 시작합니다...")
     
     # 환경변수 확인
     required_env = ["OPENAI_API_KEY", "CHROMA_AUTH_CREDENTIALS"]
     missing_env = [env for env in required_env if not os.getenv(env)]
     
     if missing_env:
-        print(f"❌ 필수 환경변수가 없습니다: {missing_env}")
-        print("   .env 파일에 다음을 추가하세요:")
+        print(f"필수 환경변수가 없습니다: {missing_env}")
         for env in missing_env:
             print(f"   {env}=your_value_here")
         return

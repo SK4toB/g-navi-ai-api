@@ -36,7 +36,7 @@ class ChromaQueryTestSimple:
     
     def get_collection_count(self):
         """문서 개수 조회"""
-        print("📊 문서 개수 조회 중...")
+        print(" 문서 개수 조회 중...")
         
         try:
             count_url = f"{self.collections_url}/{self.pod_collection_id}/count"
@@ -44,19 +44,19 @@ class ChromaQueryTestSimple:
             
             if response.status_code == 200:
                 count = response.json()
-                print(f"✅ 문서 개수: {count}개")
+                print(f" 문서 개수: {count}개")
                 return count
             else:
-                print(f"❌ 문서 개수 조회 실패: {response.status_code}")
+                print(f" 문서 개수 조회 실패: {response.status_code}")
                 return None
                 
         except Exception as e:
-            print(f"❌ 예외 발생: {str(e)}")
+            print(f" 예외 발생: {str(e)}")
             return None
     
     def search_documents(self, query_text="경력", n_results=3):
         """문서 검색"""
-        print(f"🔍 문서 검색 중: '{query_text}'")
+        print(f" 문서 검색 중: '{query_text}'")
         
         try:
             # 임베딩 생성
@@ -78,30 +78,30 @@ class ChromaQueryTestSimple:
                 metadatas = results.get('metadatas', [[]])
                 
                 result_count = len(documents[0]) if documents and len(documents) > 0 else 0
-                print(f"✅ 검색 성공: {result_count}개 결과")
+                print(f" 검색 성공: {result_count}개 결과")
                 
                 # 결과 출력
                 for i in range(result_count):
                     doc = documents[0][i] if documents[0] else ""
                     meta = metadatas[0][i] if metadatas and metadatas[0] else {}
                     
-                    print(f"\n📄 결과 {i+1}:")
+                    print(f"\n 결과 {i+1}:")
                     print(f"   내용: {doc[:150]}...")
                     print(f"   메타데이터: {meta}")
                 
                 return results
             else:
-                print(f"❌ 검색 실패: {response.status_code}")
+                print(f" 검색 실패: {response.status_code}")
                 print(f"   응답: {response.text}")
                 return None
                 
         except Exception as e:
-            print(f"❌ 예외 발생: {str(e)}")
+            print(f" 예외 발생: {str(e)}")
             return None
     
     def get_all_documents(self, limit=5):
         """모든 문서 조회 (제한)"""
-        print(f"📄 문서 조회 중 (최대 {limit}개)...")
+        print(f" 문서 조회 중 (최대 {limit}개)...")
         
         try:
             get_data = {
@@ -117,28 +117,28 @@ class ChromaQueryTestSimple:
                 documents = results.get('documents', [])
                 metadatas = results.get('metadatas', [])
                 
-                print(f"✅ 문서 조회 성공: {len(documents)}개")
+                print(f" 문서 조회 성공: {len(documents)}개")
                 
                 # 결과 출력
                 for i, doc in enumerate(documents[:3]):  # 처음 3개만 출력
                     meta = metadatas[i] if i < len(metadatas) else {}
-                    print(f"\n📄 문서 {i+1}:")
+                    print(f"\n 문서 {i+1}:")
                     print(f"   내용: {doc[:150]}...")
                     print(f"   메타데이터: {meta}")
                 
                 return results
             else:
-                print(f"❌ 문서 조회 실패: {response.status_code}")
+                print(f" 문서 조회 실패: {response.status_code}")
                 print(f"   응답: {response.text}")
                 return None
                 
         except Exception as e:
-            print(f"❌ 예외 발생: {str(e)}")
+            print(f" 예외 발생: {str(e)}")
             return None
     
     def run_tests(self):
         """간단한 테스트 실행"""
-        print("🚀 ChromaDB 간단 테스트 시작")
+        print(" ChromaDB 간단 테스트 시작")
         print("=" * 50)
         
         # 1. 문서 개수 확인
@@ -155,15 +155,15 @@ class ChromaQueryTestSimple:
         get_results = self.get_all_documents(3)
         
         print("\n" + "=" * 50)
-        print("📊 테스트 결과:")
-        print(f"  문서 개수: {'✅' if count else '❌'}")
-        print(f"  검색 기능: {'✅' if search_results else '❌'}")
-        print(f"  문서 조회: {'✅' if get_results else '❌'}")
+        print(" 테스트 결과:")
+        print(f"  문서 개수: {'' if count else ''}")
+        print(f"  검색 기능: {'' if search_results else ''}")
+        print(f"  문서 조회: {'' if get_results else ''}")
 
 def main():
     """메인 실행 함수"""
     if not os.getenv("OPENAI_API_KEY"):
-        print("❌ OPENAI_API_KEY 환경변수가 설정되지 않았습니다.")
+        print(" OPENAI_API_KEY 환경변수가 설정되지 않았습니다.")
         return
     
     tester = ChromaQueryTestSimple()

@@ -48,7 +48,7 @@ class CareerPositioningNode:
             try:
                 company_vision_context = self.retriever_agent.get_company_vision_context()
             except Exception as e:
-                print(f"❌ WARNING - 회사 비전 컨텍스트 가져오기 실패: {e}")
+                print(f"- WARNING - 회사 비전 컨텍스트 가져오기 실패: {e}")
                 company_vision_context = ""
             
             # 사용자 정보 문자열 생성
@@ -59,7 +59,7 @@ class CareerPositioningNode:
             career_context = ""
             if career_data:
                 career_context = f"사내 경력 데이터 (최대 30명): {str(career_data)}"
-                print(f"🔍 DEBUG - 생성된 career_context 길이: {len(career_context)}")
+                print(f" DEBUG - 생성된 career_context 길이: {len(career_context)}")
             
             prompt = f"""
 당신은 G.Navi의 전문 커리어 상담사입니다. 사내 구성원 데이터(최대 30명)를 기반으로 {merged_user_data.get('name', '고객')}님의 커리어 포지셔닝을 분석하고 개인화된 방향성을 제안해주세요.
@@ -139,7 +139,7 @@ class CareerPositioningNode:
             career_paths = []
             lines = ai_response.split('\n')
             
-            print("🔍 DEBUG - 텍스트에서 경로 추출 시작")
+            print(" DEBUG - 텍스트에서 경로 추출 시작")
             # ### 1. 또는 ### 2. 형태의 경로 제목을 찾아서 파싱
             for i, line in enumerate(lines):
                 stripped_line = line.strip()
@@ -165,11 +165,11 @@ class CareerPositioningNode:
                         "number": path_number
                     }
                     career_paths.append(career_path)
-                    print(f"🔍 DEBUG - 파싱된 경로 {path_number}: {career_path}")
+                    print(f" DEBUG - 파싱된 경로 {path_number}: {career_path}")
             
             # 파싱 결과가 없으면 기본 경로 생성
             if not career_paths:
-                print("🔍 DEBUG - 경로 파싱 실패, 기본 경로 생성")
+                print(" DEBUG - 경로 파싱 실패, 기본 경로 생성")
                 career_paths = [
                     {
                         "id": "path_1",
@@ -187,7 +187,7 @@ class CareerPositioningNode:
                     }
                 ]
             
-            print(f"🔍 DEBUG - 최종 career_paths: {career_paths}")
+            print(f" DEBUG - 최종 career_paths: {career_paths}")
             
             return {
                 "message": ai_response,
@@ -195,7 +195,7 @@ class CareerPositioningNode:
             }
             
         except Exception as e:
-            print(f"❌ AI 커리어 분석 실패: {e}")
+            print(f"- AI 커리어 분석 실패: {e}")
             return {
                 "message": "커리어 분석 중 오류가 발생했습니다. 다시 시도해주세요.",
                 "career_paths": []
@@ -206,7 +206,7 @@ class CareerPositioningNode:
         AI가 생성한 커리어 방향성 정보를 기반으로 커리어 전환 경로 Mermaid 다이어그램 생성
         """
         try:
-            print("🎨 커리어 전환 경로 다이어그램 생성 시작...")
+            print(" 커리어 전환 경로 다이어그램 생성 시작...")
             
             # 커리어 전환 경로에 특화된 컨텍스트 구성
             career_transition_context = f"""
@@ -243,21 +243,21 @@ AI 분석 결과 (커리어 방향성):
             )
             
             if mermaid_code:
-                print(f"✅ 커리어 전환 경로 다이어그램 생성 완료 ({len(mermaid_code)}자)")
+                print(f" 커리어 전환 경로 다이어그램 생성 완료 ({len(mermaid_code)}자)")
                 return mermaid_code
             else:
-                print("⚠️ 커리어 전환 경로 다이어그램 생성 실패")
+                print(" 커리어 전환 경로 다이어그램 생성 실패")
                 return ""
                 
         except Exception as e:
-            print(f"❌ 커리어 전환 다이어그램 생성 중 오류: {e}")
+            print(f"- 커리어 전환 다이어그램 생성 중 오류: {e}")
             return ""
 
     async def analyze_career_positioning(self, state: ChatState) -> Dict[str, Any]:
         """
         Agent 기반 커리어 포지셔닝 분석 (간결한 버전)
         """
-        print("🎯 커리어 포지셔닝 분석 시작...")
+        print(" 커리어 포지셔닝 분석 시작...")
         
         # 1. 사용자 정보 병합
         user_data = self.graph_builder.get_user_info_from_session(state)
@@ -272,7 +272,7 @@ AI 분석 결과 (커리어 방향성):
                 chat_history=state.get("chat_history", [])
             )
         except Exception as e:
-            print(f"❌ Intent 분석 실패: {e}")
+            print(f"- Intent 분석 실패: {e}")
             intent_analysis = {"keywords": [], "intent": "career_guidance"}
         
         # 3. Agent 기반 데이터 검색
@@ -295,7 +295,7 @@ AI 분석 결과 (커리어 방향성):
                     }
                     structured_career_data.append(career_info)
         except Exception as e:
-            print(f"❌ 데이터 검색 실패: {e}")
+            print(f"- 데이터 검색 실패: {e}")
             structured_career_data = []
         
         # 4. AI 기반 커리어 분석
@@ -307,7 +307,7 @@ AI 분석 결과 (커리어 방향성):
         try:
             mermaid_diagram = await self._generate_career_path_diagram(ai_result, merged_user_data, state)
         except Exception as e:
-            print(f"❌ Mermaid 다이어그램 생성 실패: {e}")
+            print(f"- Mermaid 다이어그램 생성 실패: {e}")
             mermaid_diagram = ""
             
         # 6. 다이어그램을 마크다운 응답에 통합
@@ -344,7 +344,7 @@ AI 분석 결과 (커리어 방향성):
                 
             # "선택 안내" 섹션이 다이어그램 다음에 오도록 재배치
             message_content = '\n'.join(lines)
-            print(f"✅ 다이어그램이 응답에 통합되었습니다. ({len(mermaid_diagram)}자)")
+            print(f" 다이어그램이 응답에 통합되었습니다. ({len(mermaid_diagram)}자)")
         
         # 7. 응답 구성
         positioning_response = {
