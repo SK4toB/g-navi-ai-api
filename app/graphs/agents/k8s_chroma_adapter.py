@@ -104,8 +104,6 @@ class K8sChromaRetriever(BaseRetriever):
                     for i, doc_text in enumerate(documents[0]):
                         metadata = metadatas[0][i] if metadatas and len(metadatas[0]) > i else {}
                         docs.append(Document(page_content=doc_text, metadata=metadata))
-                
-                print(f" [K8sChromaRetriever] 검색 완료: {len(docs)}개 문서 반환")
                 return docs
             else:
                 print(f"- [K8sChromaRetriever] 검색 실패: {response.status_code} - {response.text}")

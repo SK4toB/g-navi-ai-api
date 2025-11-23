@@ -51,7 +51,6 @@ async def create_or_load_room(
             print("채팅방 로드")  # 기존 방 로드 로그
 
         if is_new_room:
-            # user_info에 member_id 추가 (VectorDB 구축을 위해 필요)
             enhanced_user_info = {**request.user_info, "member_id": request.member_id}
             
             bot_message = await chat_service.create_chat_session(
@@ -60,7 +59,6 @@ async def create_or_load_room(
             )
         
         else:
-            # user_info에 member_id 추가 (VectorDB 구축을 위해 필요)
             enhanced_user_info = {**request.user_info, "member_id": request.member_id}
             
             load_result = await chat_service.load_chat_session(

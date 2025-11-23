@@ -50,6 +50,7 @@ class CareerPositioningNode:
             except Exception as e:
                 print(f"- WARNING - 회사 비전 컨텍스트 가져오기 실패: {e}")
                 company_vision_context = ""
+                
             
             # 사용자 정보 문자열 생성
             skills_str = ", ".join(merged_user_data.get('skills', ['정보 없음']))
@@ -255,7 +256,7 @@ AI 분석 결과 (커리어 방향성):
 
     async def analyze_career_positioning(self, state: ChatState) -> Dict[str, Any]:
         """
-        Agent 기반 커리어 포지셔닝 분석 (간결한 버전)
+        Agent 기반 커리어 포지셔닝 분석
         """
         print(" 커리어 포지셔닝 분석 시작...")
         

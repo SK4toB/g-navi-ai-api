@@ -47,8 +47,6 @@ async def send_message(
         
         print(f"메시지 응답 생성 완료, 메시지 처리 시간: {processing_time}ms")
         
-        # TODO: MongoDB에 대화 내역 저장 (나중에 추가)
-        
         return MessageResponse(  # 응답 객체 반환
             conversationId=conversation_id,
             memberId=request.member_id,

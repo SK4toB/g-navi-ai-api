@@ -268,7 +268,6 @@ class CareerEnsembleRetrieverAgent:
 
     def _load_k8s_vectorstore_and_retriever(self):
         """K8s 환경: 외부 ChromaDB 사용"""
-        print(" [K8s ChromaDB] 외부 ChromaDB 연결 중...")
         
         # 통합 K8sChromaRetriever 사용
         self.vectorstore = K8sChromaRetriever("career_history", self.career_cached_embeddings, k=3)
@@ -310,7 +309,6 @@ class CareerEnsembleRetrieverAgent:
     
     def _load_local_vectorstore_and_retriever(self):
         """로컬 환경: 기존 로컬 ChromaDB 사용"""
-        print("[로컬 ChromaDB] 로컬 ChromaDB 로드 중...")
         
         # Chroma 벡터스토어 로드
         self.vectorstore = Chroma(
@@ -349,18 +347,18 @@ class CareerEnsembleRetrieverAgent:
         print(f"[로컬 커리어 사례 VectorDB] 초기화 완료")
 
     def retrieve(self, query: str, k: int = 3):
-        """앙상블 리트리버로 검색 (기본 3개 결과) + 시간 기반 필터링"""
+        """앙상블 리트리버로 검색"""
         print(f" [커리어 사례 검색] 시작 - '{query}'")
         
         if not self.ensemble_retriever:
             print(f"[커리어 사례 검색] 앙상블 리트리버가 없음")
             return []
         
-        # 동적으로 k 값 설정 (각 리트리버가 더 많은 결과를 반환하도록)
+        # 동적으로 k 값 설정
         search_k = max(k * 2, 10)  # 요청된 개수의 2배 또는 최소 10개
         
-        # Chroma 벡터스토어에서 더 많은 결과 검색
-        embedding_docs = self.vectorstore.similarity_search(query, k=search_k)
+        # Chroma 벡터스토어에서 결과 검색
+        embedding_docs = self.vectorstore.similarity_seaerch(query, k=search_k)
         print(f"DEBUG - 임베딩 검색 결과: {len(embedding_docs)}개")
         
         # BM25 검색도 더 많은 결과 반환
@@ -377,23 +375,45 @@ class CareerEnsembleRetrieverAgent:
             except Exception as e:
                 print(f"BM25 검색 실패: {e}")
         
-        # 두 검색 결과를 가중치로 합치기
-        all_docs = []
-        seen_contents = set()
-        
+        # 두 검색 결과를 RRF 알고리즘으로 가중치 결합
+        doc_scores = {} 
+        RRF_CONSTANT = 60
+
         # 임베딩 결과 (가중치 0.3)
-        for doc in embedding_docs:
+        for rank, doc in enumerate(embedding_docs):
             content_hash = hash(doc.page_content)
-            if content_hash not in seen_contents:
-                all_docs.append(doc)
-                seen_contents.add(content_hash)
-        
+            rrf_score = 1.0 / (rank + RRF_CONSTANT)
+            weighted_score = rrf_score * 0.3  # Vector Search 가중치
+
+            if content_hash in doc_scores:
+                # 이미 있는 문서면 점수 누적 (여러 retriever에서 나온 경우)
+                doc_scores[content_hash] = (
+                    doc_scores[content_hash][0] + weighted_score,
+                    doc_scores[content_hash][1]
+                )
+            else:
+                doc_scores[content_hash] = (weighted_score, doc)
+
         # BM25 결과 (가중치 0.7)
-        for doc in bm25_docs:
+        for rank, doc in enumerate(bm25_docs):
             content_hash = hash(doc.page_content)
-            if content_hash not in seen_contents:
-                all_docs.append(doc)
-                seen_contents.add(content_hash)
+            rrf_score = 1.0 / (rank + RRF_CONSTANT)
+            weighted_score = rrf_score * 0.7  # BM25 가중치
+
+            if content_hash in doc_scores:
+                # 이미 있는 문서면 점수 누적
+                doc_scores[content_hash] = (
+                    doc_scores[content_hash][0] + weighted_score,
+                    doc_scores[content_hash][1]
+                )
+            else:
+                doc_scores[content_hash] = (weighted_score, doc)
+
+        # 점수 순으로 정렬하여 최종 문서 리스트 생성
+        sorted_docs = sorted(doc_scores.values(), key=lambda x: x[0], reverse=True)
+        all_docs = [doc for score, doc in sorted_docs]
+
+        print(f"DEBUG - RRF 결합 결과: {len(all_docs)}개 (중복 제거됨)")
         
         # 최근 키워드 감지 및 연도 추출
         recent_keywords = ['최근', '최신', 'recent', '요즘', '지금', '현재', '새로운', '신규', '트렌드']
@@ -422,7 +442,6 @@ class CareerEnsembleRetrieverAgent:
             
             if focus_on_start_year:
                 # 신입/입사 관련 쿼리인 경우: 시작 연도 기준
-                self.logger.info(f"신입/입사 관련 쿼리 감지됨. {min_year}년 이후 **시작된** 활동 데이터 필터링 시작...")
                 filtered_docs = []
                 for doc in all_docs:
                     try:
